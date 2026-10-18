@@ -1,0 +1,20 @@
+name: DuneLobby
+version: 1.1.0
+main: com.example.dunelobby.DuneLobby
+api-version: '1.21'
+load: POSTWORLD
+softdepend: [ImageFrame, DuneEss, DuneCore]
+commands:
+  lobby:
+    description: Return to the Spacing Guild lobby
+    permission: dunelobby.visit
+  dunelobby:
+    description: Guild lobby administration
+    permission: dunelobby.admin
+permissions:
+  dunelobby.visit:
+    default: true
+  dunelobby.admin:
+    default: op
+  dunelobby.build:
+    default: op

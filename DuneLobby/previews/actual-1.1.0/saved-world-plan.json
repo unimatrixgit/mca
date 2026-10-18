@@ -1,0 +1,23 @@
+{
+  "minecraft": "1.21.4",
+  "data_version": 4189,
+  "spawn": [
+    0,
+    81,
+    10
+  ],
+  "saved_non_air_blocks_in_build_height": 386882,
+  "entities": {
+    "minecraft:glow_item_frame": 1024,
+    "minecraft:text_display": 6,
+    "minecraft:item_frame": 15,
+    "minecraft:villager": 4
+  },
+  "npc_roles": {
+    "exchange": 1,
+    "water": 1,
+    "spice": 1,
+    "liaison": 1
+  },
+  "checks": "PASS: saved spawn, five launch pads, six rooms, four unique NPCs, 1024 artwork frames, opaque enclosure and flat ceiling, no dragon"
+}
