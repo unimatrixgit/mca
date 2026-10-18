@@ -8,7 +8,7 @@ cfg=(pathlib.Path(__file__).resolve().parents[1]/"DuneTerrain/src/main/resources
 java=(pathlib.Path(__file__).resolve().parents[1]/"DuneTerrain/src/main/java/com/example/duneterrain/DuneTerrain.java").read_text()
 expected={
  "arrakis":set(),
- "giedi_prime":{"COAL_ORE","IRON_ORE","COPPER_ORE","REDSTONE_ORE"},
+ "giedi_prime":{"COAL_ORE","IRON_ORE","COPPER_ORE","REDSTONE_ORE","ANCIENT_DEBRIS"},
  "kaitain":{"GOLD_ORE","EMERALD_ORE","DIAMOND_ORE","LAPIS_ORE"},
  "caladan":{"COAL_ORE","IRON_ORE","COPPER_ORE","LAPIS_ORE"},
  "sigma_draconis_iv":{"IRON_ORE","COPPER_ORE","REDSTONE_ORE","DIAMOND_ORE"},
@@ -26,7 +26,7 @@ def parse(name):
     for part in line.group(1).split(","):
         key,value=part.strip().split(":",1)
         values[key.strip()]=int(value.strip())
-    return {k:v for k,v in values.items() if k.endswith("_ORE") and v>0}
+    return {k:v for k,v in values.items() if (k.endswith("_ORE") or k=="ANCIENT_DEBRIS") and v>0}
 rng=random.Random(20261018)
 for name,wanted in expected.items():
     ores=parse(name)
