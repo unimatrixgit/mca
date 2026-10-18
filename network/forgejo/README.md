@@ -1,0 +1,13 @@
+# DuneRealms Forgejo
+
+Installed 18 October 2026 under the existing `dunerealms` hosting user. Public URL: https://www.dunerealms.com/git/. Forgejo 17.0.0 official amd64 binary was checked against its SHA256 and verified with the official release-signing key fingerprint EB114F5E6C0DC2BCDD183550A4B61A2DC5923710.
+
+The installation lives in `/home/dunerealms/apps/forgejo`: binary in `bin/`, SQLite database in `data/`, bare Git repositories in `repositories/`, and private configuration in `custom/conf/app.ini`. No credentials, signing keys or database are stored in this source repository. Administrator username is `unimatrix`; public registration is disabled. Email delivery and Actions runners are not configured. Git transport is HTTPS; Forgejo SSH and LFS are disabled in this initial installation.
+
+Forgejo binds to localhost:3001. The website's Node host streams `/git/` to that service, preserving Git requests and Forgejo cookies without exposing website session cookies or accepting forged reverse-proxy identity headers. Ordinary website requests retain their bounded body limit. The public Nginx Vhost redirects apex and www1 requests to `https://www.dunerealms.com$request_uri`; www is the serving hostname. The website's private environment sets `PUBLIC_ORIGIN=https://www.dunerealms.com` and `FORGEJO_URL=http://127.0.0.1:3001`. Forgejo config uses `DOMAIN=www.dunerealms.com` and `ROOT_URL=https://www.dunerealms.com/git/`.
+
+PM2 manages `forgejo` and `dunerealms-web` as the site user, with the saved process list restored by its existing reboot entry. Website release is `20261018-forgejo`, cloned from the working status-panel release. The previous release is preserved. Back up the entire Forgejo directory, including its SQLite database and private config, consistently while Forgejo is stopped or with the supported Forgejo backup tooling.
+
+The owner explicitly requested public copies of both private GitHub repositories under the Forgejo account. `MC` was imported with its complete history and four branches; `A3` was empty on GitHub and is an empty repository here as well. GitHub visibility was not changed. These are independent copies, not automatically scheduled mirrors.
+
+Verification: public HTTPS pages, anonymous repository listing and Git ref advertisements worked; MC branch hashes matched the source. The proxy test covers a Git payload above the website's normal body limit, subpath routing, auth forwarding and separation from website cookies/identity headers. Website health and the live world-status API remained available after the canonical hostname change.
