@@ -1,1 +1,32 @@
 .market{max-width:1200px;margin:2rem auto;padding:1rem;color:#ebddc2}.market-hero{padding:3rem 2rem;background:linear-gradient(100deg,#151617ed,#634322b3),url('assets/arrakis.webp') center/cover;border:1px solid #b08a4c}.market h1{font-size:clamp(2.5rem,6vw,5rem);color:#f4c976}.market-status{color:#f4c976}.market-board{background:#171a1c;border:1px solid #856c46;padding:1.5rem;margin:1.5rem 0}.market-controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:end}.market-controls label{display:grid;gap:.3rem;flex:1 1 180px}.market-controls select,.market-controls input{background:#26292b;color:white;border:1px solid #97774a;padding:.8rem;width:100%;min-height:45px}.market button{background:#5b4427;color:white;border:1px solid #d0a45a;padding:.8rem;cursor:pointer}.market-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem}.market-card{background:#222629;padding:1rem;border:1px solid #725d3c;border-top:4px solid #e5a65c}.market-card[data-planet=giedi_prime]{border-top-color:#ba3030}.market-card[data-planet=caladan]{border-top-color:#4fa5c9}.market-card[data-planet=kaitain]{border-top-color:#d5c35d}.market-card[data-planet=sigma_draconis_iv]{border-top-color:#9691c6}.market-card h3{color:#f3cf87;margin:.5rem 0}.market-card p{margin:.35rem 0}.market-price{color:#f7d17c;font-size:1.5rem;font-weight:700}.market-pages{display:flex;align-items:center;justify-content:center;gap:1rem;margin:1.5rem}.market-info{padding:1rem;border-left:3px solid #b89155}.market-info code{color:#ffd68d}.market-empty{padding:2rem;text-align:center;border:1px dashed #776044}.market-card small{color:#aeb4b7}
+
+/* CHOAM exchange layout — matches the Project Dune teal, gold and parchment theme */
+.choam{max-width:1440px;margin:auto;padding:24px clamp(16px,3vw,48px) 72px;color:#f5eddd}
+.choam-hero{min-height:285px;display:flex;flex-direction:column;justify-content:center;padding:44px clamp(22px,5vw,72px);border:1px solid #d5ab63;background:linear-gradient(90deg,rgba(16,32,31,.97),rgba(16,32,31,.56)),url('assets/arrakis.webp') center 55%/cover}
+.choam-hero h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.8rem,6vw,5.4rem);line-height:1.05;color:#f5eddd;margin:.3em 0}
+.choam-hero .eyebrow,.choam-hero>p:nth-of-type(2){color:#d5ab63;letter-spacing:.14em;text-transform:uppercase}
+.choam-desc{max-width:650px;color:#e7d9bf}
+.planet-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:18px 0 26px}
+.planet-tiles button{min-height:122px;padding:16px 8px;background-position:center;background-size:cover;color:#fff;border:1px solid #92784d;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.6rem;cursor:pointer}
+.planet-tiles button small{display:block;font-family:Manrope,sans-serif;font-size:.7rem;letter-spacing:.04em;margin-top:6px;color:#ead6b1}
+.planet-tiles button[aria-pressed=true]{outline:2px solid #d5ab63;outline-offset:2px}
+.market-tabs{display:flex;gap:24px;flex-wrap:wrap;border-bottom:1px solid #886f45;padding:0 12px 12px;color:#c3b79c;font-size:.86rem}
+.market-tabs .selected{color:#e9c078;border-bottom:2px solid #d5ab63;padding-bottom:10px;margin-bottom:-13px}
+.market-layout{display:grid;grid-template-columns:minmax(175px,1fr) minmax(0,3.5fr) minmax(190px,1.1fr);gap:18px;margin-top:20px;align-items:start}
+.market-side,.market-main{background:#142a28;border:1px solid #675c43;padding:22px;min-width:0}
+.market-side h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.55rem;color:#e9c078;margin:0 0 15px}
+.market-side h2:not(:first-child){margin-top:26px}
+.market-side select,.market-toolbar select,.market-toolbar input{width:100%;min-height:44px;background:#10201f;color:#f5eddd;border:1px solid #766544;padding:10px;font:inherit}
+.market-toolbar{display:flex;gap:10px;flex-wrap:wrap}
+.market-toolbar input{flex:1 1 230px}.market-toolbar select{flex:0 1 180px}
+.market-toolbar button,.market-pages button,.market-action{background:#263c37;color:#f4dbac;border:1px solid #a38654;padding:10px 14px;cursor:pointer;text-decoration:none}
+.market-action{display:block;margin:8px 0;text-align:center}
+.market-muted,.market-note{color:#c7baa2;line-height:1.65}
+.market-side code{color:#e9c078;overflow-wrap:anywhere}
+.market-art{width:100%;height:135px;object-fit:cover;border:1px solid #766544}
+.market-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.market-pages{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:22px}
+.market-note{text-align:center;margin-top:22px;font-size:.8rem}
+.choam .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:980px){.market-layout{grid-template-columns:1fr 2fr}.market-layout>.market-side:last-child{grid-column:1/-1}.planet-tiles{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.market-layout{display:block}.market-side,.market-main{margin-bottom:14px}.planet-tiles{grid-template-columns:repeat(2,1fr)}.market-results{grid-template-columns:1fr}.market-toolbar>*{flex:1 1 100%}.market-tabs{gap:12px}}
