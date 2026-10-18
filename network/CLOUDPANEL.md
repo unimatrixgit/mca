@@ -1,32 +1,39 @@
-# DuneRealms web hosting on Hetzner Cloud
-Use a **separate fresh Debian 12/13 VM** for CloudPanel. Do not run the Minecraft
-bootstrap or Velocity/Paper deployment on this VM. CloudPanel installs Nginx,
-database and system packages and is intended for a clean host.
+# Hetzner DuneRealms: CloudPanel on the Spacing Guild lobby host
 
-## VM names
-- `dune-web-01`: CloudPanel / Nginx / website
-- `dune-mc-01`: Velocity and six Paper servers (size RAM to workload)
+The **Spacing Guild lobby server is also the web hosting server**.
+Run CloudPanel and the Spacing Guild Paper backend on the same Debian VM.
+Velocity and the other five planets may run on this VM or another VM.
 
-## Web installation
-SSH to `dune-web-01`, clone the repo, then:
-```bash
-sudo bash network/hetzner-cloudpanel-setup.sh
-```
-Script downloads the official CloudPanel Hetzner installer and verifies its
-published SHA-256 before execution. If checksum changes, review official
-documentation and update the script instead of bypassing verification.
+## Recommended hostname
+- `dune-lobby-01`: CloudPanel, Nginx, website, and Spacing Guild Paper (port 25571)
+- `dune-mc-01`: Velocity and five planet backends (optional second VM)
 
-Open Hetzner firewall: TCP 80 and 443 to public; TCP 8443 and 22 only from
-your administrator IP. Do not expose SQL ports. Visit
-`https://WEB_PUBLIC_IP:8443` promptly to create the first admin user.
-Create the website as a Node.js site or reverse-proxy site as appropriate for
-the website's runtime, configure DNS, and enable TLS in CloudPanel.
-Never put API secrets in a public web root.
+## Install order on a fresh Debian 12/13 VM
+1. Install CloudPanel **first** on the fresh VM with `network/hetzner-cloudpanel-setup.sh`.
+2. Complete CloudPanel initial setup on `https://LOBBY_IP:8443`.
+3. Run `network/hetzner-debian-setup.sh` to install Java 21 and Minecraft dependencies.
+4. Deploy the GitHub Actions network ZIP with `network/deploy-network.sh` if running the full network locally.
+   If using separate VMs, copy only the Spacing Guild backend to the lobby VM and
+   adjust Velocity's `spacing-guild` address to its private Hetzner network IP.
+   The existing deployment script assumes all six backends and proxy are local:
+   multi-VM installation is not automated yet.
 
-On `dune-mc-01`, allow public TCP 25565 for Velocity and SSH only from your IP.
-Paper ports 25566-25571 must remain private. The existing network ZIP is a
-prototype; Spacing Guild generator, economy synchronization and lobby travel
-behavior still require testing and implementation.
+## Networking and security
+- Public TCP 80/443: CloudPanel website.
+- TCP 8443: CloudPanel admin, restricted to your administrator IP.
+- TCP 22: SSH, restricted to your administrator IP.
+- Public TCP 25565: Velocity proxy **only on the VM hosting Velocity**.
+- TCP 25571: Spacing Guild backend; only accessible from Velocity over private network.
+- TCP 25566–25570: Planet backends; private access only.
+- Never expose MariaDB or Paper backends to the public internet.
+- If Velocity and lobby are on different hosts, change `server-ip=127.0.0.1`
+  in lobby `server.properties` to the lobby VM's private network IP,
+  configure Paper's Velocity forwarding secret, and firewall port 25571.
+- Reserve sufficient RAM for CloudPanel services and Minecraft; do not allocate
+  all RAM to Java. Monitor CPU, disk, and memory during testing.
 
-CloudPanel official Hetzner instructions:
+The network packaging and lobby generation are prototypes: custom Spacing Guild
+terrain, NPC navigation, and economy synchronization are not yet verified.
+
+CloudPanel official documentation:
 https://www.cloudpanel.io/docs/v2/getting-started/hetzner-cloud/installation/installer/
