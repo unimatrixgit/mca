@@ -1,0 +1,14 @@
+{
+  "domain": "example.com",
+  "ssh_user": "root",
+  "ssh_port": 22,
+  "nodes": {
+    "proxy": {"host": "10.0.0.10", "port": 25565, "ssh_host": "10.0.0.10"},
+    "spacing-guild": {"host": "10.0.0.11", "port": 25571, "ssh_host": "10.0.0.11"},
+    "arrakis": {"host": "10.0.0.12", "port": 25566, "ssh_host": "10.0.0.12"},
+    "giedi-prime": {"host": "10.0.0.13", "port": 25567, "ssh_host": "10.0.0.13"},
+    "kaitain": {"host": "10.0.0.14", "port": 25568, "ssh_host": "10.0.0.14"},
+    "caladan": {"host": "10.0.0.15", "port": 25569, "ssh_host": "10.0.0.15"},
+    "sigma-draconis-iv": {"host": "10.0.0.16", "port": 25570, "ssh_host": "10.0.0.16"}
+  }
+}
