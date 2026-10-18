@@ -6,6 +6,10 @@ depend: [Vault]
 softdepend: [DuneCore, DuneTerrain]
 description: Dune Solaris economy, Vault provider, spice sales, and Arrakis travel
 commands:
+  exchange:
+    description: CHOAM interplanetary player marketplace
+    usage: /exchange
+    aliases: [choam, market]
   duneess:
     description: Solaris, travel, and Arrakis administration
     usage: /duneess help
