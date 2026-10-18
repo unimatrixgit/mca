@@ -32,6 +32,7 @@ import java.util.*;
 public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCompleter, Listener {
     private static final List<String> PLANETS = List.of("arrakis", "giedi_prime", "kaitain", "caladan", "sigma_draconis_iv");
     private DuneEconomy economy;
+    private ExchangeMenu exchangeMenu;
     private String jdbcUrl = "", dbUser = "", dbPassword = "";
     private boolean networkEnabled;
     private String localPlanet;
@@ -86,6 +87,8 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         command.setExecutor(this);
         command.setTabCompleter(this);
         getServer().getPluginManager().registerEvents(this, this);
+        exchangeMenu = new ExchangeMenu(this);
+        exchangeMenu.register();
         for (Player player : Bukkit.getOnlinePlayers()) economy.createPlayerAccount(player);
         getLogger().info("DuneEss enabled as the Solaris Vault provider.");
     }
