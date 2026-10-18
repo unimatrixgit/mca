@@ -557,11 +557,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             if (maxY < minY) return;
             for (String key : ores.getKeys(false)) {
                 Material ore = Material.matchMaterial(key);
-                if (ore == null || !key.endsWith("_ORE")) continue;
+                if (ore == null || (!key.endsWith("_ORE") && !(planet.equals("giedi_prime") && ore == Material.ANCIENT_DEBRIS))) continue;
                 int attempts = Math.max(0, Math.min(64, ores.getInt(key, 0)));
+                int effectiveVeinSize = ore == Material.ANCIENT_DEBRIS ? 1 : veinSize;
                 for (int attempt = 0; attempt < attempts; attempt++) {
                     int x = random.nextInt(16), z = random.nextInt(16), y = minY + random.nextInt(maxY - minY + 1);
-                    for (int n = 0; n < veinSize; n++) {
+                    for (int n = 0; n < effectiveVeinSize; n++) {
                         int vx = Math.max(0, Math.min(15, x + random.nextInt(3) - 1));
                         int vz = Math.max(0, Math.min(15, z + random.nextInt(3) - 1));
                         int vy = Math.max(minY, Math.min(maxY, y + random.nextInt(3) - 1));
