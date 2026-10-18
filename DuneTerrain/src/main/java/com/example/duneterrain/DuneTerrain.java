@@ -559,13 +559,17 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
                 Material ore = Material.matchMaterial(key);
                 if (ore == null || (!key.endsWith("_ORE") && !(planet.equals("giedi_prime") && ore == Material.ANCIENT_DEBRIS))) continue;
                 int attempts = Math.max(0, Math.min(64, ores.getInt(key, 0)));
-                int effectiveVeinSize = ore == Material.ANCIENT_DEBRIS ? 1 : veinSize;
+                int effectiveVeinSize = ore == Material.ANCIENT_DEBRIS
+                    ? Math.max(1, Math.min(16, plugin.getConfig().getInt(path + "ancient-debris.vein-size", 5))) : veinSize;
+                int oreMinY = ore == Material.ANCIENT_DEBRIS ? Math.max(minWorldY + 1, plugin.getConfig().getInt(path + "ancient-debris.min-y", -59)) : minY;
+                int oreMaxY = ore == Material.ANCIENT_DEBRIS ? Math.min(maxWorldY - 4, plugin.getConfig().getInt(path + "ancient-debris.max-y", 16)) : maxY;
+                if (oreMaxY < oreMinY) continue;
                 for (int attempt = 0; attempt < attempts; attempt++) {
-                    int x = random.nextInt(16), z = random.nextInt(16), y = minY + random.nextInt(maxY - minY + 1);
+                    int x = random.nextInt(16), z = random.nextInt(16), y = oreMinY + random.nextInt(oreMaxY - oreMinY + 1);
                     for (int n = 0; n < effectiveVeinSize; n++) {
                         int vx = Math.max(0, Math.min(15, x + random.nextInt(3) - 1));
                         int vz = Math.max(0, Math.min(15, z + random.nextInt(3) - 1));
-                        int vy = Math.max(minY, Math.min(maxY, y + random.nextInt(3) - 1));
+                        int vy = Math.max(oreMinY, Math.min(oreMaxY, y + random.nextInt(3) - 1));
                         Material existing = data.getType(vx, vy, vz);
                         if (existing == Material.STONE || existing == Material.DEEPSLATE || existing == Material.TUFF) data.setBlock(vx, vy, vz, ore);
                     }
