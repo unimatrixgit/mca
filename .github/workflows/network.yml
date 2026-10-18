@@ -1,0 +1,42 @@
+name: Package DuneRealms Velocity Network
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'network/**'
+      - 'DuneTerrain/**'
+      - 'DuneEss/**'
+      - 'DuneNPC/**'
+      - 'DuneRealms-minecraft-only/**'
+      - '.github/workflows/network.yml'
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Build plugins
+        run: |
+          set -e
+          mkdir -p built-plugins
+          for project in DuneRealms-minecraft-only DuneTerrain DuneNPC DuneEss; do
+            (cd "$project" && gradle clean build)
+          done
+          cp DuneRealms-minecraft-only/build/libs/*.jar built-plugins/DuneCore.jar
+          cp DuneTerrain/build/libs/*.jar built-plugins/DuneTerrain.jar
+          cp DuneNPC/build/libs/*.jar built-plugins/DuneNPC.jar
+          cp DuneEss/build/libs/*.jar built-plugins/DuneEss.jar
+      - name: Package six servers and Velocity config
+        run: python3 network/package.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DuneRealms-Velocity-Network
+          path: DuneRealms-Velocity-Network.zip
+          if-no-files-found: error
