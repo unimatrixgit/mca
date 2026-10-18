@@ -548,6 +548,7 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
         private static double hashUnit(long hash) { return (hash >>> 11) * 0x1.0p-53; }
         private void placeOres(ChunkData data, Random random, String path, int minWorldY, int maxWorldY) {
+            if (planet.equals("arrakis")) return; // Spice, never ores.
             org.bukkit.configuration.ConfigurationSection ores = plugin.getConfig().getConfigurationSection(path + "ores");
             if (ores == null) return;
             int minY = Math.max(minWorldY + 1, plugin.getConfig().getInt(path + "ores.min-y", -48));
