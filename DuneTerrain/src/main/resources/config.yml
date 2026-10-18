@@ -53,7 +53,7 @@ planets:
     water: {level: 63, swamp-pools: true, coverage: 0.18}
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
     # Giedi Prime: Harkonnen heavy industry.
-    ores: {min-y: -48, max-y: 48, vein-size: 6, COAL_ORE: 22, IRON_ORE: 20, COPPER_ORE: 14, REDSTONE_ORE: 10}
+    ores: {min-y: -48, max-y: 48, vein-size: 6, COAL_ORE: 22, IRON_ORE: 20, COPPER_ORE: 14, REDSTONE_ORE: 10, ANCIENT_DEBRIS: 2}
   kaitain:
     enabled: true
     spawn: {x: 0, z: 0}
