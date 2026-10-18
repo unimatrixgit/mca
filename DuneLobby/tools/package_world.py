@@ -28,10 +28,10 @@ if __name__ == '__main__':
         if file.name in ('session.lock','uid.dat') or 'playerdata' in relative.parts or 'advancements' in relative.parts or 'stats' in relative.parts:
             continue
         files['guild_lobby/'+relative.as_posix()]=file.read_bytes()
-    files['plugins/DuneLobby-1.0.0.jar']=(ROOT/'build/libs/DuneLobby-1.0.0.jar').read_bytes()
+    files['plugins/DuneLobby-1.1.0.jar']=(ROOT/'build/libs/DuneLobby-1.1.0.jar').read_bytes()
     files['tools/install_imageframe.py']=(ROOT/'tools/install_imageframe.py').read_bytes()
     files['README-Guild-Lobby.md']=(ROOT/'README.md').read_bytes()
-    files['README.txt']=('Dune Guild Lobby 1.0.0 | Paper 1.21.4 | Java 21\n\n'
+    files['README.txt']=('Dune Guild Lobby 1.1.0 | Paper 1.21.4 | Java 21 | Interiors only\n\n'
         'Extract into a STOPPED dedicated lobby server directory. Do not overwrite an existing guild_lobby.\n'
         'Install ImageFrame 2026.1.5.0: python tools/install_imageframe.py <server-directory>\n'
         'Keep level-name=lobby_bootstrap (or another primary world); do not set level-name=guild_lobby.\n'

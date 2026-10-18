@@ -1,3 +1,7 @@
+## Delivered 1.1.0 interior
+
+ctual-1.1.0/navigator-chamber.jpg is the actual installed Minecraft Java 1.21.4 client, captured during local visual verification. It is not an AI rendering. ctual-1.1.0/saved-world-plan.png and JSON are decoded from the saved blocks. The approved revision uses opaque interiors and flat ceilings; the older roofless concept below is retained only as historical design material.
+
 # Lobby previews
 
 - `guild-lobby-concept.png`: built-in ImageGen concept rendering, generated 2026-10-18. This is a visual design reference, not a Minecraft screenshot.

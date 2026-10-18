@@ -32,8 +32,24 @@ final class LobbyArtwork {
         new Panel("giedi","world-1.png",-100,88,-87,5,4),
         new Panel("kaitain","world-2.png",-90,88,-87,5,4),
         new Panel("caladan","world-3.png",-68,88,-87,5,4),
-        new Panel("sigma","world-4.png",-58,88,-87,5,4));
+        new Panel("sigma","world-4.png",-58,88,-87,5,4),
+        new Panel("navigator_left","guild-navigator.png",-23,103,-26,6,10),
+        new Panel("navigator_right","arrakis-cover.png",18,103,-26,6,10),
+        new Panel("choam_history_south","spice-expedition.png",-86,85,60,10,6),
+        new Panel("choam_arrakis_south","arrakis-cover.png",-56,85,60,10,6),
+        new Panel("news_caladan","world-3.png",44,85,-60,6,6),
+        new Panel("news_kaitain","world-2.png",73,85,-60,6,6),
+        new Panel("news_expedition_south","spice-expedition.png",47,85,-22,8,6),
+        new Panel("news_sandworm_south","shai-hulud-encounter.png",69,85,-22,8,6),
+        new Panel("charter_sietch_south","sietch-panorama.png",45,85,56,10,6),
+        new Panel("charter_arrakis_south","arrakis-cover.png",70,85,56,10,6),
+        new Panel("starport_guild_south","guild-navigator.png",-110,86,-29,10,7),
+        new Panel("starport_arrakis_south","arrakis-cover.png",-59,86,-29,10,7),
+        new Panel("smuggler_water","smuggler-water-camp.png",-85,84,84,8,5),
+        new Panel("smuggler_spice","smuggler-spice-mission.png",-57,84,84,8,5));
     LobbyArtwork(DuneLobby plugin,World world) { this.plugin=plugin; this.world=world; key=new NamespacedKey(plugin,"art"); }
+    static int tileCount() { return PANELS.stream().mapToInt(p->p.width*p.height).sum(); }
+    static int panelCount() { return PANELS.size(); }
     void restore() { install(); }
     void install() {
         if(!Bukkit.getPluginManager().isPluginEnabled("ImageFrame")) { plugin.getLogger().warning("Install ImageFrame 2026.1.5.0 to restore image decorations; structural lobby remains usable."); return; }
@@ -89,8 +105,18 @@ final class LobbyArtwork {
         for(ItemFrame frame:world.getEntitiesByClass(ItemFrame.class)) {
             String tag=frame.getPersistentDataContainer().get(key,PersistentDataType.STRING); if(tag!=null) existing.put(tag,frame);
         }
+        boolean facesNorth=p.name.equals("guild")||p.name.equals("smugglers")||p.name.endsWith("_south");
+        int backing=p.z+(facesNorth?1:-1);
+        for(int x=p.x-1;x<=p.x+p.width;x++) for(int y=p.y-1;y<=p.y+p.height;y++) {
+            if(x!=p.x-1&&x!=p.x+p.width&&y!=p.y-1&&y!=p.y+p.height) continue;
+            world.getBlockAt(x,y,backing).setType(Material.WAXED_CUT_COPPER,false);
+        }
+        for(int x:new int[]{p.x-2,p.x+p.width+1}) {
+            for(int y=p.y-1;y<=p.y+p.height;y++) world.getBlockAt(x,y,backing).setType(Material.CHISELED_POLISHED_BLACKSTONE,false);
+            world.getBlockAt(x,p.y+p.height+1,backing).setType(Material.LANTERN,false);
+        }
         for(int row=0;row<p.height;row++) for(int col=0;col<p.width;col++) {
-            boolean north=p.name.equals("guild")||p.name.equals("smugglers");
+            boolean north=facesNorth;
             int x=p.x+(north?p.width-1-col:col),y=p.y+p.height-1-row,z=p.z; String tag=p.name+":"+row+":"+col;
             BlockFace face=north?BlockFace.NORTH:BlockFace.SOUTH;
             // South-wall panels face into the room; reverse column order for that view.

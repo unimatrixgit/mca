@@ -58,6 +58,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         String name=getConfig().getString("world","guild_lobby");
         if(!name.matches("[A-Za-z0-9_-]+")) throw new IllegalArgumentException("world must be a simple folder name");
         lobby=Bukkit.createWorld(new WorldCreator(name).environment(World.Environment.THE_END).generator(new VoidGenerator()).generateStructures(false));
+        disableDragonBattle();
         lobby.setSpawnLocation(new Location(lobby,.5,81,10.5,180,0));
         lobby.setGameRule(GameRule.DO_MOB_SPAWNING,false); lobby.setGameRule(GameRule.DO_FIRE_TICK,false);
         lobby.setGameRule(GameRule.MOB_GRIEFING,false); lobby.setGameRule(GameRule.DO_DAYLIGHT_CYCLE,false);
@@ -67,13 +68,25 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         lobby.setPVP(false); lobby.getWorldBorder().setCenter(-16,16); lobby.getWorldBorder().setSize(330);
         lobby.setKeepSpawnInMemory(false);
         // Keep the bounded lobby footprint loaded: NPC/art restoration must see all rooms.
-        for(int cx=-8;cx<=6;cx++) for(int cz=-6;cz<=8;cz++) lobby.addPluginChunkTicket(cx,cz,this);
-        if(lobby.getEnderDragonBattle()!=null) lobby.getEnderDragonBattle().setPreviouslyKilled(true);
+        for(int cx=-8;cx<=6;cx++) for(int cz=-7;cz<=8;cz++) lobby.addPluginChunkTicket(cx,cz,this);
+        for(EnderDragon dragon:lobby.getEntitiesByClass(EnderDragon.class)) dragon.remove();
+    }
+    private void disableDragonBattle() {
+        // Paper 1.21.4 exposes ServerLevel.setDragonFight. Clearing the controller prevents
+        // both a boss bar and vanilla portal/dragon generation after a real player joins.
+        try {
+            Object handle=lobby.getClass().getMethod("getHandle").invoke(lobby);
+            var setter=Arrays.stream(handle.getClass().getMethods())
+                .filter(m->m.getName().equals("setDragonFight")&&m.getParameterCount()==1).findFirst().orElseThrow();
+            setter.invoke(handle,new Object[]{null});
+        } catch(ReflectiveOperationException|NoSuchElementException e) {
+            throw new IllegalStateException("This lobby requires the tested Paper 1.21.4 dragon-controller API",e);
+        }
     }
     private boolean inLobby(World world) { return lobby!=null && world.equals(lobby); }
     private void ensureNpcs() {
         for(int x=-8;x<=6;x++) for(int z=-6;z<=8;z++) lobby.getChunkAt(x,z).load();
-        npc("liaison","Guild Navigator Liaison",0,81,-5,Villager.Profession.CLERIC);
+        npc("liaison","Guild Navigator Liaison",13,87,-11,Villager.Profession.CLERIC);
         npc("exchange","CHOAM Exchange Broker",-82,81,23,Villager.Profession.LIBRARIAN);
         npc("water","Discreet Water Seller",-78,81,110,Villager.Profession.FISHERMAN);
         npc("spice","Discreet Spice Seller",-54,81,110,Villager.Profession.LEATHERWORKER);
@@ -99,7 +112,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
                 File target=new File(Bukkit.getWorldContainer(),getConfig().getString("world","guild_lobby"));
                 if(target.exists() || lobby!=null) { sender.sendMessage("Refusing to overwrite an existing world. Import it or choose a new world name."); return true; }
                 loadWorld(); long n=new LobbyBuilder(lobby).build(); ensureNpcs(); lobby.save();
-                try { Files.writeString(lobby.getWorldFolder().toPath().resolve("DUNE-LOBBY.txt"),"DuneLobby 1.0.0 / Minecraft Java 1.21.4 / End void / spawn 0.5 81 10.5 yaw 180\n"); }
+                try { Files.writeString(lobby.getWorldFolder().toPath().resolve("DUNE-LOBBY.txt"),"DuneLobby 1.1.0 / Minecraft Java 1.21.4 / End lighting, opaque enclosure / spawn 0.5 81 10.5 yaw 180\n"); }
                 catch(IOException e) { getLogger().warning(e.toString()); }
                 sender.sendMessage("GUILD_BUILD_COMPLETE: "+n+" placements. Run dunelobby artwork, then dunelobby verify.");
             }
@@ -114,24 +127,29 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         List<String> failures=new ArrayList<>();
         Location s=lobby.getSpawnLocation();
         if(lobby.getEnvironment()!=World.Environment.THE_END) failures.add("environment");
+        if(lobby.getEnderDragonBattle()!=null) failures.add("dragon battle controller active");
         if(!lobby.getBlockAt(s.getBlockX(),80,s.getBlockZ()).getType().isSolid() || !lobby.getBlockAt(s.getBlockX(),81,s.getBlockZ()).isPassable() || !lobby.getBlockAt(s.getBlockX(),82,s.getBlockZ()).isPassable()) failures.add("spawn clearance");
         // Flood-fill two-block-high walkable cells with step height <= 1.
         Set<String> seen=new HashSet<>(); ArrayDeque<int[]> todo=new ArrayDeque<>(); todo.add(new int[]{0,81,10});
         while(!todo.isEmpty()) {
             int[] p=todo.removeFirst(); String k=p[0]+","+p[1]+","+p[2];
-            if(p[0]<-120||p[0]>92||p[2]<-94||p[2]>128||p[1]<79||p[1]>86||!seen.add(k)) continue;
+            if(p[0]<-120||p[0]>92||p[2]<-94||p[2]>128||p[1]<79||p[1]>101||!seen.add(k)) continue;
             if(!walkable(p[0],p[1],p[2])) { seen.remove(k); continue; }
             for(int[] d:new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) for(int dy:new int[]{0,1,-1}) {
                 int x=p[0]+d[0],y=p[1]+dy,z=p[2]+d[1];
                 if(!seen.contains(x+","+y+","+z) && walkable(x,y,z)) { todo.add(new int[]{x,y,z}); break; }
             }
         }
-        int[][] targets={{0,81,10},{-66,81,35},{62,81,-36},{62,81,30},{-66,81,100},{-78,81,-32},{-78,81,109},{-54,81,109}};
+        int[][] targets={{0,81,10},{-66,81,35},{62,81,-36},{66,81,30},{-66,81,100},{-78,81,-32},{-78,81,109},{-54,81,109}};
         for(int[] p:targets) if(!seen.contains(p[0]+","+p[1]+","+p[2])) failures.add("unreachable "+Arrays.toString(p));
         for(int[] p:LobbyBuilder.PADS) if(!seen.contains(p[0]+",83,"+p[1])) failures.add("launch pad "+Arrays.toString(p));
+        for(int[] p:new int[][]{{0,10},{-78,-58},{-66,40},{62,-42},{62,37},{-66,101},{-30,-21},{31,21}})
+            if(!lobby.getBlockAt(p[0],128,p[1]).getType().isOccluding()) failures.add("missing flat ceiling "+Arrays.toString(p));
+        for(int y:new int[]{81,96,120}) for(int[] p:new int[][]{{-126,0},{96,0},{0,-98},{0,130}})
+            if(!lobby.getBlockAt(p[0],y,p[1]).getType().isOccluding()) failures.add("visible sky boundary "+Arrays.toString(p));
         for(String role:List.of("liaison","exchange","water","spice")) if(lobby.getEntitiesByClass(Villager.class).stream().noneMatch(v->role.equals(v.getPersistentDataContainer().get(roleKey,PersistentDataType.STRING)))) failures.add("missing NPC "+role);
         long art=lobby.getEntitiesByClass(ItemFrame.class).stream().filter(v->v.getPersistentDataContainer().has(new NamespacedKey(this,"art"),PersistentDataType.STRING)).count();
-        if(art<30) failures.add("art frames "+art+" < 30");
+        if(art!=LobbyArtwork.tileCount()) failures.add("art frames "+art+" != "+LobbyArtwork.tileCount());
         String result="GUILD_VERIFY "+(failures.isEmpty()?"PASS":"FAIL")+" walkable="+seen.size()+" artwork="+art+" "+failures;
         sender.sendMessage(result);
         try { Files.writeString(getDataFolder().toPath().resolve("verification.txt"),result+"\n"); } catch(IOException e) { getLogger().warning(e.toString()); }
@@ -148,7 +166,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
     }
     @EventHandler public void damage(EntityDamageEvent e) { if(inLobby(e.getEntity().getWorld())) e.setCancelled(true); }
     @EventHandler public void spawn(CreatureSpawnEvent e) {
-        if(inLobby(e.getLocation().getWorld()) && e.getSpawnReason()!=CreatureSpawnEvent.SpawnReason.CUSTOM) e.setCancelled(true);
+        if(inLobby(e.getLocation().getWorld()) && (e.getEntity() instanceof EnderDragon || e.getSpawnReason()!=CreatureSpawnEvent.SpawnReason.CUSTOM)) e.setCancelled(true);
     }
     @EventHandler public void breakBlock(BlockBreakEvent e) { if(inLobby(e.getBlock().getWorld())&&!e.getPlayer().hasPermission("dunelobby.build")) e.setCancelled(true); }
     @EventHandler public void placeBlock(BlockPlaceEvent e) { if(inLobby(e.getBlock().getWorld())&&!e.getPlayer().hasPermission("dunelobby.build")) e.setCancelled(true); }

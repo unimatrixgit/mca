@@ -1,31 +1,31 @@
-# Guild lobby delivery validation — 2026-10-18
+# Guild lobby 1.1.0 validation — 2026-10-18
 
-## Delivered
+This rebuild supersedes the simplified 1.0.0 draft. The current package is `worlds/Dune-Guild-Lobby-1.1.0.zip` (21,383,329 bytes), SHA256 `f66c0bc3192a1b1010b28e7123af60133b7ec32a2eb5fc62ca88e6d36a2bc5cf`.
 
-- Saved End world: `worlds/Dune-Guild-Lobby-1.0.0.zip`, **10,893,624 bytes**, SHA256 `6ecfef68a94a603d1f0a7a0485c3bcfd40eeb2180205347e2a2a7eb0f143dda8`.
-- ZIP contains the actual `guild_lobby/level.dat`, End Anvil region/entity/data files, DuneLobby 1.0.0 companion JAR, verified dependency installer, setup instructions and per-file SHA256 manifest. It contains no server executable, player data, session lock or world UUID file.
-- Source, original panels and reused project artwork are in `DuneLobby/`. Source builds embed the artwork and do not fetch remote images.
-- AI design preview and an independent plan rendered from the saved chunks are in `DuneLobby/previews/`.
+## Changes and visual evidence
+
+- Monumental Navigator tank, broad stepped dais, gold floor medallion, upper galleries, carved blackstone columns, short diagonal connections and furnished rooms replace the sparse grid layout.
+- All connecting halls and room boundaries are opaque interiors with flat ceilings. There are no exterior/sky views. The outer enclosure is opaque too.
+- Twenty-five ImageFrame paintings use 1,024 map tiles; fifteen separate item displays decorate the official market. Water and spice sellers remain separate NPCs in the dim, screened smuggler market.
+- `previews/actual-1.1.0/navigator-chamber.jpg` is an actual installed Minecraft Java 1.21.4 client window capture, using vanilla rendering. It was displayed to the user before their approval. It is not an AI rendering. The historical concept remains separately labelled.
+- The real client joined the local loopback test server. An End dragon-controller issue discovered during that check was corrected: the companion disables the controller through the tested Paper 1.21.4 adapter, preventing the boss bar, dragon and vanilla exit portal from appearing.
+- Computer control was stopped by the user after the visual check. No further app input was issued. The previously captured game image was exported as an artifact through file operations.
 
 ## Checks completed
 
-1. Compiled with Java 21.0.12.1 and Gradle 8.14 against Paper API 1.21.4. Build passed. This module has no separate unit-test suite; validation below runs the actual server/world.
-2. Started a local, loopback-only **Paper 1.21.4 build 232** server with pinned **ImageFrame 2026.1.5.0**. Generated all six rooms, block Navigator, starport arrival apron, five launch platforms, frigate, corridors and four NPCs. Installed eleven ImageFrame panels (276 map tiles).
-3. Runtime flood-fill checks passed: **16,274 reachable standing cells**, clear supported central spawn, routes to every room, both smuggler counters and all five raised launch pads. World environment reported **THE_END**.
-4. Stopped and restarted the server. The imported world was reused, NPCs remained and artwork restored. Runtime verification passed after restart, without duplicate frames or merchants.
-5. `dunelobby build` refused an existing world folder, as intended.
-6. Extracted the package into a **second fresh Paper server** with no ImageFrame data or primary-world map data. It imported the End world, recreated its own image-map registry and restored all eleven panels. Runtime verification passed there too. A subsequent restart checked the final panel-facing adjustment and passed again.
-7. Independently decoded the saved Anvil/NBT data after shutdown: Minecraft data version **4189**; spawn **0,81,10**; clear headroom; **109,535 non-air blocks in build height**; six supported room centres; five marked launch pads; exactly **4 villagers** (one each liaison, official broker, water seller, spice seller); exactly **276 glowing item frames**; **no Ender Dragon**. See `previews/saved-world-plan.json`.
-8. ZIP integrity check passed. All included file hashes are recorded in its `manifest.json`. Temporary validation servers were shut down after testing.
+1. Java 21 / Gradle 8.14 build passed against Paper API 1.21.4. There is no separate unit-test suite; these checks run the real server and decode the saved world.
+2. Built a fresh world on Paper 1.21.4 build 232 with ImageFrame 2026.1.5.0. The builder performed 565,328 block placements.
+3. Restarted with the final companion, restored all 25 image maps and verified the saved world without regenerating its blocks.
+4. Runtime flood-fill and environment checks passed: six rooms, both seller approaches, five launch pads, four named NPCs, 1,024 artwork frames, clear supported spawn, opaque flat ceiling/enclosure and no active dragon battle controller.
+5. After clean shutdown, an independent Anvil/NBT reader confirmed data version 4189, spawn 0/81/10, 386,882 non-air blocks in the inspected height range (including enclosure), four villagers, 1,024 glowing painting frames, fifteen item frames, six text labels, and no Ender Dragon. It checked the flat ceiling and outer walls directly from saved blocks. Results and an actual-block plan are in `previews/actual-1.1.0/`.
+6. ZIP integrity check passed. The package includes a per-file SHA256 manifest, the actual saved End chunks, companion JAR and setup/dependency installer. Locks, UUID identity files, player data and the server executable are excluded. Local test servers were shut down.
 
 Final runtime output:
 
 ```text
-GUILD_VERIFY PASS walkable=16274 artwork=276 []
+GUILD_VERIFY PASS walkable=13791 artwork=1024 []
 ```
 
-## Practical limits
+## Limits
 
-The preview is concept art. The map uses real vanilla blocks, End atmosphere and ordinary vanilla light. There was no graphical Minecraft client available for an in-game visual walkthrough; the saved-block plan was visually inspected. Paid Solaris transactions, actual player merchant clicks and remote proxy destinations were not exercised. DuneEss/DuneCore integration routes through their existing player commands; configure those optional plugins before using the official economy. Lobby merchants use emerald barter and their spice/water are separate sample goods, not faction reward currency. No live server was deployed.
-
-The dedicated lobby has its own join/respawn routing. On an existing mixed backend, disable that routing in the companion config. Install ImageFrame separately using the pinned installer or its official distribution. Keep its data and primary-world map data with normal server backups after installation.
+The screenshot verifies the Navigator interior; it is not a claim of pixel-for-pixel equivalence to the earlier AI art. Other room geometry, paint placement and connectivity were checked from the saved world and running server. Merchant clicks, paid Solaris transfers, remote proxy destinations and production concurrency were not exercised. No live server was deployed. The smuggler merchants use emerald barter and sample goods, separate from redeemable faction rewards. Paper versions other than the tested 1.21.4 require validation because the dragon-controller adapter is version-specific. Install the new world folder to replace a 1.0.0 draft; updating only the JAR deliberately leaves existing blocks intact.

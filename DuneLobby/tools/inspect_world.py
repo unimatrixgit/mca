@@ -36,11 +36,11 @@ def blocks(world):
     result = {}
     for chunk in chunks(world/'DIM1'/'region'):
         cx, cz = int(chunk['xPos']), int(chunk['zPos'])
-        if not (-8 <= cx <= 6 and -6 <= cz <= 8):
+        if not (-8 <= cx <= 6 and -7 <= cz <= 8):
             continue
         for section in chunk['sections']:
             sy = int(section['Y'])
-            if sy < 4 or sy > 7:
+            if sy < 4 or sy > 8:
                 continue
             states = section['block_states']
             palette = [str(p['Name']).removeprefix('minecraft:') for p in states['palette']]
@@ -129,11 +129,16 @@ if __name__ == '__main__':
             if role is not None:
                 roles[str(role)] += 1
     assert roles == Counter({'liaison':1,'exchange':1,'water':1,'spice':1}),roles
-    assert entity_counts['minecraft:glow_item_frame'] == 276,entity_counts
+    assert entity_counts['minecraft:glow_item_frame'] == 1024,entity_counts
     assert entity_counts['minecraft:ender_dragon'] == 0,entity_counts
+    for x,z in [(0,0),(-78,-58),(-66,40),(62,-42),(62,37),(-66,101)]:
+        assert data.get((x,128,z)) == 'black_concrete', (x,z,'flat ceiling')
+    for y in [81,96,120]:
+        for x,z in [(-126,0),(96,0),(0,-98),(0,130)]:
+            assert data.get((x,y,z)) == 'black_concrete',(x,y,z,'opaque enclosure')
     report={'minecraft':'1.21.4','data_version':int(level['DataVersion']),'spawn':[0,81,10],
             'saved_non_air_blocks_in_build_height':len(data),'entities':dict(entity_counts),'npc_roles':dict(roles),
-            'checks':'PASS: saved spawn, five launch pads, six rooms, four unique NPCs, 276 artwork frames, no dragon'}
+            'checks':'PASS: saved spawn, five launch pads, six rooms, four unique NPCs, 1024 artwork frames, opaque enclosure and flat ceiling, no dragon'}
     render(data,args.output)
     args.output.with_suffix('.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(report,indent=2))

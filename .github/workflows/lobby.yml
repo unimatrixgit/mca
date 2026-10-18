@@ -22,7 +22,7 @@ jobs:
           name: Dune-Guild-Lobby
           path: |
             DuneLobby/build/libs/*.jar
-            worlds/Dune-Guild-Lobby-1.0.0.zip
+            worlds/Dune-Guild-Lobby-1.1.0.zip
             DuneLobby/README.md
             DuneLobby/VALIDATION.md
           if-no-files-found: error
