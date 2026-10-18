@@ -4,13 +4,16 @@ import {pathToFileURL} from 'node:url';
 import worker from '../dist/server/index.js';
 import {openDatabase} from './mysql.mjs';
 import {createAuth,identity,safeReturn} from './auth.mjs';
+import {createWorldStatus} from './world-status.mjs';
 const root=new URL('./public/',import.meta.url);
 const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"};
 export function createApplication(db,settings={}) {
   const origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
   const auth=createAuth(db,origin);
+  const worldStatus=createWorldStatus(settings);
   return async function handle(request) {
     const url=new URL(request.url);
+    if(url.pathname==='/api/worlds')return request.method==='GET'?worldStatus():new Response('Method not allowed',{status:405});
     if(url.pathname==='/signin-with-chatgpt')return Response.redirect(origin+'/login.html?return_to='+encodeURIComponent(safeReturn(url.searchParams.get('return_to'))),302);
     if(url.pathname==='/healthz'){await db.prepare('SELECT 1 AS ok').first();return Response.json({status:'ok',database:'connected'},{headers:{'Cache-Control':'no-store'}});}
     if(url.pathname.startsWith('/api/auth/'))return auth(request);

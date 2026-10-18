@@ -11,3 +11,11 @@ MySQL stores forum discussions, profiles, private support tickets, accounts and 
 Validation: 39 local website tests passed, including rejection of forged identity headers, CSRF, privilege injection and expired logout sessions. Live MySQL tests covered registration, profile updates, private ticket create/read/reply/close, forum create/search/read/reply and cleanup of temporary records. Public domain returned the application and connected health check. The owner installed the TLS certificate; HTTPS verification and browser checks on the custom domain subsequently passed.
 
 The exchange intentionally retains labelled demo offers until a game-market feed is configured. Connecting MySQL does not connect Minecraft market data. News and diplomacy feeds also require their configured sources. No existing ChatGPT-hosted account data was migrated.
+
+## Live world status
+
+The homepage and exchange show a translucent server panel over the hero artwork. `web/world-status.js` polls `/api/worlds` every 30 seconds while visible. The Node handler caches checks for 15 seconds and fetches the fixed `WORLD_STATUS_URL` configured by the operator. It does not accept probe addresses from visitors or disclose internal addresses. A missing, stale or unreachable monitor produces Unknown, never a fabricated Online/Offline result.
+
+`network/live-lobby/status-agent.py` on the Minecraft VM performs the Minecraft Java status handshake against Velocity and the Paper lobby independently. Not-yet-configured planets show Offline; add their private host/port pairs through its `WORLD_TARGETS_JSON` environment setting when deployed. The read-only systemd service `dune-status` listens on TCP 25572; UFW allows only the website host to reach it. No game console or write endpoint is exposed. The website uses `WORLD_STATUS_URL=http://2.28.33.142:25572/status` in its private environment file.
+
+The status deployment is release `20261018-status`; its node_modules symlink reuses the previously installed exact dependency version from `20261018-node`. Keep that earlier release while this dependency symlink is in use. For a standalone future release install dependencies in its own directory.
