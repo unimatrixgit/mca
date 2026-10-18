@@ -16,6 +16,8 @@ jobs:
           python-version: '3.12'
       - name: Check inventory and build world config ZIPs
         run: python3 network/preflight.py --check-worlds
+      - name: Simulate 1000 chunks of planetary ore attempts
+        run: python3 network/simulate-ores.py
       - name: Upload world configuration packages
         uses: actions/upload-artifact@v4
         with:
