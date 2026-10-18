@@ -1,0 +1,28 @@
+name: Build Guild Lobby companion
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, beta]
+    paths: ['DuneLobby/**', 'worlds/**', '.github/workflows/lobby.yml']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - run: gradle -p DuneLobby build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Dune-Guild-Lobby
+          path: |
+            DuneLobby/build/libs/*.jar
+            worlds/Dune-Guild-Lobby-1.0.0.zip
+            DuneLobby/README.md
+            DuneLobby/VALIDATION.md
+          if-no-files-found: error

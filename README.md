@@ -16,9 +16,12 @@ A Dune-themed Minecraft Java plugin suite for **Paper 1.21.4 and Java 21**. Expl
 | DuneTerrain | 1.0.7 | Planet generation, Arrakis formations and landmarks, spice deposits, personal sietch caches, and safe spawn. |
 | DuneNPC | 1.0.0 | Guild Navigators, smuggler missions, stationary quest camps, timed deadlines, particles and NPC admin GUI. |
 | DuneEss | 1.0.1 | Solaris economy through Vault, spice sales, Guild travel, help, and administrative travel/economy tools. |
+| [DuneLobby](DuneLobby/README.md) | 1.0.0 | Optional saved End lobby: Guild Navigator spawn, Dune II starport, Exchange, News, Rules and shady water/spice market. |
 | DuneResourcePack.zip | Minecraft Java 1.21.4 | Desert Sniffer skin, haunted Fremen zombies, spice-gold suspicious sand, and smuggler wandering traders. |
 
 ## Download and install
+
+**Optional lobby:** download the already built [Dune Guild Lobby world package](worlds/Dune-Guild-Lobby-1.0.0.zip) and follow the [lobby setup guide](DuneLobby/README.md) for a separate Paper backend. It includes its companion plugin; ImageFrame is installed separately. Planet installation below is unchanged.
 
 1. Open the latest successful [GitHub Actions build](https://github.com/unimatrixgit/mcdune/actions) and download **DuneRealms-Server-Package** from its artifacts. The server package includes Vault, all four project plugin JARs, the resource pack, and the manual. GitHub artifact downloads may require sign-in.
 2. Stop the Paper server and back up its worlds, plugin data, and any shared database before replacing an existing release.
