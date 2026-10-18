@@ -31,7 +31,7 @@ Velocity 3.5.1 was incompatible with this Geyser build's Adventure API; 4.3.0 st
 
 Imported the saved `worlds/Dune-Guild-Lobby-1.0.0.zip` from the beta commit above. The initial generated lobby and old companion JAR were preserved under `/opt/dunerealms/backups/20261018/`. No planet worlds were overwritten. The new companion preserves the saved structure and restores eleven ImageFrame panels comprising 276 frames.
 
-Runtime verification passed: `GUILD_VERIFY PASS walkable=16274 artwork=276 []`. A real Java player connected through Velocity and the owner confirmed the connection works. Bedrock services start and listen; an actual Bedrock player session has not yet been confirmed. Planet travel, paid fares and the official exchange require their future DuneCore/DuneEss/backend integrations. The smuggler merchants provide their own emerald barter goods, not redeemable Solaris resources.
+Runtime verification passed: `GUILD_VERIFY PASS walkable=16274 artwork=276 []`, both before and after a controlled Paper service restart. ImageFrame reloaded eleven saved image maps after restart. A real Java player connected through Velocity and the owner confirmed the connection works. An external Bedrock UDP status ping succeeded; an actual Bedrock player session has not yet been confirmed. Planet travel, paid fares and the official exchange require their future DuneCore/DuneEss/backend integrations. The smuggler merchants provide their own emerald barter goods, not redeemable Solaris resources.
 
 ## Operations
 
