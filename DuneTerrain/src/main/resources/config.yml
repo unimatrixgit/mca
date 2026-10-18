@@ -41,7 +41,8 @@ planets:
     # Nested flat terraces, hard capped at 3 levels and 5 blocks between levels.
     # Radius 45-55 gives approximately 90-110 blocks across, including a rough edge.
     darkstone-islands: {enabled: true, spacing: 750, min-radius: 45, max-radius: 55, max-height: 14, max-plateaus: 3, plateau-interval: 5}
-    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 2, IRON_ORE: 2, COPPER_ORE: 1}
+    # Arrakis: spice only, no mineable ores.
+    ores: {min-y: -48, max-y: 48, vein-size: 5}
   giedi_prime:
     enabled: true
     spawn: {x: 0, z: 0}
@@ -51,7 +52,8 @@ planets:
     filler: DEEPSLATE
     water: {level: 63, swamp-pools: true, coverage: 0.18}
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
-    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 14, IRON_ORE: 12, COPPER_ORE: 9, GOLD_ORE: 7, REDSTONE_ORE: 8, LAPIS_ORE: 5, DIAMOND_ORE: 4, EMERALD_ORE: 2}
+    # Giedi Prime: Harkonnen heavy industry.
+    ores: {min-y: -48, max-y: 48, vein-size: 6, COAL_ORE: 22, IRON_ORE: 20, COPPER_ORE: 14, REDSTONE_ORE: 10}
   kaitain:
     enabled: true
     spawn: {x: 0, z: 0}
@@ -61,7 +63,8 @@ planets:
     filler: DIRT
     water: {level: 0, swamp-pools: false, coverage: 0.18}
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 64}
-    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 4, IRON_ORE: 5, GOLD_ORE: 15, DIAMOND_ORE: 18, EMERALD_ORE: 3}
+    # Kaitain: imperial precious minerals.
+    ores: {min-y: -48, max-y: 48, vein-size: 4, GOLD_ORE: 16, EMERALD_ORE: 12, DIAMOND_ORE: 7, LAPIS_ORE: 7}
   caladan:
     enabled: true
     spawn: {x: 0, z: 0}
@@ -71,7 +74,8 @@ planets:
     filler: DIRT
     water: {level: 72, swamp-pools: true, coverage: 0.55}
     vegetation: {trees: true, tree-chance: 0.035, flowers-per-chunk: 0}
-    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 4, IRON_ORE: 5, COPPER_ORE: 5, DIAMOND_ORE: 2}
+    # Caladan: modest industrial minerals.
+    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 7, IRON_ORE: 8, COPPER_ORE: 12, LAPIS_ORE: 5}
   sigma_draconis_iv:
     enabled: true
     spawn: {x: 0, z: 0}
@@ -81,4 +85,5 @@ planets:
     filler: DEEPSLATE
     water: {level: 0, swamp-pools: false, coverage: 0.18}
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
-    ores: {min-y: -48, max-y: 48, vein-size: 5, COAL_ORE: 5, IRON_ORE: 5, COPPER_ORE: 2, DIAMOND_ORE: 2}
+    # Sigma Draconis IV: harsh frontier mining.
+    ores: {min-y: -48, max-y: 48, vein-size: 5, IRON_ORE: 11, COPPER_ORE: 6, REDSTONE_ORE: 12, DIAMOND_ORE: 5}
