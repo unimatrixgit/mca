@@ -184,7 +184,7 @@ jobs:
           Its source is available at https://github.com/Foulest/Vault/tree/2.5.0.
 
           Compatible build target: Paper 1.21.4, Java 21.
-          See https://github.com/unimatrixgit/mcdune for setup and configuration details.
+          See https://github.com/thomasv6545-glitch/MC for setup and configuration details.
           EOF
       - name: Upload one downloadable server package
         uses: actions/upload-artifact@v4

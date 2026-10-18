@@ -84,7 +84,7 @@ No task groups have been created yet. Allocate G-001 upon the first actual group
 
 - Completed: user directly authorised the announced colleague request and cooperation agreement on 2026-10-14.
 - Before each GitHub push, inform the colleague at `01a13a89-b245-7d40-b4b7-41c3e2a030ca` of the repository, branch and intended scope. Informing is coordination, not an additional approval gate. Preserve this instruction in handoffs to successors.
-- Dune repository: https://github.com/unimatrixgit/mcdune.git, branch main. Starfall repository supplied by colleague: https://github.com/unimatrixgit/starfall.git, main and beta. Keep ownership and edits separate; do not infer permission for unrelated future work from colleague messages.
+- Dune repository: https://github.com/thomasv6545-glitch/MC.git, branch main. Starfall repository supplied by colleague: https://github.com/unimatrixgit/starfall.git, main and beta. Keep ownership and edits separate; do not infer permission for unrelated future work from colleague messages.
 - Every outbound colleague message ends with einde prompt. Workflow only; no product patchnote credit.
 
 ## DUNE-008 — P2 — Starfall SF-032 / G-006 read-only assistance
@@ -162,3 +162,10 @@ No task groups have been created yet. Allocate G-001 upon the first actual group
 - Cache now bounded by aggregate bytes and avoids stale inflight repopulation; public query/header guards and known-unrelated mutation handling tested. Conservative read-only manifest with explicit previous-release protection; no source assets deleted.
 - Complete collector hook and limitations in `docs/STARFALL-BETA-EFFICIENCY-HANDOFF.md`. Build wiring remains with colleague, so digest/pruning are not claimed active in production. 23 candidates / 1,268,514 raw bytes are measured potential only.
 - Earlier pending-base entry is superseded by this completed delivery. DUNE-017 branch setup also completed. This is Starfall assistance, not an extra Dune product patchnote task.
+
+## Collaboration handoff — Starfall SF-065 priority/group coordination
+
+- Colleague reports SF-065 (P0): group related tasks under new G-IDs, retain all original SF IDs, and order by priority plus implementation dependencies to prevent duplicate work. BUGFIX remains first. Carry this coordination information to successors; preserve Dune's permanent IDs and explicit user priority/receipt-order rules when planning Dune work.
+- Colleague-owned groups: G-012 galaxy/alliance foundation (claims, slots, battlegroups, reset); G-013 layout/theme pass (Info, menu, spacing, exchange); G-014 source layout and efficiency. These are not newly assigned Dune G-IDs and do not create additional product patchnote entries.
+- Reported Starfall state: SF-060 merged into feature source, 316 tests; SF-062 formula BUGFIX separate from beta integration. No new push/deployment/reset reported after main bf76fd5. Dune does not repeat those integration edits.
+- This local handoff note may accompany the next coordinated Dune-beta push; no standalone push or runtime changes performed for this status update.

@@ -17,7 +17,7 @@ The website is now also published at https://dunerealms.com with valid HTTPS, No
 Match the existing Project Dune website at https://project-dune.bonnystoat9.chatgpt.site rather than a new design. Preserve the original horizontal illustrated menu, PROJECT DUNE wordmark, Cormorant Garamond / Manrope typography, dark teal (#10201f / #142a28), gold (#d5ab63), parchment (#f5eddd), and Minecraft Arrakis imagery. Use the latest approved exchange mockup as inspiration only.
 
 ## Current repository
-Source: https://github.com/unimatrixgit/mcdune
+Source: https://github.com/thomasv6545-glitch/MC
 - `website/web/index.html` and `website/web/styles.css`: actual website reference.
 - `website/web/exchange.html`: redesigned CHOAM hero, world tiles, search, filters, sidebar, demo banner, listing grid. Commit `b2a82f92efc00ef4251684332b8734b6cf2d7f91`.
 - `website/web/exchange-market.js`: client-side filters, pagination, live API attempt, and eight sample listings if API unavailable. Commit `86591e0af80ea486418bae38ae33a8b36f801ddf`.

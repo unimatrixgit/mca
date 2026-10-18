@@ -23,7 +23,7 @@ A Dune-themed Minecraft Java plugin suite for **Paper 1.21.4 and Java 21**. Expl
 
 **Optional lobby:** download the rebuilt [Dune Guild Lobby 1.1.0 world package](worlds/Dune-Guild-Lobby-1.1.0.zip) and follow the [lobby setup guide](DuneLobby/README.md) for a separate Paper backend. It includes its companion plugin; ImageFrame is installed separately. Version 1.0.0 is a superseded draft. Planet installation below is unchanged.
 
-1. Open the latest successful [GitHub Actions build](https://github.com/unimatrixgit/mcdune/actions) and download **DuneRealms-Server-Package** from its artifacts. The server package includes Vault, all four project plugin JARs, the resource pack, and the manual. GitHub artifact downloads may require sign-in.
+1. Open the latest successful [GitHub Actions build](https://github.com/thomasv6545-glitch/MC/actions) and download **DuneRealms-Server-Package** from its artifacts. The server package includes Vault, all four project plugin JARs, the resource pack, and the manual. GitHub artifact downloads may require sign-in.
 2. Stop the Paper server and back up its worlds, plugin data, and any shared database before replacing an existing release.
 3. Put Vault, DuneCore, DuneNPC, DuneEss, and DuneTerrain JARs in `plugins/`. Keep only one JAR per plugin. Remove the legacy `DuneRealms.jar` if upgrading from that plugin.
 4. Start once to create configuration files. Set the backend's `server.planet` in DuneTerrain and matching `network.local-planet` in DuneCore, then restart after edits.

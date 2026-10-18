@@ -38,7 +38,7 @@ if __name__ == '__main__':
         'Start Paper; DuneLobby imports guild_lobby as THE_END, restores artwork, and routes joins.\n'
         'Run dunelobby verify from console. Players use /lobby.\n'
         'Read README-Guild-Lobby.md for proxy destinations, optional DuneCore/DuneEss integration and barter rules.\n'
-        'Source and current instructions: https://github.com/unimatrixgit/mcdune/tree/beta/DuneLobby\n').encode()
+        'Source and current instructions: https://github.com/thomasv6545-glitch/MC/tree/beta/DuneLobby\n').encode()
     manifest={path:{'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()} for path,data in sorted(files.items())}
     files['manifest.json']=(json.dumps({'minecraft':'1.21.4','world':'guild_lobby','environment':'THE_END','runtime_verification':result.strip(),'files':manifest},indent=2)+'\n').encode()
     args.output.parent.mkdir(parents=True,exist_ok=True)

@@ -17,7 +17,7 @@ if __name__ == '__main__':
             raise SystemExit('Existing ImageFrame differs. Nothing overwritten; inspect it first.')
         print('Pinned ImageFrame already installed.')
     else:
-        request = urllib.request.Request(URL, headers={'User-Agent': 'DuneLobby/1.0 https://github.com/unimatrixgit/mcdune'})
+        request = urllib.request.Request(URL, headers={'User-Agent': 'DuneLobby/1.0 https://github.com/thomasv6545-glitch/MC'})
         data = urllib.request.urlopen(request, timeout=90).read()
         if hashlib.sha256(data).hexdigest() != SHA256:
             raise SystemExit('ImageFrame checksum mismatch. Nothing installed.')
