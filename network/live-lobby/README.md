@@ -1,5 +1,7 @@
 # Live EU lobby, 18 October 2026
 
+> Update, 19 October: [Arrakis now has a separate Paper backend](../arrakis/README.md) on localhost:25566. Both servers run on this test VM; Velocity temporarily tries Arrakis first and retains spacing-guild as fallback. Lobby heap is now 768 MB. The deployment description below records the initial lobby-only installation.
+
 The live server is a Hetzner CX23 in Falkenstein, Germany: `2.28.33.142`, DNS `lobby.dunerealms.com`. It runs only the public proxy, lobby backend and Bedrock connection menu. CloudPanel belongs to the separate website host and is not installed here.
 
 ## Routing
