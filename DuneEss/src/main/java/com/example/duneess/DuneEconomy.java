@@ -57,6 +57,8 @@ final class DuneEconomy implements Economy {
         databaseEnabled = !jdbcUrl.isBlank();
     }
 
+    boolean sharedDatabaseReady() { return databaseEnabled; }
+
     private Connection connect() throws SQLException {
         return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
     }
@@ -196,8 +198,8 @@ final class DuneEconomy implements Economy {
     @Override public boolean isEnabled() { return plugin.isEnabled(); }
     @Override public String getName() { return "DuneEss"; }
     @Override public boolean hasBankSupport() { return false; }
-    @Override public int fractionalDigits() { return 0; }
-    @Override public String format(double amount) { return String.format(java.util.Locale.US, "%,.0f %s", amount, Math.abs(amount) == 1 ? singular : plural); }
+    @Override public int fractionalDigits() { return 2; }
+    @Override public String format(double amount) { return String.format(java.util.Locale.US, "%,.2f %s", amount, Math.abs(amount) == 1 ? singular : plural); }
     @Override public String currencyNamePlural() { return plural; }
     @Override public String currencyNameSingular() { return singular; }
     @Override public boolean hasAccount(String name) { return hasAccount(Bukkit.getOfflinePlayer(name)); }

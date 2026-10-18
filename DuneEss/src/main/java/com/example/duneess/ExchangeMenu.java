@@ -5,48 +5,286 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
-import java.sql.*;
-import java.util.*;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.*;
 
-/** Vanilla inventory menus: compatible with Java and Geyser/Bedrock. */
-public final class ExchangeMenu implements Listener, CommandExecutor {
- private final DuneEss plugin;
- private final Map<UUID, String> views=new HashMap<>();
- private final Map<UUID, Integer> pages=new HashMap<>();
- private final Map<UUID, String> filters=new HashMap<>();
- private static final List<String> CATS=List.of("ores","spice","building","equipment","farming","misc");
- private static final List<Material> ICONS=List.of(Material.IRON_PICKAXE,Material.ORANGE_DYE,Material.BRICKS,Material.IRON_SWORD,Material.WHEAT,Material.CHEST);
- ExchangeMenu(DuneEss p){plugin=p;}
- void register(){Objects.requireNonNull(plugin.getCommand("exchange")).setExecutor(this);Bukkit.getPluginManager().registerEvents(this,plugin);try(Connection c=plugin.connectEconomyDatabase();Statement s=c.createStatement()){s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_exchange_listings(id BIGSERIAL PRIMARY KEY,seller UUID NOT NULL,seller_name VARCHAR(32) NOT NULL,origin VARCHAR(48) NOT NULL,category VARCHAR(24) NOT NULL,material VARCHAR(80) NOT NULL,quantity INT NOT NULL CHECK(quantity>0),price NUMERIC(20,2) NOT NULL CHECK(price>0))");}catch(Exception e){plugin.getLogger().warning("Exchange database unavailable: "+e.getMessage());}}
- private String faction(Player p){String world=p.getWorld().getName().toLowerCase(Locale.ROOT);if(world.contains("giedi"))return "Harkonnen";if(world.contains("caladan"))return "Atreides";if(world.contains("kaitain"))return "Corrino";if(world.contains("arrakis"))return "Fremen";return "Guild";}
- private ChatColor tint(Player p){return switch(faction(p)){case "Harkonnen"->ChatColor.RED;case "Atreides"->ChatColor.AQUA;case "Corrino"->ChatColor.GOLD;case "Guild"->ChatColor.LIGHT_PURPLE;default->ChatColor.YELLOW;};}
- private ItemStack item(Material m,String name,String... lore){ItemStack i=new ItemStack(m);ItemMeta meta=i.getItemMeta();meta.setDisplayName(name);meta.setLore(Arrays.asList(lore));i.setItemMeta(meta);return i;}
- private Inventory menu(Player p,String id,String title){views.put(p.getUniqueId(),id);Inventory inv=Bukkit.createInventory(null,54,tint(p)+title);ItemStack border=item(switch(faction(p)){case "Harkonnen"->Material.RED_STAINED_GLASS_PANE;case "Atreides"->Material.CYAN_STAINED_GLASS_PANE;case "Corrino"->Material.YELLOW_STAINED_GLASS_PANE;case "Guild"->Material.PURPLE_STAINED_GLASS_PANE;default->Material.ORANGE_STAINED_GLASS_PANE;},ChatColor.DARK_GRAY+" ");for(int s=0;s<54;s++)if(s<9||s>=45||s%9==0||s%9==8)inv.setItem(s,border);inv.setItem(49,item(Material.BARRIER,ChatColor.RED+"Back / Close"));return inv;}
- private void show(Player p,Inventory i){p.openInventory(i);}
- private void home(Player p){Inventory i=menu(p,"home","CHOAM | "+faction(p));for(int n=0;n<6;n++)i.setItem(10+n,item(ICONS.get(n),ChatColor.GOLD+CATS.get(n).toUpperCase(),ChatColor.GRAY+"Browse interplanetary offers"));i.setItem(29,item(Material.EMERALD,ChatColor.GREEN+"Buy Items"));i.setItem(31,item(Material.CHEST,ChatColor.YELLOW+"Sell Held Item",ChatColor.GRAY+"Use /exchange sell <amount> <price>"));i.setItem(33,item(Material.BOOK,ChatColor.AQUA+"My Listings"));i.setItem(40,item(Material.COMPASS,ChatColor.LIGHT_PURPLE+"Planet Filter",ChatColor.GRAY+filters.getOrDefault(p.getUniqueId(),"all")));if(p.hasPermission("dune.admin"))i.setItem(42,item(Material.COMMAND_BLOCK,ChatColor.RED+"Admin Exchange"));show(p,i);}
- private void categories(Player p){Inventory i=menu(p,"categories","Exchange Categories");for(int n=0;n<6;n++)i.setItem(11+n,item(ICONS.get(n),ChatColor.GOLD+CATS.get(n).toUpperCase()));show(p,i);}
- private void planets(Player p){Inventory i=menu(p,"planets","Planet Filter");String[] planets={"all","arrakis","giedi_prime","caladan","kaitain","sigma_draconis_iv"};for(int n=0;n<planets.length;n++)i.setItem(11+n,item(Material.COMPASS,ChatColor.YELLOW+planets[n]));show(p,i);}
- private void browse(Player p,String category,int page,boolean mine){pages.put(p.getUniqueId(),Math.max(0,page));Inventory i=menu(p,(mine?"mine":category),"CHOAM | "+(mine?"My Listings":category));String filter=filters.getOrDefault(p.getUniqueId(),"all");String sql="SELECT id,material,quantity,price,seller_name,origin FROM dune_exchange_listings WHERE "+(mine?"seller=?":"category=?")+(mine||filter.equals("all")?"":" AND origin=?")+" ORDER BY id DESC LIMIT 28 OFFSET ?";
- try(Connection c=plugin.connectEconomyDatabase();PreparedStatement q=c.prepareStatement(sql)){int k=1;if(mine)q.setObject(k++,p.getUniqueId());else q.setString(k++,category);if(!mine&&!filter.equals("all"))q.setString(k++,filter);q.setInt(k,page*28);try(ResultSet r=q.executeQuery()){int slot=10;while(r.next()){while(slot%9==0||slot%9==8)slot++;if(slot>=44)break;Material m=Material.matchMaterial(r.getString("material"));if(m==null)m=Material.PAPER;String action=mine?"Click to cancel and reclaim":"Click to buy ONE item";i.setItem(slot++,item(m,ChatColor.GOLD+"#"+r.getLong("id")+" "+m.name(),ChatColor.WHITE+"Quantity: "+r.getInt("quantity"),ChatColor.YELLOW+"Each: "+r.getBigDecimal("price")+" Solaris",ChatColor.GRAY+"Seller: "+r.getString("seller_name"),ChatColor.GRAY+"Planet: "+r.getString("origin"),ChatColor.GREEN+action));}}}catch(Exception ex){p.sendMessage(ChatColor.RED+"Exchange SQL error: "+ex.getMessage());}
- i.setItem(45,item(Material.ARROW,ChatColor.YELLOW+"Previous"));i.setItem(53,item(Material.ARROW,ChatColor.YELLOW+"Next"));show(p,i);}
- private void admin(Player p){Inventory i=menu(p,"admin","CHOAM Administration");i.setItem(20,item(Material.BOOK,ChatColor.GOLD+"All Listings"));i.setItem(24,item(Material.REDSTONE,ChatColor.RED+"Database Status"));show(p,i);}
- @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){if(!(sender instanceof Player p)){sender.sendMessage("Use in-game.");return true;}if(args.length==0){home(p);return true;}try{switch(args[0].toLowerCase(Locale.ROOT)){
- case "sell"->{if(args.length<3){p.sendMessage("/exchange sell <amount> <price-per-item>");return true;}sell(p,Integer.parseInt(args[1]),new BigDecimal(args[2]));}
- case "buy"->{if(args.length<2)return true;buy(p,Long.parseLong(args[1]));}
- case "cancel"->{if(args.length<2)return true;cancel(p,Long.parseLong(args[1]));}
- case "admin"->{if(p.hasPermission("dune.admin"))admin(p);}
- case "mine"->browse(p,"",0,true);
- default->home(p);
- }}catch(Exception e){p.sendMessage(ChatColor.RED+"Exchange: "+e.getMessage());}return true;}
- private String category(Material m){String n=m.name();if(n.contains("ORE")||n.contains("INGOT")||n.contains("DEBRIS")||n.contains("DIAMOND")||n.contains("EMERALD")||n.contains("COAL")||n.contains("REDSTONE"))return "ores";if(n.contains("SAND")||n.contains("STONE")||n.contains("BRICK")||n.contains("PLANK"))return "building";if(n.contains("SWORD")||n.contains("PICKAXE")||n.contains("ARMOR")||n.contains("HELMET"))return "equipment";if(n.contains("WHEAT")||n.contains("CARROT")||n.contains("POTATO")||n.contains("SEED"))return "farming";return "misc";}
- private void sell(Player p,int amount,BigDecimal price)throws Exception{ItemStack held=p.getInventory().getItemInMainHand();if(held.getType().isAir()||amount<1||amount>held.getAmount()||price.signum()<=0||price.scale()>2||price.compareTo(new BigDecimal("1000000"))>0)throw new IllegalArgumentException("Invalid amount or price.");if(held.hasItemMeta()&&(held.getItemMeta().hasDisplayName()||held.getItemMeta().hasEnchants()||!held.getItemMeta().getPersistentDataContainer().isEmpty()))throw new IllegalArgumentException("Only plain vanilla items can be listed.");String cat=category(held.getType());try(Connection c=plugin.connectEconomyDatabase();PreparedStatement q=c.prepareStatement("INSERT INTO dune_exchange_listings(seller,seller_name,origin,category,material,quantity,price) VALUES(?,?,?,?,?,?,?)")){q.setObject(1,p.getUniqueId());q.setString(2,p.getName());q.setString(3,p.getWorld().getName().toLowerCase(Locale.ROOT));q.setString(4,cat);q.setString(5,held.getType().name());q.setInt(6,amount);q.setBigDecimal(7,price);q.executeUpdate();}held.setAmount(held.getAmount()-amount);p.sendMessage(ChatColor.GREEN+"Listed "+amount+" "+held.getType()+" at "+price+" Solaris each.");}
- private void buy(Player p,long id)throws Exception{if(id<1)return;try(Connection c=plugin.connectEconomyDatabase()){c.setAutoCommit(false);try(PreparedStatement q=c.prepareStatement("SELECT seller,material,quantity,price FROM dune_exchange_listings WHERE id=? FOR UPDATE")){q.setLong(1,id);try(ResultSet r=q.executeQuery()){if(!r.next())throw new IllegalArgumentException("Listing unavailable.");UUID seller=r.getObject(1,UUID.class);Material m=Material.matchMaterial(r.getString(2));BigDecimal price=r.getBigDecimal(4);if(seller.equals(p.getUniqueId()))throw new IllegalArgumentException("Cannot buy your own listing.");if(m==null||p.getInventory().firstEmpty()<0)throw new IllegalArgumentException("No inventory space.");try(PreparedStatement debit=c.prepareStatement("UPDATE dune_economy_balances SET balance=balance-? WHERE uuid=? AND balance>=?");PreparedStatement credit=c.prepareStatement("INSERT INTO dune_economy_balances(uuid,balance) VALUES(?,?) ON CONFLICT(uuid) DO UPDATE SET balance=dune_economy_balances.balance+EXCLUDED.balance");PreparedStatement reduce=c.prepareStatement("UPDATE dune_exchange_listings SET quantity=quantity-1 WHERE id=?");PreparedStatement clean=c.prepareStatement("DELETE FROM dune_exchange_listings WHERE id=? AND quantity=0")){debit.setBigDecimal(1,price);debit.setObject(2,p.getUniqueId());debit.setBigDecimal(3,price);if(debit.executeUpdate()!=1)throw new IllegalArgumentException("Insufficient Solaris.");credit.setObject(1,seller);credit.setBigDecimal(2,price);credit.executeUpdate();reduce.setLong(1,id);reduce.executeUpdate();clean.setLong(1,id);clean.executeUpdate();c.commit();p.getInventory().addItem(new ItemStack(m));p.sendMessage(ChatColor.GREEN+"Purchased 1 "+m+" for "+price+" Solaris.");}}}catch(Exception ex){c.rollback();throw ex;}}}
- private void cancel(Player p,long id)throws Exception{try(Connection c=plugin.connectEconomyDatabase()){c.setAutoCommit(false);try(PreparedStatement q=c.prepareStatement("SELECT material,quantity FROM dune_exchange_listings WHERE id=? AND seller=? FOR UPDATE")){q.setLong(1,id);q.setObject(2,p.getUniqueId());try(ResultSet r=q.executeQuery()){if(!r.next())throw new IllegalArgumentException("Listing not found.");Material m=Material.matchMaterial(r.getString(1));int qty=r.getInt(2);if(m==null||p.getInventory().firstEmpty()<0)throw new IllegalArgumentException("Clear inventory space.");try(PreparedStatement d=c.prepareStatement("DELETE FROM dune_exchange_listings WHERE id=?")){d.setLong(1,id);d.executeUpdate();}c.commit();while(qty>0){int n=Math.min(qty,m.getMaxStackSize());Map<Integer,ItemStack> leftovers=p.getInventory().addItem(new ItemStack(m,n));for(ItemStack left:leftovers.values())p.getWorld().dropItemNaturally(p.getLocation(),left);qty-=n;}p.sendMessage(ChatColor.GREEN+"Listing cancelled and items returned.");}}}catch(Exception ex){c.rollback();throw ex;}}}
- @EventHandler public void click(InventoryClickEvent e){if(!(e.getWhoClicked() instanceof Player p))return;String view=views.get(p.getUniqueId());if(view==null||!e.getView().getTitle().contains("CHOAM")&&!e.getView().getTitle().contains("Exchange")&&!e.getView().getTitle().contains("Planet"))return;e.setCancelled(true);if(e.getClickedInventory()!=e.getView().getTopInventory())return;int slot=e.getRawSlot();ItemStack clicked=e.getCurrentItem();if(clicked==null||clicked.getType().name().endsWith("GLASS_PANE"))return;Bukkit.getScheduler().runTask(plugin,()->{if(slot==49){home(p);return;}if(view.equals("home")){if(slot>=10&&slot<=15){browse(p,CATS.get(slot-10),0,false);return;}if(slot==29){categories(p);return;}if(slot==31){p.closeInventory();p.sendMessage(ChatColor.YELLOW+"Hold an item, then /exchange sell <amount> <price-each>");return;}if(slot==33){browse(p,"",0,true);return;}if(slot==40){planets(p);return;}if(slot==42&&p.hasPermission("dune.admin"))admin(p);return;}if(view.equals("categories")&&slot>=11&&slot<=16){browse(p,CATS.get(slot-11),0,false);return;}if(view.equals("planets")&&slot>=11&&slot<=16){filters.put(p.getUniqueId(),new String[]{"all","arrakis","giedi_prime","caladan","kaitain","sigma_draconis_iv"}[slot-11]);home(p);return;}if(view.equals("admin")){if(slot==20)browse(p,"",0,true);if(slot==24)p.sendMessage(ChatColor.YELLOW+"Exchange database configured: "+!plugin.getConfig().getBoolean("database.use-core-database",true));return;}if(slot==45||slot==53){browse(p,view.equals("mine")?"":view,pages.getOrDefault(p.getUniqueId(),0)+(slot==53?1:-1),view.equals("mine"));return;}if(clicked.hasItemMeta()){String name=ChatColor.stripColor(clicked.getItemMeta().getDisplayName());if(name.startsWith("#")){try{long id=Long.parseLong(name.split(" ")[0].substring(1));p.closeInventory();p.sendMessage(ChatColor.YELLOW+(view.equals("mine")?"Confirm cancellation: /exchange cancel ":"Confirm purchase: /exchange buy ")+id);}catch(NumberFormatException ignored){}}}});}
- @EventHandler public void drag(InventoryDragEvent e){if(views.containsKey(e.getWhoClicked().getUniqueId())&&(e.getView().getTitle().contains("CHOAM")||e.getView().getTitle().contains("Exchange")||e.getView().getTitle().contains("Planet")))e.setCancelled(true);}
- @EventHandler public void quit(org.bukkit.event.player.PlayerQuitEvent e){views.remove(e.getPlayer().getUniqueId());pages.remove(e.getPlayer().getUniqueId());}
+/** Standard inventory slots work on Java and through Geyser without custom client interfaces. */
+@SuppressWarnings("deprecation")
+final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
+    private static final List<String> CATEGORIES=List.of("ores","spice","building","equipment","farming","misc");
+    private static final List<String> PLANETS=List.of("all","arrakis","giedi_prime","caladan","kaitain","sigma_draconis_iv");
+    private static final List<Material> ICONS=List.of(Material.IRON_PICKAXE,Material.ORANGE_DYE,Material.BRICKS,Material.IRON_SWORD,Material.WHEAT,Material.CHEST);
+    private final DuneEss plugin;
+    private final ExchangeStore store;
+    private final Map<UUID,String> planets=new HashMap<>();
+    private boolean ready;
+    static final class Screen implements InventoryHolder {
+        final UUID owner;
+        final Map<Integer,Runnable> actions=new HashMap<>();
+        Inventory inventory;
+        Screen(UUID owner) { this.owner=owner; }
+        @Override public Inventory getInventory() { return inventory; }
+    }
+    ExchangeMenu(DuneEss plugin) {
+        this.plugin=plugin;
+        this.store=new ExchangeStore(plugin::connectEconomyDatabase);
+    }
+    void register() {
+        PluginCommand command=Objects.requireNonNull(plugin.getCommand("exchange"));
+        command.setExecutor(this); command.setTabCompleter(this);
+        Bukkit.getPluginManager().registerEvents(this,plugin);
+        try { store.initialize(); ready=true; }
+        catch(SQLException ex) { plugin.getLogger().warning("CHOAM is offline until the shared PostgreSQL economy is connected."); }
+    }
+    private boolean connected(Player p) {
+        // Retry after a transient startup outage; never trade against a fallback local wallet.
+        if(!ready) try { store.initialize(); ready=true; } catch(SQLException ignored) { }
+        if(!ready) p.sendMessage(ChatColor.YELLOW+"CHOAM is not connected. Ask an operator to configure DuneCore PostgreSQL and restart DuneEss. No items or Solaris were taken.");
+        return ready;
+    }
+    private String faction(Player p) {
+        Plugin core=Bukkit.getPluginManager().getPlugin("DuneCore");
+        if(core!=null) try {
+            String house=String.valueOf(core.getClass().getMethod("factionOf",Player.class).invoke(core,p));
+            if(List.of("Fremen","Atreides","Harkonnen","Corrino","Ordos").contains(house)) return house;
+        } catch(ReflectiveOperationException ignored) { }
+        return "Spacing Guild";
+    }
+    private ChatColor tint(Player p) {
+        return switch(faction(p)) {
+            case "Atreides" -> ChatColor.AQUA;
+            case "Harkonnen" -> ChatColor.RED;
+            case "Corrino" -> ChatColor.GOLD;
+            case "Fremen" -> ChatColor.YELLOW;
+            case "Ordos" -> ChatColor.GREEN;
+            default -> ChatColor.LIGHT_PURPLE;
+        };
+    }
+    private ItemStack icon(Material material,String name,String... lore) {
+        ItemStack item=new ItemStack(material); ItemMeta meta=item.getItemMeta();
+        meta.setDisplayName(name); meta.setLore(Arrays.asList(lore)); item.setItemMeta(meta); return item;
+    }
+    private Screen screen(Player p,String title) {
+        Screen s=new Screen(p.getUniqueId());
+        s.inventory=Bukkit.createInventory(s,54,tint(p)+"CHOAM | "+title);
+        Material glass=switch(faction(p)) {
+            case "Atreides" -> Material.CYAN_STAINED_GLASS_PANE;
+            case "Harkonnen" -> Material.RED_STAINED_GLASS_PANE;
+            case "Corrino" -> Material.YELLOW_STAINED_GLASS_PANE;
+            case "Ordos" -> Material.GREEN_STAINED_GLASS_PANE;
+            case "Fremen" -> Material.ORANGE_STAINED_GLASS_PANE;
+            default -> Material.PURPLE_STAINED_GLASS_PANE;
+        };
+        for(int i=0;i<54;i++) if(i<9||i>=45||i%9==0||i%9==8)
+            s.inventory.setItem(i,icon(glass," "));
+        button(s,49,Material.BARRIER,"Back to Exchange",()->home(p)); return s;
+    }
+    private void button(Screen s,int slot,Material material,String title,Runnable action,String... lore) {
+        s.inventory.setItem(slot,icon(material,ChatColor.GOLD+title,lore)); s.actions.put(slot,action);
+    }
+    private void home(Player p) {
+        Screen s=screen(p,faction(p));
+        for(int i=0;i<CATEGORIES.size();i++) {
+            String category=CATEGORIES.get(i);
+            button(s,10+i,ICONS.get(i),category.toUpperCase(Locale.ROOT),()->browse(p,category,0,false,false));
+        }
+        button(s,29,Material.EMERALD,"Buy / All Items",()->browse(p,"all",0,false,false));
+        button(s,31,Material.CHEST,"Sell Held Item",()->{
+            p.closeInventory(); p.sendMessage(ChatColor.YELLOW+"Hold the item to list, then /exchange sell <amount> <price-each>. Example: /exchange sell 16 25");
+        },"Tagged Dune items and their attributes are preserved.","Price is for ONE item.");
+        button(s,33,Material.BOOK,"My Listings",()->browse(p,"all",0,true,false),"Cancel and reclaim your unsold items.");
+        button(s,40,Material.COMPASS,"Planet: "+planets.getOrDefault(p.getUniqueId(),"all"),()->planetMenu(p));
+        button(s,38,Material.PAPER,"Trading Guide",()->{
+            p.sendMessage(ChatColor.YELLOW+"/exchange sell <amount> <price> · /exchange buy <id> · /exchange cancel <id> · /exchange mine");
+            p.sendMessage(ChatColor.GRAY+"Purchases buy one item. Listings reserve the offered items. Website demo offers cannot be purchased.");
+        });
+        if(p.hasPermission("dune.admin")) button(s,42,Material.COMMAND_BLOCK,"Exchange Administration",()->admin(p));
+        button(s,49,Material.BARRIER,"Close",p::closeInventory);
+        p.openInventory(s.inventory);
+    }
+    private void planetMenu(Player p) {
+        Screen s=screen(p,"Planet Filter");
+        for(int i=0;i<PLANETS.size();i++) {
+            String planet=PLANETS.get(i);
+            button(s,11+i,Material.COMPASS,planet,()->{planets.put(p.getUniqueId(),planet); browse(p,"all",0,false,false);});
+        }
+        p.openInventory(s.inventory);
+    }
+    private void admin(Player p) {
+        if(!p.hasPermission("dune.admin")) return;
+        Screen s=screen(p,"Administration");
+        button(s,20,Material.BOOK,"All Listings",()->browse(p,"all",0,false,true),"All planets. Read-only inspection; normal ownership rules apply.");
+        button(s,24,Material.REDSTONE,"Check Database",()->{
+            if(connected(p)) p.sendMessage(ChatColor.GREEN+"Shared CHOAM database connected.");
+        });
+        p.openInventory(s.inventory);
+    }
+    private ItemStack decode(ExchangeStore.Listing offer) {
+        ItemStack item;
+        if(offer.payload()!=null&&!offer.payload().isBlank()) item=ItemStack.deserializeBytes(Base64.getDecoder().decode(offer.payload()));
+        else {
+            Material material=Material.matchMaterial(offer.material());
+            if(material==null||material.isAir()||!material.isItem()) throw new IllegalArgumentException("This item is unsupported on this server; contact an operator.");
+            item=new ItemStack(material);
+        }
+        item.setAmount(1); return item;
+    }
+    private void browse(Player p,String category,int page,boolean mine,boolean admin) {
+        if(admin&&!p.hasPermission("dune.admin")) return;
+        if(!connected(p)) return;
+        execute(p,()->{
+            int current=Math.max(0,page);
+            String planet=mine||admin?"all":planets.getOrDefault(p.getUniqueId(),"all");
+            List<ExchangeStore.Listing> rows=store.browse(category,planet,mine?p.getUniqueId():null,current);
+            Screen s=screen(p,(mine?"My Listings":admin?"All Listings":category)+" · "+(current+1));
+            int slot=10;
+            for(ExchangeStore.Listing row:rows.subList(0,Math.min(28,rows.size()))) {
+                while(slot%9==0||slot%9==8) slot++;
+                ItemStack item;
+                try { item=decode(row); } catch(RuntimeException ex) { item=new ItemStack(Material.PAPER); }
+                ItemMeta meta=item.getItemMeta();
+                meta.setDisplayName(ChatColor.GOLD+"#"+row.id()+" "+(row.displayName()==null?row.material():row.displayName()));
+                meta.setLore(List.of("Quantity: "+row.quantity(),"Each: "+row.price()+" Solaris","Seller: "+row.sellerName(),"Planet: "+row.origin(),
+                    row.seller().equals(p.getUniqueId())?"Click to reclaim unsold items":"Click to review purchase"));
+                item.setItemMeta(meta); s.inventory.setItem(slot,item);
+                s.actions.put(slot,()->confirm(p,row.id(),row.seller().equals(p.getUniqueId()))); slot++;
+            }
+            if(rows.isEmpty()) s.inventory.setItem(22,icon(Material.PAPER,"No matching listings","Try another planet or list a held item."));
+            if(current>0) button(s,45,Material.ARROW,"Previous",()->browse(p,category,current-1,mine,admin));
+            if(rows.size()>28) button(s,53,Material.ARROW,"Next",()->browse(p,category,current+1,mine,admin));
+            p.openInventory(s.inventory);
+        });
+    }
+    private void confirm(Player p,long id,boolean reclaim) {
+        execute(p,()->{
+            ExchangeStore.Listing row=store.find(id);
+            if(reclaim&&!row.seller().equals(p.getUniqueId())) throw new IllegalArgumentException("You can reclaim only your own listings.");
+            Screen s=screen(p,reclaim?"Reclaim Listing":"Confirm Purchase");
+            s.inventory.setItem(22,icon(decode(row).getType(),"#"+id+" "+(row.displayName()==null?row.material():row.displayName()),
+                "Seller: "+row.sellerName(),reclaim?"Return "+row.quantity()+" unsold items":"Buy ONE for "+row.price()+" Solaris"));
+            button(s,30,Material.LIME_CONCRETE,reclaim?"Confirm Reclaim":"Confirm Purchase",()->{
+                p.closeInventory(); if(reclaim) cancel(p,id); else buy(p,id);
+            });
+            button(s,32,Material.RED_CONCRETE,"Never Mind",()->home(p)); p.openInventory(s.inventory);
+        });
+    }
+    private boolean fits(Player p,ItemStack item,int amount) {
+        int remaining=amount;
+        for(ItemStack slot:p.getInventory().getStorageContents()) {
+            if(slot==null||slot.getType().isAir()) remaining-=item.getMaxStackSize();
+            else if(slot.isSimilar(item)) remaining-=Math.max(0,item.getMaxStackSize()-slot.getAmount());
+            if(remaining<=0) return true;
+        }
+        return false;
+    }
+    private void deliver(Player p,ItemStack item,int amount) {
+        item.setAmount(amount);
+        Map<Integer,ItemStack> excess=p.getInventory().addItem(item);
+        // Capacity is checked immediately before the transaction on this same server thread.
+        for(ItemStack left:excess.values()) p.getWorld().dropItemNaturally(p.getLocation(),left);
+        p.saveData();
+    }
+    private void sell(Player p,int amount,BigDecimal price) throws SQLException {
+        ExchangeStore.validate(amount,price);
+        ItemStack held=p.getInventory().getItemInMainHand();
+        if(held.getType().isAir()||amount>held.getAmount()) throw new IllegalArgumentException("Hold at least that many items in your main hand.");
+        // Never let operator tools become tradeable through the public exchange.
+        if(held.hasItemMeta()) for(NamespacedKey key:held.getItemMeta().getPersistentDataContainer().getKeys())
+            if(key.getKey().contains("admin")) throw new IllegalArgumentException("Administrative tools cannot be listed.");
+        ItemStack unit=held.clone(); unit.setAmount(1);
+        String name=unit.hasItemMeta()&&unit.getItemMeta().hasDisplayName()?ChatColor.stripColor(unit.getItemMeta().getDisplayName()):unit.getType().name();
+        if(name.length()>120) name=name.substring(0,120);
+        store.list(p.getUniqueId(),p.getName(),origin(p),category(unit),unit.getType().name(),amount,price,
+            Base64.getEncoder().encodeToString(unit.serializeAsBytes()),name);
+        held.setAmount(held.getAmount()-amount); p.saveData();
+        p.sendMessage(ChatColor.GREEN+"Listed "+amount+" "+name+" at "+price+" Solaris each.");
+    }
+    private String origin(Player p) {
+        String world=p.getWorld().getName().toLowerCase(Locale.ROOT).replace('-','_');
+        for(String planet:PLANETS) if(!planet.equals("all")&&world.contains(planet)) return planet;
+        return plugin.localPlanet();
+    }
+    static String category(ItemStack item) {
+        if(item.hasItemMeta()) {
+            String kind=item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey("dunerealms","item"),PersistentDataType.STRING);
+            if(kind!=null&&kind.toLowerCase(Locale.ROOT).contains("spice")) return "spice";
+        }
+        String n=item.getType().name();
+        if(n.contains("ORE")||n.contains("INGOT")||n.contains("DEBRIS")||n.contains("DIAMOND")||n.contains("EMERALD")||n.contains("COAL")||n.contains("REDSTONE")||n.contains("RAW_")||n.contains("LAPIS")||n.contains("QUARTZ")) return "ores";
+        if(n.contains("SWORD")||n.contains("PICKAXE")||n.endsWith("AXE")||n.contains("HELMET")||n.contains("CHESTPLATE")||n.contains("LEGGINGS")||n.contains("BOOTS")||n.contains("ELYTRA")||n.contains("BOW")||n.contains("SHOVEL")||n.contains("HOE")||n.equals("SHIELD")||n.equals("TRIDENT")||n.equals("FISHING_ROD")||n.equals("ENCHANTED_BOOK")) return "equipment";
+        if(item.getType().isEdible()||n.contains("WHEAT")||n.contains("SEED")||n.contains("SAPLING")) return "farming";
+        return item.getType().isBlock()?"building":"misc";
+    }
+    private void buy(Player p,long id) {
+        if(!connected(p)) return;
+        execute(p,()->{
+            ExchangeStore.Listing before=store.find(id); ItemStack item=decode(before);
+            if(!fits(p,item,1)) throw new IllegalArgumentException("Make room in your inventory first.");
+            ExchangeStore.Listing bought=store.buy(p.getUniqueId(),id);
+            deliver(p,item,1); p.sendMessage(ChatColor.GREEN+"Purchased one item for "+bought.price()+" Solaris.");
+        });
+    }
+    private void cancel(Player p,long id) {
+        if(!connected(p)) return;
+        execute(p,()->{
+            ExchangeStore.Listing before=store.find(id); ItemStack item=decode(before);
+            if(!fits(p,item,before.quantity())) throw new IllegalArgumentException("Make room for all "+before.quantity()+" items first.");
+            ExchangeStore.Listing cancelled=store.cancel(p.getUniqueId(),id);
+            deliver(p,item,cancelled.quantity()); p.sendMessage(ChatColor.GREEN+"Listing cancelled. Unsold items returned.");
+        });
+    }
+    private interface Operation { void run() throws SQLException; }
+    private void execute(Player p,Operation action) {
+        try { action.run(); }
+        catch(IllegalArgumentException ex) { p.sendMessage(ChatColor.YELLOW+ex.getMessage()); }
+        catch(SQLException ex) {
+            ready=false; plugin.getLogger().warning("CHOAM SQL operation failed: "+ex.getSQLState());
+            p.sendMessage(ChatColor.RED+"The market database is unavailable. Please try again later.");
+        }
+    }
+    @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
+        if(!(sender instanceof Player p)) { sender.sendMessage("Open the CHOAM exchange in-game with /exchange."); return true; }
+        if(args.length==0) { home(p); return true; }
+        String action=args[0].toLowerCase(Locale.ROOT);
+        if(action.equals("admin")) { if(p.hasPermission("dune.admin")) admin(p); else p.sendMessage(ChatColor.RED+"Operators only."); return true; }
+        if(action.equals("help")) { home(p); return true; }
+        if(!connected(p)) return true;
+        execute(p,()->{
+            try {
+                switch(action) {
+                    case "sell" -> { if(args.length!=3) throw new IllegalArgumentException("/exchange sell <amount> <price-each>"); sell(p,Integer.parseInt(args[1]),new BigDecimal(args[2])); }
+                    case "buy","cancel" -> { if(args.length!=2) throw new IllegalArgumentException("/exchange "+action+" <listing-id>"); long id=Long.parseLong(args[1]); if(id<1) throw new IllegalArgumentException("Listing IDs are positive numbers."); confirm(p,id,action.equals("cancel")); }
+                    case "mine" -> browse(p,"all",0,true,false);
+                    default -> p.sendMessage(ChatColor.YELLOW+"Use /exchange, /exchange sell <amount> <price>, /exchange buy <id>, /exchange cancel <id>, or /exchange mine.");
+                }
+            } catch(NumberFormatException ex) { throw new IllegalArgumentException("Enter a valid amount, price and listing ID."); }
+        });
+        return true;
+    }
+    @Override public List<String> onTabComplete(CommandSender sender,Command command,String alias,String[] args) {
+        if(args.length!=1) return List.of();
+        return List.of("help","sell","buy","cancel","mine","admin").stream()
+            .filter(s->!s.equals("admin")||sender.hasPermission("dune.admin"))
+            .filter(s->s.startsWith(args[0].toLowerCase(Locale.ROOT))).toList();
+    }
+    @EventHandler public void click(InventoryClickEvent e) {
+        if(!(e.getView().getTopInventory().getHolder() instanceof Screen screen)) return;
+        e.setCancelled(true);
+        if(!(e.getWhoClicked() instanceof Player p)||!screen.owner.equals(p.getUniqueId())
+                ||e.getClickedInventory()!=e.getView().getTopInventory()||e.getClick()==ClickType.DOUBLE_CLICK) return;
+        Runnable action=screen.actions.get(e.getRawSlot());
+        if(action!=null) Bukkit.getScheduler().runTask(plugin,()->{
+            if(p.isOnline()&&p.getOpenInventory().getTopInventory()==screen.inventory) action.run();
+        });
+    }
+    @EventHandler public void drag(InventoryDragEvent e) {
+        if(e.getView().getTopInventory().getHolder() instanceof Screen) e.setCancelled(true);
+    }
+    @EventHandler public void quit(PlayerQuitEvent e) { planets.remove(e.getPlayer().getUniqueId()); }
 }

@@ -1,5 +1,14 @@
 # CHOAM Exchange — handoff notes (18 October 2026)
 
+## Completion update — supersedes the old pre-deployment checklist below
+
+- Website: 40 clearly labelled fictional offers, all five planets and six categories, working sidebar/select/tile filters, search (including category and planet names), sorting, pagination and retry. Demo offers never show a purchase command. A valid empty live market remains empty. Matching responsive CSS is implemented; mobile planet controls no longer inherit absolute navigation positioning. Planet artwork is in external CSS to comply with the production Content Security Policy.
+- In-game: DuneEss 1.0.2 compiles. Replaced the broken exchange class with holder-based faction menus, buy/reclaim confirmation screens, all-items/admin browsing, actual faction identity (including Ordos), item payload preservation and inventory-space checks. A locked SQL transaction handles payment/credit/stock; final-item purchase deletes the row without violating the positive-quantity constraint. Offline/local fallback wallets cannot trade.
+- Verification: 12 passing Java tests (8 SQL transaction tests and 4 GUI/security tests); 37 website tests pass. Desktop filters/pagination and 390px mobile layout/menu verified in a browser. SQL tests use H2 PostgreSQL mode; live PostgreSQL/Paper/Velocity/Geyser staging is not claimed.
+- Source is developed on a separate `exchange-completion` GitHub branch for review; main is not overwritten. Website publication uses the existing Sites project and public audience, separate from GitHub.
+- Read `../DuneEss/EXCHANGE.md` for commands, configuration, legacy schema migration, payload support and remaining server-thread/crash-boundary limitations. Installing the built JAR and configuring the production database/HTTPS read-only bridge require server access; no game server or database has been changed in this task.
+- The original notes below are historical. CSS, all-world handling, sidebar handling, demo labels and local build/tests are completed. Publishing result and source commit are recorded in the completion response.
+
 ## Goal
 Match the existing Project Dune website at https://project-dune.bonnystoat9.chatgpt.site rather than a new design. Preserve the original horizontal illustrated menu, PROJECT DUNE wordmark, Cormorant Garamond / Manrope typography, dark teal (#10201f / #142a28), gold (#d5ab63), parchment (#f5eddd), and Minecraft Arrakis imagery. Use the latest approved exchange mockup as inspiration only.
 

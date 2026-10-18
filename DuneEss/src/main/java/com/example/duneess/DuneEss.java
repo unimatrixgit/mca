@@ -136,9 +136,17 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         localPlanet = useCore ? core.getString("network.local-planet", getConfig().getString("network.local-planet", "arrakis")) : getConfig().getString("network.local-planet", "arrakis");
     }
 
-    Connection connectEconomyDatabase() throws Exception {
-        if (jdbcUrl.isBlank()) throw new IllegalStateException("No shared economy database configured");
-        return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
+    String localPlanet() { return localPlanet; }
+
+    Connection connectEconomyDatabase() throws java.sql.SQLException {
+        if (jdbcUrl.isBlank() || !economy.sharedDatabaseReady())
+            throw new java.sql.SQLException("No shared economy database configured");
+        Properties properties = new Properties();
+        properties.setProperty("user", dbUser);
+        properties.setProperty("password", dbPassword);
+        properties.setProperty("connectTimeout", "5");
+        properties.setProperty("socketTimeout", "5");
+        return DriverManager.getConnection(jdbcUrl, properties);
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

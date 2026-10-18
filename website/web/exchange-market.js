@@ -1,1 +1,66 @@
-(()=>{'use strict';const $=id=>document.getElementById(id);const state={items:[],page:0,ready:false};const perPage=12;const demoListings=[{id:1,material:'spice_melange',category:'spice',origin:'arrakis',seller:'Fremen Trader',price:1250,quantity:16},{id:2,material:'iron_ingot',category:'ores',origin:'caladan',seller:'Atreides Supply',price:90,quantity:64},{id:3,material:'ancient_debris',category:'ores',origin:'giedi_prime',seller:'Harkonnen Mining',price:2800,quantity:4},{id:4,material:'diamond',category:'ores',origin:'kaitain',seller:'Imperial Merchant',price:650,quantity:12},{id:5,material:'redstone',category:'ores',origin:'sigma_draconis_iv',seller:'Ordos Exchange',price:75,quantity:48},{id:6,material:'sandstone',category:'building',origin:'arrakis',seller:'Desert Builder',price:25,quantity:64},{id:7,material:'wheat',category:'farming',origin:'caladan',seller:'Caladan Farms',price:18,quantity:32},{id:8,material:'netherite_scrap',category:'equipment',origin:'giedi_prime',seller:'Foundry Guild',price:1800,quantity:2}];let demoMode=false;const planets={arrakis:'Arrakis',giedi_prime:'Giedi Prime',caladan:'Caladan',kaitain:'Kaitain',sigma_draconis_iv:'Sigma Draconis IV'};function text(el,value){el.textContent=String(value)}function render(){const term=$('market-search').value.trim().toLowerCase(),cat=$('market-category').value,planet=$('market-planet').value,sort=$('market-sort').value;let items=state.items.filter(x=>(cat==='all'||x.category===cat)&&(planet==='all'||x.origin===planet)&&(!term||x.material.toLowerCase().includes(term)||x.seller.toLowerCase().includes(term)));if(sort==='price')items.sort((a,b)=>a.price-b.price);else if(sort==='quantity')items.sort((a,b)=>b.quantity-a.quantity);else items.sort((a,b)=>b.id-a.id);const pages=Math.max(1,Math.ceil(items.length/perPage));state.page=Math.max(0,Math.min(state.page,pages-1));text($('market-count'),items.length+' listings');text($('market-page'),'Page '+(state.page+1)+' of '+pages);$('market-prev').disabled=state.page===0;$('market-next').disabled=state.page>=pages-1;const root=$('market-results');root.replaceChildren();if(!items.length){const p=document.createElement('p');p.className='market-empty';text(p,state.ready?'No matching listings.':'Live listings are not connected yet.');root.append(p);return;}for(const offer of items.slice(state.page*perPage,(state.page+1)*perPage)){const card=document.createElement('article');card.className='market-card';card.dataset.planet=offer.origin;const heading=document.createElement('h3');text(heading,offer.material.replaceAll('_',' '));card.append(heading);for(const line of ['#'+offer.id+' · '+offer.category,offer.price.toLocaleString()+' Solaris each','Quantity: '+offer.quantity,'Seller: '+offer.seller,'Planet: '+(planets[offer.origin]||offer.origin)]){const p=document.createElement('p');text(p,line);if(line.includes('Solaris'))p.className='market-price';card.append(p);}const small=document.createElement('small');text(small,demoMode?'DEMO LISTING · illustrative item and price · not purchasable':'Buy in Minecraft: /exchange buy '+offer.id);card.append(small);root.append(card);}}async function load(){text($('market-status'),'Connecting to the Guild market…');try{const r=await fetch('/api/exchange/listings',{cache:'no-store'});if(!r.ok)throw Error('Market API unavailable ('+r.status+')');const data=await r.json();if(!Array.isArray(data.listings))throw Error('Invalid market response');state.items=data.listings.filter(x=>Number.isSafeInteger(x.id)&&x.id>0&&typeof x.material==='string'&&typeof x.category==='string'&&typeof x.origin==='string'&&typeof x.seller==='string'&&Number.isFinite(x.price)&&x.price>0&&Number.isInteger(x.quantity)&&x.quantity>0);state.ready=true;demoMode=false;text($('market-status'),'Live market · read-only · '+state.items.length+' recent listings');}catch(e){state.ready=true;demoMode=true;state.items=demoListings;text($('market-status'),'DEMO MODE · Sample listings only · Marketplace database not connected');}render();}for(const id of ['market-search','market-category','market-planet','market-sort'])$(id).addEventListener(id==='market-search'?'input':'change',()=>{state.page=0;render()});document.querySelectorAll('.planet-tiles button[data-planet]').forEach(button=>{button.addEventListener('click',()=>{const selected=$('market-planet');selected.value=selected.value===button.dataset.planet?'all':button.dataset.planet;document.querySelectorAll('.planet-tiles button[data-planet]').forEach(b=>b.setAttribute('aria-pressed',String(selected.value===b.dataset.planet)));state.page=0;render();});});$('market-planet').addEventListener('change',()=>document.querySelectorAll('.planet-tiles button[data-planet]').forEach(b=>b.setAttribute('aria-pressed',String($('market-planet').value===b.dataset.planet))));$('market-refresh').addEventListener('click',load);$('market-prev').addEventListener('click',()=>{state.page--;render()});$('market-next').addEventListener('click',()=>{state.page++;render()});load();})();
+import {categories,planets,demoListings,validListings,filterListings,listingInstruction} from './exchange-data.js';
+const $=id=>document.getElementById(id);
+const state={items:[],page:0,demo:true,loading:false};
+const perPage=12;
+const categoryIcons={ores:'◆',spice:'✦',building:'▦',equipment:'⚒',farming:'❧',misc:'◎'};
+function element(tag,className,value) {
+  const el=document.createElement(tag); if(className) el.className=className;
+  if(value!==undefined) el.textContent=String(value); return el;
+}
+function render() {
+  const filters={search:$('market-search').value,category:$('market-category').value,planet:$('market-planet').value,sort:$('market-sort').value};
+  const matches=filterListings(state.items,filters);
+  const pages=Math.max(1,Math.ceil(matches.length/perPage));
+  state.page=Math.max(0,Math.min(state.page,pages-1));
+  $('market-count').textContent=matches.length+' '+(state.demo?'demo offers':'live listings');
+  $('market-page').textContent='Page '+(state.page+1)+' of '+pages;
+  $('market-prev').disabled=state.page===0; $('market-next').disabled=state.page>=pages-1;
+  $('market-mode').textContent=state.demo?'DEMONSTRATION MARKET':'LIVE MARKET · READ ONLY';
+  $('market-mode-detail').textContent=state.demo?'Fictional sellers, items and prices. No purchases or payments.':'Verified listings from the connected game market. Trade inside Minecraft.';
+  document.querySelectorAll('button[data-planet]').forEach(b=>b.setAttribute('aria-pressed',String(filters.planet===b.dataset.planet)));
+  document.querySelectorAll('button[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(filters.category===b.dataset.category)));
+  const root=$('market-results'); root.replaceChildren();
+  if(!matches.length) {
+    root.append(element('p','market-empty',state.items.length?'No matching offers. Try another filter or clear your search.':'The connected market has no listings yet. List your held item with /exchange sell <amount> <price>.'));
+    return;
+  }
+  for(const offer of matches.slice(state.page*perPage,(state.page+1)*perPage)) {
+    const card=element('article','market-card'); card.dataset.planet=offer.origin;
+    const art=element('div','market-item-art'); art.setAttribute('aria-hidden','true');
+    art.append(element('span','',categoryIcons[offer.category]));
+    card.append(art,element('p','market-card-category',categories[offer.category]),element('h3','',offer.material.replaceAll('_',' ')),
+      element('p','market-price',offer.price.toLocaleString(undefined,{maximumFractionDigits:2})+' Solaris'),
+      element('p','market-unit','per item · '+offer.quantity+' available'),element('p','market-seller',offer.seller),
+      element('p','market-origin',planets[offer.origin]),element('small','market-instruction',listingInstruction(offer,state.demo)));
+    root.append(card);
+  }
+}
+async function load() {
+  if(state.loading) return;
+  state.loading=true; $('market-refresh').disabled=true;
+  $('market-status').textContent='Checking for live market listings…';
+  try {
+    const response=await fetch('/api/exchange/listings',{cache:'no-store',signal:AbortSignal.timeout(10000)});
+    if(!response.ok) throw Error('Market unavailable');
+    const data=await response.json(),items=validListings(data.listings);
+    if(data.listings.length&&!items.length) throw Error('Invalid listings');
+    state.items=items; state.demo=false;
+    $('market-status').textContent='Connected to the game market · Read only · Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  } catch {
+    state.items=demoListings; state.demo=true;
+    $('market-status').textContent='Game market not connected — showing '+demoListings.length+' fictional demo offers. Refresh to check the connection.';
+  } finally {
+    state.loading=false; state.page=0; $('market-refresh').disabled=false; render();
+  }
+}
+for(const id of ['market-search','market-category','market-planet','market-sort']) {
+  $(id).addEventListener(id==='market-search'?'input':'change',()=>{state.page=0;render();});
+}
+for(const kind of ['planet','category']) document.querySelectorAll('button[data-'+kind+']').forEach(button=>{
+  button.addEventListener('click',()=>{$('market-'+kind).value=button.dataset[kind];state.page=0;render();});
+});
+$('market-refresh').addEventListener('click',load);
+$('market-prev').addEventListener('click',()=>{state.page--;render();});
+$('market-next').addEventListener('click',()=>{state.page++;render();});
+// Render the demonstration immediately while the first connection check is in flight.
+state.items=demoListings; render(); load();

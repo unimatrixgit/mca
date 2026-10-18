@@ -69,3 +69,30 @@
 .market-pages button:disabled{opacity:.35;cursor:not-allowed}
 @media(max-width:1150px){.planet-tiles{grid-template-columns:repeat(3,1fr)}.market-results{grid-template-columns:repeat(2,minmax(0,1fr))}.market-toolbar{grid-template-columns:repeat(2,1fr)}.market-toolbar input{grid-column:1/-1}}
 @media(max-width:680px){.choam-hero{min-height:340px;padding:55px 6%}.planet-tiles{grid-template-columns:repeat(2,1fr)}.market-layout{display:block}.market-side{margin-bottom:16px}.market-results{grid-template-columns:1fr}.market-toolbar{display:flex}.market-toolbar>*{flex:1 1 100%}}
+
+.category-links button[aria-pressed=true]{background:#203d34;border-left-color:#d5ab63;color:#f3cd86}
+.choam button:focus-visible,.choam input:focus-visible,.choam select:focus-visible{outline:2px solid #f4d99c;outline-offset:4px}
+.market-toolbar label.sr-only{position:absolute;display:block}
+.market-card{display:flex;flex-direction:column;overflow-wrap:anywhere}
+.market-item-art{height:108px;display:grid;place-items:center;background:radial-gradient(ellipse at center,#40514388,transparent 70%),linear-gradient(135deg,#203d34,#0b1716);border:1px solid #3a4a3d;margin:-1px -1px 14px;color:#d5ab63;font-family:Georgia,serif;font-size:54px}
+.market-card[data-planet=caladan] .market-item-art{color:#90bfc9;background:radial-gradient(ellipse at center,#315b6888,transparent 70%),#10201f}
+.market-card[data-planet=giedi_prime] .market-item-art{color:#df9b88;background:radial-gradient(ellipse at center,#773e3a88,transparent 70%),#10201f}
+.market-card[data-planet=kaitain] .market-item-art{color:#eed99c}
+.market-card[data-planet=sigma_draconis_iv] .market-item-art{color:#b5addb;background:radial-gradient(ellipse at center,#51466a88,transparent 70%),#10201f}
+.market-card .market-card-category{text-transform:uppercase;letter-spacing:.1em;font-size:9px;color:#d5ab63}
+.market-card h3{font-size:clamp(24px,2.2vw,30px);line-height:1.1;min-height:2.2em}
+.market-card .market-unit{font-size:10px;margin-bottom:14px;color:#a9b7a7}
+.market-card .market-seller{color:#e4d8be}
+.market-card .market-origin{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#aabca9}
+.market-card .market-instruction{display:block;margin-top:auto;padding-top:14px;border-top:1px solid #3b4d40;line-height:1.6}
+.market-heading{align-items:start}.demo-banner{max-width:310px;line-height:1.6;background:#10201f}
+.market-empty{grid-column:1/-1;line-height:1.7}.market-results{align-items:stretch}
+.market-toolbar{align-items:center}.market-toolbar>*{min-width:0}
+.choam .planet-tiles{position:static;inset:auto;padding:0;background:transparent;border:0;align-items:stretch}
+.planet-tiles button[data-planet=arrakis]{background-image:linear-gradient(0deg,#071917ee,#07191725),url('assets/arrakis.webp')}
+.planet-tiles button[data-planet=caladan]{background-image:linear-gradient(0deg,#071917ee,#07191725),url('assets/caladan.webp')}
+.planet-tiles button[data-planet=giedi_prime]{background-image:linear-gradient(0deg,#071917ee,#07191725),url('assets/giedi.webp')}
+.planet-tiles button[data-planet=kaitain]{background-image:linear-gradient(0deg,#071917ee,#07191725),url('assets/kaitain.webp')}
+.planet-tiles button[data-planet=sigma_draconis_iv]{background-image:linear-gradient(0deg,#071917ee,#07191725),url('assets/sigma.webp')}
+.choam-hero .choam-desc{text-transform:none;letter-spacing:normal;color:#e7d9bf;font-size:14px}
+@media(max-width:680px){.choam-hero h1{font-size:clamp(48px,13vw,72px)}.exchange-content{padding-inline:5%}.market-side{padding:20px}.category-links{grid-template-columns:repeat(2,minmax(0,1fr))}.category-links button{font-size:11px;padding:10px 8px}.market-help{margin-top:18px;padding-top:14px}.market-item-art{height:100px}.market-card h3{min-height:0}.market-pages{gap:8px;margin-inline:0;font-size:11px}.market-pages button{padding:10px}.planet-tiles button{font-size:10px;min-height:104px}}
