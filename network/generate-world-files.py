@@ -1,31 +1,45 @@
 #!/usr/bin/env python3
-"""Produce per-server world-generation config ZIPs from the repository's terrain defaults.
-
-Not a Minecraft world pregenerator: actual .mca files require Paper to run.
-"""
+"""Build planet-specific DuneTerrain configs (not Minecraft region files)."""
 from pathlib import Path
-import shutil, zipfile, re
-names=("arrakis","giedi-prime","kaitain","caladan","sigma-draconis-iv","spacing-guild")
-source=Path(__file__).resolve().parents[1]/"DuneTerrain/src/main/resources/config.yml"
-if not source.exists(): raise SystemExit("Missing DuneTerrain default config")
-base=source.read_text()
-out=Path("network/generated-worlds")
-out.mkdir(parents=True,exist_ok=True)
-for name in names:
-    ident=name.replace("-","_")
-    target=out/name/"plugins"/"DuneTerrain"
-    target.mkdir(parents=True,exist_ok=True)
-    config=base.replace("planet: arrakis","planet: "+ident,1)
-    if name=="spacing-guild":
-        config+="\n# WARNING: Spacing Guild custom generation is NOT implemented yet.\n"
-    (target/"config.yml").write_text(config)
-    (target/"generation.yml").write_text("# Proposed centralized generation settings; current plugin reads config.yml\n"+config)
-    (out/name/"WORLD-README.txt").write_text(
-        f"{name}: config files only. Start Paper with DuneTerrain to generate actual world files.\n"
-        +"Spacing Guild custom world generation is NOT implemented.\n" if name=="spacing-guild"
-        else f"{name}: config files only. Start Paper with DuneTerrain to generate actual world files.\n"
-    )
-    with zipfile.ZipFile(out/(name+"-world-config.zip"),"w",zipfile.ZIP_DEFLATED) as z:
-        for p in (out/name).rglob("*"):
-            if p.is_file(): z.write(p,p.relative_to(out/name))
-    print(out/(name+"-world-config.zip"))
+from zipfile import ZipFile, ZIP_DEFLATED
+import argparse, re
+
+PLANETS = ("arrakis", "giedi-prime", "kaitain", "caladan", "sigma-draconis-iv")
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", default="network/generated-worlds")
+    args = parser.parse_args()
+    source = Path(__file__).resolve().parents[1] / "DuneTerrain/src/main/resources/config.yml"
+    original = source.read_text(encoding="utf-8")
+    if not re.search(r"(?m)^  planet: arrakis\s*$", original):
+        raise SystemExit("Expected 'server.planet: arrakis' in DuneTerrain config")
+    output = Path(args.output)
+    output.mkdir(parents=True, exist_ok=True)
+    for planet in PLANETS:
+        folder = output / planet
+        target = folder / "plugins" / "DuneTerrain"
+        target.mkdir(parents=True, exist_ok=True)
+        content = re.sub(r"(?m)^(  planet: )arrakis\s*$", lambda m: m.group(1) + planet.replace("-", "_"), original, count=1)
+        (target / "config.yml").write_text(content, encoding="utf-8")
+        (folder / "README.txt").write_text(
+            f"{planet}: DuneTerrain plugin config only.\n"
+            "Generate actual world/region/*.mca by starting a compatible Paper server.\n"
+            "For primary-world terrain generation, configure generator and biome provider in bukkit.yml.\n",
+            encoding="utf-8")
+        archive = output / (planet + "-world-config.zip")
+        with ZipFile(archive, "w", ZIP_DEFLATED) as z:
+            for file in folder.rglob("*"):
+                if file.is_file():
+                    z.write(file, file.relative_to(folder))
+        print(archive)
+    lobby = output / "spacing-guild"
+    lobby.mkdir(exist_ok=True)
+    (lobby / "README.txt").write_text(
+        "Spacing Guild custom world generator is not implemented.\n"
+        "Use vanilla Paper world generation temporarily; do NOT set DuneTerrain server.planet to spacing_guild.\n",
+        encoding="utf-8")
+    with ZipFile(output / "spacing-guild-world-config.zip", "w", ZIP_DEFLATED) as z:
+        z.write(lobby / "README.txt", "README.txt")
+    print(output / "spacing-guild-world-config.zip")
+if __name__ == "__main__":
+    main()
