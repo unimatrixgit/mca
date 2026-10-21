@@ -2,9 +2,12 @@ name: Package DuneRealms Velocity Network
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, "feature/native-gui-1.21.8"]
     paths:
       - 'network/**'
+      - 'gui-common/**'
+      - 'tools/**'
+      - 'DuneLobby/**'
       - 'DuneTerrain/**'
       - 'DuneEss/**'
       - 'DuneNPC/**'
@@ -26,13 +29,20 @@ jobs:
         run: |
           set -e
           mkdir -p built-plugins
-          for project in DuneRealms-minecraft-only DuneTerrain DuneNPC DuneEss; do
+          for project in DuneRealms-minecraft-only DuneTerrain DuneNPC DuneEss DuneLobby; do
             (cd "$project" && gradle clean build)
           done
           cp DuneRealms-minecraft-only/build/libs/*.jar built-plugins/DuneCore.jar
           cp DuneTerrain/build/libs/*.jar built-plugins/DuneTerrain.jar
           cp DuneNPC/build/libs/*.jar built-plugins/DuneNPC.jar
-          cp DuneEss/build/libs/*.jar built-plugins/DuneEss.jar
+          cp DuneEss/build/libs/*.jar built-plugins/DuneRealms-Essentials.jar
+          cp DuneLobby/build/libs/*.jar built-plugins/DuneLobby.jar
+      - name: Download verified crossplay plugins
+        run: |
+          python3 tools/download-crossplay.py built-crossplay
+          curl --fail --location --silent --show-error https://github.com/Foulest/Vault/releases/download/2.5.0/Vault-2.5.0.jar --output built-crossplay/universal/Vault-2.5.0.jar
+          echo "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9  built-crossplay/universal/Vault-2.5.0.jar" | sha256sum --check --strict
+          curl --fail --location --silent --show-error https://raw.githubusercontent.com/Foulest/Vault/2.5.0/LICENSE --output built-crossplay/Vault-LICENSE.txt
       - name: Package six servers and Velocity config
         run: python3 network/package.py
       - uses: actions/upload-artifact@v4

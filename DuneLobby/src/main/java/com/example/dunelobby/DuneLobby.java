@@ -202,26 +202,28 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         for(int i=0;i<LobbyBuilder.PADS.length;i++) { int[] p=LobbyBuilder.PADS[i]; if(Math.abs(x-p[0])<=3 && z>=p[1]-9 && z<=p[1]-7) { departure(e.getPlayer(),LobbyBuilder.PLANETS.get(i)); return; } }
         if(b.getType()==Material.LECTERN) {
             boolean rules=z>0; List<String> text=getConfig().getStringList(rules?"rules":"news");
-            ItemStack book=new ItemStack(Material.WRITTEN_BOOK); BookMeta meta=(BookMeta)book.getItemMeta(); meta.setTitle(rules?"Guild Charter":"Guild News"); meta.setAuthor("Spacing Guild");
-            meta.setPages(text.stream().map(line->ChatColor.DARK_GRAY+line).toList()); book.setItemMeta(meta); e.getPlayer().openBook(book);
+            com.example.dunegui.NativeMenus.show(this,e.getPlayer(),rules?"Guild Charter":"Guild News",String.join("\n\n",text),List.of(
+                new com.example.dunegui.NativeMenus.Choice("Close","",e.getPlayer()::closeInventory)));
+
         }
     }
     private void departure(Player player,String planet) {
         TravelMenu menu=new TravelMenu(planet); ItemStack confirm=new ItemStack(Material.LIME_CONCRETE); ItemMeta meta=confirm.getItemMeta();
         meta.setDisplayName("Confirm departure: "+planet); meta.setLore(List.of("DuneEss fares and access rules apply when installed.")); confirm.setItemMeta(meta);
-        menu.inventory.setItem(4,confirm); player.openInventory(menu.inventory);
+        menu.inventory.setItem(4,confirm);
+        com.example.dunegui.NativeMenus.show(this,player,"Guild departure",List.of(
+            new com.example.dunegui.NativeMenus.Choice("Confirm departure: "+planet,"DuneEss fares and access rules apply.",()->depart(player,planet)),
+            new com.example.dunegui.NativeMenus.Choice("Cancel","",player::closeInventory)));
     }
-    @EventHandler public void menu(InventoryClickEvent e) {
-        if(!(e.getView().getTopInventory().getHolder() instanceof TravelMenu menu)) return;
-        e.setCancelled(true); if(e.getRawSlot()!=4 || !(e.getWhoClicked() instanceof Player player)) return;
+    private void depart(Player player,String planet) {
         long now=System.currentTimeMillis(); if(now-travelCooldown.getOrDefault(player.getUniqueId(),0L)<5000) return;
         travelCooldown.put(player.getUniqueId(),now);
         Bukkit.getScheduler().runTask(this,()-> {
             player.closeInventory();
-            if(Bukkit.getPluginCommand("duneess")!=null) { player.performCommand("duneess travel "+menu.planet); return; }
-            World target=Bukkit.getWorld(menu.planet);
+            if(Bukkit.getPluginCommand("duneess")!=null) { player.performCommand("duneess travel "+planet); return; }
+            World target=Bukkit.getWorld(planet);
             if(target!=null) { player.teleport(target.getSpawnLocation()); return; }
-            String server=getConfig().getString("servers."+menu.planet,"");
+            String server=getConfig().getString("servers."+planet,"");
             if(server.isBlank()) { player.sendMessage("No destination configured."); return; }
             try {
                 ByteArrayOutputStream bytes=new ByteArrayOutputStream(); DataOutputStream out=new DataOutputStream(bytes); out.writeUTF("Connect"); out.writeUTF(server);

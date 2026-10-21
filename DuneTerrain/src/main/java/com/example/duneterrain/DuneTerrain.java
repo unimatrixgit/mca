@@ -219,7 +219,7 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
     }
 
-    private static ItemStack spiceItem(int amount) {
+    static ItemStack spiceItem(int amount) {
         ItemStack item = new ItemStack(Material.ORANGE_DYE, amount);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + "Melange Spice");
@@ -276,6 +276,8 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             getLogger().info("Upgraded default Arrakis rock formations to about 100 blocks across in new chunks.");
         }
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new DenseSpice(this), this);
+        getServer().getPluginManager().registerEvents(new HarkonnenFortress(this), this);
 
         sietchLootIdKey = new NamespacedKey(this, "sietch-loot-id");
         String planet = getConfig().getString("server.planet", "arrakis").toLowerCase(Locale.ROOT);
@@ -348,10 +350,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
     private static class PlanetChunkGenerator extends ChunkGenerator {
         private final DuneTerrain plugin;
         private final String planet;
+        private record GroundKey(RockPlateaus.Shape shape, int baseHeight, double variation) {}
+        private final java.util.concurrent.ConcurrentHashMap<GroundKey,Integer> formationGround = new java.util.concurrent.ConcurrentHashMap<>();
         PlanetChunkGenerator(DuneTerrain plugin, String planet) { this.plugin = plugin; this.planet = planet; }
         @Override public List<BlockPopulator> getDefaultPopulators(World world) {
             return planet.equals("arrakis") && world.getName().equalsIgnoreCase("arrakis")
-                ? List.of(new SietchPopulator(plugin), new SpiceBlowPopulator(plugin)) : List.of();
+                ? List.of(new SietchPopulator(plugin), new SpiceBlowPopulator(plugin), new DesertVillages(plugin), new HarkonnenFortress(plugin)) : List.of();
         }
         @Override public void generateNoise(WorldInfo world, Random random, int chunkX, int chunkZ, ChunkData data) {
             String path = "planets." + planet + ".";
@@ -400,6 +404,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
                 placeDarkstoneIsland(data, chunkX, chunkZ, heights, minY, maxY);
                 placeSpiceDeposits(data, heights, random, minY, maxY);
                 placeRandomSpicePatch(data, chunkX, chunkZ, heights);
+                if (plugin.getConfig().getBoolean("dense-spice.enabled", true)) {
+                    int spacing = Math.max(128, plugin.getConfig().getInt("dense-spice.spacing", 512));
+                    for (int x=0;x<16;x++) for(int z=0;z<16;z++)
+                        if(DenseSpice.contains(world.getSeed(),chunkX*16+x,chunkZ*16+z,spacing))
+                            data.setBlock(x,heights[x][z],z,Material.ORANGE_TERRACOTTA);
+                }
             }
             placeOres(data, random, path, minY, maxY);
         }
@@ -441,48 +451,50 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
         private void placeDarkstoneIsland(ChunkData data, int chunkX, int chunkZ, int[][] heights, int minY, int maxY) {
             String path = "planets.arrakis.darkstone-islands.";
-            if (!plugin.getConfig().getBoolean(path + "enabled", true)) return;
-            int spacing = Math.max(128, plugin.getConfig().getInt(path + "spacing", 750));
+            if (!plugin.getConfig().getBoolean("planets.arrakis.highlands.enabled", true)) return;
+            int minimumGap = Math.max(192, plugin.getConfig().getInt("planets.arrakis.highlands.min-spacing", 300));
+            int maximumGap = Math.max(minimumGap, plugin.getConfig().getInt("planets.arrakis.highlands.max-spacing", 500));
+            int spacing = (minimumGap + maximumGap) / 2;
             int minRadius = Math.max(6, plugin.getConfig().getInt(path + "min-radius", 45));
             int maxRadius = Math.max(minRadius, plugin.getConfig().getInt(path + "max-radius", 55));
             int maxRise = Math.max(1, plugin.getConfig().getInt(path + "max-height", 14));
+            boolean highlands = plugin.getConfig().getBoolean("planets.arrakis.highlands.enabled", true);
+            int mountainRise = highlands ? Math.max(0, Math.min(96, plugin.getConfig().getInt("planets.arrakis.highlands.mountain-rise", 32))) : 0;
             int baseHeight = plugin.getConfig().getInt("planets.arrakis.terrain.base-height", 70);
             double variation = plugin.getConfig().getDouble("planets.arrakis.terrain.height-variation", 11);
             double scale = Math.max(0.001, plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale", 0.02));
             int worldMinX = chunkX * 16, worldMinZ = chunkZ * 16;
-            int firstCellX = Math.floorDiv(worldMinX - maxRadius - 3, spacing), lastCellX = Math.floorDiv(worldMinX + 15 + maxRadius + 3, spacing);
-            int firstCellZ = Math.floorDiv(worldMinZ - maxRadius - 3, spacing), lastCellZ = Math.floorDiv(worldMinZ + 15 + maxRadius + 3, spacing);
-            long salt = 0x4441524B49534C41L;
+            int reach = (int)Math.ceil(maxRadius * 2.0) + 3;
+            int firstCellX = Math.floorDiv(worldMinX - reach, spacing), lastCellX = Math.floorDiv(worldMinX + 15 + reach, spacing);
+            int firstCellZ = Math.floorDiv(worldMinZ - reach, spacing), lastCellZ = Math.floorDiv(worldMinZ + 15 + reach, spacing);
             for (int cellX = firstCellX; cellX <= lastCellX; cellX++) for (int cellZ = firstCellZ; cellZ <= lastCellZ; cellZ++) {
-                long seed = mix64((long) cellX * 0x9E3779B97F4A7C15L ^ (long) cellZ * 0xC2B2AE3D27D4EB4FL ^ salt);
-                long centerX = (long) cellX * spacing + Math.floorMod(mix64(seed ^ 0x165667B19E3779F9L), spacing);
-                long centerZ = (long) cellZ * spacing + Math.floorMod(mix64(seed ^ 0x85EBCA77C2B2AE63L), spacing);
-                int radius = minRadius + (int) Math.floorMod(seed >>> 1, maxRadius - minRadius + 1L);
-                int highestGround = Integer.MIN_VALUE;
-                for (int sampleX = (int)centerX - radius - 2; sampleX <= centerX + radius + 2; sampleX++)
-                    for (int sampleZ = (int)centerZ - radius - 2; sampleZ <= centerZ + radius + 2; sampleZ++) {
-                        if (Math.hypot(sampleX - centerX, sampleZ - centerZ) > radius + 2) continue;
-                        double noise = Math.sin(sampleX * scale) * Math.cos(sampleZ * scale * 1.13)
-                            + Math.sin(sampleX * scale * 2.7 + sampleZ * scale * 1.45) * 0.35;
-                        highestGround = Math.max(highestGround, baseHeight + (int)Math.round(noise * variation));
-                    }
-                int plateauCount = RockPlateaus.count(seed, Math.min(maxRise, plugin.getConfig().getInt(path + "max-plateaus", 3)));
+                long seed = RockPlateaus.formationSeed(cellX, cellZ);
+                long centerX = RockPlateaus.centerX(cellX,minimumGap,maximumGap);
+                long centerZ = RockPlateaus.centerZ(cellZ,minimumGap,maximumGap);
+                int radius = RockPlateaus.radius(seed,minRadius,maxRadius);
+                RockPlateaus.Shape shape = RockPlateaus.shape(seed, centerX, centerZ, radius, scale);
+                if (formationGround.size() > 2048) formationGround.clear();
+                int highestGround = formationGround.computeIfAbsent(new GroundKey(shape,baseHeight,variation),
+                    key -> RockPlateaus.highestGround(key.shape(),key.baseHeight(),key.variation()));
+                int allowedPlateaus = Math.max(1, Math.min(3, Math.min(maxRise, plugin.getConfig().getInt(path + "max-plateaus", 3))));
+                int plateauCount = highlands ? allowedPlateaus : RockPlateaus.count(seed, allowedPlateaus);
                 int interval = RockPlateaus.interval(plugin.getConfig().getInt(path + "plateau-interval", 5), maxRise, plateauCount);
-                int plateauY = highestGround + plateauCount * interval;
+                int plateauY = highestGround + mountainRise + plateauCount * interval;
                 for (int lx = 0; lx < 16; lx++) for (int lz = 0; lz < 16; lz++) {
                     long gx = (long) worldMinX + lx, gz = (long) worldMinZ + lz;
-                    long dx = gx - centerX, dz = gz - centerZ;
                     long rough = mix64(gx * 0x9E3779B97F4A7C15L ^ gz * 0xC2B2AE3D27D4EB4FL ^ seed);
-                    double edge = radius + (((rough >>> 11) * 0x1.0p-53) - 0.5) * 3.0;
-                    double distance = Math.sqrt(dx * dx + dz * dz);
-                    if (distance > edge) continue;
+                    double depth = shape.depth(gx, gz);
+                    if (depth < 0) continue;
                     int baseY = heights[lx][lz];
                     if (plateauY + 2 >= maxY || baseY <= minY + 1) continue;
-                    int level = RockPlateaus.level(distance, radius, plateauCount);
-                    boolean plateau = level > 0;
-                    int terraceY = highestGround + level * interval;
-                    double slope = Math.max(0.0, Math.min(1.0, (edge - distance) / Math.max(1.0, edge - radius * 0.9)));
-                    int sideTop = highestGround + (int)Math.floor(slope * interval);
+                    int level = RockPlateaus.level(highlands ? (depth - 0.40) / 0.60 : depth, plateauCount);
+                    int lowerLevel = highlands ? RockPlateaus.lowerTerrace(depth) : 0;
+                    boolean plateau = level > 0 || lowerLevel > 0;
+                    int terraceY = lowerLevel > 0 ? highestGround + lowerLevel * interval : highestGround + mountainRise + level * interval;
+                    double slope = Math.max(0.0, Math.min(1.0, depth / (highlands ? 0.46 : 0.10)));
+                    slope = slope * slope * (3 - 2 * slope);
+                    int sideTop = highlands ? baseY + (int)Math.floor(slope * (highestGround + mountainRise - baseY))
+                        : highestGround + (int)Math.floor(slope * interval);
                     Material[] darkRock = {Material.BLACKSTONE, Material.BASALT, Material.POLISHED_BLACKSTONE};
                     if (plateau) {
                         for (int y = baseY + 1; y < terraceY; y++) {
@@ -490,8 +502,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
                             data.setBlock(lx, y, lz, darkRock[hashIndex]);
                         }
                         data.setBlock(lx, terraceY, lz, Material.SAND);
+                        heights[lx][lz] = terraceY;
                     } else {
-                        int sideSurface = Math.max(baseY, sideTop);
+                        int spire = highlands ? RockPlateaus.spireRise(seed,gx,gz,depth,
+                            plugin.getConfig().getInt("planets.arrakis.highlands.spire-height",40)) : 0;
+                        int sideSurface = Math.max(baseY, Math.min(maxY - 2, sideTop + spire));
+                        heights[lx][lz] = sideSurface;
                         for (int y = baseY; y <= sideSurface; y++) {
                             int hashIndex = (int)Math.floorMod(mix64(rough + y * 0x9E3779B97F4A7C15L), darkRock.length);
                             data.setBlock(lx, y, lz, darkRock[hashIndex]);
@@ -591,16 +607,36 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
     }
     private static final class PlanetBiomeProvider extends BiomeProvider {
-        private final Biome biome;
+        private final DuneTerrain plugin;
+        private final String planet;
+        private final Biome biome, highlands, denseSpice;
         PlanetBiomeProvider(DuneTerrain plugin, String planet) {
-            String configured = planet.equals("arrakis") ? "DESERT" : plugin.getConfig().getString("planets." + planet + ".biome", "PLAINS");
-            Biome selected;
-            try { selected = Biome.valueOf(configured.toUpperCase(Locale.ROOT)); }
-            catch (IllegalArgumentException ex) { selected = Biome.DESERT; }
-            this.biome = selected;
+            this.plugin = plugin; this.planet = planet;
+            String configured = plugin.getConfig().getString("planets." + planet + ".biome", "DESERT");
+            NamespacedKey key = NamespacedKey.fromString(configured.toLowerCase(Locale.ROOT));
+            Biome selected = key == null ? null : Registry.BIOME.get(key);
+            this.biome = selected == null ? Biome.DESERT : selected;
+            String custom = plugin.getConfig().getString("planets.arrakis.highlands.biome", "dunerealms:dune-highlands");
+            NamespacedKey customKey = NamespacedKey.fromString(custom);
+            this.denseSpice = planet.equals("arrakis") && plugin.getConfig().getBoolean("dense-spice.enabled", true)
+                ? Registry.BIOME.get(new NamespacedKey("dunerealms", "dense-spice")) : null;
+            this.highlands = planet.equals("arrakis") && plugin.getConfig().getBoolean("planets.arrakis.highlands.enabled", true)
+                && customKey != null ? Registry.BIOME.get(customKey) : null;
         }
-        @Override public Biome getBiome(WorldInfo info, int x, int y, int z) { return biome; }
-        @Override public List<Biome> getBiomes(WorldInfo info) { return List.of(biome); }
+        @Override public Biome getBiome(WorldInfo info, int x, int y, int z) {
+            if (denseSpice != null && DenseSpice.contains(info.getSeed(),x,z,Math.max(128,plugin.getConfig().getInt("dense-spice.spacing",512)))) return denseSpice;
+            if (highlands == null) return biome;
+            String path = "planets.arrakis.darkstone-islands.";
+            int minimumGap = Math.max(192, plugin.getConfig().getInt("planets.arrakis.highlands.min-spacing", 300));
+            int maximumGap = Math.max(minimumGap, plugin.getConfig().getInt("planets.arrakis.highlands.max-spacing", 500));
+            int minimum = Math.max(6, plugin.getConfig().getInt(path + "min-radius", 45));
+            int maximum = Math.max(minimum, plugin.getConfig().getInt(path + "max-radius", 55));
+            double scale = Math.max(.001, plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale", .02));
+            return RockPlateaus.regionDepth(x,z,minimumGap,maximumGap,minimum,maximum,scale) >= 0 ? highlands : biome;
+        }
+        @Override public List<Biome> getBiomes(WorldInfo info) {
+            Set<Biome> all = new LinkedHashSet<>(); all.add(biome); if(highlands!=null)all.add(highlands); if(denseSpice!=null)all.add(denseSpice); return List.copyOf(all);
+        }
     }
 
     private static long mix64(long value) {
@@ -611,10 +647,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
 
     private static final class SietchPopulator extends BlockPopulator {
         private final DuneTerrain plugin;
+        private final java.util.concurrent.ConcurrentHashMap<RockPlateaus.Shape,List<HighlandSietches.Site>> highlandSites = new java.util.concurrent.ConcurrentHashMap<>();
         private SietchPopulator(DuneTerrain plugin) { this.plugin = plugin; }
         @Override public void populate(WorldInfo world, Random random, int cx, int cz, LimitedRegion region) {
             if (!world.getName().equalsIgnoreCase("arrakis")) return;
             if (!plugin.getConfig().getBoolean("sietches.enabled", true)) return;
+            populateHighlands(world,cx,cz,region);
             int spacing = Math.max(256, plugin.getConfig().getInt("sietches.spacing", 2000));
             int centerX = cx * 16 + 8, centerZ = cz * 16 + 8;
             long cellX = Math.floorDiv(centerX, spacing), cellZ = Math.floorDiv(centerZ, spacing);
@@ -679,6 +717,50 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             placePersonalChest(region, x, hy - 14, z - 10, cellX, cellZ);
             for (int[] lamp : new int[][]{{0,-1,0},{-20,-5,-2},{20,-5,2},{0,-11,-11}})
                 set(region, x + lamp[0], hy + lamp[1], z + lamp[2], Material.TORCH);
+        }
+
+        private void populateHighlands(WorldInfo world,int cx,int cz,LimitedRegion region) {
+            if(!plugin.getConfig().getBoolean("planets.arrakis.highlands.enabled",true)
+                ||!plugin.getConfig().getBoolean("sietches.highlands.enabled",true))return;
+            int minGap=Math.max(192,plugin.getConfig().getInt("planets.arrakis.highlands.min-spacing",300));
+            int maxGap=Math.max(minGap,plugin.getConfig().getInt("planets.arrakis.highlands.max-spacing",500));
+            int spacing=(minGap+maxGap)/2;
+            int minRadius=Math.max(6,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.min-radius",45));
+            int maxRadius=Math.max(minRadius,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.max-radius",55));
+            double scale=Math.max(.001,plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale",.02));
+            int reach=(int)Math.ceil(maxRadius*2.0)+3;
+            if(highlandSites.size()>2048)highlandSites.clear();
+            for(int gx=Math.floorDiv(cx*16-reach,spacing);gx<=Math.floorDiv(cx*16+15+reach,spacing);gx++)
+                for(int gz=Math.floorDiv(cz*16-reach,spacing);gz<=Math.floorDiv(cz*16+15+reach,spacing);gz++) {
+                    long seed=RockPlateaus.formationSeed(gx,gz);
+                    var shape=RockPlateaus.shape(seed,RockPlateaus.centerX(gx,minGap,maxGap),RockPlateaus.centerZ(gz,minGap,maxGap),RockPlateaus.radius(seed,minRadius,maxRadius),scale);
+                    var sites=highlandSites.computeIfAbsent(shape,k->HighlandSietches.sites(k,
+                        plugin.getConfig().getInt("sietches.highlands.frequency-multiplier",3),plugin.getConfig().getInt("sietches.highlands.minimum-per-region",3)));
+                    for(var site:sites) {
+                        int x=site.x(),z=site.z();
+                        if(Math.floorDiv(x,16)!=cx||Math.floorDiv(z,16)!=cz)continue;
+                        int surface=region.getHighestBlockYAt(x,z),hy=surface-11;
+                        if(hy-12<=world.getMinHeight()||surface+2>=world.getMaxHeight())continue;
+                        // Compact multi-room caves fit three sites without the large desert template colliding.
+                        carveRoom(region,x,hy,z,7,4,7);
+                        carveRoom(region,x-5,hy-3,z+5,4,3,4);
+                        carveRoom(region,x+5,hy-3,z+5,4,3,4);
+                        carveTunnelNetwork(region,new int[][]{{x,hy-1,z},{x-3,hy-2,z+3},{x-5,hy-3,z+5}});
+                        carveTunnelNetwork(region,new int[][]{{x,hy-1,z},{x+3,hy-2,z+3},{x+5,hy-3,z+5}});
+                        carveCaveEntrance(region,x,z,hy);
+                        furnishSleepingHall(region,x-5,hy-4,z+5);
+                        furnishKitchen(region,x+5,hy-4,z+5);
+                        carveRoom(region,x,hy-8,z+6,4,3,4);
+                        carveTunnelNetwork(region,new int[][]{{x,hy-1,z+2},{x+2,hy-3,z+4},{x+2,hy-5,z+6},{x,hy-8,z+6}});
+                        for(int dx=-2;dx<=2;dx++)for(int dz=-2;dz<=2;dz++) {
+                            set(region,x+dx,hy-11,z+6+dz,Material.STONE);
+                            set(region,x+dx,hy-10,z+6+dz,Material.WATER);
+                        }
+                        placePersonalChest(region,x,hy-2,z-3,site.cacheId(),0x484947484c414e44L);
+                        set(region,x,hy-3,z,Material.CHISELED_STONE_BRICKS);
+                        set(region,x,hy-2,z,Material.LANTERN);
+                    }
+                }
         }
 
         private static void carveRoom(LimitedRegion region, int cx, int cy, int cz, int rx, int ry, int rz) {

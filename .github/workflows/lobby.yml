@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main, beta]
-    paths: ['DuneLobby/**', 'worlds/**', '.github/workflows/lobby.yml']
+    paths: ['DuneLobby/**', 'worlds/**', '.github/workflows/lobby.yml', 'gui-common/**']
 jobs:
   build:
     runs-on: ubuntu-latest

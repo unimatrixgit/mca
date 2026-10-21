@@ -307,14 +307,18 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         armorMeta.setTrim(new ArmorTrim(material, pattern));
     }
     private void kit(Player p) {
-        String faction = selected.getOrDefault(p.getUniqueId(), "Fremen");
+        for (ItemStack item : createFactionKit(selected.getOrDefault(p.getUniqueId(), "Fremen"))) p.getInventory().addItem(item);
+    }
+    /** Shared authoritative kit factory for player rewards and fortress loot. */
+    public List<ItemStack> createFactionKit(String faction) {
+        List<ItemStack> items = new ArrayList<>();
         Color armorColor = factionArmorColor(faction);
         ItemStack shovel=custom(Material.NETHERITE_SHOVEL,"Spice Harvest Shovel","shovel");
         shovel.addUnsafeEnchantment(Enchantment.EFFICIENCY,5);
         shovel.addUnsafeEnchantment(Enchantment.UNBREAKING,3);
-        p.getInventory().addItem(shovel);
+        items.add(shovel);
         if (faction.equalsIgnoreCase("Ordos"))
-            p.getInventory().addItem(custom(Material.WIND_CHARGE,"Ordos Implosion Charge","ordos_wind_charge"));
+            items.add(custom(Material.WIND_CHARGE,"Ordos Implosion Charge","ordos_wind_charge"));
         for (Material m : new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS}) {
             ItemStack armor = custom(m, "Stillsuit " + m.name().toLowerCase(Locale.ROOT), "stillsuit");
             org.bukkit.inventory.meta.LeatherArmorMeta meta = (org.bukkit.inventory.meta.LeatherArmorMeta) armor.getItemMeta();
@@ -329,8 +333,9 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             }
             if(faction.equalsIgnoreCase("Corrino"))meta.addEnchant(Enchantment.PROTECTION,3,true);
             armor.setItemMeta(meta);
-            p.getInventory().addItem(armor);
+            items.add(armor);
         }
+        return items;
     }
     private String fullSetFaction(Player player) {
         String faction=selected.getOrDefault(player.getUniqueId(),"").toLowerCase(Locale.ROOT);

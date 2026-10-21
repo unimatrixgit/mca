@@ -30,9 +30,10 @@ import java.sql.PreparedStatement;
 import java.util.*;
 
 public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCompleter, Listener {
-    private static final List<String> PLANETS = List.of("arrakis", "giedi_prime", "kaitain", "caladan", "sigma_draconis_iv");
+    private static final List<String> PLANETS = List.of("arrakis", "giedi_prime", "kaitain", "caladan", "sigma_draconis_iv", "spacing_guild");
     private DuneEconomy economy;
     private ExchangeMenu exchangeMenu;
+    private EssentialsBasics basics;
     private String jdbcUrl = "", dbUser = "", dbPassword = "";
     private boolean networkEnabled;
     private String localPlanet;
@@ -87,10 +88,12 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         command.setExecutor(this);
         command.setTabCompleter(this);
         getServer().getPluginManager().registerEvents(this, this);
+        basics=new EssentialsBasics(this);
+        basics.register();
         exchangeMenu = new ExchangeMenu(this);
         exchangeMenu.register();
         for (Player player : Bukkit.getOnlinePlayers()) economy.createPlayerAccount(player);
-        getLogger().info("DuneEss enabled as the Solaris Vault provider.");
+        getLogger().info("DuneRealms Essentials enabled as the Solaris Vault provider.");
     }
 
     @Override public void onDisable() {
@@ -150,6 +153,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(args.length==0 && sender instanceof Player player) { basics.menu(player); return true; }
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             int page = 1;
             if (args.length > 1 && args[1].equalsIgnoreCase("menu")) {
@@ -273,7 +277,17 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         nextMeta.getPersistentDataContainer().set(helpPageKey, PersistentDataType.INTEGER, index + 2);
         next.setItemMeta(nextMeta);
         menu.setItem(53, next);
-        player.openInventory(menu);
+        java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
+        actions.put(45,()->openHelpMenu(player,index));
+        actions.put(53,()->openHelpMenu(player,index+2));
+        actions.put(49,player::closeInventory);
+        for(int slot:slots) {
+            ItemStack entry=menu.getItem(slot);
+            if(entry==null) continue;
+            String command=entry.getItemMeta().getPersistentDataContainer().get(helpActionKey,PersistentDataType.STRING);
+            if(command!=null) actions.put(slot,()->player.performCommand(command.substring(1)));
+        }
+        com.example.dunegui.NativeMenus.inventory(this,player,"Dune Field Guide · "+(index+1),menu,actions);
     }
 
     private ItemStack helpItem(Material material, String name, List<String> lore) {
@@ -304,6 +318,33 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
 
     @EventHandler public void onPlayerJoin(PlayerJoinEvent event) {
         economy.createPlayerAccount(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled=true)
+    public void spiceSeller(org.bukkit.event.player.PlayerInteractEntityEvent event) {
+        if(!event.getRightClicked().getPersistentDataContainer().has(new NamespacedKey("dunerealms","spice-seller"),PersistentDataType.BYTE))return;
+        event.setCancelled(true);
+        if(event.getHand()!=org.bukkit.inventory.EquipmentSlot.HAND)return;
+        Player player=event.getPlayer();
+        Inventory menu=Bukkit.createInventory(null,9,"Spice Seller");
+        int quantity=16;
+        double price=java.math.BigDecimal.valueOf(Math.max(1,getConfig().getInt("currency.spice-price",15)))
+            .multiply(new java.math.BigDecimal("1.35")).multiply(java.math.BigDecimal.valueOf(quantity)).doubleValue();
+        ItemStack offer=new ItemStack(Material.ORANGE_DYE,quantity); ItemMeta meta=offer.getItemMeta();
+        meta.setDisplayName("Buy 16 spice · "+economy.format(price));
+        meta.setLore(List.of("35% above standard spice price", "Confirm purchase"));offer.setItemMeta(meta);menu.setItem(4,offer);
+        Map<Integer,Runnable> actions=new HashMap<>();
+        actions.put(4,()->{
+            // Recheck proximity and capacity at confirmation; never charge for undeliverable goods.
+            if(!event.getRightClicked().isValid() || !player.getWorld().equals(event.getRightClicked().getWorld())
+                || player.getLocation().distanceSquared(event.getRightClicked().getLocation())>64)return;
+            ItemStack spice=new ItemStack(Material.ORANGE_DYE,quantity);ItemMeta sm=spice.getItemMeta();
+            sm.setDisplayName(ChatColor.GOLD+"Melange Spice");sm.getPersistentDataContainer().set(spiceKey,PersistentDataType.STRING,"spice");spice.setItemMeta(sm);
+            if(player.getInventory().firstEmpty()<0){player.sendMessage("Make an empty inventory slot first.");return;}
+            if(!economy.withdrawPlayer(player,price).transactionSuccess()){player.sendMessage("Not enough Solaris, or economy unavailable.");return;}
+            player.getInventory().addItem(spice);player.sendMessage(ChatColor.GOLD+"Bought 16 spice for "+economy.format(price)+".");
+        });
+        com.example.dunegui.NativeMenus.inventory(this,player,"Spice Seller · +35%",menu,actions);
     }
 
     private void sellSpice(Player player) {
@@ -346,7 +387,9 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             item.setItemMeta(meta);
             inventory.setItem(i, item);
         }
-        player.openInventory(inventory);
+        java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
+        for(int i=0;i<PLANETS.size();i++) { String planet=PLANETS.get(i); actions.put(i,()->travel(player,planet)); }
+        com.example.dunegui.NativeMenus.inventory(this,player,"Spacing Guild Travel",inventory,actions);
     }
 
     @EventHandler public void onTravelMenuClick(InventoryClickEvent event) {

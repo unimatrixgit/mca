@@ -18,3 +18,7 @@ network:
   servers: {}
 
 worlds: [arrakis, giedi_prime, kaitain, caladan, sigma_draconis_iv]
+
+# Homes are local to each backend. Vanilla bed/anchor respawns remain authoritative.
+essentials:
+  max-homes: 3

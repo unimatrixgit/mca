@@ -4,7 +4,7 @@ name: Build DuneCore, DuneNPC, DuneEss, and DuneTerrain
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, "feature/native-gui-1.21.8"]
 
 jobs:
   build-website:
@@ -143,9 +143,27 @@ jobs:
           path: DuneNPC/build/libs/*.jar
           if-no-files-found: error
 
+  build-lobby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - run: gradle -p DuneLobby clean build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DuneLobby-Plugin
+          path: DuneLobby/build/libs/*.jar
+          if-no-files-found: error
+
   package-server:
     runs-on: ubuntu-latest
-    needs: [build-core, build-ess, build-terrain, build-npc]
+    needs: [build-core, build-ess, build-terrain, build-npc, build-lobby]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -155,6 +173,8 @@ jobs:
           pattern: Dune*-Plugin
           path: DuneRealms-Server-Package
           merge-multiple: true
+      - name: Download verified crossplay plugins
+        run: python3 tools/download-crossplay.py DuneRealms-Server-Package/crossplay
       - name: Add resource pack and install instructions
         run: |
           curl --fail --location --silent --show-error \
@@ -168,28 +188,32 @@ jobs:
           cp docs/Dune-User-Manual.pdf DuneRealms-Server-Package/
           cp docs/Dune-Complete-Illustrated-Manual.pdf DuneRealms-Server-Package/
           cp docs/posters/*.png DuneRealms-Server-Package/
+          cp docs/Native-GUI.md DuneRealms-Server-Package/Native-GUI.md
           cp README.md DuneRealms-Server-Package/Project-README.md
           cp website/DISCORD-FEEDS.md DuneRealms-Server-Package/DiscordSRV-Website-Setup.md
           cat > DuneRealms-Server-Package/README.txt <<'EOF'
           DuneRealms Paper server package
 
-          Contents: Vault 2.5.0, DuneCore, DuneNPC, DuneEss, and DuneTerrain plugin JARs, plus DuneResourcePack.zip.
+          Contents: Vault 2.5.0, all five Dune plugins, and verified Geyser, Floodgate, ViaVersion JARs.
+          See Native-GUI.md for platform-specific plugin placement.
           The illustrated user manual and Project-README.md are included for players and administrators.
 
-          Install all five plugin JARs in the Paper server's plugins/ folder and restart the server.
+          Install the applicable plugin JARs in the Paper server's plugins/ folder and restart the server.
           Install the included resource pack on vanilla or Fabric 1.21.4 clients for sandworm, haunted Fremen, and spice textures.
           On Fabric, put the ZIP in .minecraft/resourcepacks and enable it in Options > Resource Packs; do not put it in mods/.
           DuneEss provides the Solaris economy through the included Vault API plugin.
           Vault 2.5.0 is the GPL-3.0 licensed Foulest/MilkBowl Vault project; its license is included here.
           Its source is available at https://github.com/Foulest/Vault/tree/2.5.0.
 
-          Compatible build target: Paper 1.21.4, Java 21.
+          Compatible GUI build target: Paper 1.21.8, Java 21.
           See https://github.com/thomasv6545-glitch/MC for setup and configuration details.
           EOF
+      - name: ZIP every server plugin JAR together
+        run: zip -r DuneRealms-All-Server-Jars.zip DuneRealms-Server-Package
       - name: Upload one downloadable server package
         uses: actions/upload-artifact@v4
         with:
           name: DuneRealms-Server-Package
-          path: DuneRealms-Server-Package/
+          path: DuneRealms-All-Server-Jars.zip
           if-no-files-found: error
           retention-days: 90
