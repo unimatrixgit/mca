@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
 
-/** Standard inventory slots work on Java and through Geyser without custom client interfaces. */
+/** Native menus share the existing SQL-backed trading operations. */
 @SuppressWarnings("deprecation")
 final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
     private static final List<String> CATEGORIES=List.of("ores","spice","building","equipment","farming","misc");
@@ -28,6 +28,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         final UUID owner;
         final Map<Integer,Runnable> actions=new HashMap<>();
         Inventory inventory;
+        String title;
         Screen(UUID owner) { this.owner=owner; }
         @Override public Inventory getInventory() { return inventory; }
     }
@@ -72,6 +73,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
     }
     private Screen screen(Player p,String title) {
         Screen s=new Screen(p.getUniqueId());
+        s.title="CHOAM | "+title;
         s.inventory=Bukkit.createInventory(s,54,tint(p)+"CHOAM | "+title);
         Material glass=switch(faction(p)) {
             case "Atreides" -> Material.CYAN_STAINED_GLASS_PANE;
@@ -106,7 +108,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         });
         if(p.hasPermission("dune.admin")) button(s,42,Material.COMMAND_BLOCK,"Exchange Administration",()->admin(p));
         button(s,49,Material.BARRIER,"Close",p::closeInventory);
-        p.openInventory(s.inventory);
+        com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
     }
     private void planetMenu(Player p) {
         Screen s=screen(p,"Planet Filter");
@@ -114,7 +116,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             String planet=PLANETS.get(i);
             button(s,11+i,Material.COMPASS,planet,()->{planets.put(p.getUniqueId(),planet); browse(p,"all",0,false,false);});
         }
-        p.openInventory(s.inventory);
+        com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
     }
     private void admin(Player p) {
         if(!p.hasPermission("dune.admin")) return;
@@ -123,7 +125,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         button(s,24,Material.REDSTONE,"Check Database",()->{
             if(connected(p)) p.sendMessage(ChatColor.GREEN+"Shared CHOAM database connected.");
         });
-        p.openInventory(s.inventory);
+        com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
     }
     private ItemStack decode(ExchangeStore.Listing offer) {
         ItemStack item;
@@ -158,7 +160,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             if(rows.isEmpty()) s.inventory.setItem(22,icon(Material.PAPER,"No matching listings","Try another planet or list a held item."));
             if(current>0) button(s,45,Material.ARROW,"Previous",()->browse(p,category,current-1,mine,admin));
             if(rows.size()>28) button(s,53,Material.ARROW,"Next",()->browse(p,category,current+1,mine,admin));
-            p.openInventory(s.inventory);
+            com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
         });
     }
     private void confirm(Player p,long id,boolean reclaim) {
@@ -171,7 +173,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             button(s,30,Material.LIME_CONCRETE,reclaim?"Confirm Reclaim":"Confirm Purchase",()->{
                 p.closeInventory(); if(reclaim) cancel(p,id); else buy(p,id);
             });
-            button(s,32,Material.RED_CONCRETE,"Never Mind",()->home(p)); p.openInventory(s.inventory);
+            button(s,32,Material.RED_CONCRETE,"Never Mind",()->home(p)); com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
         });
     }
     private boolean fits(Player p,ItemStack item,int amount) {

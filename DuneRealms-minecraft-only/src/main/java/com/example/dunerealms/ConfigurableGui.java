@@ -100,7 +100,9 @@ final class ConfigurableGui {
         }
         opened.put(p.getUniqueId(),page);
         actions.put(p.getUniqueId(),slots);
-        p.openInventory(inv);
+        Map<Integer,Runnable> nativeActions=new HashMap<>();
+        slots.forEach((slot,action)->nativeActions.put(slot,()->execute(p,action)));
+        com.example.dunegui.NativeMenus.inventory(plugin,p,title,inv,nativeActions);
     }
     void click(InventoryClickEvent e) {
         if(!(e.getWhoClicked() instanceof Player p)) return;

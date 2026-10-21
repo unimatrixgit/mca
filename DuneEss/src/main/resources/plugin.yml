@@ -1,10 +1,11 @@
 name: DuneEss
-version: 1.0.2
+version: 1.0.3
 main: com.example.duneess.DuneEss
-api-version: '1.21'
+api-version: '1.21.8'
 depend: [Vault]
-softdepend: [DuneCore, DuneTerrain]
-description: Dune Solaris economy, Vault provider, spice sales, and Arrakis travel
+softdepend: [floodgate, ViaVersion, DuneCore, DuneTerrain]
+prefix: DuneRealms Essentials
+description: DuneRealms Essentials - Dune Solaris economy, Vault provider, spice sales, and Arrakis travel
 commands:
   exchange:
     description: CHOAM interplanetary player marketplace
@@ -14,6 +15,38 @@ commands:
     description: Solaris, travel, and Arrakis administration
     usage: /duneess help
     aliases: [dess]
+  essentials:
+    description: Open DuneRealms Essentials
+    permission: duneess.basics
+  home:
+    description: Teleport to a saved home
+    permission: duneess.basics
+  sethome:
+    description: Save a named home
+    permission: duneess.basics
+  delhome:
+    description: Remove a named home
+    permission: duneess.basics
+  homes:
+    description: Choose a saved home
+    permission: duneess.basics
+  tpa:
+    description: Request player teleportation
+    permission: duneess.basics
+  tpaccept:
+    description: Accept a teleport request
+    permission: duneess.basics
+  tpdeny:
+    description: Decline a teleport request
+    permission: duneess.basics
+  spawn:
+    description: Return to world spawn
+    permission: duneess.basics
+  server:
+    description: Open Guild server travel
+    permission: duneess.basics
 permissions:
+  duneess.basics:
+    default: true
   dune.admin:
     default: op

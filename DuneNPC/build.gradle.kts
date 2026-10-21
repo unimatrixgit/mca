@@ -8,10 +8,10 @@ repositories {
 }
 dependencies {
     compileOnly(project(":DuneCore"))
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit", module = "bukkit") }
     testImplementation(project(":DuneCore"))
-    testImplementation("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("org.mockito:mockito-core:5.15.2")
     testRuntimeOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit", module = "bukkit") }
@@ -20,3 +20,10 @@ dependencies {
 java { toolchain.languageVersion.set(JavaLanguageVersion.of(21)) }
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }
 tasks.test { useJUnitPlatform() }
+
+tasks.jar { archiveFileName.set("DuneRealms-NPC.jar") }
+
+// Explicit test instrumentation works on Java 21 without dynamic self-attachment.
+val mockitoAgent by configurations.creating
+dependencies { mockitoAgent("org.mockito:mockito-core:5.15.2") { isTransitive = false } }
+tasks.test { jvmArgs("-javaagent:${mockitoAgent.singleFile.absolutePath}") }

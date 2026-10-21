@@ -4,3 +4,9 @@ build/
 # Manual render and conversion intermediates
 tmp/
 __pycache__/
+
+# Generated release packages and credentials in fresh-install network templates
+/built-plugins/
+/built-crossplay/
+/DuneRealms-Velocity-Network/
+/DuneRealms-Velocity-Network.zip

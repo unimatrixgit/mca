@@ -5,9 +5,24 @@ import os, shutil, zipfile, secrets
 ROOT=Path("DuneRealms-Velocity-Network")
 PLANETS={"arrakis":25566,"giedi-prime":25567,"kaitain":25568,"caladan":25569,"sigma-draconis-iv":25570,"spacing-guild":25571}
 IDS={"arrakis":"arrakis","giedi-prime":"giedi_prime","kaitain":"kaitain","caladan":"caladan","sigma-draconis-iv":"sigma_draconis_iv","spacing-guild":"spacing_guild"}
+def copy_jar(source, destination):
+    with zipfile.ZipFile(source) as archive:
+        if archive.testzip() is not None:
+            raise ValueError(f"Corrupt JAR: {source}")
+    shutil.copy2(source, destination)
+
 if ROOT.exists(): shutil.rmtree(ROOT)
 secret=secrets.token_hex(32)
-(ROOT/"proxy").mkdir(parents=True)
+(ROOT/"proxy"/"plugins").mkdir(parents=True)
+if not Path("built-crossplay/universal/Vault-2.5.0.jar").is_file():
+    raise RuntimeError("Vault is required on every backend")
+shutil.copy2("built-crossplay/Vault-LICENSE.txt", ROOT/"Vault-LICENSE.txt")
+shutil.copy2("docs/Native-GUI.md", ROOT/"Native-GUI.md")
+shutil.copy2("built-crossplay/crossplay-lock.json", ROOT/"crossplay-lock.json")
+for jar in Path("built-crossplay/velocity").glob("*.jar"):
+    copy_jar(jar, ROOT/"proxy"/"plugins"/jar.name)
+if len(list((ROOT/"proxy"/"plugins").glob("*.jar"))) != 2:
+    raise RuntimeError("Run tools/download-crossplay.py built-crossplay before packaging")
 (ROOT/"proxy"/"forwarding.secret").write_text(secret+"\n")
 servers="\n".join(f'  {name} = "127.0.0.1:{port}"' for name,port in PLANETS.items())
 (ROOT/"proxy"/"velocity.toml").write_text(f'''config-version = "2.7"
@@ -57,11 +72,17 @@ for name,port in PLANETS.items():
     (plugins/"DuneCore"/"config.yml").write_text(core_config)
     (plugins/"DuneNPC"/"config.yml").write_text(npc)
     (plugins/"DuneEss"/"config.yml").write_text(ess)
+    copy_jar("built-crossplay/spigot/floodgate-spigot.jar", plugins/"floodgate-spigot.jar")
+    for jar in Path("built-crossplay/universal").glob("*.jar"):
+        copy_jar(jar, plugins/jar.name)
+    if name=="spacing-guild":
+        copy_jar("built-plugins/DuneLobby.jar", plugins/"DuneRealms-Lobby.jar")
     for plugin in ("DuneCore","DuneTerrain","DuneNPC","DuneEss"):
-        matches=list(Path("built-plugins").glob(plugin+"*.jar"))
+        matches=list(Path("built-plugins").glob(("DuneRealms-Essentials" if plugin=="DuneEss" else plugin)+"*.jar"))
         if len(matches)!=1: raise RuntimeError(f"Expected one jar for {plugin}, found {matches}")
-        shutil.copy2(matches[0],plugins/(plugin+".jar"))
-(ROOT/"README.md").write_text("""DuneRealms Velocity network — Paper 1.21.4 / Java 21
+        copy_jar(matches[0],plugins/("DuneRealms-"+ ("Essentials" if plugin=="DuneEss" else plugin.removeprefix("Dune"))+".jar"))
+(ROOT/"README.md").write_text("""DuneRealms Velocity network — Paper 1.21.8 / Java 21
+See docs/Native-GUI.md in the source for Floodgate forwarding and shared key setup.
 Run the Velocity proxy and six Paper backends separately. Download the matching server
 and proxy binaries from their official distribution sites. Do not expose backend ports.
 Set eula=true only after reviewing the Minecraft EULA.

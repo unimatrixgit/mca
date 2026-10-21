@@ -1,24 +1,26 @@
-# DuneTerrain for Paper 1.21.4
+# DuneTerrain for Paper 1.21.8
 
-DuneTerrain is a standalone Paper plugin that generates one Dune planet world per server. It includes the five planet profiles, terrain and ore generation, Arrakis spice deposits and sietches, safe world spawn setup, and a protected Spacing Guild navigator.
+DuneRealms terrain runs on Java 21. Build with `gradle build`; install `build/libs/DuneRealms-Terrain.jar`. Keep the existing plugin name/data directory `DuneTerrain`. Existing worlds, player data and configuration files are preserved; new terrain applies only to new chunks. Do not delete or regenerate an existing world to install this update.
 
-New darkstone formations are approximately 100 blocks across (45-55-block radii), with up to three flat plateaus and at most five blocks between levels. Upgrading automatically replaces the old 10/18 default radii in an existing config, while preserving customized sizes. Existing generated chunks are unchanged. With DuneCore installed, loaded spice blooms announce coordinates on Arrakis and start a fifteen-minute countdown to a network-wide Spacing Guild announcement. See [Session 2](../SESSION-2.md).
+## Arrakis update
 
-## Build and install
+- **Dune-highlands** (`dunerealms:dune-highlands`): irregular, terrain-aligned darkstone mountain regions, roughly 100 blocks across, with three sand terraces. Default terrace rise is four blocks (hard maximum five). Mountain sides rise 32 blocks before the terraces; narrow erosion ridges and jagged darkstone spires add up to 40 blocks on the outer shoulders, leaving the three upper flat terraces intact. Three additional broad sand ledges near the foot of the mountain also have four-block default steps; a steep rocky shoulder separates the lower and upper terrace groups. Centres have a 300–500-block gap to their north, south, east and west neighbours. These replace the old circular plateau formations.
+- **Dense Spice** (`dunerealms:dense-spice`): one 30 × 30 rich patch per 512-block placement region, with seed-dependent positions. This is configurable village-like density, not vanilla village placement. Deep orange terracotta represents finite rich spice sand. Each authentic deposit yields four existing tagged Melange Spice items by default. Silk Touch and Fortune cannot clone or multiply it; creative mining consumes the deposit without a reward. A chunk Persistent Data Container stores each deposit's position and removes it on harvest. Ordinary orange terracotta has no spice value. Pistons and explosions cannot move or duplicate registered deposits. Ledger state persists in normal chunk saves across restarts; restoring a world backup restores its historical deposits too.
+- A persistent spice seller appears in the centre of each new rich field. Right-click opens the shared native menu and offers 16 tagged spice at **standard DuneEss price × 1.35**. At 15 Solaris each, 16 cost 324 Solaris. Existing spice sales, taxes and CHOAM trading remain unchanged. Confirming purchases checks distance, inventory capacity and successful economy withdrawal.
+- **Desert villages**: custom four-house sandstone settlements, with cut-sandstone lanes, villagers, beds, non-farming workstations, lanterns and finite shared supply chests. No farmland, crops or hay bales enter the structure palette. Chests use `dunerealms:chests/desert-village`: bread, dried kelp, apples and raw iron. Placement regions default to 768 blocks, with terrain suitability checks.
+- **Old Harkonnen Fortress**: a custom jungle-temple-style Arrakis adaptation with sandstone walls, darkstone pillars, a stepped roof, red banner, stair and underground loot vault. It is a custom layout, not a replacement of Minecraft's built-in jungle temple structure definition. The default attempt rate is one per 1,000 Arrakis chunks, matching the Java desert-well-style chance; uneven terrain can reject an attempt. Its finite chest uses `dunerealms:chests/old-harkonnen-fortress`. When loot is generated, DuneTerrain appends a complete Harkonnen kit from the updated DuneCore kit factory: red faction stillsuit, native equipment attributes and trim, and the enchanted spice shovel. Food and raw iron also come from the loot table. Install updated Core and Terrain together; without the updated Core API, fortress rewards fall back to basic sword/food rather than fabricated faction equipment.
 
-Build the plugin from this directory with Java 21 and Gradle 8.14 or newer:
+Dune-highlands receive three naturally generated compact cave sietches per region by default (three times the one-site regional baseline, with a minimum of three). Each has a cave mouth, sleeping and kitchen chambers, a reservoir, and an independent personal supply cache using the existing loot/claim rules. The existing 2,000-block open-desert sietch placement algorithm and large cave template are unchanged. Configure only the new `sietches.highlands` section to tune or disable highland sites; `sietches.spacing` still controls the original desert grid. These extra caves apply only to new chunks; previously generated highlands are not retrofitted.
 
-```sh
-gradle clean build
-```
+Oasis trees, personal cave sietch supplies, regular suspicious-sand spice deposits and magma-marked spice blows remain enabled. Custom structures are generated only on the Arrakis world.
 
-Copy `build/libs/DuneTerrain-1.0.6.jar` into the Paper server's `plugins/` directory. Set `server.planet` in `plugins/DuneTerrain/config.yml` separately on each backend, then restart.
+## Server datapack installation
 
-Valid values are `arrakis`, `giedi_prime`, `kaitain`, `caladan`, and `sigma_draconis_iv`. All five planet profiles are present in each server's config; change `server.planet` to select the world that backend creates. The generated world is named after the selected planet. Adjust its `planets.<planet>` settings for terrain, biome, surface, water, vegetation, ores, and spawn coordinates.
+`gradle build` also creates `build/distributions/DuneRealms-Dune-Highlands-Datapack.zip`, containing both custom biomes and the structure loot tables. While the server is stopped, copy this ZIP into the **primary world's** `datapacks/` directory (the world selected by `level-name` in `server.properties`), then restart before exploring new terrain. For a primary world named `world`, use `world/datapacks/`; for primary Arrakis, use `arrakis/datapacks/`. Do not replace `level.dat`, world folders or plugin data. Keep the datapack installed after generating custom-biome chunks. It uses Minecraft 1.21.8 data pack format 81.
 
-Install DuneCore alongside DuneTerrain if you want the Guild navigator to open DuneCore's travel menu. DuneCore reads the loaded planet world to identify its local backend. For proxy travel, set `network.local-planet` and `network.servers` in DuneCore's config to match the DuneTerrain selection and proxy server names.
+The pack is server-side: no client mods or mandatory resource packs. Without it, the plugin safely uses Desert biome metadata and direct fallback chest supplies; terrain geometry still works. Custom-biome climate and tint translation through Geyser must be checked on a live Java/Bedrock staging network; no live client compatibility is claimed by unit tests.
 
-Paper's `paper-global.yml` and `paper-world-defaults.yml` do not choose terrain generators; Paper reads those for server and world behavior settings. Terrain generators are registered through `bukkit.yml`. DuneTerrain loads at startup and exposes its generator to Paper. If Arrakis is the primary world (`level-name=arrakis`), add this to `bukkit.yml`:
+For Arrakis as the primary world, use:
 
 ```yaml
 worlds:
@@ -27,15 +29,14 @@ worlds:
     biome-provider: DuneTerrain:arrakis
 ```
 
-For another primary planet, replace both `arrakis` values with that planet name. When using DuneTerrain's separate planet world alongside a normal primary world named `world`, the plugin assigns the generator directly as it creates the planet world; no `bukkit.yml` entry is needed.
+Set `server.planet` in `plugins/DuneTerrain/config.yml` to `arrakis`, `giedi_prime`, `kaitain`, `caladan` or `sigma_draconis_iv`. Public Velocity server names may use hyphens; these internal planet IDs keep underscores. A separate planet world created by the plugin gets its generator and biome provider directly.
 
-The generator applies to newly generated chunks. Existing chunks are never replaced by a config change. If the selected planet world already exists with non-Arrakis terrain or rivers, stop the server, back up and move that world's folder out of the server directory, then restart to create it with DuneTerrain. DuneTerrain registers the generator at startup and creates a separate planet world only after Paper has finished loading, if needed.
+Existing configurations receive the new features through code defaults. Old radius defaults 10/18 automatically upgrade to 45/55; customized radii are retained. `planets.arrakis.highlands` now controls formation enablement, density and mountain rise. The old `darkstone-islands` radius and terrace settings remain compatible, but its old `spacing` and `enabled` values no longer control highlands. Use `highlands.enabled` to disable the replacement. New density options are `dense-spice.spacing`, `desert-villages.spacing` and `harkonnen-fortress.rarity`.
 
-Arrakis uses the Desert biome throughout and has no vanilla vegetation. Sparse persistent-leaf oasis trees remain about 300 blocks apart. A larger underground cave sietch generates about every 2,000 blocks; it has a broad stone-arched cave entrance, connected sleeping and kitchen chambers, a gently winding descent to a larger bottom reservoir with a waterfall, and a personal cache per player containing at least 250 tagged spice, enchanted gold armor, planks, and bread. Raised darkstone islands generate about every 750 blocks, with broad flat sand plateaus and steep, exposed blackstone and basalt sides. Spice blows also generate about every 2,000 blocks as a magma cluster; touching one with a living entity or hitting it with an arrow or trident releases a rich suspicious-sand field worth about 15,000 Solaris at the default 15 Solaris per spice. Admins can use `/dune admin spiceblow [player]` to teleport to the nearest generated or erupted spice blow. Set `sietches.spacing`, `spice-blow.spacing`, and `planets.arrakis.darkstone-islands.spacing` to adjust structure intervals. Random spice patches generate about 35% of 600-by-600-block regions; each patch has roughly 5,000 Solaris in deposits at the default price. Adjust `spice-deposits.patches` for patch frequency, size, or value.
+DuneNPC continues to own Guild Navigators. Install updated DuneCore and DuneEss alongside Terrain for authentic fortress kits and native spice-seller purchases.
 
-DuneCore sends new players who have not chosen a faction from Paper's default `world` to the local planet spawn, so they arrive in the world generated by DuneTerrain.
+## Validation limits
 
-As of DuneTerrain 1.0.7, Guild Navigator NPC creation is handled exclusively by DuneNPC.
-Install DuneNPC with DuneCore for automatic Navigators and their travel menus. Existing tagged
-Navigators are reused. `guild-npc.enabled` now belongs in `plugins/DuneNPC/config.yml`; its legacy
-DuneTerrain value is imported when DuneNPC is first configured.
+Gradle tests cover irregular terrain contours, terrace steps, cardinal spacing, biome footprint alignment, 30 × 30 patch bounds, seeded rarity and deposit identity persistence/consumption. A reflection probe invokes the actual compiled terrain code to render a development preview. Compilation and mocks do not validate server startup, generated-world registry persistence, chunk event timing, structure physics or real Java/Bedrock/ViaVersion clients. Exercise these on a separate staging world before production. No existing user world was opened or changed during development.
+
+[Actual generator render](previews/dune-highlands.png) · [Validation](../docs/Arrakis-Update-Validation.md)

@@ -9,6 +9,11 @@ server:
 sietches:
   enabled: true
   spacing: 2000
+  # Additional sites only in Dune-highlands; open-desert grid stays unchanged.
+  highlands:
+    enabled: true
+    frequency-multiplier: 3
+    minimum-per-region: 3
 
 spice-blow:
   enabled: true
@@ -38,7 +43,11 @@ planets:
     water: {level: 63, swamp-pools: false, coverage: 0.18}
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
     oasis-trees: {enabled: true, spacing: 300, trunk-height: 7}
-    # Nested flat terraces, hard capped at 3 levels and 5 blocks between levels.
+    # Server datapack registers this biome; absent pack safely uses DESERT climate.
+    # Highlands share the irregular rock footprint and have three upper terraces.
+    highlands: {enabled: true, biome: 'dunerealms:dune-highlands', mountain-rise: 32, spire-height: 40, min-spacing: 300, max-spacing: 500}
+    # Legacy spacing/enabled below are superseded by highlands settings.
+    # Upper terraces are hard capped at 3 levels and 5 blocks between levels.
     # Radius 45-55 gives approximately 90-110 blocks across, including a rough edge.
     darkstone-islands: {enabled: true, spacing: 750, min-radius: 45, max-radius: 55, max-height: 14, max-plateaus: 3, plateau-interval: 5}
     # Arrakis: spice only, no mineable ores.
@@ -89,3 +98,19 @@ planets:
     vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
     # Sigma Draconis IV: harsh frontier mining.
     ores: {min-y: -48, max-y: 48, vein-size: 5, IRON_ORE: 11, COPPER_ORE: 6, REDSTONE_ORE: 12, DIAMOND_ORE: 5}
+
+# One finite 30 x 30 rich patch per 512-block region; new Arrakis chunks only.
+dense-spice:
+  enabled: true
+  spacing: 512
+  yield: 4
+
+# Custom sandstone houses; no farms or hay. Shared finite chest loot.
+desert-villages:
+  enabled: true
+  spacing: 768
+
+# Java desert-well-style attempt rate (1 per 1000 chunks), subject to terrain checks.
+harkonnen-fortress:
+  enabled: true
+  rarity: 1000

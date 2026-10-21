@@ -2,7 +2,7 @@
 
 <img src="docs/artwork/arrakis-cover.png" alt="Illustrated Arrakis dunes and Shai-Hulud" width="240" align="right">
 
-A Dune-themed Minecraft Java plugin suite for **Paper 1.21.4 and Java 21**. Explore Arrakis, harvest melange, join a faction, trade through the Spacing Guild, and encounter Shai-Hulud.
+A Dune-themed Minecraft Java plugin suite for **Paper 1.21.8 and Java 21**. Explore Arrakis, harvest melange, join a faction, trade through the Spacing Guild, and encounter Shai-Hulud.
 
 **[Project Dune website](https://project-dune.bonnystoat9.chatgpt.site)** — illustrated landing page, searchable online manual, Races & Houses, Exchange and News. The website is public; profiles and private support tickets require sign-in. Live feeds show “server not connected” until configured; see [DiscordSRV integration](website/DISCORD-FEEDS.md).
 
@@ -27,7 +27,7 @@ A Dune-themed Minecraft Java plugin suite for **Paper 1.21.4 and Java 21**. Expl
 2. Stop the Paper server and back up its worlds, plugin data, and any shared database before replacing an existing release.
 3. Put Vault, DuneCore, DuneNPC, DuneEss, and DuneTerrain JARs in `plugins/`. Keep only one JAR per plugin. Remove the legacy `DuneRealms.jar` if upgrading from that plugin.
 4. Start once to create configuration files. Set the backend's `server.planet` in DuneTerrain and matching `network.local-planet` in DuneCore, then restart after edits.
-5. Put `DuneResourcePack.zip` in the client's `.minecraft/resourcepacks` directory and enable it. Vanilla and Fabric clients use the same resource pack; it does not belong in `mods/`.
+5. Optionally put `DuneResourcePack.zip` in the client's `.minecraft/resourcepacks` directory and enable it. Vanilla and Fabric clients use the same resource pack; it does not belong in `mods/`.
 
 For a planet used as Paper's primary world, configure its generator and biome provider in `bukkit.yml` as explained in the [terrain guide](DuneTerrain/README.md). Existing chunks are preserved when generation settings change.
 
@@ -181,3 +181,10 @@ Expiry pays nothing, keeps cargo, and clears the camp once its last contract end
 
 Sietch Armoury now has its own page with all 68 item entries and full suit abilities. Diplomacy displays current leaders, Emperor, Spice Steward and House of Water through the opt-in DuneCore 1.0.10 DiscordSRV snapshot bridge. Configure the dedicated diplomacy channel as described in website/DISCORD-FEEDS.md.
 
+
+
+### Native menus and DuneRealms Essentials
+
+See [Native GUI and essentials setup](docs/Native-GUI.md) for Java dialogs, Bedrock forms,
+ViaVersion fallbacks, plugin names, crossplay dependency versions, and the staged upgrade checklist.
+Resource packs and client mods are optional; the new menus require neither.

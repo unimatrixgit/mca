@@ -1,0 +1,46 @@
+[
+  {
+    "project": "geyser",
+    "version": "2.12.0",
+    "build": 1267,
+    "platform": "spigot",
+    "name": "Geyser-Spigot.jar",
+    "sha256": "70e4653cd69c771dc456c20d7c909d3ce1542114981023c9e95ea3dc2edd3648",
+    "url": "https://download.geysermc.org/v2/projects/geyser/versions/2.12.0/builds/1267/downloads/spigot"
+  },
+  {
+    "project": "geyser",
+    "version": "2.12.0",
+    "build": 1267,
+    "platform": "velocity",
+    "name": "Geyser-Velocity.jar",
+    "sha256": "5ae8fc19790f28d9e779882713602a645ff3f7ee3389ac355209473a9aa07798",
+    "url": "https://download.geysermc.org/v2/projects/geyser/versions/2.12.0/builds/1267/downloads/velocity"
+  },
+  {
+    "project": "floodgate",
+    "version": "2.2.5",
+    "build": 141,
+    "platform": "spigot",
+    "name": "floodgate-spigot.jar",
+    "sha256": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+    "url": "https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/141/downloads/spigot"
+  },
+  {
+    "project": "floodgate",
+    "version": "2.2.5",
+    "build": 141,
+    "platform": "velocity",
+    "name": "floodgate-velocity.jar",
+    "sha256": "649835022de37ff09255fc626d4bfe7bc2a3b926d07b0dfaf1f51e12bf37001d",
+    "url": "https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/141/downloads/velocity"
+  },
+  {
+    "project": "viaversion",
+    "version": "5.12.1",
+    "platform": "universal",
+    "name": "ViaVersion-5.12.1.jar",
+    "sha256": "b8033807e7182c35003a45962352dd642c1e91880ca281da3a43cb6f481a95a2",
+    "url": "https://github.com/ViaVersion/ViaVersion/releases/download/5.12.1/ViaVersion-5.12.1.jar"
+  }
+]
