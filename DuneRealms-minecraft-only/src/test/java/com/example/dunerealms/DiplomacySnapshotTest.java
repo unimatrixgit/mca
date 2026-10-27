@@ -8,8 +8,8 @@ class DiplomacySnapshotTest {
         var record=new YamlConfiguration(); String id=UUID.randomUUID().toString(); long week=42;
         record.set("votes.emperor.42.tally."+id,2);
         record.set("votes.emperor.42.names."+id,"MuadDib");
-        record.set("votes.house.42.Fremen.tally."+id,1);
-        record.set("votes.house.42.Fremen.names."+id,"MuadDib");
+        record.set("votes.house.42.Vrijduin.tally."+id,1);
+        record.set("votes.house.42.Vrijduin.names."+id,"MuadDib");
         record.set("appointments.steward.week",42);
         record.set("appointments.steward.emperor",id);
         record.set("appointments.steward.house","Atreides");

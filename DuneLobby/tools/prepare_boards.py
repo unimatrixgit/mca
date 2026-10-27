@@ -27,7 +27,7 @@ if __name__ == '__main__':
         'SOLARIS  /  SPICE  /  CONTRACTS', 'Speak to the Exchange Broker.',
         'Planetary markets follow server rules.', 'Discreet supplies: follow the side passage.'])
     board('news.png', 'GUILD DISPATCH', 'NEWS & ARRIVALS', [
-        'Welcome aboard the Spacing Guild.', 'Five worlds. One starport.',
+        'Welcome aboard the Vaerkring.', 'Five worlds. One starport.',
         'Landing apron: arrivals. Launch pads: departures.', 'Read the lecterns for current notices.',
         'Official exchange and discreet market are open.'])
     board('rules.png', 'GUILD CHARTER', 'SAFE PASSAGE FOR EVERY TRAVELLER', [

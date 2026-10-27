@@ -2,7 +2,7 @@
 
 <img src="docs/artwork/arrakis-cover.png" alt="Illustrated Arrakis dunes and Shai-Hulud" width="240" align="right">
 
-A Dune-themed Minecraft Java plugin suite for **Paper 1.21.8 and Java 21**. Explore Arrakis, harvest melange, join a faction, trade through the Spacing Guild, and encounter Shai-Hulud.
+A Dune-themed Minecraft Java plugin suite for **Paper 1.21.8 and Java 21**. Explore Arrakis, harvest melange, join a faction, trade through the Vaerkring, and encounter Shai-Hulud.
 
 **[Project Dune website](https://project-dune.bonnystoat9.chatgpt.site)** — illustrated landing page, searchable online manual, Races & Houses, Exchange and News. The website is public; profiles and private support tickets require sign-in. Live feeds show “server not connected” until configured; see [DiscordSRV integration](website/DISCORD-FEEDS.md).
 
@@ -39,7 +39,7 @@ For a planet used as Paper's primary world, configure its generator and biome pr
 - Arrakis sun exposure, finite-water trading, imperial appointments, prototype politics and invasions, and optional PostgreSQL-backed permits and bounties.
 - **Visible Sniffer sandworms with native zombie AI**, provided by invisible Husk controllers. The Sniffer body can be fought and killed; its death produces a rich spice field and removes its controller.
 - Haunted Fremen zombie raiders, with an increased spawn chance near rich spice fields.
-- Lore sightings with coordinates on Arrakis, followed by a **fifteen-minute Spacing Guild announcement** to online players across the proxy. Timers persist through restart and avoid repeating a sighting on ordinary chunk reload.
+- Lore sightings with coordinates on Arrakis, followed by a **fifteen-minute Vaerkring announcement** to online players across the proxy. Timers persist through restart and avoid repeating a sighting on ordinary chunk reload.
 - Configurable Navigator menus, a Guild travel menu, and a paged in-game help guide.
 - Operator-only Imperial Admin Scepters, automatically supplied to ops, with linked DuneNPC management controls.
 - Roaming Arrakis smugglers with lore-based spice and water missions, a 30-minute real-time deadline, stationary illuminated quest camps and green/purple status particles.
@@ -52,7 +52,7 @@ The other planet terrain profiles already exist: Giedi Prime, Kaitain, Caladan, 
 
 Use `/dune help` or `/duneess help menu`, choose a faction with `/dune choose <faction>`, and equip all four stillsuit pieces from the kit. Use the tagged Spice Harvest Shovel on Arrakis suspicious sand, then `/duneess sell` to sell the collected spice. `/dune` opens the Navigator; `/duneess balance` checks Solaris and `/duneess travel [planet]` opens or requests Guild travel.
 
-The default spice price is 15 Solaris, normal Guild fare is 100, and starting balance is zero. Direct sales can incur the Spacing Trust levy and smuggling consequences. Server operators may change these values.
+The default spice price is 15 Solaris, normal Guild fare is 100, and starting balance is zero. Direct sales can incur the Vaerkring Trust levy and smuggling consequences. Server operators may change these values.
 
 ## Admin sandworm summon
 
@@ -75,7 +75,7 @@ The intended network uses one Paper backend per planet behind Velocity. Match pl
 
 Guild travel is an asynchronous transfer request without an arrival acknowledgment. The global Guild notice needs an online player connection on Arrakis; a due notice waits if that backend is empty. Use `network.enabled: false` for local delivery.
 
-PostgreSQL optionally shares player faction/inventory, Solaris, politics, permits, and bounties. CHOAM state and Guild deadlines remain local files. Player exchange worker assignments are in memory, and shared-mode listing persistence is incomplete. Shared profiles do not synchronize every vanilla player property or plugin tag. This is a gameplay prototype; test multi-backend economics and transfer behavior before a public deployment.
+PostgreSQL optionally shares player faction/inventory (including armor/offhand), XP, selected hotbar slot, Solaris, politics, permits, and bounties. See [shared database setup and recovery](network/database/README.md) for deployment, single-backend profile ownership, and unclean-session recovery. CHOAM state and Guild deadlines remain local files. Player exchange worker assignments are in memory, and shared-mode listing persistence is incomplete. Shared profiles do not synchronize every vanilla player property or plugin tag. This is a gameplay prototype; test multi-backend economics and transfer behavior before a public deployment.
 
 ## Build and verification
 

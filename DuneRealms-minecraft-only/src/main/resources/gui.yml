@@ -19,8 +19,8 @@ menus:
       guild:
         slot: 10
         icon: COMPASS
-        name: "&eSpacing Guild"
-        lore: ["&7Travel to another planet", "&7Fare: %travel_cost% Solaris"]
+        name: "&eVaerkring"
+        lore: ["&7Travel to another planet", "&7Fare: %travel_cost% Dunemarks"]
         action: "open:travel"
       choam:
         slot: 12
@@ -36,8 +36,8 @@ menus:
         action: "open:exchange"
       wallet:
         slot: 16
-        icon: GOLD_INGOT
-        name: "&6Wallet: %balance% Solaris"
+        icon: DUNEMARK
+        name: "&6Wallet: %balance% Dunemarks"
         lore: ["&7Click to view balance"]
         action: "dune:balance"
       sell:
@@ -58,7 +58,7 @@ menus:
         name: "&dWinged Stillsuit Upgrade"
         lore:
           - "&7Merge worn chestplate with an Elytra"
-          - "&6Cost: 1,000,000 Solaris"
+          - "&6Cost: 1,000,000 Dunemarks"
           - "&7Wear stillsuit chestplate and carry Elytra"
         action: "dune:elytra"
       faction:
@@ -146,7 +146,7 @@ menus:
       max-items: 4
       icon: ENDER_PEARL
       name: "&eTravel to %id%"
-      lore: ["&7Fare: %travel_cost% Solaris"]
+      lore: ["&7Fare: %travel_cost% Dunemarks"]
       action: "dune:travel %id%"
   factions:
     title: "&6Dune | Factions"

@@ -1,4 +1,4 @@
-# Spacing Guild lobby world
+# Vaerkring lobby world
 
 A separate **Minecraft Java / Paper 1.21.4 / Java 21** End-dimension lobby. The rebuilt 1.1.0 world is already built and saved in [`../worlds/Dune-Guild-Lobby-1.1.0.zip`](../worlds/Dune-Guild-Lobby-1.1.0.zip); the deterministic builder and runtime companion are here. It does not replace a planet world.
 

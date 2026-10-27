@@ -41,12 +41,12 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         command.setExecutor(this); command.setTabCompleter(this);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         try { store.initialize(); ready=true; }
-        catch(SQLException ex) { plugin.getLogger().warning("CHOAM is offline until the shared PostgreSQL economy is connected."); }
+        catch(SQLException ex) { plugin.getLogger().warning("Koopkring is offline until the shared PostgreSQL economy is connected."); }
     }
     private boolean connected(Player p) {
         // Retry after a transient startup outage; never trade against a fallback local wallet.
         if(!ready) try { store.initialize(); ready=true; } catch(SQLException ignored) { }
-        if(!ready) p.sendMessage(ChatColor.YELLOW+"CHOAM is not connected. Ask an operator to configure DuneCore PostgreSQL and restart DuneEss. No items or Solaris were taken.");
+        if(!ready) p.sendMessage(ChatColor.YELLOW+"Koopkring is not connected. Ask an operator to configure DuneCore PostgreSQL and restart DuneEss. No items or Dunemarks were taken.");
         return ready;
     }
     private String faction(Player p) {
@@ -55,7 +55,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             String house=String.valueOf(core.getClass().getMethod("factionOf",Player.class).invoke(core,p));
             if(List.of("Fremen","Atreides","Harkonnen","Corrino","Ordos").contains(house)) return house;
         } catch(ReflectiveOperationException ignored) { }
-        return "Spacing Guild";
+        return "Vaerkring";
     }
     private ChatColor tint(Player p) {
         return switch(faction(p)) {
@@ -73,8 +73,8 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
     }
     private Screen screen(Player p,String title) {
         Screen s=new Screen(p.getUniqueId());
-        s.title="CHOAM | "+title;
-        s.inventory=Bukkit.createInventory(s,54,tint(p)+"CHOAM | "+title);
+        s.title="Koopkring | "+title;
+        s.inventory=Bukkit.createInventory(s,54,tint(p)+"Koopkring | "+title);
         Material glass=switch(faction(p)) {
             case "Atreides" -> Material.CYAN_STAINED_GLASS_PANE;
             case "Harkonnen" -> Material.RED_STAINED_GLASS_PANE;
@@ -85,6 +85,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         };
         for(int i=0;i<54;i++) if(i<9||i>=45||i%9==0||i%9==8)
             s.inventory.setItem(i,icon(glass," "));
+        s.inventory.setItem(47,com.example.dunegui.DunemarkItems.icon(ChatColor.GOLD+"Dunemarks",List.of(ChatColor.GRAY+"Wallet: "+plugin.balanceLabel(p),ChatColor.GRAY+"Display icon only; balances stay in the ledger.")));
         button(s,49,Material.BARRIER,"Back to Exchange",()->home(p)); return s;
     }
     private void button(Screen s,int slot,Material material,String title,Runnable action,String... lore) {
@@ -96,7 +97,8 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             String category=CATEGORIES.get(i);
             button(s,10+i,ICONS.get(i),category.toUpperCase(Locale.ROOT),()->browse(p,category,0,false,false));
         }
-        button(s,29,Material.EMERALD,"Buy / All Items",()->browse(p,"all",0,false,false));
+        s.inventory.setItem(29,com.example.dunegui.DunemarkItems.icon(ChatColor.GOLD+"Buy / All Items",List.of(ChatColor.GRAY+"Pay with Dunemarks from your wallet.")));
+        s.actions.put(29,()->browse(p,"all",0,false,false));
         button(s,31,Material.CHEST,"Sell Held Item",()->{
             p.closeInventory(); p.sendMessage(ChatColor.YELLOW+"Hold the item to list, then /exchange sell <amount> <price-each>. Example: /exchange sell 16 25");
         },"Tagged Dune items and their attributes are preserved.","Price is for ONE item.");
@@ -123,7 +125,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         Screen s=screen(p,"Administration");
         button(s,20,Material.BOOK,"All Listings",()->browse(p,"all",0,false,true),"All planets. Read-only inspection; normal ownership rules apply.");
         button(s,24,Material.REDSTONE,"Check Database",()->{
-            if(connected(p)) p.sendMessage(ChatColor.GREEN+"Shared CHOAM database connected.");
+            if(connected(p)) p.sendMessage(ChatColor.GREEN+"Shared Koopkring database connected.");
         });
         com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
     }
@@ -152,7 +154,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
                 try { item=decode(row); } catch(RuntimeException ex) { item=new ItemStack(Material.PAPER); }
                 ItemMeta meta=item.getItemMeta();
                 meta.setDisplayName(ChatColor.GOLD+"#"+row.id()+" "+(row.displayName()==null?row.material():row.displayName()));
-                meta.setLore(List.of("Quantity: "+row.quantity(),"Each: "+row.price()+" Solaris","Seller: "+row.sellerName(),"Planet: "+row.origin(),
+                meta.setLore(List.of("Quantity: "+row.quantity(),"Each: "+row.price()+" Dunemarks","Seller: "+row.sellerName(),"Planet: "+row.origin(),
                     row.seller().equals(p.getUniqueId())?"Click to reclaim unsold items":"Click to review purchase"));
                 item.setItemMeta(meta); s.inventory.setItem(slot,item);
                 s.actions.put(slot,()->confirm(p,row.id(),row.seller().equals(p.getUniqueId()))); slot++;
@@ -169,7 +171,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
             if(reclaim&&!row.seller().equals(p.getUniqueId())) throw new IllegalArgumentException("You can reclaim only your own listings.");
             Screen s=screen(p,reclaim?"Reclaim Listing":"Confirm Purchase");
             s.inventory.setItem(22,icon(decode(row).getType(),"#"+id+" "+(row.displayName()==null?row.material():row.displayName()),
-                "Seller: "+row.sellerName(),reclaim?"Return "+row.quantity()+" unsold items":"Buy ONE for "+row.price()+" Solaris"));
+                "Seller: "+row.sellerName(),reclaim?"Return "+row.quantity()+" unsold items":"Buy ONE for "+row.price()+" Dunemarks"));
             button(s,30,Material.LIME_CONCRETE,reclaim?"Confirm Reclaim":"Confirm Purchase",()->{
                 p.closeInventory(); if(reclaim) cancel(p,id); else buy(p,id);
             });
@@ -189,8 +191,7 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         item.setAmount(amount);
         Map<Integer,ItemStack> excess=p.getInventory().addItem(item);
         // Capacity is checked immediately before the transaction on this same server thread.
-        for(ItemStack left:excess.values()) p.getWorld().dropItemNaturally(p.getLocation(),left);
-        p.saveData();
+        if (!excess.isEmpty()) throw new IllegalArgumentException("Inventory changed; the trade was rolled back. Make room and retry.");
     }
     private void sell(Player p,int amount,BigDecimal price) throws SQLException {
         ExchangeStore.validate(amount,price);
@@ -202,10 +203,13 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         ItemStack unit=held.clone(); unit.setAmount(1);
         String name=unit.hasItemMeta()&&unit.getItemMeta().hasDisplayName()?ChatColor.stripColor(unit.getItemMeta().getDisplayName()):unit.getType().name();
         if(name.length()>120) name=name.substring(0,120);
-        store.list(p.getUniqueId(),p.getName(),origin(p),category(unit),unit.getType().name(),amount,price,
-            Base64.getEncoder().encodeToString(unit.serializeAsBytes()),name);
-        held.setAmount(held.getAmount()-amount); p.saveData();
-        p.sendMessage(ChatColor.GREEN+"Listed "+amount+" "+name+" at "+price+" Solaris each.");
+        final String displayName=name;
+        atomic(p, scoped -> {
+            scoped.list(p.getUniqueId(),p.getName(),origin(p),category(unit),unit.getType().name(),amount,price,
+                Base64.getEncoder().encodeToString(unit.serializeAsBytes()),displayName);
+            held.setAmount(held.getAmount()-amount);
+        });
+        p.sendMessage(ChatColor.GREEN+"Listed "+amount+" "+name+" at "+price+" Dunemarks each.");
     }
     private String origin(Player p) {
         String world=p.getWorld().getName().toLowerCase(Locale.ROOT).replace('-','_');
@@ -228,8 +232,11 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         execute(p,()->{
             ExchangeStore.Listing before=store.find(id); ItemStack item=decode(before);
             if(!fits(p,item,1)) throw new IllegalArgumentException("Make room in your inventory first.");
-            ExchangeStore.Listing bought=store.buy(p.getUniqueId(),id);
-            deliver(p,item,1); p.sendMessage(ChatColor.GREEN+"Purchased one item for "+bought.price()+" Solaris.");
+            atomic(p, scoped -> {
+                scoped.buy(p.getUniqueId(),p.getName(),id);
+                deliver(p,item,1);
+            });
+            p.sendMessage(ChatColor.GREEN+"Purchased one item for "+before.price()+" Dunemarks.");
         });
     }
     private void cancel(Player p,long id) {
@@ -237,21 +244,42 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         execute(p,()->{
             ExchangeStore.Listing before=store.find(id); ItemStack item=decode(before);
             if(!fits(p,item,before.quantity())) throw new IllegalArgumentException("Make room for all "+before.quantity()+" items first.");
-            ExchangeStore.Listing cancelled=store.cancel(p.getUniqueId(),id);
-            deliver(p,item,cancelled.quantity()); p.sendMessage(ChatColor.GREEN+"Listing cancelled. Unsold items returned.");
+            atomic(p, scoped -> {
+                ExchangeStore.Listing cancelled=scoped.cancel(p.getUniqueId(),id);
+                deliver(p,item,cancelled.quantity());
+            });
+            p.sendMessage(ChatColor.GREEN+"Listing cancelled. Unsold items returned.");
         });
+    }
+    private interface Trade { void run(ExchangeStore scoped) throws SQLException; }
+    private void atomic(Player p, Trade trade) throws SQLException {
+        Plugin core=Bukkit.getPluginManager().getPlugin("DuneCore");
+        if (core==null) throw new SQLException("DuneCore network profiles are required");
+        try {
+            java.util.function.Consumer<java.sql.Connection> work = connection -> {
+                try { trade.run(ExchangeStore.bound(connection)); }
+                catch (SQLException ex) { throw new java.util.concurrent.CompletionException(ex); }
+            };
+            core.getClass().getMethod("transactNetworkInventory",Player.class,java.util.function.Consumer.class).invoke(core,p,work);
+        } catch (ReflectiveOperationException ex) {
+            Throwable cause=ex instanceof java.lang.reflect.InvocationTargetException ? ex.getCause() : ex;
+            if (cause instanceof java.util.concurrent.CompletionException && cause.getCause()!=null) cause=cause.getCause();
+            if (cause instanceof IllegalArgumentException invalid) throw invalid;
+            if (cause instanceof SQLException sql) throw sql;
+            throw new SQLException("Network inventory transaction unavailable; install matching Core and Essentials",cause);
+        }
     }
     private interface Operation { void run() throws SQLException; }
     private void execute(Player p,Operation action) {
         try { action.run(); }
         catch(IllegalArgumentException ex) { p.sendMessage(ChatColor.YELLOW+ex.getMessage()); }
         catch(SQLException ex) {
-            ready=false; plugin.getLogger().warning("CHOAM SQL operation failed: "+ex.getSQLState());
+            ready=false; plugin.getLogger().warning("Koopkring SQL operation failed: "+ex.getSQLState());
             p.sendMessage(ChatColor.RED+"The market database is unavailable. Please try again later.");
         }
     }
     @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
-        if(!(sender instanceof Player p)) { sender.sendMessage("Open the CHOAM exchange in-game with /exchange."); return true; }
+        if(!(sender instanceof Player p)) { sender.sendMessage("Open the Koopkring exchange in-game with /exchange."); return true; }
         if(args.length==0) { home(p); return true; }
         String action=args[0].toLowerCase(Locale.ROOT);
         if(action.equals("admin")) { if(p.hasPermission("dune.admin")) admin(p); else p.sendMessage(ChatColor.RED+"Operators only."); return true; }

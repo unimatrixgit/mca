@@ -1,7 +1,7 @@
 # DuneRealms Pterodactyl deployment
 
 ## Topology
-- dune-lobby-01: CloudPanel, public website, Pterodactyl **panel**, Wings node for Spacing Guild.
+- dune-lobby-01: CloudPanel, public website, Pterodactyl **panel**, Wings node for Vaerkring.
 - dune-proxy-01: Wings node for Velocity.
 - dune-arrakis-01, dune-giedi-01, dune-kaitain-01, dune-caladan-01, dune-sigma-01:
   one Wings node each for its Paper backend.

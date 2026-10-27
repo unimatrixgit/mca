@@ -98,4 +98,28 @@ class ExchangeStoreTest {
         assertThrows(IllegalArgumentException.class,()->listing(0,"1"));
         assertThrows(IllegalArgumentException.class,()->listing(65,"1"));
     }
+    @Test void committedSaleRecordsBuyerItemAndExactPaymentButFailuresDoNot() throws Exception {
+        long id=listing(2,"12.50");store.buy(buyer,"BuyerName",id);
+        try(Connection c=DriverManager.getConnection(url);Statement q=c.createStatement();ResultSet r=q.executeQuery("SELECT * FROM dune_exchange_sales")) {
+            assertTrue(r.next());assertEquals(seller,r.getObject("seller",UUID.class));
+            assertEquals(buyer,r.getObject("buyer",UUID.class));assertEquals("BuyerName",r.getString("buyer_name"));
+            assertEquals(1,r.getInt("quantity"));assertEquals(new BigDecimal("12.50"),r.getBigDecimal("total_price"));assertFalse(r.next());
+        }
+        assertThrows(IllegalArgumentException.class,()->store.buy(seller,id));store.cancel(seller,id);
+        try(Connection c=DriverManager.getConnection(url);Statement q=c.createStatement();ResultSet r=q.executeQuery("SELECT COUNT(*) FROM dune_exchange_sales")) {
+            assertTrue(r.next());assertEquals(1,r.getInt(1));
+        }
+    }
+    @Test void externallyOwnedTransactionRollsBackStockWalletsAndHistoryTogether() throws Exception {
+        long id=listing(1,"25");
+        try(Connection c=DriverManager.getConnection(url)) {
+            c.setAutoCommit(false);ExchangeStore.bound(c).buy(buyer,"Buyer",id);
+            assertFalse(c.isClosed());c.rollback();
+        }
+        assertEquals(1,store.find(id).quantity());assertEquals(new BigDecimal("100.00"),balance(buyer));
+        assertEquals(new BigDecimal("0.00"),balance(seller));
+        try(Connection c=DriverManager.getConnection(url);Statement q=c.createStatement();ResultSet r=q.executeQuery("SELECT COUNT(*) FROM dune_exchange_sales")) {
+            assertTrue(r.next());assertEquals(0,r.getInt(1));
+        }
+    }
 }

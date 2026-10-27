@@ -44,7 +44,7 @@ def main():
     out.mkdir(parents=True,exist_ok=True)
     (out/"proxy").mkdir(exist_ok=True)
     lines=['config-version = "2.7"','bind = "0.0.0.0:'+str(nodes["proxy"]["port"])+'"',
-           'motd = "<gold>DuneRealms <gray>| Spacing Guild"','show-max-players = 100',
+           'motd = "<gold>DuneRealms <gray>| Vaerkring"','show-max-players = 100',
            'online-mode = true','player-info-forwarding-mode = "modern"',
            'forwarding-secret-file = "forwarding.secret"','[servers]']
     for name in BACKENDS:

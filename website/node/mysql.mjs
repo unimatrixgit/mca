@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 import {readFile} from 'node:fs/promises';
 export function mysqlSql(sql) {
-  return sql.replace(/ON CONFLICT\(user_id\) DO UPDATE SET /gi,'ON DUPLICATE KEY UPDATE ')
+  return sql.replace(/ON CONFLICT\([a-z_, ]+\) DO UPDATE SET /gi,'ON DUPLICATE KEY UPDATE ')
     .replace(/excluded\.([a-z_]+)/gi,'VALUES($1)');
 }
 export async function openDatabase(env) {

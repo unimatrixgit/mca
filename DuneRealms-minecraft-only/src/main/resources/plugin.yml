@@ -1,5 +1,5 @@
 name: DuneCore
-version: 1.0.11
+version: 1.0.12
 main: com.example.dunerealms.DuneCore
 api-version: '1.21.8'
 depend: [Vault, DuneEss]

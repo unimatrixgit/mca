@@ -4,7 +4,7 @@
 
 ## Current layout: seven virtual machines
 - `dune-proxy-01`: Velocity, public Minecraft TCP 25565.
-- `dune-lobby-01`: Spacing Guild Paper (25571) **plus CloudPanel website** (80, 443, 8443).
+- `dune-lobby-01`: Vaerkring Paper (25571) **plus CloudPanel website** (80, 443, 8443).
 - `dune-arrakis-01`: Arrakis Paper, private TCP 25566.
 - `dune-giedi-01`: Giedi Prime Paper, private TCP 25567.
 - `dune-kaitain-01`: Kaitain Paper, private TCP 25568.
@@ -36,5 +36,5 @@ Velocity; if CloudPanel is on that VM install CloudPanel before Minecraft.
 6. Review/accept Minecraft EULA on each backend, then enable/start services
    using `sudo systemctl enable --now dune-NODE`.
 
-The generated ZIP includes a *prototype* Spacing Guild terrain profile; the
+The generated ZIP includes a *prototype* Vaerkring terrain profile; the
 custom lobby generation and navigator behavior are not yet implemented.

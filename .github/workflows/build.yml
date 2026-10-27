@@ -19,12 +19,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build the illustrated website and API
-        run: node scripts/build.mjs
       - name: Install website server dependencies
         run: npm install --omit=dev --no-audit --no-fund
+      - name: Build the illustrated website and API
+        run: node scripts/build.mjs
       - name: Test feeds and compiled pages
         run: node --test tests/*.test.mjs
+      - name: Test inventory ownership and private market bridge
+        run: node --test ../control-panel-inventory/tests/*.test.mjs
       - name: Upload website build
         uses: actions/upload-artifact@v4
         with:

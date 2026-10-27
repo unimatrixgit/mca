@@ -181,7 +181,7 @@ final class LobbyBuilder {
         for(int y=99;y<=111;y+=2) for(int s:new int[]{-1,1}) box(s<0?-4:2,y,-18,s<0?-2:4,y,-17,Material.SANDSTONE);
         for(int x:new int[]{-14,14}) for(int z=-25;z<=-11;z+=5) lamp(x,87,z,false);
         box(11,87,-12,15,88,-12,Material.WAXED_CUT_COPPER);
-        sign(13,88,-11,BlockFace.SOUTH,"SPACING GUILD","NAVIGATOR","Right-click liaison","for planet travel");
+        sign(13,88,-11,BlockFace.SOUTH,"VAERKRING","NAVIGATOR","Right-click liaison","for planet travel");
         for(int x=-18;x<=18;x++) for(int z=-5;z<=23;z++) {
             double r=Math.hypot(x,z-10);
             if((r>=11.5 && r<=12.5)||(r>=4.5&&r<=5.5)) block(x,80,z,Material.GOLD_BLOCK);
@@ -276,7 +276,7 @@ final class LobbyBuilder {
             box(x-5,81,25,x-5,86,25,Material.DARK_OAK_LOG); box(x+5,81,25,x+5,86,25,Material.DARK_OAK_LOG);
             box(x-5,87,24,x+5,87,26,Material.BLACK_WOOL);
             block(x,83,25,Material.LANTERN);
-            sign(x,82,27,BlockFace.SOUTH,"CHOAM EXCHANGE","Official market","Right-click broker","to open exchange");
+            sign(x,82,27,BlockFace.SOUTH,"Koopkring EXCHANGE","Official market","Right-click broker","to open exchange");
         }
         for(int x=-84;x<=-48;x+=6) { box(x,81,54,x+2,82,56,Material.BARREL); block(x+1,83,55,Material.LANTERN); }
         box(-76,81,40,-70,81,44,Material.DARK_OAK_PLANKS);
@@ -342,7 +342,7 @@ final class LobbyBuilder {
             for(int y:new int[]{83,86,89}) box(x-5,y,21,x+5,y,22,Material.WAXED_CUT_COPPER);
             for(int i=0;i<5;i++) displayItem(x-4+i*2,84,23,new Material[]{Material.DIAMOND,Material.GOLD_INGOT,Material.ORANGE_DYE,Material.POTION,Material.EMERALD}[i]);
             for(int dx:new int[]{-3,3}) { block(x+dx,83,26,Material.BREWING_STAND); block(x+dx,87,26,Material.LANTERN); }
-            title(x+.5,89,26.5,x==-66?"CHOAM":x==-82?"TRADE":"CONTRACTS");
+            title(x+.5,89,26.5,x==-66?"Koopkring":x==-82?"TRADE":"CONTRACTS");
         }
         for(int x:new int[]{-85,-47}) for(int z=34;z<=46;z+=4) {
             box(x-1,81,z-1,x+1,82,z+1,Material.DARK_OAK_PLANKS);

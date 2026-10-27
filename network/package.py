@@ -27,7 +27,7 @@ if len(list((ROOT/"proxy"/"plugins").glob("*.jar"))) != 2:
 servers="\n".join(f'  {name} = "127.0.0.1:{port}"' for name,port in PLANETS.items())
 (ROOT/"proxy"/"velocity.toml").write_text(f'''config-version = "2.7"
 bind = "0.0.0.0:25565"
-motd = "<gold>DuneRealms <gray>| Spacing Guild"
+motd = "<gold>DuneRealms <gray>| Vaerkring"
 show-max-players = 100
 online-mode = true
 player-info-forwarding-mode = "modern"
@@ -86,8 +86,8 @@ See docs/Native-GUI.md in the source for Floodgate forwarding and shared key set
 Run the Velocity proxy and six Paper backends separately. Download the matching server
 and proxy binaries from their official distribution sites. Do not expose backend ports.
 Set eula=true only after reviewing the Minecraft EULA.
-Spacing Guild is the first-join lobby (port 25571); connect players to Velocity port 25565.
-IMPORTANT: Spacing Guild world generation is NOT yet implemented by DuneTerrain; its
+Vaerkring is the first-join lobby (port 25571); connect players to Velocity port 25565.
+IMPORTANT: Vaerkring world generation is NOT yet implemented by DuneTerrain; its
 configuration is a proposed profile and will not generate a custom lobby until code is added.
 generation.yml is a staging copy; DuneTerrain currently reads config.yml.
 Guild NPC/return command and cross-server economy synchronization are not verified.

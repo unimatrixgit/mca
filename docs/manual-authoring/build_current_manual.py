@@ -73,7 +73,7 @@ def footer(c,doc):
         c.setFillColor(PALE);c.setFont('ArialBold',10);c.drawString(48,H-56,'PROJECT DUNE / PLAYER + ADMIN EDITION')
         c.setFont('GeorgiaBold',68);c.drawString(48,H-140,'DUNE')
         c.setFont('Arial',25);c.drawString(48,H-178,'The illustrated field manual')
-        c.setFont('Arial',11);c.drawString(48,H-213,'ARRAKIS / FACTIONS / SPICE / THE SPACING GUILD')
+        c.setFont('Arial',11);c.drawString(48,H-213,'ARRAKIS / FACTIONS / SPICE / THE VAERKRING')
         c.setStrokeColor(PALE);c.line(48,H-233,W-48,H-233)
         c.setFont('Arial',9);c.drawString(48,H-251,'DuneCore 1.0.8  |  DuneNPC 1.0.0  |  DuneTerrain 1.0.7  |  DuneEss 1.0.1')
         c.setFillColor(colors.HexColor('#102322'));c.setFillAlpha(.80);c.rect(0,0,W,59,fill=1,stroke=0);c.setFillAlpha(1)
@@ -150,7 +150,7 @@ HEROES = {
     'Meeting the roaming smugglers': ('A contact beyond the ledgers','smuggler-spice-mission.png','Sand-tan robes and green dust identify a roaming contact. Approach on Arrakis and right-click to see the smuggling offers available to your house.'),
     'Water for the Hidden Sietch': ('A light in the desert','smuggler-water-camp.png','Purple dust marks an active quest contact. Invisible light blocks brighten its camp while the player carries water toward a different smuggler.'),
     'The Imperial Admin Scepter': ('The keeper of the routes','imperial-npc-administration.png','The glowing blaze rod opens operator controls. DuneNPC manages Guild Navigators, smugglers and their missions through its own linked administration page.'),
-    'The Arrakis landscape': ('Arrakis / the desert world','world-0.png','Arrakis receives the full gameplay treatment in this edition: terrain, spice, sietches, survival, worms, rights and smuggling. This is the active field guide.'),
+    'The Arrakduin landscape': ('Arrakduin / the desert world','world-0.png','Arrakis receives the full gameplay treatment in this edition: terrain, spice, sietches, survival, worms, rights and smuggling. This is the active field guide.'),
     'Giedi Prime': ('Giedi Prime / industrial shadows','world-1.png','A lore-inspired view of the Harkonnen world. The following reserved chapter records the released swamp and blackstone profile; the depicted industry is concept scenery.'),
     'Kaitain': ('Kaitain / the Imperial horizon','world-2.png','A lore-inspired Imperial vista. The following reserved chapter records the released plains, flowers and ores; palace architecture is concept scenery.'),
     'Caladan': ('Caladan / water and green lands','world-3.png','A lore-inspired Atreides vista. The following reserved chapter records the current jungle and water profile; additional local missions remain future documentation.'),
@@ -162,7 +162,7 @@ toc=TableOfContents();toc.levelStyles=[ParagraphStyle('toc',fontName='Arial',fon
 toc.tableStyle=TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),0),('RIGHTPADDING',(0,0),(-1,-1),0),('TOPPADDING',(0,0),(-1,-1),1),('BOTTOMPADDING',(0,0),(-1,-1),1)])
 story += [Paragraph('HOW TO USE THIS BOOK',STYLE['label']),Paragraph('Contents',STYLE['title']),Paragraph('Player guidance comes first, followed by command references and server administration. Each of the four reserved planet chapters contains its currently implemented profile and space for future additions. Configuration values shown here are shipped defaults; your administrator may change them.',STYLE['body']),toc,PageBreak()]
 raw=Path(__file__).with_name('manual-current-content.txt').read_text(encoding='utf-8')
-artwork_intro('Beneath the sands of Arrakis','A field guide to the desert: reach a sietch, prepare your stillsuit, follow the spice and watch for Shai-Hulud. The gameplay chapters that follow explain exactly what the release implements.',ART/'sietch-panorama.png')
+artwork_intro('Beneath the sands of Arrakduin','A field guide to the desert: reach a sietch, prepare your stillsuit, follow the spice and watch for Shai-Hulud. The gameplay chapters that follow explain exactly what the release implements.',ART/'sietch-panorama.png')
 for block in raw.split('\n===PAGE===\n'):
     lines=block.strip().splitlines()
     if not lines:continue
@@ -171,12 +171,12 @@ for block in raw.split('\n===PAGE===\n'):
     scenes={
         'Harvesting melange': ('Melange among the terraces','spice-expedition.png','Wear your stillsuit, recognize the tagged netherite shovel and harvest the desert. Fremen receive two spice units per deposit. The plateau formations can have up to three levels, with at most five blocks between their heights.'),
         'Shai-Hulud: model, AI and combat': ('When Shai-Hulud rises','shai-hulud-encounter.png','A visible Sniffer body carries the sandworm skin while an invisible Husk supplies native zombie AI. Fight the visible body. Its default 500 health makes it a serious encounter; its death creates a rich spice field rather than a direct cash payout.'),
-        'The five-backend network': ('The Guild connects the worlds','guild-navigator.png','The Spacing Guild navigator opens planet travel. Arrakis sighting coordinates remain local for fifteen real minutes before the Guild informs the proxy network. The heighliner in this illustration is lore scenery, not a flyable feature in the plugin.')
+        'The five-backend network': ('The Guild connects the worlds','guild-navigator.png','The Vaerkring navigator opens planet travel. Arrakis sighting coordinates remain local for fifteen real minutes before the Guild informs the proxy network. The heighliner in this illustration is lore scenery, not a flyable feature in the plugin.')
     }
     if title in scenes:
         scene_title,filename,caption=scenes[title]
         sh=Paragraph(scene_title,STYLE['title']);sh.toc_title=scene_title
-        story.extend([Paragraph('ARRAKIS / ILLUSTRATED FIELD NOTES',STYLE['label']),sh,Image(str(ROOT/'docs/artwork'/filename),width=W-96,height=(W-96)*2/3),Spacer(1,20),Paragraph(caption,STYLE['body']),Spacer(1,12),Paragraph('The spice must flow.',STYLE['sub']),Paragraph('Concept artwork illustrates the game\'s themes. Creature scale and architecture are artistic interpretations, not screenshots. The following chapter describes the actual release behavior.',STYLE['small']),PageBreak()])
+        story.extend([Paragraph('ARRAKDUIN / ILLUSTRATED FIELD NOTES',STYLE['label']),sh,Image(str(ROOT/'docs/artwork'/filename),width=W-96,height=(W-96)*2/3),Spacer(1,20),Paragraph(caption,STYLE['body']),Spacer(1,12),Paragraph('The spice must flow.',STYLE['sub']),Paragraph('Concept artwork illustrates the game\'s themes. Creature scale and architecture are artistic interpretations, not screenshots. The following chapter describes the actual release behavior.',STYLE['small']),PageBreak()])
     heading=Paragraph(markup(title),STYLE['title']);heading.toc_title=title
     story += [Paragraph(markup(label.upper()),STYLE['label']),heading]
     if title=='The fifteen-minute Guild notice':story.append(GuildTimeline())

@@ -64,7 +64,7 @@ final class EssentialsBasics implements CommandExecutor, TabCompleter, Listener 
         choices.add(new NativeMenus.Choice("Spawn","Return to this world's spawn.",()->p.performCommand("spawn")));
         choices.add(new NativeMenus.Choice("Guild servers","Travel using existing Solaris fares and permissions.",()->p.performCommand("duneess travel")));
         choices.add(new NativeMenus.Choice("Solaris","Show your balance.",()->p.performCommand("duneess balance")));
-        choices.add(new NativeMenus.Choice("CHOAM Exchange","Buy, list and reclaim items.",()->p.performCommand("exchange")));
+        choices.add(new NativeMenus.Choice("Koopkring Exchange","Buy, list and reclaim items.",()->p.performCommand("exchange")));
         choices.add(new NativeMenus.Choice("Help","Open the Dune Field Guide.",()->p.performCommand("duneess help menu")));
         NativeMenus.show(plugin,p,"DuneRealms Essentials","Solaris: "+plugin.economy().format(plugin.economy().getBalance(p)),choices);
     }
@@ -98,7 +98,7 @@ final class EssentialsBasics implements CommandExecutor, TabCompleter, Listener 
                     if(args.length!=1) throw new IllegalArgumentException("Usage: /tpa <online player>");
                     Player target=Bukkit.getPlayerExact(args[0]);
                     if(target==null || target.equals(p) || !p.canSee(target)) throw new IllegalArgumentException("Choose another online player on this server.");
-                    if(!target.getWorld().equals(p.getWorld())) throw new IllegalArgumentException("Use Guild travel to reach that player's world first.");
+                    if(!target.getWorld().equals(p.getWorld())) throw new IllegalArgumentException("Use Vaerkring travel to reach that player's world first.");
                     requests.put(target.getUniqueId(),new Request(p.getUniqueId(),System.nanoTime()+60_000_000_000L));
                     target.sendMessage(p.getName()+" requests to teleport to you. /tpaccept or /tpdeny (60 seconds).");
                     p.sendMessage("Teleport request sent.");

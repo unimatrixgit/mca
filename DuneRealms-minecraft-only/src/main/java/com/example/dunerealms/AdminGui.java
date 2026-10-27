@@ -64,7 +64,7 @@ final class AdminGui implements Listener {
         holder.inventory = Bukkit.createInventory(holder, 36, ChatColor.GOLD + "Dune | Imperial Administration");
         for (int slot = 0; slot < 36; slot++) holder.inventory.setItem(slot, icon(Material.BLACK_STAINED_GLASS_PANE, " "));
         holder.inventory.setItem(10, icon(Material.SNIFFER_SPAWN_EGG, "Summon Shai-Hulud", "Spawn a sandworm at your position on Arrakis."));
-        holder.inventory.setItem(12, icon(Material.VILLAGER_SPAWN_EGG, "Place Guild Navigator", "Spawn a Guild NPC at your position."));
+        holder.inventory.setItem(12, icon(Material.VILLAGER_SPAWN_EGG, "Place Vaerkring Routekeeper", "Spawn a Guild NPC at your position."));
         holder.inventory.setItem(14, icon(Material.ORANGE_DYE, "Give Test Spice", "Receive one tagged spice item."));
         holder.inventory.setItem(16, icon(Material.COMPARATOR, "Reload Menus", "Reload gui.yml from disk."));
         holder.inventory.setItem(20, icon(Material.NETHERITE_CHESTPLATE, "Receive Faction Kit", "Receive your selected faction's kit."));

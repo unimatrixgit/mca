@@ -66,7 +66,7 @@ ports protected. Do not regenerate keys, forwarding secrets or player UUID setti
 GitHub build.yml publishes **DuneRealms-All-Server-Jars.zip**, containing every Dune plugin,
 Vault and the platform-specific crossplay plugins together, plus the lock manifest and instructions.
 The network workflow puts the appropriate JARs into each server directory and includes the lobby
-plugin only on the Spacing Guild backend. Paper/Velocity engine executables are obtained separately;
+plugin only on the Vaerkring backend. Paper/Velocity engine executables are obtained separately;
 this package contains server **plugin** JARs.
 
 ## Minimal essentials

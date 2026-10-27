@@ -1,32 +1,30 @@
-# CHOAM exchange — DuneEss 1.0.2
+# CHOAM exchange — DuneEss 1.0.4
 
-Install `DuneEss-1.0.2.jar` with Vault and the existing DuneCore/DuneTerrain/DuneNPC suite on Paper 1.21.4 / Java 21. Replace the previous DuneEss JAR while the server is stopped. Existing wallet and listing tables are retained; startup adds nullable item-payload and display-name columns to the listing table.
+Install matching DuneRealms-Core.jar (1.0.12) and DuneRealms-Essentials.jar (1.0.4), with Vault and existing modules on Java 21 / Paper 1.21.8. Stop all planetary servers, back up SQL/player data, replace only these plugin JARs and configure the shared PostgreSQL database on every backend before starting. Preserve all worlds/configurations. See [database setup](../network/database/README.md).
 
 ## Player controls
 
-- `/exchange` (also `/choam` or `/market`): faction-themed standard inventory menu. Actual DuneCore faction selection controls its appearance, including Ordos and unaffiliated Guild styling. Uses vanilla inventory slots; no Java-only client UI is required.
-- `/exchange sell <amount> <price-each>`: reserve 1–64 held items, priced per item, maximum 1,000,000 Solaris with two decimal places. You cannot offer more than the held stack. Item names, enchantments, Dune tags and other serialized item data are preserved. Operator admin rods cannot be sold.
-- `/exchange buy <id>`: review a listing, then confirm purchase of **one** item. The inventory GUI uses the same confirmation. Self-purchases are refused.
-- `/exchange mine`: view your offers; select one to confirm cancellation and reclaim all unsold items. Only the seller can cancel. Your offers span all planets regardless of the browsing filter.
-- `/exchange cancel <id>`: open the reclaim confirmation directly.
-- `/exchange admin`: permission `dune.admin`, with all-planet listing inspection and a real connection check. Normal ownership rules still apply.
+- `/exchange` (`/choam`, `/market`): native Java/Bedrock exchange menu.
+- `/exchange sell <amount> <price-each>`: list 1–64 held items, up to 1,000,000 Solari per item, two decimal places. Items are escrowed with names, enchantments, Dune metadata and item data. Administrative items are rejected.
+- `/exchange buy <id>`: inspect and confirm the purchase of one item.
+- `/exchange mine`: browse your listings and reclaim unsold stock.
+- `/exchange cancel <id>`: confirm cancellation of your own listing.
+- `/exchange admin`: operator inspection and database check. Ownership rules still apply.
 
-Category filters, all-items browsing, planet filters and pagination work together. The GUI identifies its own inventories through holders, cancels item transfers and drags, and prevents queued duplicate confirmations after a screen changes.
+Filters, pagination, capacity checks, stale-confirmation handling and self-purchase rejection remain supported. Missing/incompatible shared Core profiles refuse to trade; lobby inventories never enter the planetary exchange.
 
-## Shared database
+## Transactions and history
 
-Enable PostgreSQL in `plugins/DuneCore/config.yml`, using the same database on every backend. Leave `database.use-core-database: true` in DuneEss. DuneEss first initializes the existing shared `dune_economy_balances` ledger, then initializes the exchange. Restart after configuration changes. The exchange refuses to trade against fallback local wallets or an unavailable shared economy. Menu/guide access still works when unconnected, and no demo items are sold in-game.
+Every actual player trade runs through Core's owned profile connection. Listing escrow, buyer debit, seller credit, stock changes, the resulting authoritative player inventory checkpoint, and any completed sale history commit together. A normal SQL failure restores the in-memory inventory and rolls back all SQL. If the commit outcome is uncertain, the profile is quarantined and ordinary quit saving is suppressed until manual recovery. Excess item delivery aborts the transaction instead of dropping items into the world.
 
-Payments, seller credit and stock changes share one SQL transaction with a locked listing row. Buying the final item deletes the row instead of attempting an invalid zero quantity. Insufficient funds, a missing seller wallet or another transaction failure rolls back the database changes. Legacy material-only listings remain readable. Unsold item payloads are stored in PostgreSQL.
+The sales ledger `dune_exchange_sales` retains a row per completed unit purchase, including seller/buyer names and UUIDs, item/material, quantity, exact unit/total price, origin and timestamp. Cancelling or failing a trade creates no sale. Earlier sales cannot be reconstructed retroactively. Configured shared economy deposits/withdrawals now use atomic SQL arithmetic and do not fall back to stale local balances during SQL outages.
 
-**Verification limits:** automated SQL tests use H2 in PostgreSQL compatibility mode, and GUI tests use mocked Paper events. A live PostgreSQL + Paper/Velocity/Geyser staging run has not been performed. Queries are bounded and have five-second query/connect/socket timeouts but currently run on the server thread. Bukkit inventory/player-file writes and SQL commits are separate operations: abrupt process loss between them is not an exactly-once transfer guarantee. Keep normal backups and test staging before opening a public multi-backend economy. This change does not alter the wider Core profile/transfer synchronization system.
+General gameplay/container changes outside these exchange transactions still rely on autosaves and unclean-session recovery. This is not an exactly-once guarantee for every Minecraft/plugin interaction. Ender chests remain local. SQL remains synchronous with bounded timeouts; profile capacity and staging tests are documented in the database guide.
 
-## Website
+## Account page and website
 
-The website uses 40 clearly labelled fictional offers while the game-market gateway is unavailable. Demo offers never display purchase commands. When the configured gateway returns a valid live response, it switches to read-only live listings automatically on page load or Refresh; a valid empty live response remains an empty live market.
+[control-panel-inventory](../control-panel-inventory/README.md) contains the account-page armor mannequin, saved inventory and **History of sales**, plus authenticated read-only API handlers, a private market listings bridge, integration instructions and a self-contained demo preview. The CP source is not in MC, so live wiring/deployment is a handoff task. Purchases remain in-game. Existing public website demo offers remain labelled until its operator enables the supplied live bridge.
 
-The current gateway expects an HTTPS read-only bridge in `EXCHANGE_LISTINGS_URL`, authenticated server-to-server with `EXCHANGE_READ_TOKEN`. These are runtime secrets, never browser code. No bridge or production database is provisioned by this change. The response is `{ "listings": [{ "id": 1, "material": "IRON_INGOT", "category": "ores", "origin": "giedi_prime", "seller": "Trader", "quantity": 16, "price": 90 }] }`. Category and planet IDs must match the website's documented filter IDs. The bridge reads `dune_exchange_listings`; the website never executes a purchase or writes to SQL.
+## Validation
 
-## Checks
-
-Run `gradle build` in DuneEss and `npm run build` / `npm test` in website. SQL coverage includes the final item, partial purchases, insufficient funds, rollback after debit, concurrent buyers, ownership, filters/pagination and validation. GUI coverage includes holder isolation, bottom-inventory transfers, drags, stale duplicate confirmation and admin permission enforcement.
+Run `gradle build` in Core and DuneEss and `node --test tests/*.test.mjs` in control-panel-inventory. Core tests use mocked JDBC/Paper and exchange SQL tests use H2 PostgreSQL compatibility mode, including concurrency, rollback, sales ledger and externally owned transactions. Live PostgreSQL/Paper/Velocity/Bedrock validation is pending.

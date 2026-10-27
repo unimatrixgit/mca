@@ -12,7 +12,9 @@ test('Demo market covers every category and planet, with enough listings for pag
 test('Search includes material names, categories, planets and sellers without mutating source',()=>{
   const original=demoListings.map(x=>x.id);
   assert.ok(filterListings(demoListings,{search:'iron ingot'}).length);
-  assert.equal(filterListings(demoListings,{search:'caladan'}).length,filterListings(demoListings,{planet:'caladan'}).length);
+  assert.equal(filterListings(demoListings,{search:'Vrijduin reclaimer suit'}).length,1);
+  assert.equal(filterListings(demoListings,{search:'pelareth'}).length,filterListings(demoListings,{planet:'caladan'}).length);
+  assert.equal(filterListings(demoListings,{search:'kaladam'}).length,filterListings(demoListings,{planet:'caladan'}).length);
   assert.ok(filterListings(demoListings,{search:'ores & minerals'}).length);
   const sorted=filterListings(demoListings,{sort:'price'});
   assert.ok(sorted.every((x,i)=>i===0||x.price>=sorted[i-1].price));

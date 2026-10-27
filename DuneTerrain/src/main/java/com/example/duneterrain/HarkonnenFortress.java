@@ -39,7 +39,7 @@ final class HarkonnenFortress extends BlockPopulator implements Listener {
         }
         r.setType(x+3,y-5,z+3,Material.CHEST);
         if(r.getBlockState(x+3,y-5,z+3) instanceof Chest chest) {
-            chest.setCustomName("Old Harkonnen Fortress");
+            chest.setCustomName("Old Harkveen Fortress");
             var table=Bukkit.getLootTable(LOOT);
             if(table!=null){chest.setLootTable(table);chest.setSeed(DenseSpice.mix(world.getSeed()^cx^((long)cz<<32)));}
             else for(ItemStack item:kit())chest.getSnapshotInventory().addItem(item);
@@ -56,7 +56,7 @@ final class HarkonnenFortress extends BlockPopulator implements Listener {
         var core=Bukkit.getPluginManager().getPlugin("DuneCore");
         if(core!=null && core.isEnabled())try {
             return (List<ItemStack>)core.getClass().getMethod("createFactionKit",String.class).invoke(core,"Harkonnen");
-        }catch(ReflectiveOperationException ex){plugin.getLogger().warning("Harkonnen kit requires updated DuneCore: "+ex.getMessage());}
+        }catch(ReflectiveOperationException ex){plugin.getLogger().warning("Harkveen kit requires updated DuneCore: "+ex.getMessage());}
         return List.of(new ItemStack(Material.IRON_SWORD),new ItemStack(Material.BREAD,8));
     }
     @EventHandler(ignoreCancelled=true) public void loot(LootGenerateEvent e) {

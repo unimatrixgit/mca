@@ -26,7 +26,7 @@ Bring the shovel, a complete suit, food and a weapon. Locate shelter before taki
 PLAYER GUIDE | Menus and help
 The Navigator is a configurable chest-style interface. Background colors reflect your faction. Buttons are actions, not free inventory items: clicking them opens a page or runs a player command. Menus expose the same systems available through chat.
 |Navigator button|Action|
-|Spacing Guild|Open the destination menu.|
+|Vaerkring|Open the destination menu.|
 |CHOAM Contracts|Browse the current hourly contracts and accept one.|
 |Player Spice Exchange|Open shortcuts to post or cancel a listing, or leave a job.|
 |Wallet / Sell Spice|Read the balance or sell tagged spice through DuneEss.|
@@ -34,7 +34,7 @@ The Navigator is a configurable chest-style interface. Background colors reflect
 |Winged Stillsuit Upgrade|Run the paid Elytra merge.|
 |Choose Faction|Open the five playable faction selections.|
 ## Other ways to navigate
-`/dune menu` and `/dune gui` also open the Navigator. `/dune exchange` opens the exchange menu; `/dune job` prints the actual listings and remaining quotas. Interacting with a tagged Spacing Guild Navigator opens DuneEss's travel menu. The automatically generated navigator is an invulnerable, stationary villager at planet spawn.
+`/dune menu` and `/dune gui` also open the Navigator. `/dune exchange` opens the exchange menu; `/dune job` prints the actual listings and remaining quotas. Interacting with a tagged Vaerkring Navigator opens DuneEss's travel menu. The automatically generated navigator is an invulnerable, stationary villager at planet spawn.
 ## Current menu details
 The default DuneCore travel page displays only four destinations because its dynamic list is capped at four. Sigma Draconis IV is still available through `/duneess travel sigma_draconis_iv` or the DuneEss travel menu, which lists all five worlds. The exchange page has listing-management shortcuts but no dynamic listing browser; use `/dune job` to find a sponsor.
 Help supports `/duneess help <page>`, `next`, `previous` and `menu`. The chat guide includes clickable navigation. Some introductory messages and older files omit Ordos, but it is a distinct playable faction in the current code.
@@ -50,7 +50,7 @@ Faction passives use the recorded faction. Full-set effects additionally check t
 ## Arrival and respawning
 Faction selection requests travel to the corresponding homeworld without a normal paid fare. On a proxy network, this is a server-transfer request. On a single backend, the homeworld must already be loaded for a local arrival. Respawn is redirected to the homeworld only when that world is loaded on the current backend; there is no general cross-server respawn router.
 ## Choosing carefully
-Fremen suits favor harvesting and sneaking; Harkonnen and Corrino favor combat; Atreides favor speed and extra full-set health; Ordos favor short concealment and explosives. Spacing Guild has appearance-related support but is not one of the five player-selectable factions.
+Fremen suits favor harvesting and sneaking; Harkonnen and Corrino favor combat; Atreides favor speed and extra full-set health; Ordos favor short concealment and explosives. Vaerkring has appearance-related support but is not one of the five player-selectable factions.
 ===PAGE===
 PLAYER GUIDE | Stillsuits, flight and Ordos equipment
 ## Armor that looks like leather but protects like netherite
@@ -65,14 +65,14 @@ The tagged Ordos Implosion Charge launches a wind charge and supplies a replacem
 PLAYER GUIDE | Solaris, spice sales and Guild travel
 Solaris is the currency supplied by DuneEss through Vault. The default spice price is 15 Solaris per unit, normal Guild fare is 100 and starting balance is zero. Balances can be negative by default, allowing contract fines to create debt. There are no player-to-player pay or general bank commands in this plugin's command set.
 ## Selling spice
-`/duneess sell` sells all correctly tagged spice in storage inventory. It does not sell ordinary orange dye or an item renamed Melange Spice. With DuneCore enabled, a Spacing Trust levy is taken and unauthorized spice sales can create smuggling bounties. A sale of 100 spice has a gross value of 1,500 Solaris; the default 1.21% levy rounds up to 19, leaving 1,481 Solaris for a player without an appointment. Members of the current Spice Steward or House of Water instead receive +33% gross: 1,995 gross, levy 25, net 1,970. See Imperial spice profit and mission eligibility for the complete rules.
+`/duneess sell` sells all correctly tagged spice in storage inventory. It does not sell ordinary orange dye or an item renamed Melange Spice. With DuneCore enabled, a Vaerkring Trust levy is taken and unauthorized spice sales can create smuggling bounties. A sale of 100 spice has a gross value of 1,500 Solaris; the default 1.21% levy rounds up to 19, leaving 1,481 Solaris for a player without an appointment. Members of the current Spice Steward or House of Water instead receive +33% gross: 1,995 gross, levy 25, net 1,970. See Imperial spice profit and mission eligibility for the complete rules.
 ## Travelling
 `/duneess travel` opens the five-world menu. `/duneess travel arrakis` requests a specific destination; use the internal world IDs listed in this book. If the destination is the local loaded world, you teleport to its spawn. If networking is enabled and the destination is remote, DuneEss asks the proxy to switch servers.
 The appointed Spice Steward faction has free Arrakis travel. Other travelers normally pay the fare. A local failed teleport refunds the fare; a proxy request refunds only when sending the request itself fails. The proxy does not confirm destination arrival to this plugin, so an offline destination can still leave a fare charged.
 ## Arrival rights are a separate system
 Paying the fare does not grant legal spice rights or necessarily prevent an arrival bounty. The current arrival rule treats the Spice Steward faction as sanctioned and uses shared PostgreSQL permits. Ordinary arrivals without a valid permit can be marked wanted when the database-backed arrival check is active. See the legal-rights chapter before organizing a multiplayer expedition.
 ===PAGE===
-ARRAKIS FIELD GUIDE | The Arrakis landscape
+ARRAKDUIN FIELD GUIDE | The Arrakduin landscape
 Arrakis is fully implemented in this manual. Its world ID is `arrakis`. The terrain profile uses Desert biome, sand at the surface and red sand filler. Default base height is 70, height variation 11 and noise scale 0.02. It contains sparse ores, procedural dunes and Dune-specific landmarks, rather than a custom city map.
 |Landmark or resource|Shipped generation setting|
 |Cave sietches|About one anchor per 2,000-block spacing cell.|
@@ -87,7 +87,7 @@ Trees have persistent leaves, and vanilla vegetation is disabled for Arrakis. Th
 ## Existing terrain is preserved
 Generation changes apply to newly generated chunks. Old chunks do not grow additional plateaus after an upgrade. Administrators must plan exploration into new terrain or a backed-up world regeneration if they want the new formations everywhere.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Harvesting melange
+ARRAKDUIN FIELD GUIDE | Harvesting melange
 Suspicious sand on Arrakis is treated as a spice deposit. With the resource pack it appears bright spice-gold. Harvest it by breaking the block with the tagged Spice Harvest Shovel from your faction kit. A regular netherite shovel is rejected even if it has the same enchantments or name. Other worlds' suspicious sand does not use this Arrakis harvesting rule.
 ## Yield and provenance
 Fremen harvest two tagged spice units per deposit; other factions normally get one. Outside an active player-sponsored job, the block drops Melange Spice, represented by tagged orange dye. Its lore records the miner, faction and the current unit price. Collect the drop before using `/duneess sell`.
@@ -97,7 +97,7 @@ The default regeneration delay is 120 seconds. At the end of that scheduled dela
 ## Estimating value
 Values advertised for a field are based on ordinary one-unit harvest at the configured spice price. Actual returns depend on how much sand was converted, how many deposits remain, faction yield, contract assignment and levies. A target field worth 15,000 Solaris at a 15-Solaris unit price seeks 1,000 deposits; it is not a guaranteed cash reward on discovery.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Spice blooms and spice blows
+ARRAKDUIN FIELD GUIDE | Spice blooms and spice blows
 An untriggered generated spice bloom is marked by a 3-by-3 magma patch with a raised central magma block. The server announces its coordinates when the marker's chunk loads. Finding the marker is separate from activating its rich field.
 ## Triggering a blow
 A player or other moving living entity touching the marker can trigger it. An arrow or trident impact at the marker also works. The trigger removes the lower magma patch, turns the raised center to glowstone and produces an explosion sound and particle. The source does not use a destructive world explosion for this bloom effect.
@@ -107,7 +107,7 @@ Nearby sandy surface blocks within the default 24-block radius become suspicious
 ## Two other types of rich field
 Random suspicious-sand patches have their own procedural setting and a 5,000-Solaris default target. Defeating a sandworm creates a much larger field targeting 100,000 Solaris. The loaded-marker announcement is specifically for spice blooms, not an alert for every ordinary suspicious-sand deposit or random patch in the world.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Sietches and personal caches
+ARRAKDUIN FIELD GUIDE | Sietches and personal caches
 Procedural cave sietches have a broad stone-arched entrance, sleeping and kitchen spaces, a winding descent, and a lower reservoir with a waterfall. Their default anchor spacing is 2,000 blocks. Landmarks are generated only where the terrain and region permit placement.
 ## What is in a cache
 |Supply|Amount and properties|
@@ -121,7 +121,7 @@ Closing the cache automatically transfers its remaining contents to your invento
 The cache's gold armor is useful loot, but it is not tagged as a stillsuit. Wearing it does not satisfy the Arrakis heat-protection or faction full-set requirements. Its spice is correctly tagged and can be sold, but claiming a chest is not harvesting deposits and does not advance CHOAM's harvested-spice counter.
 At the default sale price, 250 cache spice has 3,750 Solaris gross value. With the normal Trust levy, the direct sale leaves 3,704 Solaris, before any separate consequences of unauthorized trade.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Sun exposure and shelter
+ARRAKDUIN FIELD GUIDE | Sun exposure and shelter
 Arrakis has a dedicated heatstroke timer. Default lethal exposure is 300 seconds: five minutes of uninterrupted qualifying sunlight. The plugin checks once each second and warns on the first exposed second and at thirty-second intervals.
 ## When the timer runs
 All of these conditions must apply: you are alive on Arrakis, outside Creative and Spectator modes, not wearing a full tagged stillsuit, in clear weather, during daytime before world time 12300, and exposed at the top of the surface rather than beneath shelter.
@@ -133,7 +133,7 @@ DuneTerrain disables the daylight cycle on Arrakis and sets world time to 6000 d
 ## Equipment edge cases
 A winged stillsuit counts as the chest piece. A mixed-faction set can still satisfy heat protection if every equipped slot has the stillsuit tag, but faction set bonuses require matching tags. Ordos Shadow Step temporarily removes armor, so its five-second concealment also temporarily breaks the full stillsuit condition.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Shai-Hulud: model, AI and combat
+ARRAKDUIN FIELD GUIDE | Shai-Hulud: model, AI and combat
 The current sandworm uses a real Sniffer as the visible, damageable body. An invisible Husk supplies native zombie-family targeting, pursuit and melee attacks. The body follows its controller each server tick. It is a composite gameplay creature: a vanilla Sniffer silhouette with a desert worm skin, not a custom elongated sandworm mesh.
 |Sandworm property|Default|
 |Visible body|Adult Sniffer; scale 3.5; 500 health points.|
@@ -148,7 +148,7 @@ The visible Sniffer can be attacked and killed. Damage to the hidden controller 
 ## Persistence and conversion
 Both parts carry saved partner UUIDs. Existing loaded Husk-based worms from 1.0.4 are converted to the visible Sniffer implementation without resetting their remaining health. The plugin repairs links after load and removes the counterpart when a linked entity dies. Live-server movement and collision behavior still need testing on the deployed Paper build.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Defeating and summoning a sandworm
+ARRAKDUIN FIELD GUIDE | Defeating and summoning a sandworm
 ## Death rewards
 Killing the tagged visible body removes the invisible controller. The worm has no normal item drops or experience reward. Instead, it strikes a visual lightning effect and converts available sandy terrain around the death location into suspicious-sand deposits.
 The field targets 100,000 Solaris at ordinary base yield. At 15 Solaris per unit this means a target of 6,667 deposits. Its radius is derived from the target, and each eligible position also has an 85% placement chance. Unsuitable terrain can reduce actual deposit count. The death message reports how much was actually placed; it does not deposit 100,000 Solaris into the killer's account.
@@ -158,7 +158,7 @@ If at least one deposit is placed, this new spice field receives an Arrakis coor
 Both forms require `dune.admin`, granted to operators by default. Coordinates must be finite numbers within the world border and build height, with open feet and head space. The coordinate-free form fails outside Arrakis. A server without a loaded Arrakis world cannot summon there.
 Admin summons bypass the automatic population cap and do not alter the saved automatic cooldown. They use the same Sniffer body, zombie AI, configured attributes, sighting messages and death-field behavior as natural worms. Summoning can therefore deliberately create more than the default three-worm population.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Haunted Fremen and rich-field danger
+ARRAKDUIN FIELD GUIDE | Haunted Fremen and rich-field danger
 Haunted Fremen are hostile zombie raiders, distinct from sandworms and from water-retaliation Angry Locals. They spawn on Arrakis near players and are more likely near high-value suspicious-sand fields. The resource pack gives zombies their haunted Fremen appearance.
 |Raider property|Default|
 |Population cap|12 tagged raiders on Arrakis.|
@@ -174,8 +174,8 @@ Raider sunlight combustion is cancelled by the plugin. Their equipment is for be
 ## Value is based on the field still present
 The rich-field scan counts nearby surface suspicious sand and multiplies by the spice price. At the default price, more than 5,000 Solaris requires at least 334 counted deposits. It does not inspect the total value of your inventory, sale proceeds or a hidden field ownership record. A shrinking harvested field can consequently stop qualifying for the increased chance.
 ===PAGE===
-ARRAKIS FIELD GUIDE | The fifteen-minute Guild notice
-Session 2 introduces a discovery window for sandworms and spice blooms. The first message is local to the Arrakis server, includes X/Y/Z and warns that the Spacing Guild will notify other worlds in fifteen minutes.
+ARRAKDUIN FIELD GUIDE | The fifteen-minute Guild notice
+Session 2 introduces a discovery window for sandworms and spice blooms. The first message is local to the Arrakis server, includes X/Y/Z and warns that the Vaerkring will notify other worlds in fifteen minutes.
 ## Which events create sightings
 - A generated, untriggered bloom marker is found when its chunk loads, including loaded chunks checked at server startup.
 - An admin places a bloom marker; a previously unannounced marker erupts.
@@ -188,7 +188,7 @@ Plugin messaging requires an online player connection on the sending backend. If
 ## Interpreting coordinates
 Coordinates are the initial sighting, not a live moving-worm tracker. A worm may move, despawn or die before the Guild message arrives. The notice also does not reserve the field for the discoverer, lock harvesting, or establish political ownership. The fifteen-minute window is an information embargo.
 ===PAGE===
-ARRAKIS FIELD GUIDE | Finite water and selling buckets
+ARRAKDUIN FIELD GUIDE | Finite water and selling buckets
 Arrakis water is deliberately constrained. Natural source buckets collected through the water listener receive the Arrakis Water - Finite Source tag. `/dune water sell` sells these tagged buckets. Ordinary water buckets bought or collected elsewhere are not automatically accepted as Arrakis trade goods.
 Water flow is cancelled on Arrakis. Emptying water buckets there is blocked, and the listener prevents new ice or snow formation and water-cauldron filling. The intended loop is to locate existing natural sources, collect finite buckets, and trade them rather than build a renewable placed-water farm. The source-tag check applies to natural water generally; it is not tied to ownership of one specific sietch.
 ## Price and legal status
@@ -283,7 +283,7 @@ Harvested job spice is not also dropped for a second sale. CHOAM progress is cre
 ## Leaving, cancellation and saving
 `/dune job finish` leaves your worker assignment; it does not force-complete the quota. `/dune job cancel` cancels your own unclaimed listing, but refuses while a worker is assigned. Listings are local to a backend. Worker assignments are in memory and need reacceptance after restart. In shared-database mode, the current save path returns after saving player profiles and does not persist new exchange-listing changes, so do not rely on listing restart durability in that mode.
 ===PAGE===
-PLAYER SYSTEMS | Politics, elections and the Spacing Trust
+PLAYER SYSTEMS | Politics, elections and the Vaerkring Trust
 `/dune politics` and `/dune trust` access the same prototype political system. `/dune politics status` shows the Trust balance, election bucket, faction, leader, Emperor, stored appointments and invasion state. You need a selected faction for actions other than status.
 ## The treasury and elections
 The default Trust levy is 1.21% of applicable gross direct sales, rounded up. `/dune politics deposit 500` voluntarily withdraws 500 from your wallet and adds it to the Trust if you have sufficient funds. The Trust is not a personal withdrawable bank account.

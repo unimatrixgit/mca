@@ -35,7 +35,7 @@ def main():
     lobby = output / "spacing-guild"
     lobby.mkdir(exist_ok=True)
     (lobby / "README.txt").write_text(
-        "Spacing Guild custom world generator is not implemented.\n"
+        "Vaerkring custom world generator is not implemented.\n"
         "Use vanilla Paper world generation temporarily; do NOT set DuneTerrain server.planet to spacing_guild.\n",
         encoding="utf-8")
     with ZipFile(output / "spacing-guild-world-config.zip", "w", ZIP_DEFLATED) as z:

@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.time.Duration;
 import java.util.*;
@@ -20,10 +21,13 @@ import java.util.*;
 /** Shared presentation layer. All gameplay callbacks run once on the server thread. */
 public final class NativeMenus {
     private NativeMenus() {}
-    public record Choice(String label, String description, Runnable action) {}
+    public record Choice(String label, String description, Runnable action, String imageUrl) {
+        public Choice(String label,String description,Runnable action) { this(label,description,action,null); }
+    }
     public static void inventory(JavaPlugin plugin, Player player, String title, Inventory model, Map<Integer,Runnable> actions) {
         List<Choice> choices = new ArrayList<>();
         List<String> information = new ArrayList<>();
+        List<ItemStack> illustrations = new ArrayList<>();
         for(int slot=0;slot<model.getSize();slot++) {
             var item=model.getItem(slot);
             if(item==null || !item.hasItemMeta()) continue;
@@ -32,21 +36,27 @@ public final class NativeMenus {
             if(label==null || label.isBlank()) continue;
             String description=meta.hasLore()?String.join("\n",meta.getLore().stream().map(ChatColor::stripColor).toList()):"";
             Runnable action=actions.get(slot);
+            boolean note=DunemarkItems.isNote(item);
+            boolean realmImage=meta.hasItemModel()&&meta.getItemModel().getNamespace().equals("dunerealms");
+            if(note||realmImage) illustrations.add(item.clone());
             if(action==null) information.add(label+(description.isBlank()?"":"\n"+description));
-            else choices.add(new Choice(label,description,action));
+            else choices.add(new Choice(label,description,action,note?DunemarkItems.ICON_URL:null));
         }
-        show(plugin,player,ChatColor.stripColor(title),String.join("\n\n",information),choices);
+        show(plugin,player,ChatColor.stripColor(title),String.join("\n\n",information),choices,illustrations);
     }
     public static void show(JavaPlugin plugin, Player player, String title, List<Choice> choices) {
         show(plugin,player,title,"",choices);
     }
     public static void show(JavaPlugin plugin, Player player, String title, String content, List<Choice> choices) {
+        show(plugin,player,title,content,choices,List.of());
+    }
+    private static void show(JavaPlugin plugin, Player player, String title, String content, List<Choice> choices,List<ItemStack> illustrations) {
         MenuSession session=new MenuSession(player.getUniqueId());
         Bukkit.getScheduler().runTaskLater(plugin,session::expire,2400L);
         List<Choice> guarded=choices.stream().map(c->new Choice(c.label(),c.description(),()-> {
             if(!session.claim(player.getUniqueId())) return;
             Bukkit.getScheduler().runTask(plugin,()-> { if(player.isOnline()) c.action().run(); });
-        })).toList();
+        },c.imageUrl())).toList();
         if(Bukkit.getPluginManager().isPluginEnabled("floodgate") && Bedrock.isPlayer(player)) {
             Bedrock.show(player,title,content,guarded); return;
         }
@@ -57,8 +67,11 @@ public final class NativeMenus {
                 .action(DialogAction.customClick((view,audience)-> {
                     if(audience instanceof Player actor && actor.getUniqueId().equals(player.getUniqueId())) c.action().run();
                 },ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(2)).build())).build()).toList();
+            List<DialogBody> body=new ArrayList<>();
+            if(!content.isBlank())body.add(DialogBody.plainMessage(Component.text(content)));
+            for(ItemStack illustration:illustrations)body.add(DialogBody.item(illustration,null,false,true,48,48));
             player.showDialog(Dialog.create(builder->builder.empty()
-                .base(DialogBase.builder(Component.text(title)).body(content.isBlank()?List.of():List.of(DialogBody.plainMessage(Component.text(content)))).build())
+                .base(DialogBase.builder(Component.text(title)).body(body).build())
                 .type(DialogType.multiAction(buttons).build())));
             return;
         }
@@ -85,7 +98,11 @@ public final class NativeMenus {
         static boolean isPlayer(Player player) { return org.geysermc.floodgate.api.FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId()); }
         static void show(Player player,String title,String content,List<Choice> choices) {
             var form=org.geysermc.cumulus.form.SimpleForm.builder().title(title).content(content);
-            for(Choice choice:choices) form.button(choice.label()+ (choice.description().isBlank()?"":"\n"+choice.description()));
+            for(Choice choice:choices) {
+                String label=choice.label()+ (choice.description().isBlank()?"":"\n"+choice.description());
+                if(choice.imageUrl()==null)form.button(label);
+                else form.button(label,org.geysermc.cumulus.util.FormImage.Type.URL,choice.imageUrl());
+            }
             form.validResultHandler(response->{ int index=response.clickedButtonId(); if(index>=0 && index<choices.size()) choices.get(index).action().run(); });
             if(!org.geysermc.floodgate.api.FloodgateApi.getInstance().sendForm(player.getUniqueId(),form.build()))
                 player.sendMessage("The menu could not be sent. Close your current screen and try again.");

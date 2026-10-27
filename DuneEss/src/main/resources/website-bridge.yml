@@ -1,0 +1,3 @@
+origin: https://cp.dunerealms.com
+# Operator secret shared with the account panel. Never publish or put it in command arguments.
+secret: ''

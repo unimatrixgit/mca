@@ -57,6 +57,7 @@ arrakis-water:
 
 database:
   enabled: false
+  autosave-seconds: 60
   jdbc-url: "jdbc:postgresql://127.0.0.1:5432/dunerealms"
   username: "dune"
   password: "CHANGE_ME"

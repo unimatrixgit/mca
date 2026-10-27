@@ -1,0 +1,27 @@
+{
+  "brand": "dunerealms.com",
+  "planets": {
+    "arrakis": "Arrakduin",
+    "caladan": "Kaladam",
+    "giedi_prime": "Giedermark",
+    "kaitain": "Kaiterhof",
+    "sigma_draconis_iv": "Sigmadraken IV"
+  },
+  "factions": {
+    "Fremen": "Vrijduin",
+    "Atreides": "Aerdrecht",
+    "Harkonnen": "Harkveen",
+    "Corrino": "Korenholt",
+    "Ordos": "Oordwijk"
+  },
+  "terms": {
+    "Shai-Hulud": "Dune Maw",
+    "Spacing Guild": "Vaerkring",
+    "CHOAM": "Koopkring",
+    "Solaris": "dunemarks",
+    "spice": "spice",
+    "stillsuit": "reclaimer suit",
+    "sietch": "rockhaven"
+  },
+  "note": "Public website names only. Existing game identifiers, plugin artifact names, URLs, commands, saves and feed contracts retain compatibility. New names are proposals, not trademark-cleared."
+}

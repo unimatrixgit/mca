@@ -60,7 +60,7 @@ class ArrakisAnnouncementsTest {
             verify(carrier, times(1)).sendPluginMessage(eq(plugin), eq("BungeeCord"), packet.capture());
             DataInputStream input = new DataInputStream(new ByteArrayInputStream(packet.getValue()));
             assertEquals("Message", input.readUTF()); assertEquals("ALL", input.readUTF());
-            assertTrue(input.readUTF().contains("Spacing Guild"));
+            assertTrue(input.readUTF().contains("Vaerkring"));
             assertTrue(YamlConfiguration.loadConfiguration(file).getBoolean(key + ".sent"));
         }
     }

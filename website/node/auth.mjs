@@ -18,6 +18,19 @@ export function createAuth(db,origin){
     if(path==='/api/auth/session'&&request.method==='GET'){const user=await identity(request,db);return json({authenticated:!!user,user:user?{username:user.username,staff:user.role==='staff'}:null});}
     if(request.method!=='POST')return json({message:'Method not allowed.'},405);
     if(request.headers.get('Origin')!==origin)return json({message:'Request origin rejected.'},403);
+    if(path==='/api/auth/password'){
+      const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);
+      if(!allowed('password:'+user.id,5))return json({message:'Too many attempts. Please try later.'},429);
+      let data;try{data=await request.json();}catch{return json({message:'Invalid request.'},400);}
+      if(typeof data.currentPassword!=='string'||data.currentPassword.length>256||typeof data.newPassword!=='string'||data.newPassword.length<12||data.newPassword.length>256)return json({message:'Use a new password of 12–256 characters.'},400);
+      const row=await db.prepare('SELECT * FROM site_accounts WHERE id=?').bind(user.id).first();
+      const actual=await scrypt(data.currentPassword,row.password_salt,64);
+      if(!timingSafeEqual(actual,Buffer.from(row.password_hash,'hex')))return json({message:'Incorrect current password.'},403);
+      const salt=randomBytes(16).toString('hex'),hash=(await scrypt(data.newPassword,salt,64)).toString('hex');
+      const result=await db.batch([db.prepare('UPDATE site_accounts SET password_salt=?,password_hash=? WHERE id=? AND password_hash=?').bind(salt,hash,user.id,row.password_hash),db.prepare('DELETE FROM site_sessions WHERE user_id=?').bind(user.id)]);
+      if(!result[0].meta.changes)return json({message:'Account changed. Sign in again.'},409);
+      return issue(row);
+    }
     if(path==='/api/auth/logout'){const token=sessionToken(request);if(token)await db.prepare('DELETE FROM site_sessions WHERE token_hash=?').bind(digest(token)).run();return json({ok:true},200,{'Set-Cookie':`${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`});}
     if(!['/api/auth/login','/api/auth/register'].includes(path))return json({message:'Not found.'},404);
     let data;try{data=await request.json();}catch{return json({message:'Send valid JSON.'},400);}

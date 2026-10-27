@@ -72,7 +72,7 @@ final class ServerJobs {
             Collections.shuffle(all);
             int count=Math.max(1,YamlConfiguration.loadConfiguration(jobsFile).getInt("offers-per-hour",3));
             offers=new ArrayList<>(all.subList(0,Math.min(count,all.size())));
-            Bukkit.broadcastMessage(ChatColor.GOLD+"[CHOAM] New server spice contracts are available! /dune serverjobs");
+            Bukkit.broadcastMessage(ChatColor.GOLD+"[Koopkring] New server spice contracts are available! /dune serverjobs");
         }
         for(var entry:new ArrayList<>(active.entrySet())) {
             Active job=entry.getValue();
@@ -89,7 +89,7 @@ final class ServerJobs {
         int fine=(int)Math.ceil(t.pay()*0.05);
         economy.withdrawPlayer(Bukkit.getOfflinePlayer(player),fine); // DuneEss permits contract debt.
         Player online=Bukkit.getPlayer(player);
-        if(online!=null) online.sendMessage(ChatColor.RED+"CHOAM contract failed: "+t.title()+". Fine: "+fine+" Solaris (5% of pay).");
+        if(online!=null) online.sendMessage(ChatColor.RED+"Koopkring contract failed: "+t.title()+". Fine: "+fine+" Solaris (5% of pay).");
     }
     void harvest(Player p,int amount) {
         Active a=active.get(p.getUniqueId());
@@ -102,7 +102,7 @@ final class ServerJobs {
         if(progress>=t.spiceRequired()) {
             active.remove(p.getUniqueId());
             economy.depositPlayer(p,t.pay());
-            p.sendMessage(ChatColor.GREEN+"CHOAM contract complete: "+t.title()+"! Paid "+t.pay()+" Solaris.");
+            p.sendMessage(ChatColor.GREEN+"Koopkring contract complete: "+t.title()+"! Paid "+t.pay()+" Solaris.");
         } else active.put(p.getUniqueId(),new Active(a.id(),a.acceptedAt(),progress));
         save();
     }
@@ -119,7 +119,7 @@ final class ServerJobs {
         return t.title()+" | "+a.harvested()+"/"+t.spiceRequired()+" spice | "+Math.max(0,(a.acceptedAt()+t.limitSeconds()-Instant.now().getEpochSecond())/60)+" min left";
     }
     void list(Player p) {
-        p.sendMessage(ChatColor.GOLD+"=== CHOAM Hourly Contracts ===");
+        p.sendMessage(ChatColor.GOLD+"=== Koopkring Hourly Contracts ===");
         for(String id:offers) {
             Template t=templates.get(id); if(t==null) continue;
             p.sendMessage(ChatColor.YELLOW+id+" | "+t.title()+" | "+t.spiceRequired()+" spice | "+t.pay()+" Solaris | "+(t.limitSeconds()/60)+" min | failure fine "+(int)Math.ceil(t.pay()*0.05)+" Solaris");
@@ -138,7 +138,7 @@ final class ServerJobs {
             p.sendMessage("Server job definitions reloaded; next rotation occurs at the next hour."); return;
         }
         if(!args[1].equalsIgnoreCase("accept") || args.length<3) { list(p); return; }
-        if(active.containsKey(p.getUniqueId())) { p.sendMessage("Finish your existing CHOAM contract first."); return; }
+        if(active.containsKey(p.getUniqueId())) { p.sendMessage("Finish your existing Koopkring contract first."); return; }
         Template t=templates.get(args[2]);
         if(t==null || !offers.contains(t.id())) { p.sendMessage("Job not available in the current rotation."); return; }
         active.put(p.getUniqueId(),new Active(t.id(),Instant.now().getEpochSecond(),0));
@@ -154,6 +154,6 @@ final class ServerJobs {
             y.set(path+"accepted-at",e.getValue().acceptedAt());
             y.set(path+"harvested",e.getValue().harvested());
         }
-        try { y.save(stateFile); } catch(IOException ex) { plugin.getLogger().warning("Cannot save CHOAM jobs: "+ex.getMessage()); }
+        try { y.save(stateFile); } catch(IOException ex) { plugin.getLogger().warning("Cannot save Koopkring jobs: "+ex.getMessage()); }
     }
 }

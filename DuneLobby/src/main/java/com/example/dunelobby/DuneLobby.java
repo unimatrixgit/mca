@@ -86,9 +86,9 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
     private boolean inLobby(World world) { return lobby!=null && world.equals(lobby); }
     private void ensureNpcs() {
         for(int x=-8;x<=6;x++) for(int z=-6;z<=8;z++) lobby.getChunkAt(x,z).load();
-        npc("liaison","Guild Navigator Liaison",13,87,-11,Villager.Profession.CLERIC);
-        npc("exchange","CHOAM Exchange Broker",-82,81,23,Villager.Profession.LIBRARIAN);
-        npc("water","Discreet Water Seller",-78,81,110,Villager.Profession.FISHERMAN);
+        npc("liaison","Vaerkring Routekeeper Liaison",13,87,-11,Villager.Profession.CLERIC);
+        npc("exchange","Koopkring Exchange Broker",-82,81,23,Villager.Profession.LIBRARIAN);
+        npc("water","Discreet Welvaarder",-78,81,110,Villager.Profession.FISHERMAN);
         npc("spice","Discreet Spice Seller",-54,81,110,Villager.Profession.LEATHERWORKER);
     }
     private void npc(String role,String name,int x,int y,int z,Villager.Profession profession) {
@@ -180,7 +180,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         if(role==null) return; e.setCancelled(true); if(e.getHand()!=EquipmentSlot.HAND) return;
         switch(role) {
             case "liaison" -> { if(Bukkit.getPluginCommand("duneess")!=null) e.getPlayer().performCommand("duneess travel"); else departure(e.getPlayer(),"arrakis"); }
-            case "exchange" -> { if(Bukkit.getPluginCommand("dune")!=null) e.getPlayer().performCommand("dune exchange"); else e.getPlayer().sendMessage(ChatColor.GOLD+"CHOAM market integration requires DuneCore on this backend."); }
+            case "exchange" -> { if(Bukkit.getPluginCommand("dune")!=null) e.getPlayer().performCommand("dune exchange"); else e.getPlayer().sendMessage(ChatColor.GOLD+"Koopkring market integration requires DuneCore on this backend."); }
             case "water","spice" -> trade(e.getPlayer(),role);
         }
     }
@@ -193,7 +193,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         result.setItemMeta(meta);
         int price=Math.max(1,Math.min(64,getConfig().getInt(water?"water-price-emeralds":"spice-price-emeralds",water?4:8)));
         MerchantRecipe recipe=new MerchantRecipe(result,0,999,false,0,0f); recipe.addIngredient(new ItemStack(Material.EMERALD,price));
-        Merchant merchant=Bukkit.createMerchant(water?"Discreet Water Seller":"Discreet Spice Seller"); merchant.setRecipes(List.of(recipe)); player.openMerchant(merchant,true);
+        Merchant merchant=Bukkit.createMerchant(water?"Discreet Welvaarder":"Discreet Spice Seller"); merchant.setRecipes(List.of(recipe)); player.openMerchant(merchant,true);
     }
     @EventHandler public void interact(PlayerInteractEvent e) {
         if(!inLobby(e.getPlayer().getWorld()) || e.getClickedBlock()==null || e.getAction()!=Action.RIGHT_CLICK_BLOCK) return;

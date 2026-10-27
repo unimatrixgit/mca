@@ -7,7 +7,7 @@ jobs:
     pay: 3000
     time-limit-minutes: 30
   guild-supply:
-    title: "Spacing Guild Supply Order"
+    title: "Vaerkring Supply Order"
     spice-required: 250
     pay: 8500
     time-limit-minutes: 45

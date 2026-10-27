@@ -1,4 +1,4 @@
-import {categories,planets,demoListings,validListings,filterListings,listingInstruction} from './exchange-data.js';
+import {categories,planets,materialName,demoListings,validListings,filterListings,listingInstruction} from './exchange-data.js';
 const $=id=>document.getElementById(id);
 const state={items:[],page:0,demo:true,loading:false};
 const perPage=12;
@@ -28,10 +28,11 @@ function render() {
     const card=element('article','market-card'); card.dataset.planet=offer.origin;
     const art=element('div','market-item-art'); art.setAttribute('aria-hidden','true');
     art.append(element('span','',categoryIcons[offer.category]));
-    card.append(art,element('p','market-card-category',categories[offer.category]),element('h3','',offer.material.replaceAll('_',' ')),
-      element('p','market-price',offer.price.toLocaleString(undefined,{maximumFractionDigits:2})+' Solaris'),
+    card.append(art,element('p','market-card-category',categories[offer.category]),element('h3','',materialName(offer.material)),
+      element('p','market-price',offer.price.toLocaleString(undefined,{maximumFractionDigits:2})+' dunemarks'),
       element('p','market-unit','per item · '+offer.quantity+' available'),element('p','market-seller',offer.seller),
       element('p','market-origin',planets[offer.origin]),element('small','market-instruction',listingInstruction(offer,state.demo)));
+    const price=card.querySelector('.market-price'),note=document.createElement('img');note.src='assets/dunemark-icon-64.png';note.alt='';note.setAttribute('aria-hidden','true');note.className='currency-note-icon';price.prepend(note);
     root.append(card);
   }
 }

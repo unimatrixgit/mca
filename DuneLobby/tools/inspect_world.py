@@ -86,7 +86,7 @@ def render(data, output):
     scale, x0, z0, margin, top = 6, -122, -96, 38, 125
     image = Image.new('RGB', (1380, 1515), '#100f1c')
     draw = ImageDraw.Draw(image)
-    draw.text((38, 24), 'SPACING GUILD | SAVED WORLD PLAN', fill='#e5bd72', font=font(36))
+    draw.text((38, 24), 'VAERKRING | SAVED WORLD PLAN', fill='#e5bd72', font=font(36))
     draw.text((40, 77), 'Actual Minecraft blocks at floor level; roofs removed for this plan. North is up.', fill='#b3adc2', font=font(19))
     for z in range(-96, 129):
         for x in range(-122, 94):

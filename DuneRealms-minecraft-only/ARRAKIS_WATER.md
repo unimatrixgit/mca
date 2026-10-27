@@ -2,11 +2,11 @@
 
 New Arrakis chunks generate underground cave **sietches** at roughly 2,000-block spacing. Each has connected chambers for sleeping and cooking, a concealed surface entry, a descending waterfall, and a bottom water reservoir. A chest opens a personal cache for each player with at least 250 tagged spice, enchanted gold armor, planks, and bread. Existing chunks will not be retroactively populated. See `plugins/DuneTerrain/config.yml` (`sietches.spacing`) to change the interval.
 
-- `/dune water guild` - become an official Spacing Guild water seller.
+- `/dune water guild` - become an official Vaerkring Welvaarder.
 - `/dune water smuggler` - become a smuggler.
 - `/dune water status` - show career and rates.
 - `/dune water sell` - sell tagged Arrakis water buckets at half the configured spice unit price. Smugglers receive 45% more gross pay, but have a configurable 30% chance of angering locals and spawning hostile Husks if on Arrakis.
-- All water sales contribute the same 1.21% Spacing Trust levy as spice sales.
+- All water sales contribute the same 1.21% Vaerkring Trust levy as spice sales.
 - On Arrakis, water flow is canceled, bucket placement is blocked, and ice/cauldron water formation is limited. Collected water is tagged and source blocks are consumed.
 
 ## Limitations / unfinished

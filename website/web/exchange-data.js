@@ -1,5 +1,8 @@
 export const categories = {ores:'Ores & Minerals',spice:'Spice & Rare',building:'Building Blocks',equipment:'Equipment',farming:'Food & Farming',misc:'Miscellaneous'};
-export const planets = {arrakis:'Arrakis',caladan:'Caladan',giedi_prime:'Giedi Prime',kaitain:'Kaitain',sigma_draconis_iv:'Sigma Draconis IV'};
+export const planets = {arrakis:'Arrakduin',caladan:'Kaladam',giedi_prime:'Giedermark',kaitain:'Kaiterhof',sigma_draconis_iv:'Sigmadraken IV'};
+const planetSearchNames={arrakis:'arrakis serevan',caladan:'caladan pelareth',giedi_prime:'giedi prime varkesh',kaitain:'kaitain orivane',sigma_draconis_iv:'sigma draconis iv nivareth'};
+const materialLabels={fremen_stillsuit:'Vrijduin reclaimer suit',spice_melange:'spice',arrakis_water:'Arrakduin water'};
+export const materialName=value=>materialLabels[value]||String(value).replaceAll('_',' ');
 const samples = [
   ['spice_melange','spice','arrakis',1250,16], ['arrakis_water','spice','arrakis',180,4],
   ['spice_harvest_shovel','equipment','arrakis',420,1], ['fremen_stillsuit','equipment','arrakis',950,1],
@@ -24,7 +27,7 @@ const samples = [
 ];
 export const demoListings = samples.map(([material,category,origin,price,quantity],i)=>({
   id:i+1, material, category, origin, price, quantity,
-  seller:({arrakis:'Sietch Supply',caladan:'Caladan Farms',giedi_prime:'Foundry Depot',kaitain:'Imperial Emporium',sigma_draconis_iv:'Ordos Research'})[origin]+' (demo)'
+  seller:({arrakis:'Rockhaven Supply',caladan:'Kaladam Farms',giedi_prime:'Foundry Depot',kaitain:'Imperial Emporium',sigma_draconis_iv:'Oordwijk Research'})[origin]+' (demo)'
 }));
 export function validListings(rows) {
   if(!Array.isArray(rows)) throw Error('Invalid market response');
@@ -39,7 +42,7 @@ export function validListings(rows) {
 export function filterListings(rows,{search='',category='all',planet='all',sort='new'}={}) {
   const term=search.trim().toLowerCase();
   return rows.filter(x=>(category==='all'||x.category===category)&&(planet==='all'||x.origin===planet)
-    &&(!term||[x.material.replaceAll('_',' '),x.material,x.seller,categories[x.category],planets[x.origin]].some(value=>value.toLowerCase().includes(term))))
+    &&(!term||[materialName(x.material),x.material,x.seller,categories[x.category],planets[x.origin],planetSearchNames[x.origin]||''].some(value=>value.toLowerCase().includes(term))))
     .sort((a,b)=>sort==='price'?a.price-b.price||b.id-a.id:sort==='quantity'?b.quantity-a.quantity||b.id-a.id:b.id-a.id);
 }
 export function listingInstruction(offer,demo) {

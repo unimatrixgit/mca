@@ -89,7 +89,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
     }
     private void spawnNavigator(Location location) {
         location.getWorld().spawn(location, Villager.class, villager -> {
-            villager.setCustomName(ChatColor.LIGHT_PURPLE + "Spacing Guild Navigator");
+            villager.setCustomName(ChatColor.LIGHT_PURPLE + "Vaerkring Navigator");
             villager.setCustomNameVisible(true); villager.setProfession(Villager.Profession.CLERIC);
             villager.setAI(false); villager.setInvulnerable(true); villager.setSilent(true); villager.setPersistent(true);
             villager.getPersistentDataContainer().set(guildKey, PersistentDataType.BYTE, (byte) 1);
@@ -106,7 +106,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
         if (args.length > 0 && args[0].equalsIgnoreCase("smuggle")) { smugglers.command(player, args); return true; }
         if (args.length > 0 && args[0].equalsIgnoreCase("guildnpc")) {
             if (!player.hasPermission("dune.admin")) { player.sendMessage("Admin only."); return true; }
-            spawnNavigator(player.getLocation()); player.sendMessage("Guild Navigator placed."); return true;
+            spawnNavigator(player.getLocation()); player.sendMessage("Vaerkring Routekeeper placed."); return true;
         }
         if (!player.isOp()) { player.sendMessage(ChatColor.RED + "Operators only. Right-click an Arrakis Smuggler for missions."); return true; }
         if (args.length == 0 || args[0].equalsIgnoreCase("admin")) { openAdmin(player); return true; }
@@ -126,14 +126,14 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
             for (WanderingTrader trader : world.getEntitiesByClass(WanderingTrader.class))
                 if (trader.getPersistentDataContainer().has(new NamespacedKey("dunecore", "smuggler"), PersistentDataType.BYTE)) traders++;
         }
-        player.sendMessage(ChatColor.GOLD + "DuneNPC: " + guild + " loaded Guild Navigators, " + traders + " loaded smugglers, " + smugglers.activeCount() + " open contracts.");
+        player.sendMessage(ChatColor.GOLD + "DuneNPC: " + guild + " loaded Vaerkring Routekeepers, " + traders + " loaded smugglers, " + smugglers.activeCount() + " open contracts.");
     }
     void openAdmin(Player player) {
         if (!player.isOp()) { player.sendMessage(ChatColor.RED + "Operators only."); return; }
         Menu menu = new Menu();
         menu.inventory = Bukkit.createInventory(menu, 27, ChatColor.GOLD + "DuneNPC | NPC Administration");
         for (int slot = 0; slot < 27; slot++) menu.inventory.setItem(slot, icon(Material.BLACK_STAINED_GLASS_PANE, " "));
-        menu.inventory.setItem(10, icon(Material.VILLAGER_SPAWN_EGG, "Place Guild Navigator", "Spawn at your position; opens Guild travel."));
+        menu.inventory.setItem(10, icon(Material.VILLAGER_SPAWN_EGG, "Place Vaerkring Routekeeper", "Spawn at your position; opens Vaerkring travel."));
         menu.inventory.setItem(12, icon(Material.WANDERING_TRADER_SPAWN_EGG, "Place Arrakis Smuggler", "Spawn at your position on Arrakis."));
         menu.inventory.setItem(14, icon(Material.WRITABLE_BOOK, "NPC and Mission Status", "Show loaded NPC counts and active contracts."));
         menu.inventory.setItem(16, icon(Material.CLOCK, "Quest Camp Guide", "Green: free to roam. Purple: active mission.", "Active contacts are stationary and lit.", "Missions expire after 30 real minutes."));

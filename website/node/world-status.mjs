@@ -1,4 +1,4 @@
-const names=[['spacing-guild','Spacing Guild'],['arrakis','Arrakis'],['caladan','Caladan'],['giedi-prime','Giedi Prime'],['kaitain','Kaitain'],['sigma-draconis-iv','Sigma Draconis IV'],['velocity','Velocity']];
+const names=[['spacing-guild','Vaerkring'],['arrakis','Arrakduin'],['caladan','Kaladam'],['giedi-prime','Giedermark'],['kaitain','Kaiterhof'],['sigma-draconis-iv','Sigmadraken IV'],['velocity','Velocity']];
 export function createWorldStatus(settings,fetcher=fetch){
  let cached,inflight,expires=0;
  async function check(){

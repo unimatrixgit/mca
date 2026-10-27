@@ -32,6 +32,7 @@ import java.util.*;
 public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCompleter, Listener {
     private static final List<String> PLANETS = List.of("arrakis", "giedi_prime", "kaitain", "caladan", "sigma_draconis_iv", "spacing_guild");
     private DuneEconomy economy;
+    String balanceLabel(Player player) { return economy.format(economy.getBalance(player)); }
     private ExchangeMenu exchangeMenu;
     private EssentialsBasics basics;
     private String jdbcUrl = "", dbUser = "", dbPassword = "";
@@ -43,28 +44,28 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
     private static final String HELP_TITLE = ChatColor.DARK_RED + "Dune Field Guide";
     private static final List<List<HelpEntry>> HELP_PAGES = List.of(
         List.of(
-            new HelpEntry("/duneess balance", "Check your Solaris wallet.", Material.GOLD_INGOT),
+            new HelpEntry("/duneess balance", "Check your Dunemarks wallet.", Material.GOLD_INGOT),
             new HelpEntry("/duneess sell", "Sell all tagged spice in your inventory.", Material.ORANGE_DYE),
-            new HelpEntry("/duneess travel", "Open the Spacing Guild planet selector.", Material.ENDER_PEARL),
+            new HelpEntry("/duneess travel", "Open the Vaerkring planet selector.", Material.ENDER_PEARL),
             new HelpEntry("/duneess travel arrakis", "Pay the fare and travel to Arrakis.", Material.MAP),
             new HelpEntry("/dune", "Open the Dune Navigator menu.", Material.NETHER_STAR)
         ),
         List.of(
-            new HelpEntry("/dune choose fremen", "Choose Fremen; replace 'fremen' with another house to choose it.", Material.WHITE_BANNER),
+            new HelpEntry("/dune choose fremen", "Choose Vrijduin; replace 'fremen' with another house to choose it.", Material.WHITE_BANNER),
             new HelpEntry("/dune kit", "Receive your faction stillsuit and spice shovel.", Material.NETHERITE_SHOVEL),
             new HelpEntry("/dune elytra", "Upgrade a worn stillsuit chestplate with an Elytra.", Material.ELYTRA),
-            new HelpEntry("/dune politics status", "View the Spacing Trust, leaders, and imperial appointments.", Material.WRITABLE_BOOK),
+            new HelpEntry("/dune politics status", "View the Vaerkring Trust, leaders, and Landsraad appointments.", Material.WRITABLE_BOOK),
             new HelpEntry("/dune water status", "View your Arrakis water-trading career.", Material.WATER_BUCKET)
         ),
         List.of(
-            new HelpEntry("/dune serverjobs", "Browse hourly CHOAM spice contracts.", Material.EMERALD),
+            new HelpEntry("/dune serverjobs", "Browse hourly Koopkring spice contracts.", Material.EMERALD),
             new HelpEntry("/dune job", "Browse player-posted spice contracts.", Material.BOOK),
             new HelpEntry("/dune job post 100", "Post a 100-spice contract; change the amount to suit your listing.", Material.PAPER),
             new HelpEntry("/dune water sell", "Sell water collected on Arrakis.", Material.BUCKET),
             new HelpEntry("/dune exchange", "Open the spice exchange menu.", Material.CHEST)
         ),
         List.of(
-            new HelpEntry("/duneess admin solari player amount", "Grant Solaris to an online player.", Material.GOLD_INGOT),
+            new HelpEntry("/duneess admin solari player amount", "Grant Dunemarks to an online player.", Material.GOLD_INGOT),
             new HelpEntry("/duneess admin teleport arrakis", "Force yourself to Arrakis spawn.", Material.COMPASS),
             new HelpEntry("/duneess admin teleport sietch", "Teleport yourself to a generated sietch.", Material.CHEST),
             new HelpEntry("/duneess admin teleport spiceblow", "Teleport yourself to a generated spice blow.", Material.MAGMA_BLOCK),
@@ -82,6 +83,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         helpPageKey = new NamespacedKey(this, "help_page");
         helpActionKey = new NamespacedKey(this, "help_action");
         economy = new DuneEconomy(this);
+        new CommunityCodes(this);
         getServer().getServicesManager().register(Economy.class, economy, this, ServicePriority.Highest);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         PluginCommand command = Objects.requireNonNull(getCommand("duneess"));
@@ -93,7 +95,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         exchangeMenu = new ExchangeMenu(this);
         exchangeMenu.register();
         for (Player player : Bukkit.getOnlinePlayers()) economy.createPlayerAccount(player);
-        getLogger().info("DuneRealms Essentials enabled as the Solaris Vault provider.");
+        getLogger().info("DuneRealms Essentials enabled as the Dunemarks Vault provider.");
     }
 
     @Override public void onDisable() {
@@ -201,7 +203,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         }
         sender.sendMessage(ChatColor.DARK_RED + "+" + "-".repeat(58) + "+");
         sendBoxLine(sender, ChatColor.GRAY + "Use /duneess help menu for the visual guide.");
-        sendBoxLine(sender, ChatColor.GRAY + "DuneEss: Solaris and Guild travel");
+        sendBoxLine(sender, ChatColor.GRAY + "DuneEss: Dunemarks and Vaerkring travel");
         sendBoxLine(sender, ChatColor.GRAY + "DuneCore: factions and Arrakis");
         sender.sendMessage(ChatColor.DARK_RED + "+" + "-".repeat(58) + "+");
         if (sender instanceof Player player) {
@@ -341,7 +343,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             ItemStack spice=new ItemStack(Material.ORANGE_DYE,quantity);ItemMeta sm=spice.getItemMeta();
             sm.setDisplayName(ChatColor.GOLD+"Melange Spice");sm.getPersistentDataContainer().set(spiceKey,PersistentDataType.STRING,"spice");spice.setItemMeta(sm);
             if(player.getInventory().firstEmpty()<0){player.sendMessage("Make an empty inventory slot first.");return;}
-            if(!economy.withdrawPlayer(player,price).transactionSuccess()){player.sendMessage("Not enough Solaris, or economy unavailable.");return;}
+            if(!economy.withdrawPlayer(player,price).transactionSuccess()){player.sendMessage("Not enough Dunemarks, or economy unavailable.");return;}
             player.getInventory().addItem(spice);player.sendMessage(ChatColor.GOLD+"Bought 16 spice for "+economy.format(price)+".");
         });
         com.example.dunegui.NativeMenus.inventory(this,player,"Spice Seller · +35%",menu,actions);
@@ -377,23 +379,23 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
     }
 
     private void openTravelMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.DARK_AQUA + "Spacing Guild Travel");
+        Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.DARK_AQUA + "Vaerkring Travel");
         for (int i = 0; i < PLANETS.size(); i++) {
             String planet = PLANETS.get(i);
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + planet + " — " + getConfig().getInt("currency.travel-price", 100) + " Solaris");
+            meta.setDisplayName(ChatColor.GOLD + com.example.dunegui.PlanetSigils.label(planet) + " — " + getConfig().getInt("currency.travel-price", 100) + " Dunemarks");
             meta.getPersistentDataContainer().set(new NamespacedKey(this, "planet"), PersistentDataType.STRING, planet);
             item.setItemMeta(meta);
-            inventory.setItem(i, item);
+            inventory.setItem(i, com.example.dunegui.PlanetSigils.apply(item,planet));
         }
         java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
         for(int i=0;i<PLANETS.size();i++) { String planet=PLANETS.get(i); actions.put(i,()->travel(player,planet)); }
-        com.example.dunegui.NativeMenus.inventory(this,player,"Spacing Guild Travel",inventory,actions);
+        com.example.dunegui.NativeMenus.inventory(this,player,"Vaerkring Travel",inventory,actions);
     }
 
     @EventHandler public void onTravelMenuClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player) || !event.getView().getTitle().equals(ChatColor.DARK_AQUA + "Spacing Guild Travel")) return;
+        if (!(event.getWhoClicked() instanceof Player player) || !event.getView().getTitle().equals(ChatColor.DARK_AQUA + "Vaerkring Travel")) return;
         event.setCancelled(true);
         ItemStack item = event.getCurrentItem();
         if (item == null || !item.hasItemMeta()) return;
@@ -415,7 +417,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             }
             if (server.isBlank()) { player.sendMessage(ChatColor.RED + "The Guild server for " + planet + " is not configured."); return; }
             int fare = travelFare(player, planet);
-            if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Solaris for the Guild fare."); return; }
+            if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Dunemarks for the Guild fare."); return; }
             if (fare > 0) economy.withdrawPlayer(player, fare);
             if (!sendToServer(player, server, planet) && fare > 0) economy.depositPlayer(player, fare);
             return;
@@ -423,13 +425,13 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         World world = Bukkit.getWorld(planet);
         if (world == null) { player.sendMessage(ChatColor.RED + "That planet is not loaded on this server."); return; }
         int fare = travelFare(player, planet);
-        if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Solaris for the Guild fare."); return; }
+        if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Dunemarks for the Guild fare."); return; }
         if (fare > 0) economy.withdrawPlayer(player, fare);
         if (!player.teleport(world.getSpawnLocation())) {
             if (fare > 0) economy.depositPlayer(player, fare);
-            player.sendMessage(ChatColor.RED + "Guild travel failed. Your fare was returned.");
+            player.sendMessage(ChatColor.RED + "Vaerkring travel failed. Your fare was returned.");
         } else {
-            player.sendMessage(ChatColor.AQUA + "Spacing Guild arrival: " + planet);
+            player.sendMessage(ChatColor.AQUA + "Vaerkring arrival: " + planet);
             if (planet.equals("arrakis")) callCoreArrakisArrival(player);
         }
     }
@@ -440,7 +442,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             DataOutputStream data = new DataOutputStream(bytes);
             data.writeUTF("Connect"); data.writeUTF(server);
             player.sendPluginMessage(this, "BungeeCord", bytes.toByteArray());
-            player.sendMessage(ChatColor.AQUA + "Spacing Guild transfer requested: " + planet);
+            player.sendMessage(ChatColor.AQUA + "Vaerkring transfer requested: " + planet);
             return true;
         } catch (Exception ex) {
             player.sendMessage(ChatColor.RED + "Guild transfer failed. Your fare was returned.");
@@ -488,7 +490,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
                 economy.depositPlayer(target, amount);
                 sender.sendMessage(ChatColor.GREEN + "Added " + economy.format(amount) + " to " + target.getName() + ".");
                 target.sendMessage(ChatColor.GOLD + "An admin added " + economy.format(amount) + " to your balance.");
-            } catch (NumberFormatException ex) { sender.sendMessage(ChatColor.RED + "Enter a positive Solaris amount."); }
+            } catch (NumberFormatException ex) { sender.sendMessage(ChatColor.RED + "Enter a positive Dunemarks amount."); }
             return true;
         }
         if (args[1].equalsIgnoreCase("spicebloom")) {

@@ -42,3 +42,38 @@ CREATE TABLE IF NOT EXISTS support_messages (
  INDEX support_messages_ticket(ticket_id,created_at), INDEX support_messages_author(author_id,created_at),
  FOREIGN KEY(ticket_id) REFERENCES support_tickets(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS site_game_links (
+ user_id CHAR(36) PRIMARY KEY,
+ minecraft_uuid CHAR(36) UNIQUE DEFAULT NULL,
+ minecraft_name VARCHAR(32) DEFAULT NULL,
+ token_hash CHAR(64) UNIQUE DEFAULT NULL,
+ expires_at BIGINT NOT NULL DEFAULT 0,
+ linked_at BIGINT DEFAULT NULL,
+ FOREIGN KEY(user_id) REFERENCES site_accounts(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS site_game_identities (
+ minecraft_uuid CHAR(36) PRIMARY KEY, first_linked_at BIGINT NOT NULL, last_name VARCHAR(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS site_link_challenges (
+ user_id CHAR(36) PRIMARY KEY, token_hash CHAR(64) NOT NULL UNIQUE, expires_at BIGINT NOT NULL,
+ FOREIGN KEY(user_id) REFERENCES site_accounts(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS community_campaigns (
+ month CHAR(7) PRIMARY KEY, target_cents BIGINT NOT NULL, received_cents BIGINT NOT NULL DEFAULT 0,
+ reward_amount INT NOT NULL, public_code VARCHAR(48) NOT NULL UNIQUE,
+ reached_at BIGINT DEFAULT NULL, created_at BIGINT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS community_rewards (
+ minecraft_uuid CHAR(36) NOT NULL, month CHAR(7) NOT NULL, personal_code VARCHAR(48) NOT NULL UNIQUE,
+ issued_at BIGINT NOT NULL, used_at BIGINT DEFAULT NULL,
+ PRIMARY KEY(minecraft_uuid,month), FOREIGN KEY(month) REFERENCES community_campaigns(month)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS community_claims (
+ minecraft_uuid CHAR(36) NOT NULL, month CHAR(7) NOT NULL, receipt CHAR(64) NOT NULL UNIQUE,
+ amount INT NOT NULL, prepared_at BIGINT NOT NULL, delivered_at BIGINT DEFAULT NULL,
+ PRIMARY KEY(minecraft_uuid,month), FOREIGN KEY(month) REFERENCES community_campaigns(month)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS account_audit (
+ id CHAR(36) PRIMARY KEY, actor_id CHAR(36) NOT NULL, action VARCHAR(40) NOT NULL,
+ details VARCHAR(500) NOT NULL, created_at BIGINT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

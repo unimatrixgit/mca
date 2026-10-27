@@ -29,11 +29,11 @@ final class ArrakisAnnouncements {
         String coordinates = "Arrakis [X " + location.getBlockX() + ", Y " + location.getBlockY() + ", Z " + location.getBlockZ() + "]";
         String sighting = kind.equals("sandworm") ? "Shai-Hulud stirs beneath the sands at " : "The desert reveals a melange spice bloom at ";
         String message = sighting + coordinates + ".";
-        state.set(key + ".message", ChatColor.GOLD + "[Spacing Guild] Our Navigators have detected: " + message + " The Guild now informs all worlds. The spice must flow!");
+        state.set(key + ".message", ChatColor.GOLD + "[Vaerkring] Our Navigators have detected: " + message + " The Guild now informs all worlds. The spice must flow!");
         state.set(key + ".due", System.currentTimeMillis() + 15L * 60L * 1000L);
         pending.add(key);
         save();
-        Bukkit.broadcastMessage(ChatColor.GOLD + "[Arrakis] " + message + " You have 15 minutes before the Spacing Guild notices and informs all other servers.");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "[Arrakis] " + message + " You have 15 minutes before the Vaerkring notices and informs all other servers.");
     }
 
     private void deliver() {

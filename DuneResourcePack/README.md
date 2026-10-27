@@ -11,3 +11,11 @@ On a Fabric client, copy `DuneResourcePack.zip` into `.minecraft/resourcepacks`,
 DuneCore 1.0.7 adds an Arrakis smuggler texture for the vanilla wandering trader model.
 Enable the updated pack to see sand-tan robes, a face covering, amber trim and leather gear.
 This texture applies to all wandering traders client-side; smuggling missions only apply to Arrakis traders.
+
+## Vaerkring Reserve GUI series (2026-10-27)
+
+Item-model keys: dunerealms:dunemark_1, dunemark_5, dunemark_100, dunemark_1000 and dunemark_5000. Each has its own transparent 128px texture and item/model definition. The legacy dunerealms:dunemark_note remains a 100-note visual alias. These are presentation-only; currency stays in the server ledger, and GUI clicks do not issue bearer notes. Wallet art selects the largest supported denomination not exceeding the balance (minimum visual fallback 1).
+
+The 0-Dunemark Leto II search tribute is deliberately absent from this pack and the game denomination list. It is website/design artwork only. The five planet textures now use letter rings for Arrakduin, Kaladam, Giedermark, Kaiterhof and Sigmadraken IV; existing internal model IDs remain stable.
+
+Published pack SHA1: f9470108e9cff93231968e6b8b2d99293e62fce2. Java 1.21.4 item-model format; in-client appearance and Bedrock conversion still require a client check. Character fan art is not represented as licensed merchandise.

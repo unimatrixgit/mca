@@ -8,6 +8,9 @@
     "start": "node --env-file-if-exists=.env node/server.mjs"
   },
   "dependencies": {
-    "mysql2": "3.24.6"
+    "altcha": "3.5.0",
+    "altcha-lib": "2.8.0",
+    "mysql2": "3.24.6",
+    "pg": "8.16.3"
   }
 }

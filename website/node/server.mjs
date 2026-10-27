@@ -6,14 +6,23 @@ import {openDatabase} from './mysql.mjs';
 import {createAuth,identity,safeReturn} from './auth.mjs';
 import {createWorldStatus} from './world-status.mjs';
 import {createForgejoProxy} from './forgejo-proxy.mjs';
+import {createContact} from './contact.mjs';
+import {createGameLink} from './game-link.mjs';
+import {createCommunityRewards} from './community-rewards.mjs';
 const root=new URL('./public/',import.meta.url);
-const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"};
+const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; frame-src https://cp.dunerealms.com; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"};
 export function createApplication(db,settings={}) {
   const origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
   const auth=createAuth(db,origin);
   const worldStatus=createWorldStatus(settings);
+  const contact=createContact(settings);
+  const gameLink=createGameLink(db,settings,origin);
+  const rewards=createCommunityRewards(db,settings,origin);
   return async function handle(request) {
     const url=new URL(request.url);
+    if(url.pathname.startsWith('/api/community/'))return rewards(request);
+    if(url.pathname==='/api/game-link'||url.pathname.startsWith('/api/game-link/'))return gameLink(request);
+    if(url.pathname.startsWith('/api/contact/'))return contact(request);
     if(url.pathname==='/api/worlds')return request.method==='GET'?worldStatus():new Response('Method not allowed',{status:405});
     if(url.pathname==='/signin-with-chatgpt')return Response.redirect(origin+'/login.html?return_to='+encodeURIComponent(safeReturn(url.searchParams.get('return_to'))),302);
     if(url.pathname==='/healthz'){await db.prepare('SELECT 1 AS ok').first();return Response.json({status:'ok',database:'connected'},{headers:{'Cache-Control':'no-store'}});}
@@ -49,7 +58,7 @@ export async function start(settings=process.env) {
       let bytes=0;const chunks=[];for await(const chunk of req){bytes+=chunk.length;if(bytes>65536){res.writeHead(413);res.end('Request too large');return;}chunks.push(chunk);}
       const path=req.url||'/';if(!path.startsWith('/')||path.startsWith('//')){res.writeHead(400);res.end('Bad request');return;}
       const request=new Request(origin+path,{method:req.method,headers:req.headers,body:['GET','HEAD'].includes(req.method)?undefined:Buffer.concat(chunks)});
-      const result=await handle(request);res.writeHead(result.status,{...security,...Object.fromEntries(result.headers)});res.end(Buffer.from(await result.arrayBuffer()));
+      const result=await handle(request),outgoing=new Headers(security);for(const [key,value]of result.headers)outgoing.set(key,value);outgoing.set('Content-Security-Policy',security['Content-Security-Policy']);res.writeHead(result.status,Object.fromEntries(outgoing));res.end(Buffer.from(await result.arrayBuffer()));
     }catch(error){console.error('Request failed:',error.code||error.name);if(!res.headersSent)res.writeHead(503,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({message:'The website is temporarily unavailable.'}));}
   });
   server.requestTimeout=300000;server.headersTimeout=10000;

@@ -1,6 +1,6 @@
 plugins { java }
 group = "com.example"
-version = "1.0.3"
+version = "1.0.4"
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
@@ -16,7 +16,7 @@ dependencies {
     testImplementation("com.h2database:h2:2.3.232")
     testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     testImplementation("org.mockito:mockito-core:5.15.2")
-    testRuntimeOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit", module = "bukkit") }
+    testImplementation("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit", module = "bukkit") }
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 tasks.jar {

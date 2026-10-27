@@ -16,7 +16,7 @@ Admins with `dune.admin` can force teleport to Arrakis or generated landmarks wi
 
 ## Sandworms (Shai-Hulud)
 
-Visible oversized Sniffers with invisible Husk controllers supplying native zombie AI spawn on sandy surfaces near players **only on Arrakis**, at most once per hour serverwide by default. The successful spawn time is saved in the plugin config, so a restart does not reset the cooldown. They have 500 health, 8 melee damage, a controller movement attribute of 0.33, and visible scale 3.5, and play a Warden roar when emerging. Settings are under `sandworms` in `config.yml`. Admins can use `/dune summon sandworm [x y z]` to summon one explicitly. Arrakis sightings include coordinates and a fifteen-minute warning before the Spacing Guild informs the network. See [Session 2](../SESSION-2.md) for timer persistence, proxy delivery, and plateau settings.
+Visible oversized Sniffers with invisible Husk controllers supplying native zombie AI spawn on sandy surfaces near players **only on Arrakis**, at most once per hour serverwide by default. The successful spawn time is saved in the plugin config, so a restart does not reset the cooldown. They have 500 health, 8 melee damage, a controller movement attribute of 0.33, and visible scale 3.5, and play a Warden roar when emerging. Settings are under `sandworms` in `config.yml`. Admins can use `/dune summon sandworm [x y z]` to summon one explicitly. Arrakis sightings include coordinates and a fifteen-minute warning before the Vaerkring informs the network. See [Session 2](../SESSION-2.md) for timer persistence, proxy delivery, and plateau settings.
 
 ## Spice contracts and sandworm blooms
 - On Arrakis, defeating a sandworm generates a broad patch of suspicious-sand spice deposits with a target base harvest value of 100,000 Solaris (actual value depends on available sandy terrain and faction bonuses).
@@ -55,7 +55,7 @@ The chest menus use configurable stained glass panes as the backdrop, based on t
 `/dune kit` now grants four leather armor pieces dyed to match the player's faction GUI background: Harkonnen red, Ordos/Fremen green, Atreides blue, Corrino purple. The items keep their `stillsuit` persistent-data identifier, so full-set spice harvesting continues to work. Existing already-issued armor is not recolored automatically; use `/dune kit` to obtain a newly dyed set.
 
 ## Expanded faction palette
-Fremen now have orange armor and orange glass; Ordos is a distinct green faction with green armor and green glass. Harkonnen remains red, Atreides blue, Corrino purple. Spacing Guild is reserved as a black visual/armor color (`spacing_guild`) but is not a selectable player faction, so no Guild armor is issued through `/dune kit` yet. Ordos currently shares Arrakis as a starting planet. Color values are hardcoded for dyed armor; GUI glass materials are configured in `gui.yml`.
+Fremen now have orange armor and orange glass; Ordos is a distinct green faction with green armor and green glass. Harkonnen remains red, Atreides blue, Corrino purple. Vaerkring is reserved as a black visual/armor color (`spacing_guild`) but is not a selectable player faction, so no Guild armor is issued through `/dune kit` yet. Ordos currently shares Arrakis as a starting planet. Color values are hardcoded for dyed armor; GUI glass materials are configured in `gui.yml`.
 
 ## Netherite-strength armor and winged stillsuit
 Each stillsuit armor piece has the same armor points (3/8/6/3), armor toughness (+3 per piece), and knockback resistance (+0.1 per piece) as vanilla netherite armor. Leather stillsuit pieces retain their faction dyes; vanilla leather durability is unchanged.
@@ -77,9 +77,9 @@ Each newly issued leather stillsuit piece receives a distinctive vanilla smithin
 | Atreides | Blue | Coast | Copper / orange |
 | Corrino | Purple | Spire | Gold / yellow |
 | Fremen | Orange | Dune | Lapis / blue |
-| Spacing Guild (reserved) | Black | Eye | Quartz / white |
+| Vaerkring (reserved) | Black | Eye | Quartz / white |
 
-Ordos starts and respawns on its own generated planet `sigma_draconis_iv` (Sigma Draconis IV). Its dark, snowy terrain profile is configured by DuneTerrain. The Spacing Guild remains a non-playable faction and does not receive its own kit through normal gameplay. Existing armor is not automatically upgraded; issue a fresh kit.
+Ordos starts and respawns on its own generated planet `sigma_draconis_iv` (Sigma Draconis IV). Its dark, snowy terrain profile is configured by DuneTerrain. The Vaerkring remains a non-playable faction and does not receive its own kit through normal gameplay. Existing armor is not automatically upgraded; issue a fresh kit.
 
 Wearing a complete Ordos stillsuit and using an ender pearl activates Shadow Step: the player and armor are invisible for five seconds. The armor is returned after the effect, on logout, or when the plugin shuts down. The Ordos kit also includes a reusable Implosion Charge: its Wind Charge projectile primes TNT immediately on impact and replaces the charge in your inventory after launch.
 

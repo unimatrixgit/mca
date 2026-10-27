@@ -63,6 +63,16 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
     private Politics politics;
     private SharedDatabase sharedDatabase;
     public SharedDatabase sharedDatabase(){return sharedDatabase;}
+    private boolean sharesPlayerInventory() {
+        String planet=getConfig().getString("network.local-planet", "arrakis").toLowerCase(java.util.Locale.ROOT).replace('-', '_');
+        return sharedDatabase!=null && java.util.Set.of("arrakis","giedi_prime","kaitain","caladan","sigma_draconis_iv").contains(planet);
+    }
+    public void transactNetworkInventory(Player player, java.util.function.Consumer<java.sql.Connection> operation) throws Exception {
+        if (!sharesPlayerInventory()) throw new java.sql.SQLException("Shared planetary profiles are required to trade");
+        restoreOrdosArmor(player.getUniqueId());
+        sharedDatabase.transaction(player, selected, operation);
+    }
+
     public Politics politics(){return politics;}
     public String factionOf(Player player){return selected.getOrDefault(player.getUniqueId(),"");}
     public void persistPlayers(){savePlayers();}
@@ -116,8 +126,18 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         if (economyRegistration == null) { getLogger().severe("Install Vault and DuneEss before DuneCore."); getServer().getPluginManager().disablePlugin(this); return; }
         economy = economyRegistration.getProvider();
         if(getConfig().getBoolean("database.enabled",false)) {
+            for (Player online : new ArrayList<>(Bukkit.getOnlinePlayers()))
+                online.kickPlayer("Network profiles are starting. Please reconnect.");
             try { sharedDatabase=new SharedDatabase(this); }
-            catch(Exception ex){getLogger().severe("Shared database required but unavailable: "+ex.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
+            catch(Exception ex){getLogger().severe("Shared database required but unavailable: "+ex.getMessage());getServer().getPluginManager().registerEvents(new org.bukkit.event.Listener() {
+                @org.bukkit.event.EventHandler public void reject(org.bukkit.event.player.PlayerLoginEvent event) {
+                    event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER, "Network database is unavailable.");
+                }
+            }, this); return;}
+        }
+        if (sharedDatabase != null) {
+            long interval = Math.max(10, getConfig().getLong("database.autosave-seconds", 60)) * 20L;
+            Bukkit.getScheduler().runTaskTimer(this, this::savePlayers, interval, interval);
         }
         politics = new Politics(this, selected, economy, sharedDatabase);
         discordWebFeed = new DiscordWebFeed(this);
@@ -147,12 +167,24 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
     @Override public void onDisable() {
 
         for (UUID playerId : new ArrayList<>(ordosCloakedArmor.keySet())) restoreOrdosArmor(playerId);
-        if(serverJobs!=null)serverJobs.save(); savePlayers();
+        if(serverJobs!=null)serverJobs.save();
+        if (sharedDatabase != null) {
+            for (Player p : Bukkit.getOnlinePlayers()) try { sharedDatabase.releasePlayer(p, selected); }
+            catch (Exception ex) { getLogger().severe("Shared shutdown save failed for " + p.getName() + ": " + ex.getMessage()); }
+            sharedDatabase.close();
+        } else if (data != null && dataFile != null) savePlayers();
     }
     private void savePlayers() {
         if (sharedDatabase != null) {
-            for (Player player : Bukkit.getOnlinePlayers()) try { sharedDatabase.savePlayer(player, selected); }
-            catch (Exception ex) { getLogger().severe("Shared save failed for " + player.getName() + ": " + ex.getMessage()); }
+            for (Player player : Bukkit.getOnlinePlayers()) try {
+                // Temporarily hidden Ordos equipment must be present in durable snapshots.
+                restoreOrdosArmor(player.getUniqueId());
+                sharedDatabase.savePlayer(player, selected);
+            }
+            catch (Exception ex) {
+                getLogger().severe("Shared save failed for " + player.getName() + ": " + ex.getMessage());
+                player.kickPlayer("Network storage is unavailable. Your profile requires recovery if saving fails.");
+            }
             return;
         }
         for (UUID id : selected.keySet()) data.set(id + ".faction", selected.getOrDefault(id, ""));
@@ -318,7 +350,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         shovel.addUnsafeEnchantment(Enchantment.UNBREAKING,3);
         items.add(shovel);
         if (faction.equalsIgnoreCase("Ordos"))
-            items.add(custom(Material.WIND_CHARGE,"Ordos Implosion Charge","ordos_wind_charge"));
+            items.add(custom(Material.WIND_CHARGE,"Oordwijk Implosion Charge","ordos_wind_charge"));
         for (Material m : new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS}) {
             ItemStack armor = custom(m, "Stillsuit " + m.name().toLowerCase(Locale.ROOT), "stillsuit");
             org.bukkit.inventory.meta.LeatherArmorMeta meta = (org.bukkit.inventory.meta.LeatherArmorMeta) armor.getItemMeta();
@@ -401,7 +433,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         Bukkit.getScheduler().runTaskLater(this,()->{
             Player owner=Bukkit.getPlayer(playerId);
             if(owner==null)return;
-            Map<Integer,ItemStack> leftovers=owner.getInventory().addItem(custom(Material.WIND_CHARGE,"Ordos Implosion Charge","ordos_wind_charge"));
+            Map<Integer,ItemStack> leftovers=owner.getInventory().addItem(custom(Material.WIND_CHARGE,"Oordwijk Implosion Charge","ordos_wind_charge"));
             for(ItemStack leftover:leftovers.values())owner.getWorld().dropItemNaturally(owner.getLocation(),leftover);
         },1L);
     }
@@ -508,7 +540,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             return true;
         }
         if (args.length > 0 && List.of("balance","sell","travel").contains(args[0].toLowerCase(Locale.ROOT))) {
-            sender.sendMessage(ChatColor.YELLOW + "Solaris, Guild travel, and admin teleports are now in DuneEss. Use /duneess help."); return true;
+            sender.sendMessage(ChatColor.YELLOW + "Solaris, Vaerkring travel, and admin teleports are now in DuneEss. Use /duneess help."); return true;
         }
         if (!(sender instanceof Player p)) { sender.sendMessage("Run this command in-game."); return true; }
         if (args.length == 0) { gui.open(p, "main"); return true; }
@@ -528,7 +560,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             case "kit" -> { if (!selected.containsKey(p.getUniqueId())) { p.sendMessage("Choose a faction first."); break; } kit(p); }
             case "politics", "trust" -> politics.command(p, args);
             case "water" -> arrakisWater.command(p,args);
-            case "balance", "sell", "travel" -> p.sendMessage(ChatColor.YELLOW + "Solaris and Guild travel moved to /duneess.");
+            case "balance", "sell", "travel" -> p.sendMessage(ChatColor.YELLOW + "Solaris and Vaerkring travel moved to /duneess.");
             case "menu", "gui" -> gui.open(p, "main");
             case "guireload" -> { if (p.hasPermission("dune.admin")) { gui.reload(); p.sendMessage("GUI configuration reloaded."); } else p.sendMessage("Admin only."); }
             case "menuitem" -> { giveMenuItem(p); p.sendMessage(ChatColor.GREEN + "Dune Navigator ready."); }
@@ -552,14 +584,14 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         helpSection(sender, "General");
         helpLine(sender, "/dune", "Open the Dune Navigator menu.");
         helpLine(sender, "/dune help", "Show this command guide.");
-        helpLine(sender, "/dune choose <faction>", "Join Fremen, Harkonnen, Corrino, Atreides, or Ordos and receive its kit.");
+        helpLine(sender, "/dune choose <faction>", "Join Vrijduin, Harkveen, Korenholt, Aerdrecht, or Oordwijk and receive its kit.");
         helpLine(sender, "/dune kit", "Receive your selected faction's kit.");
         helpLine(sender, "/dune elytra", "Merge or repair elytra equipment in your inventory.");
         helpLine(sender, "/dune menu | /dune gui", "Open the Dune Navigator menu.");
         helpLine(sender, "/dune menuitem", "Give yourself a portable Dune Navigator item.");
 
         helpSection(sender, "Travel");
-        helpLine(sender, "/duneess travel [planet]", "Open Guild travel or travel to a planet.");
+        helpLine(sender, "/duneess travel [planet]", "Open Vaerkring travel or travel to a planet.");
 
         helpSection(sender, "Solaris and spice");
         helpLine(sender, "/duneess balance", "Check your Solaris balance.");
@@ -568,8 +600,8 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         helpLine(sender, "/dune exchange", "Open the player-posted spice job exchange.");
 
         helpSection(sender, "Politics");
-        helpLine(sender, "/dune politics status", "Show Trust funds, election leaders, imperial appointments, and any invasion.");
-        helpLine(sender, "/dune politics deposit <solaris>", "Contribute your Solaris to the Spacing Trust.");
+        helpLine(sender, "/dune politics status", "Show Trust funds, election leaders, Landsraad appointments, and any invasion.");
+        helpLine(sender, "/dune politics deposit <solaris>", "Contribute your Solaris to the Vaerkring Trust.");
         helpLine(sender, "/dune politics vote <player>", "Vote for a leader of your faction.");
         helpLine(sender, "/dune politics emperorvote <player>", "Vote for the Emperor.");
         helpLine(sender, "/dune politics leader", "Show the elected leader of your faction.");
@@ -580,13 +612,13 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         helpLine(sender, "/dune trust <action>", "Alias for /dune politics.");
 
         helpSection(sender, "Contracts and water");
-        helpLine(sender, "/dune serverjobs [accept <id>]", "View hourly CHOAM spice contracts or accept an available contract.");
+        helpLine(sender, "/dune serverjobs [accept <id>]", "View hourly Koopkring spice contracts or accept an available contract.");
         helpLine(sender, "/dune job", "View player-posted spice exchange jobs.");
         helpLine(sender, "/dune job post <spice quota>", "List a spice gathering job for another player.");
         helpLine(sender, "/dune job accept <player>", "Accept another player's spice gathering job.");
         helpLine(sender, "/dune job finish", "Leave your active player-posted job.");
         helpLine(sender, "/dune job cancel", "Cancel your unclaimed job listing.");
-        helpLine(sender, "/dune water guild", "Register as a Guild water trader for the standard legal rate.");
+        helpLine(sender, "/dune water guild", "Register as a Vaerkring Welvaarder for the standard legal rate.");
         helpLine(sender, "/dune water smuggler", "Choose the higher-paying but riskier water smuggling career.");
         helpLine(sender, "/dune water sell", "Sell finite water buckets collected on Arrakis.");
         helpLine(sender, "/dune water status", "Show your water career and how water trading works.");
@@ -594,7 +626,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         if (sender.hasPermission("dune.admin")) {
             helpSection(sender, "Admin (dune.admin)");
             helpLine(sender, "/dune guireload", "Reload the configurable Navigator menu.");
-            helpLine(sender, "/dune guildnpc", "Spawn a Spacing Guild Navigator at your location.");
+            helpLine(sender, "/dune guildnpc", "Spawn a Vaerkring Navigator at your location.");
             helpLine(sender, "/dune givespice", "Give yourself one spice item.");
             helpLine(sender, "/dune admin | /dune adminitem", "Operators: open admin controls or recover the custom blaze rod.");
             helpLine(sender, "/dune summon sandworm [x y z]", "Summon Shai-Hulud on Arrakis at your position or explicit coordinates.");
@@ -712,7 +744,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         }
     }
     @EventHandler(priority=org.bukkit.event.EventPriority.LOWEST) public void loadNetworkPlayer(PlayerJoinEvent e) {
-        if(sharedDatabase==null)return;
+        if(!sharesPlayerInventory())return;
         try{sharedDatabase.loadPlayer(e.getPlayer(),selected);
             if(getConfig().getString("network.local-planet","arrakis").equalsIgnoreCase("arrakis"))
                 Bukkit.getScheduler().runTaskLater(this,()->{if(e.getPlayer().isOnline())checkArrakisArrival(e.getPlayer());},5L);
@@ -721,7 +753,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
     }
     @EventHandler public void onNetworkQuit(org.bukkit.event.player.PlayerQuitEvent e) {
         restoreOrdosArmor(e.getPlayer().getUniqueId());
-        if(sharedDatabase!=null)try{sharedDatabase.savePlayer(e.getPlayer(),selected);}
+        if(sharedDatabase!=null)try{sharedDatabase.releasePlayer(e.getPlayer(),selected);}
         catch(Exception ex){getLogger().severe("Shared player save failed: "+ex.getMessage());}
     }
     @EventHandler public void onBountyKill(org.bukkit.event.entity.PlayerDeathEvent e) {
@@ -735,7 +767,8 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
     }
     @EventHandler public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        Bukkit.getScheduler().runTask(this, () -> giveMenuItem(p));
+        if (sharesPlayerInventory() && !sharedDatabase.isLoaded(p.getUniqueId())) return;
+        Bukkit.getScheduler().runTask(this, () -> { if (p.isOnline()) giveMenuItem(p); });
         if (!selected.containsKey(p.getUniqueId()) || selected.get(p.getUniqueId()).isEmpty()) {
             p.sendMessage(ChatColor.GOLD + "Choose your faction with /dune choose <fremen|harkonnen|corrino|atreides>.");
         }
@@ -889,7 +922,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             Location spawn = new Location(world, x + 0.5, y + 1, z + 0.5);
             return world.spawn(spawn, Zombie.class, raider -> {
                 raider.getPersistentDataContainer().set(raiderKey, PersistentDataType.BYTE, (byte)1);
-                raider.setCustomName(ChatColor.DARK_RED + "Haunted Fremen");
+                raider.setCustomName(ChatColor.DARK_RED + "Haunted Vrijduin");
                 raider.setCustomNameVisible(true);
                 raider.setRemoveWhenFarAway(true);
                 raider.setCanPickupItems(false);

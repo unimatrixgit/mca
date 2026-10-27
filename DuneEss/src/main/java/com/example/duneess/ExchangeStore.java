@@ -11,12 +11,24 @@ final class ExchangeStore {
                    String material, int quantity, BigDecimal price, String payload, String displayName) {}
     private final Connections connections;
     ExchangeStore(Connections connections) { this.connections = connections; }
+    /** Reuse the Core profile transaction; only Core may commit, roll back or close it. */
+    static ExchangeStore bound(Connection connection) {
+        Connection scoped = (Connection) java.lang.reflect.Proxy.newProxyInstance(
+                ExchangeStore.class.getClassLoader(), new Class<?>[]{Connection.class}, (proxy, method, args) -> {
+                    if (Set.of("close", "commit", "rollback", "setAutoCommit").contains(method.getName())) return null;
+                    try { return method.invoke(connection, args); }
+                    catch (java.lang.reflect.InvocationTargetException ex) { throw ex.getCause(); }
+                });
+        return new ExchangeStore(() -> scoped);
+    }
     void initialize() throws SQLException {
         try (Connection c = connections.open(); Statement s = c.createStatement()) {
             s.setQueryTimeout(5);
             s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_exchange_listings (id BIGSERIAL PRIMARY KEY, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, origin VARCHAR(48) NOT NULL, category VARCHAR(24) NOT NULL, material VARCHAR(80) NOT NULL, quantity INT NOT NULL CHECK(quantity>0), price NUMERIC(20,2) NOT NULL CHECK(price>0))");
             s.executeUpdate("ALTER TABLE dune_exchange_listings ADD COLUMN IF NOT EXISTS payload TEXT");
             s.executeUpdate("ALTER TABLE dune_exchange_listings ADD COLUMN IF NOT EXISTS display_name VARCHAR(120)");
+            s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_exchange_sales (id BIGSERIAL PRIMARY KEY, listing_id BIGINT NOT NULL, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, buyer UUID NOT NULL, buyer_name VARCHAR(32) NOT NULL, material VARCHAR(80) NOT NULL, display_name VARCHAR(120), quantity INTEGER NOT NULL CHECK(quantity>0), unit_price NUMERIC(20,2) NOT NULL CHECK(unit_price>0), total_price NUMERIC(20,2) NOT NULL CHECK(total_price>0), origin VARCHAR(48) NOT NULL, sold_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            s.executeUpdate("CREATE INDEX IF NOT EXISTS dune_exchange_sales_seller_id ON dune_exchange_sales(seller,id DESC)");
         }
     }
     private PreparedStatement prepare(Connection c, String sql) throws SQLException {
@@ -68,7 +80,8 @@ final class ExchangeStore {
             r.getBigDecimal("price"),r.getString("payload"),r.getString("display_name"));
     }
     /** On SQL failure, no wallet or listing changes survive. Never set quantity to zero under CHECK(quantity>0). */
-    Listing buy(UUID buyer, long id) throws SQLException {
+    Listing buy(UUID buyer, long id) throws SQLException { return buy(buyer, "Unknown", id); }
+    Listing buy(UUID buyer, String buyerName, long id) throws SQLException {
         try(Connection c=connections.open()) {
             c.setAutoCommit(false);
             try(PreparedStatement q=prepare(c,"SELECT * FROM dune_exchange_listings WHERE id=? FOR UPDATE")) {
@@ -85,6 +98,13 @@ final class ExchangeStore {
                         credit.setBigDecimal(1,offer.price()); credit.setObject(2,offer.seller());
                         if(credit.executeUpdate()!=1) throw new IllegalArgumentException("Seller wallet unavailable; no payment taken.");
                         stock.setLong(1,id); if(stock.executeUpdate()!=1) throw new SQLException("Listing changed.");
+                        try (PreparedStatement sale = prepare(c, "INSERT INTO dune_exchange_sales(listing_id,seller,seller_name,buyer,buyer_name,material,display_name,quantity,unit_price,total_price,origin) VALUES(?,?,?,?,?,?,?,1,?,?,?)")) {
+                            sale.setLong(1, id); sale.setObject(2, offer.seller()); sale.setString(3, offer.sellerName());
+                            sale.setObject(4, buyer); sale.setString(5, buyerName);
+                            sale.setString(6, offer.material()); sale.setString(7, offer.displayName());
+                            sale.setBigDecimal(8, offer.price()); sale.setBigDecimal(9, offer.price()); sale.setString(10, offer.origin());
+                            sale.executeUpdate();
+                        }
                         c.commit(); return offer;
                     }
                 }

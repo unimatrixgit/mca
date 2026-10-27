@@ -27,7 +27,7 @@ bungee-plugin-message-channel = true
 
 Enable Velocity modern forwarding and configure each Paper backend for Velocity forwarding with the same forwarding secret. Block direct external access to backend ports. Players should connect only through the proxy. Check Velocity's current documentation for the exact forwarding options on your versions.
 
-The Spacing Guild navigator is placed by DuneTerrain; DuneCore handles its click and opens the Guild menu. The menu uses the `BungeeCord` `Connect` plugin message to ask Velocity to switch servers. This is an asynchronous request **without delivery acknowledgment**. DuneCore deducts travel fare when requesting a transfer, even if the destination is offline.
+The Vaerkring navigator is placed by DuneTerrain; DuneCore handles its click and opens the Guild menu. The menu uses the `BungeeCord` `Connect` plugin message to ask Velocity to switch servers. This is an asynchronous request **without delivery acknowledgment**. DuneCore deducts travel fare when requesting a transfer, even if the destination is offline.
 
 **Critical limitation — not production ready:** `players.yml`, hourly jobs, exchange listings, balances, and inventory are currently local to each backend. They do **not** synchronize across servers. A production network needs a shared authoritative database (e.g., MariaDB/PostgreSQL), transactional fare charges and payouts, cross-server inventory/player-data synchronization, and a proxy-side first-join/homeworld router. Without these, Solaris and contracts will differ between planets, and faction homeworld routing is not reliable. Do not deploy with a live economy until shared state and transfer confirmation are implemented.
 

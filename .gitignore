@@ -10,3 +10,7 @@ __pycache__/
 /built-crossplay/
 /DuneRealms-Velocity-Network/
 /DuneRealms-Velocity-Network.zip
+
+# Private database credentials and manual profile recovery snapshots
+/network/database/.env
+**/inventory-recovery/

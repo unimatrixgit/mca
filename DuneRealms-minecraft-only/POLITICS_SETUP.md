@@ -1,8 +1,8 @@
-# Spacing Trust and Politics (prototype)
+# Vaerkring Trust and Politics (prototype)
 
 This release adds actual Paper plugin code (`Politics.java`) and `/dune politics` commands.
 
-- Spice sales contribute 1.21% of gross Solaris earnings to the Spacing Trust (rounded up).
+- Spice sales contribute 1.21% of gross Solaris earnings to the Vaerkring Trust (rounded up).
 - `/dune politics deposit <amount>` deposits extra Solaris.
 - `/dune politics status` shows treasury, current election winners and invasion.
 - `/dune politics vote <online-player>` elects a faction leader, one vote per voter per UTC-based 7-day epoch window.

@@ -3,6 +3,6 @@ This edition deliberately excludes fictional vehicle items, custom consumables, 
 
 Retained actual Minecraft materials with plugin metadata: dyed leather faction stillsuits, merged Elytra, netherite shovel (Efficiency V, Unbreaking III) for spice harvesting, orange dye for spice, nether star for the Dune Navigator menu, ender pearls used as travel GUI buttons, water buckets, and ordinary vanilla materials used by the existing gameplay.
 
-The game does not include ornithopters, sandcrawlers, sand bikes, faction banners, shield cores, spice analyzers, water vials, fictional consumables, or fictional decoration blocks. The Spacing Guild remains a travel service, not a vehicle item.
+The game does not include ornithopters, sandcrawlers, sand bikes, faction banners, shield cores, spice analyzers, water vials, fictional consumables, or fictional decoration blocks. The Vaerkring remains a travel service, not a vehicle item.
 
 Important: source is uncompiled and untested; earlier multiplayer race conditions and other prototype limitations remain.

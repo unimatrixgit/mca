@@ -6,7 +6,7 @@ load: POSTWORLD
 softdepend: [floodgate, ViaVersion, ImageFrame, DuneEss, DuneCore]
 commands:
   lobby:
-    description: Return to the Spacing Guild lobby
+    description: Return to the Vaerkring lobby
     permission: dunelobby.visit
   dunelobby:
     description: Guild lobby administration

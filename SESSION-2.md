@@ -10,7 +10,7 @@ New Arrakis darkstone formations have one to three concentric, sand-topped flat 
 
 ## Arrakis sightings
 
-Generated spice bloom markers announce when their chunk loads. Admin-placed markers, erupted blooms, sandworm spawns/loads, and worm-death spice fields use the same announcement service. Arrakis receives a lore message with X/Y/Z and a fifteen-minute warning. After fifteen real minutes, the Spacing Guild informs all online players across the proxy. A bloom already announced at those coordinates or a worm with the same UUID does not restart the countdown on chunk reload.
+Generated spice bloom markers announce when their chunk loads. Admin-placed markers, erupted blooms, sandworm spawns/loads, and worm-death spice fields use the same announcement service. Arrakis receives a lore message with X/Y/Z and a fifteen-minute warning. After fifteen real minutes, the Vaerkring informs all online players across the proxy. A bloom already announced at those coordinates or a worm with the same UUID does not restart the countdown on chunk reload.
 
 Timers and sighting identities persist in `plugins/DuneCore/arrakis-announcements.yml`. Restarting the server preserves deadlines. If no player is connected to the Arrakis backend when a Guild message is due, delivery waits for a player connection. This is required by plugin messaging. Delivery uses the standard BungeeCord `Message` subchannel with recipient `ALL`; Velocity must have `bungee-plugin-message-channel = true`. With DuneCore `network.enabled: false`, the Guild message is delivered locally instead. Install DuneCore alongside DuneTerrain and DuneEss for coordinated announcements. No proxy-side custom plugin is required.
 

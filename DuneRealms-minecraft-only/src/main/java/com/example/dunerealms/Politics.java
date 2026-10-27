@@ -85,9 +85,9 @@ public final class Politics {
         if(args.length<2) { msg(p,"/dune politics status|deposit <amount>|vote <player>|emperorvote <player>|leader|invasion <house>|defend|steward <house>|houseofwater <house>"); return true; }
         String house=faction(p), op=args[1].toLowerCase(Locale.ROOT);
         if(op.equals("status")) {
-            msg(p,"Spacing Trust: "+state.getLong("trust")+" Solaris | Election week: "+week());
+            msg(p,"Vaerkring Trust: "+state.getLong("trust")+" Solaris | Election week: "+week());
             msg(p,"Your faction: "+house+" | Leader: "+leader(house)+" | Emperor: "+emperor());
-            msg(p,"Steward of Dune: "+state.getString("appointments.steward.house","none")+" | House of Water: "+state.getString("appointments.water.house","none"));
+            msg(p,"Specerhuis: "+state.getString("appointments.steward.house","none")+" | Welvaart House: "+state.getString("appointments.water.house","none"));
             msg(p,"Active invasion: "+state.getString("invasion.attacker","none")+" -> "+state.getString("invasion.defender","none"));
             return true;
         }
@@ -99,7 +99,7 @@ public final class Politics {
             if(amount<=0 || !economy.has(p,amount)){msg(p,"Insufficient Solaris.");return true;}
             economy.withdrawPlayer(p,amount);
             state.set("trust",state.getLong("trust")+amount); save();
-            msg(p,"Deposited "+amount+" Solaris into the Spacing Trust.");return true;
+            msg(p,"Deposited "+amount+" Solaris into the Vaerkring Trust.");return true;
         }
         if(op.equals("leader")) {msg(p,"Elected "+house+" leader: "+leader(house));return true;}
         if(op.equals("vote") || op.equals("emperorvote")) {
@@ -120,7 +120,7 @@ public final class Politics {
             if(!p.getUniqueId().toString().equals(winnerId("votes.house."+week()+"."+house))) {msg(p,"Only this week's elected leader may invade.");return true;}
             if(args.length<3 || canon(args[2])==null || house.equalsIgnoreCase(args[2])) {msg(p,"Specify another playable faction.");return true;}
             int cost=plugin.getConfig().getInt("politics.invasion-cost",50000);
-            if(state.getLong("trust")<cost){msg(p,"Spacing Trust requires "+cost+" Solaris.");return true;}
+            if(state.getLong("trust")<cost){msg(p,"Vaerkring Trust requires "+cost+" Solaris.");return true;}
             if(state.getLong("invasion.until",0)>System.currentTimeMillis()){msg(p,"An invasion is already active.");return true;}
             state.set("trust",state.getLong("trust")-cost);
             state.set("invasion.attacker",house);state.set("invasion.defender",canon(args[2]));
@@ -159,7 +159,7 @@ public final class Politics {
             state.set(root+".emperor",emperorId);
             save();
             plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"IMPERIAL APPOINTMENT: "+canon(args[2])+
-                (key.equals("steward")?" is now Steward of Dune (legal spice rights).":" is now House of Water (legal water rights)."));
+                (key.equals("steward")?" is now Specerhuis (legal spice rights).":" is now Welvaart House (legal water rights)."));
             return true;
         }
         msg(p,"Unknown politics command.");return true;

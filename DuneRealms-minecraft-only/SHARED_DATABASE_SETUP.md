@@ -1,16 +1,9 @@
-# Shared PostgreSQL network prototype
+# Shared PostgreSQL network
 
-Set `database.enabled: true` and identical JDBC settings on every Paper backend. Create a PostgreSQL database and user with schema privileges. The plugin creates `dune_players`, `dune_politics`, and `dune_bounties`.
+Current setup, migration, capacity and recovery instructions are maintained in [network/database/README.md](../network/database/README.md).
 
-`SharedDatabase` stores faction, Solaris and serialized full player inventory (including armor/offhand) across planetary servers. `Politics` loads and writes the common political YAML state. Bounties are issued on smuggler water COLLECTION, not sale, on any planet; online players in that planet receive the alert. Player kills claim the bounty once through an atomic SQL UPDATE.
+DuneCore 1.0.12 shares planetary inventories (armor/offhand included), faction and XP. Lobby inventory stays separate; ender chests remain local and are never synchronized or exposed in account snapshots. The same PostgreSQL database serves the existing DuneEss wallets and exchange. Direct session locks prevent concurrent backend ownership, durable unclean-session markers require explicit recovery, and exchange operations commit their inventory checkpoint together with wallets, listings and sales history.
 
-**CRITICAL LIMITATIONS / NOT PRODUCTION READY**
-- The politics YAML snapshot is NOT transactionally locked. Simultaneous votes/invasions from different servers can overwrite each other. Replace with normalized SQL tables and atomic transactions before public deployment.
-- Player inventories are saved on quit and on `savePlayers()`. Concurrent sessions or a crashed backend can cause duplication or stale state. Implement proxy transfer handshakes, single-session leases, and atomic write/version checks.
-- Database operations are synchronous on the Paper main thread. Move to async workers with safe main-thread inventory application.
-- Smuggler career remains local-memory only; it must be persisted to shared storage.
-- A water bucket on non-Arrakis worlds does not automatically become a tagged Arrakis water bucket and cannot be sold through the existing water seller mechanic.
-- Bounty reward is based on ONE water bucket's smuggler gross proceeds, not total inventory; adjust for bulk smuggling contracts.
-- Local NPC retaliation is immediate on collection; spawned Husks may be affected by local biome/daylight rules.
-- The existing lobby routing and travel refund limitations remain.
-- This source was not compiled or tested. Test against Paper 1.21.4 and PostgreSQL before deployment.
+The new inventory/exchange changes have automated validation. Live PostgreSQL, Paper, Velocity, Geyser and ViaVersion staging validation remains necessary. SQL still runs synchronously. Existing political YAML snapshots, smuggler persistence and travel/bounty limitations are outside this change; this does not claim completion of those systems.
+
+Known pre-existing limits: political YAML writes can race; smuggler career persistence, cross-world water tagging, bulk bounty calculation and travel/refund behavior need separate review. SQL is synchronous on the game thread. Run real PostgreSQL and multi-backend client acceptance before enabling shared inventory in production.

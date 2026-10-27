@@ -1,0 +1,10 @@
+{
+  "tool": "Built-in imagegen",
+  "seal": "Use case: logo-brand. Create an original imperial seal for fictional dunerealms.com banknotes. Single isolated circular embossed gold seal, transparent background. Splendour of a desert space empire, Minecraft/block-built geometry, refined numismatic engraving. Central stepped imperial crown above an eight-point desert sun and three geometric dune bands, circular double gold border, symmetric palm-like geometric branches. Deep teal enamel recesses, antique gold highlights. No franchise crest, no eagle, no letters, no text, no mockup, no background, no cast shadow outside seal. Crisp readable silhouette at 64 pixels, luxurious engraved details at full size.",
+  "icons": [
+    {
+      "value": 1,
+      "prompt": "Use case: stylized-concept. A single isolated cartoon inventory icon of the 1 Dunemark note in reference 1, front face only, wide rectangular note centred on a square transparent canvas. Simplify the ornate engraved note into a bold Minecraft GUI item, with thick dark teal outline, warm parchment, copper-gold border and a clearly cubic Minecraft Stilgar portrait wearing sand hood, square blue eyes. Large extremely legible \"1\" on left, small imperial crown/sun/dunes seal at lower left using reference 2. Keep all details inside note silhouette, no cast shadow. Must remain clear at 64x64 pixels. No stacked notes, no coins, no background, no tiny text except the large number. Genuine transparent alpha."
+    }
+  ]
+}
