@@ -43,7 +43,7 @@ export async function startPanel(settings=process.env){
  let inventoryPool=null;
  if(settings.DUNE_INVENTORY_DATABASE_URL){const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));}
  const db=await openDatabase(settings),handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
- const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors https://www.dunerealms.com https://dunerealms.com"};
+ const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com"};
  const server=createServer(async(req,res)=>{try{
   req.setTimeout(15000);let length=0;const chunks=[];for await(const chunk of req){length+=chunk.length;if(length>16384){res.writeHead(413,security);res.end();return;}chunks.push(chunk);}
   if(!req.url?.startsWith('/')||req.url.startsWith('//')){res.writeHead(400,security);res.end();return;}

@@ -9,3 +9,5 @@ async function readLog(){try{const id=$('log-server').value;const data=await api
 $('refresh').onclick=refresh;$('refresh-log').onclick=readLog;$('log-server').onchange=readLog;
 $('command-form').onsubmit=async event=>{event.preventDefault();const input=$('command'),command=input.value.trim();if(!/^[A-Za-z][ -~]{0,239}$/.test(command)){notice('Enter one command without a leading slash.');return;}await act($('log-server').value,'command',command);input.value='';setTimeout(readLog,1000);};
 refresh().then(()=>{if(ready)readLog();});setInterval(()=>{if(ready&&!busy&&!document.hidden)refresh();},15000);
+
+if(new URLSearchParams(location.search).get('embedded')==='1'){document.body.classList.add('server-embedded');const report=()=>parent.postMessage({type:'dune-server-panel-height',height:document.documentElement.scrollHeight},location.origin);new ResizeObserver(report).observe(document.body);report();}
