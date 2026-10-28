@@ -165,6 +165,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         getLogger().info("DuneCore enabled. Gameplay, faction travel, Arrakis threats, and spice raiders ready.");
     }
     @Override public void onDisable() {
+        if (sandwormMobs != null) sandwormMobs.close();
 
         for (UUID playerId : new ArrayList<>(ordosCloakedArmor.keySet())) restoreOrdosArmor(playerId);
         if(serverJobs!=null)serverJobs.save();
