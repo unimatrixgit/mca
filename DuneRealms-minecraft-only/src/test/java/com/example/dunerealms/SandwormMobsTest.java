@@ -32,7 +32,6 @@ class SandwormMobsTest {
     @Test void snifferBodyLinksToHuskBrainAndOnlyBodyDeathRemovesPartner() {
         DuneCore plugin = mock(DuneCore.class);
         when(plugin.getName()).thenReturn("DuneCore");
-        when(plugin.namespace()).thenReturn("dunecore"); // Paper 1.21.8 NamespacedKey uses Plugin.namespace().
         when(plugin.getConfig()).thenReturn(new YamlConfiguration());
         World world = mock(World.class); when(world.getName()).thenReturn("arrakis");
         Location location = new Location(world, 12, 75, 34);

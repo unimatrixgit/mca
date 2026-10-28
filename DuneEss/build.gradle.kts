@@ -7,14 +7,14 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
     }
     implementation("org.postgresql:postgresql:42.7.4")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("com.h2database:h2:2.3.232")
-    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     testImplementation("org.mockito:mockito-core:5.15.2")
     testImplementation("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit", module = "bukkit") }
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

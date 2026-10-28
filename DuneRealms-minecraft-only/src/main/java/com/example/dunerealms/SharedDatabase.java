@@ -49,6 +49,8 @@ public final class SharedDatabase implements AutoCloseable {
     }
 
     public Connection connect() throws SQLException {
+        try { Class.forName("org.postgresql.Driver"); }
+        catch (ClassNotFoundException ex) { throw new SQLException("PostgreSQL driver unavailable", ex); }
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);

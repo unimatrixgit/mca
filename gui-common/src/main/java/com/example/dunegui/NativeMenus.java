@@ -1,11 +1,5 @@
 package com.example.dunegui;
 
-import io.papermc.paper.dialog.Dialog;
-import io.papermc.paper.registry.data.dialog.ActionButton;
-import io.papermc.paper.registry.data.dialog.DialogBase;
-import io.papermc.paper.registry.data.dialog.body.DialogBody;
-import io.papermc.paper.registry.data.dialog.action.DialogAction;
-import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
 import org.bukkit.Bukkit;
@@ -25,24 +19,7 @@ public final class NativeMenus {
         public Choice(String label,String description,Runnable action) { this(label,description,action,null); }
     }
     public static void inventory(JavaPlugin plugin, Player player, String title, Inventory model, Map<Integer,Runnable> actions) {
-        List<Choice> choices = new ArrayList<>();
-        List<String> information = new ArrayList<>();
-        List<ItemStack> illustrations = new ArrayList<>();
-        for(int slot=0;slot<model.getSize();slot++) {
-            var item=model.getItem(slot);
-            if(item==null || !item.hasItemMeta()) continue;
-            var meta=item.getItemMeta();
-            String label=ChatColor.stripColor(meta.getDisplayName());
-            if(label==null || label.isBlank()) continue;
-            String description=meta.hasLore()?String.join("\n",meta.getLore().stream().map(ChatColor::stripColor).toList()):"";
-            Runnable action=actions.get(slot);
-            boolean note=DunemarkItems.isNote(item);
-            boolean realmImage=meta.hasItemModel()&&meta.getItemModel().getNamespace().equals("dunerealms");
-            if(note||realmImage) illustrations.add(item.clone());
-            if(action==null) information.add(label+(description.isBlank()?"":"\n"+description));
-            else choices.add(new Choice(label,description,action,note?DunemarkItems.ICON_URL:null));
-        }
-        show(plugin,player,ChatColor.stripColor(title),String.join("\n\n",information),choices,illustrations);
+        player.openInventory(model);
     }
     public static void show(JavaPlugin plugin, Player player, String title, List<Choice> choices) {
         show(plugin,player,title,"",choices);
@@ -59,21 +36,6 @@ public final class NativeMenus {
         },c.imageUrl())).toList();
         if(Bukkit.getPluginManager().isPluginEnabled("floodgate") && Bedrock.isPlayer(player)) {
             Bedrock.show(player,title,content,guarded); return;
-        }
-        // Dialogs were introduced with protocol 771 (Java 1.21.6). Fail closed if Via cannot identify a client.
-        if(protocol(player)>=771) {
-            List<ActionButton> buttons=guarded.stream().map(c->ActionButton.builder(Component.text(c.label()))
-                .tooltip(Component.text(c.description()))
-                .action(DialogAction.customClick((view,audience)-> {
-                    if(audience instanceof Player actor && actor.getUniqueId().equals(player.getUniqueId())) c.action().run();
-                },ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(2)).build())).build()).toList();
-            List<DialogBody> body=new ArrayList<>();
-            if(!content.isBlank())body.add(DialogBody.plainMessage(Component.text(content)));
-            for(ItemStack illustration:illustrations)body.add(DialogBody.item(illustration,null,false,true,48,48));
-            player.showDialog(Dialog.create(builder->builder.empty()
-                .base(DialogBase.builder(Component.text(title)).body(body).build())
-                .type(DialogType.multiAction(buttons).build())));
-            return;
         }
         player.sendMessage(Component.text(title+" (select an option below)"));
         if(!content.isBlank()) player.sendMessage(Component.text(content));
