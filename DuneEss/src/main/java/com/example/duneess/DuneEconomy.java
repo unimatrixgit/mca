@@ -64,6 +64,8 @@ final class DuneEconomy implements Economy {
     boolean sharedDatabaseReady() { return databaseEnabled; }
 
     private Connection connect() throws SQLException {
+        try { Class.forName("org.postgresql.Driver"); }
+        catch (ClassNotFoundException ex) { throw new SQLException("PostgreSQL driver unavailable", ex); }
         java.util.Properties settings=new java.util.Properties();
         settings.setProperty("user",dbUser);settings.setProperty("password",dbPassword);
         settings.setProperty("connectTimeout","5");settings.setProperty("socketTimeout","10");
