@@ -9,18 +9,21 @@ import {createMarketBridge} from './inventory/market-bridge.mjs';
 import {createGameLink,json} from '../node/game-link.mjs';
 import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {createAccountAdmin} from '../node/account-admin.mjs';
+import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
 const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const auth=createAuth(db,origin),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const admin=createAccountAdmin(db,origin);
+ const servers=createServerControl(db,settings,dependencies.serverControl);
  const pool=dependencies.inventoryPool||{async query(){throw Error('Inventory database is not configured');}};
  const inventoryOptions={authenticate:request=>identity(request,db),verifiedMinecraftUuid:async accountId=>(await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(accountId).first())?.minecraft_uuid||null,pool,logger:dependencies.logger||console};
  const inventory=createInventoryHandler(inventoryOptions),sales=createSalesHistoryHandler(inventoryOptions);
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{
   const path=new URL(request.url).pathname;
+  if(path==='/api/servers'||path.startsWith('/api/servers/'))return servers(request);
   if(path==='/api/inventory')return inventory(request);
   if(path==='/api/exchange/sales-history')return sales(request);
   if(path==='/internal/exchange/listings')return market?market(request):new Response('Not configured',{status:503,headers:{'Cache-Control':'no-store'}});
@@ -31,8 +34,8 @@ export function createPanel(db,settings={},dependencies={}){
   if(path.startsWith('/api/community/'))return rewards(request);
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
-  const file=path==='/'?'index.html':path.slice(1);
-  if(!['index.html','panel.js','panel.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
+  if(!['index.html','panel.js','panel.css','servers.html','servers.js','servers.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }

@@ -94,3 +94,9 @@ Expired missions consume no cargo and pay no reward. When the last mission expir
 smuggler returns to green particles and normal roaming, and its temporary lighting is removed.
 Contracts created before 1.0.8 receive one initial 30-minute window when first upgraded; subsequent
 restarts preserve their saved deadline.
+
+## Block-display sandworm (Core 1.0.13)
+
+`sandworms.model: display` renders the existing Husk/Sniffer pair as a 27-part segmented block-display worm. The Sniffer remains the damageable hitbox, and the current AI, health and reward paths are retained. This model needs no custom resource pack. Use `sandworms.model: sniffer` for the original appearance.
+
+The display model rises, follows the controller path, flashes on damage and sinks on death. Movement history is capped at 256 samples; initial terrain sampling avoids loading chunks. Model parts are non-persistent and are removed when the plugin stops. Display-spawn failure removes partial parts and keeps the Sniffer visible. Visual body segments have no additional collision hitboxes. Client appearance and large worm populations should be assessed in gameplay before raising the configured population cap.
