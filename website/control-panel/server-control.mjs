@@ -1,13 +1,17 @@
+import {can} from '../node/permissions.mjs';
 import {randomUUID} from 'node:crypto';
 import {identity} from '../node/auth.mjs';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie'}});
 export function createServerControl(db,settings,{fetcher=fetch}={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
- const operators=new Set((settings.SERVER_CONTROL_OPERATORS||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean));
  return async request=>{
   const user=await identity(request,db);
   if(!user)return json({message:'Sign in to the account panel first.'},401);
-  if(user.role!=='staff'||!operators.has(user.username.toLowerCase()))return json({message:'Server operator access is required.'},403);
+  const path=new URL(request.url).pathname;
+  let node=path.endsWith('/logs')?'cp.servers.logs':path.endsWith('/action')?'cp.servers.power':'cp.servers.view';
+  if(!await can(db,user,'cp.menu.servers'))return json({message:'Server operator access is required.'},403);
+  if(path.endsWith('/action')){try{if((await request.clone().json()).action==='command')node='cp.servers.console';}catch{}}
+  if(!await can(db,user,node))return json({message:'Permission required: '+node},403);
   if(!settings.SERVER_CONTROL_TOKEN||settings.SERVER_CONTROL_TOKEN.length<64)return json({message:'Server controls are not configured.'},503);
   const url=new URL(request.url);let target,body;
   if(request.method==='GET'&&url.pathname==='/api/servers'&&!url.search)target='/servers';

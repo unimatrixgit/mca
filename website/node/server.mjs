@@ -1,3 +1,4 @@
+import {initializeRanks,can} from './permissions.mjs';
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -36,7 +37,7 @@ export function createApplication(db,settings={}) {
     const headers=new Headers(request.headers);
     for(const key of [...headers.keys()])if(key.startsWith('oai-')||key.startsWith('x-internal-'))headers.delete(key);
     const user=await identity(request,db);
-    if(user){headers.set('oai-authenticated-user-id',user.id);if(user.role==='staff')headers.set('oai-authenticated-user-email','verified-staff@dunerealms.internal');}
+    if(user){headers.set('oai-authenticated-user-id',user.id);if(await can(db,user,'cp.accounts.view'))headers.set('oai-authenticated-user-email','verified-staff@dunerealms.internal');}
     const forwarded=new Request(request.url,{method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:request.body,duplex:'half'});
     const response=await worker.fetch(forwarded,{...settings,DB:db,FORUM_ADMIN_EMAILS:'verified-staff@dunerealms.internal',SUPPORT_STAFF_EMAILS:'verified-staff@dunerealms.internal'});
     const type=response.headers.get('Content-Type')||'';
@@ -49,7 +50,7 @@ export function createApplication(db,settings={}) {
   };
 }
 export async function start(settings=process.env) {
-  const db=await openDatabase(settings),handle=createApplication(db,settings),origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
+  const db=await openDatabase(settings);await initializeRanks(db);const handle=createApplication(db,settings),origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
   const forgejo=createForgejoProxy(settings);
   const server=createServer(async(req,res)=>{
     try{

@@ -1,3 +1,4 @@
+import {publicUser} from './permissions.mjs';
 import {randomBytes,randomUUID,createHash,scrypt as rawScrypt,timingSafeEqual} from 'node:crypto';
 import {promisify} from 'node:util';
 const scrypt=promisify(rawScrypt),cookieName='__Host-dune_session';
@@ -12,10 +13,10 @@ export async function identity(request,db){
 export function createAuth(db,origin){
   const attempts=new Map();
   function allowed(key,max=10,window=900000){const now=Date.now();if(attempts.size>5000)for(const [k,v]of attempts)if(v.until<now)attempts.delete(k);if(attempts.size>5000)return false;let row=attempts.get(key);if(!row||row.until<now){row={count:0,until:now+window};attempts.set(key,row);}return ++row.count<=max;}
-  async function issue(user){const token=randomBytes(32).toString('base64url');await db.prepare('INSERT INTO site_sessions(token_hash,user_id,expires_at) VALUES(?,?,?)').bind(digest(token),user.id,Date.now()+604800000).run();return json({ok:true,user:{username:user.username,staff:user.role==='staff'}},200,{'Set-Cookie':`${cookieName}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`});}
+  async function issue(user){const token=randomBytes(32).toString('base64url');await db.prepare('INSERT INTO site_sessions(token_hash,user_id,expires_at) VALUES(?,?,?)').bind(digest(token),user.id,Date.now()+604800000).run();return json({ok:true,user:await publicUser(db,user)},200,{'Set-Cookie':`${cookieName}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`});}
   return async request=>{
     const path=new URL(request.url).pathname;
-    if(path==='/api/auth/session'&&request.method==='GET'){const user=await identity(request,db);return json({authenticated:!!user,user:user?{username:user.username,staff:user.role==='staff'}:null});}
+    if(path==='/api/auth/session'&&request.method==='GET'){const user=await identity(request,db);return json({authenticated:!!user,user:user?await publicUser(db,user):null});}
     if(request.method!=='POST')return json({message:'Method not allowed.'},405);
     if(request.headers.get('Origin')!==origin)return json({message:'Request origin rejected.'},403);
     if(path==='/api/auth/password'){
@@ -42,10 +43,10 @@ export function createAuth(db,origin){
       if(!allowed('registrations',60,3600000))return json({message:'Registration is temporarily limited. Please try later.'},429);
       const salt=randomBytes(16).toString('hex'),hash=(await scrypt(password,salt,64)).toString('hex'),id=randomUUID(),now=Date.now();
       try{await db.batch([
-        db.prepare('INSERT INTO site_accounts(id,username,display_name,password_salt,password_hash,role,created_at) VALUES(?,?,?,?,?,?,?)').bind(id,username,username,salt,hash,'player',now),
+        db.prepare('INSERT INTO site_accounts(id,username,display_name,password_salt,password_hash,role,created_at) VALUES(?,?,?,?,?,?,?)').bind(id,username,username,salt,hash,'user',now),
         db.prepare('INSERT INTO player_profiles(user_id,display_name,minecraft_name,discord_name,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(id,username,'','',now,now)
       ]);}catch(error){if(error.code==='ER_DUP_ENTRY'||String(error.message).includes('UNIQUE constraint'))return json({message:'That username is unavailable.'},409);throw error;}
-      return issue({id,username,role:'player'});
+      return issue({id,username,role:'user'});
     }
     const user=await db.prepare('SELECT * FROM site_accounts WHERE username=?').bind(username).first();
     const actual=await scrypt(password,user?.password_salt||'00000000000000000000000000000000',64);

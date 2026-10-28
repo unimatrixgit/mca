@@ -1,3 +1,6 @@
+import {createRankAdmin} from '../node/rank-admin.mjs';
+import {createStaffManual} from './staff-manual.mjs';
+import {initializeRanks,can} from '../node/permissions.mjs';
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -16,6 +19,8 @@ export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const auth=createAuth(db,origin),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const admin=createAccountAdmin(db,origin);
+ const ranks=createRankAdmin(db,settings,origin);
+ const manual=createStaffManual(db);
  const servers=createServerControl(db,settings,dependencies.serverControl);
  const pool=dependencies.inventoryPool||{async query(){throw Error('Inventory database is not configured');}};
  const inventoryOptions={authenticate:request=>identity(request,db),verifiedMinecraftUuid:async accountId=>(await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(accountId).first())?.minecraft_uuid||null,pool,logger:dependencies.logger||console};
@@ -23,6 +28,10 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{
   const path=new URL(request.url).pathname;
+  if(path==='/api/staff/manual')return manual(request);
+  if(path==='/api/game/permissions'||path==='/api/ranks'||path.startsWith('/api/ranks/'))return ranks(request);
+  const menu=path==='/api/inventory'||path==='/api/exchange/sales-history'?'cp.menu.inventory':(path==='/api/game-link'||path.startsWith('/api/game-link/')&&path!=='/api/game-link/consume')?'cp.menu.game':path==='/api/community/rewards'?'cp.menu.rewards':null;
+  if(menu){const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);if(!await can(db,user,menu))return json({message:'Permission required: '+menu},403);}
   if(path==='/api/servers'||path.startsWith('/api/servers/'))return servers(request);
   if(path==='/api/inventory')return inventory(request);
   if(path==='/api/exchange/sales-history')return sales(request);
@@ -35,14 +44,14 @@ export function createPanel(db,settings={},dependencies={}){
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
   const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
-  if(!['index.html','panel.js','panel.css','servers.html','servers.js','servers.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  if(!['index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','ranks.mjs','ranks.css','staff-manual.mjs','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }
 export async function startPanel(settings=process.env){
  let inventoryPool=null;
  if(settings.DUNE_INVENTORY_DATABASE_URL){const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));}
- const db=await openDatabase(settings),handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
+ const db=await openDatabase(settings);await initializeRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
  const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com"};
  const server=createServer(async(req,res)=>{try{
   req.setTimeout(15000);let length=0;const chunks=[];for await(const chunk of req){length+=chunk.length;if(length>16384){res.writeHead(413,security);res.end();return;}chunks.push(chunk);}

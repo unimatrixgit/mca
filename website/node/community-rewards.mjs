@@ -1,3 +1,4 @@
+import {can} from './permissions.mjs';
 import {randomBytes,randomUUID} from 'node:crypto';
 import {identity} from './auth.mjs';
 import {json,gameAuthorized,validUuid} from './game-link.mjs';
@@ -43,7 +44,7 @@ export function createCommunityRewards(db,settings,origin){
    const {results}=await db.prepare('SELECT r.month,r.personal_code,r.issued_at,c.reward_amount,q.delivered_at FROM community_rewards r JOIN community_campaigns c ON c.month=r.month LEFT JOIN community_claims q ON q.minecraft_uuid=r.minecraft_uuid AND q.month=r.month WHERE r.minecraft_uuid=? ORDER BY r.month DESC').bind(link.minecraft_uuid).all();
    return json({linked:true,eligibleSince:link.first_linked_at,available:results.filter(r=>!r.delivered_at),history:results.filter(r=>r.delivered_at).map(({personal_code,...row})=>row)});
   }
-  if(user.role!=='staff')return json({message:'Staff access required.'},403);
+  if(!await can(db,user,'cp.community.manage'))return json({message:'Community management permission required.'},403);
   if(request.method!=='POST')return json({message:'Method not allowed'},405);
   if(request.headers.get('origin')!==origin)return json({message:'Origin rejected'},403);
   let data;try{data=await request.json();}catch{return json({message:'Invalid request'},400);}
