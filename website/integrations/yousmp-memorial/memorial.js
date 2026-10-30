@@ -1,0 +1,6 @@
+(()=>{const original=document.querySelector('.feature-header');if(!original||document.querySelector('.yousmp-memorial-banner'))return;const banner=document.createElement('section');banner.className='yousmp-memorial-banner';original.append(banner);banner.setAttribute('aria-label','In memory of Sir Patrick Stewart');banner.replaceChildren();const text=document.createElement('div');text.className='yousmp-memorial-copy';const intro=document.createElement('p');intro.className='yousmp-memorial-intro';intro.textContent='IN MEMORY OF';const title=document.createElement('h1');title.textContent='Sir Patrick Stewart';const role=document.createElement('p');role.className='yousmp-memorial-role';role.textContent='Captain Jean-Luc Picard · Star Trek: The Next Generation';const quote=document.createElement('blockquote');quote.textContent='“What we leave behind is not as important as how we’ve lived.”';const credit=document.createElement('cite');credit.textContent='— Captain Jean-Luc Picard';const candle=document.createElement('span');candle.className='yousmp-memorial-candle';candle.setAttribute('role','img');candle.setAttribute('aria-label','A burning candle in remembrance');candle.append(document.createElement('i'));text.append(intro,title,role,quote,credit,candle);banner.append(text);})();
+
+
+
+
+

@@ -1,0 +1,691 @@
+{
+  "capturedAt": "2026-10-30T17:43:17.598Z",
+  "branch": "handoff/website-alpha-20261030",
+  "scope": "Paused website source handoff; see ALPHA-WEBSITE-HANDOFF-20261030.md for live versus staged",
+  "files": [
+    {
+      "path": "website/content/kit-quest-arc-v1.json",
+      "sha256": "f876dd505cc1b98dae98912e22c737e8ce32bc7bf7122c8ae6fa58f17849f838"
+    },
+    {
+      "path": "website/control-panel/ban-bridge.mjs",
+      "sha256": "4b1fcd2128ff5e60b08e45823c4b8384cde51c3648a75fc9d178acf9f5713f87"
+    },
+    {
+      "path": "website/control-panel/ban-register.mjs",
+      "sha256": "46cc191cf7446aafeefa263970e0b6e508c8b3c1b43c560185844ba80380a8d5"
+    },
+    {
+      "path": "website/control-panel/banking.mjs",
+      "sha256": "1eaa60a325f65670cf9e4fdde5818a4e11ae93fdef277f9a49661505af941b83"
+    },
+    {
+      "path": "website/control-panel/clan-shop.mjs",
+      "sha256": "d2a85657a4bf740643ec744d674b60eff1ad11eb49cc10a1af07a6b0b9309d1e"
+    },
+    {
+      "path": "website/control-panel/clans.mjs",
+      "sha256": "5257bc903604c5e2e6abfe8c0054fdee9937e0881cfe4ac71f1b21033d898a1a"
+    },
+    {
+      "path": "website/control-panel/community-admin.mjs",
+      "sha256": "90c8cd0808d796098b3f8e3bac65e09b7ddb2d55b086bff82711ee55c1bc2c02"
+    },
+    {
+      "path": "website/control-panel/evidence.mjs",
+      "sha256": "7d5d9fb3c18bdb9f4220f5f7cd39c47bf1ddeaaa7f79799f2b8bf817f81d828f"
+    },
+    {
+      "path": "website/control-panel/exchange.mjs",
+      "sha256": "4b916e5f1041d2335fe88d8fbdf1d2bac7cd9a17ad08742f64f3ec9ddd61f4df"
+    },
+    {
+      "path": "website/control-panel/game-tickets.mjs",
+      "sha256": "500a38ea1df82fda9735976a4bf9acbb8afc678e75d75c3307d59e10da6d7598"
+    },
+    {
+      "path": "website/control-panel/imperial-atelier.mjs",
+      "sha256": "77670483f3d1084e298fc65c89b71c78685d1659de4113a7168c41148442889f"
+    },
+    {
+      "path": "website/control-panel/inventory/inventory-api.mjs",
+      "sha256": "310e7db603f9f3b450076e0766cf3d73ec0dbf99b62c9a1c64cd40fddbf5c589"
+    },
+    {
+      "path": "website/control-panel/inventory/market-bridge.mjs",
+      "sha256": "a0b6ce353526aecf9abb8a582dc013cbcfd4b606f888553fe8549284e8390510"
+    },
+    {
+      "path": "website/control-panel/kit-market.mjs",
+      "sha256": "b49930ded96e10c9fc865702de7f25039a2eafe4d2ab47d6ea42bda39c3504ad"
+    },
+    {
+      "path": "website/control-panel/kit-studio.mjs",
+      "sha256": "376af1233ee96789b0226c1610547b976a06e2337668ee54f4cdfdad90396bcd"
+    },
+    {
+      "path": "website/control-panel/luckperms-theme/prepare.mjs",
+      "sha256": "a87071034e98fc4746b9faa241e4941d2fdd31a5bef77990fcfbd8c0d1988857"
+    },
+    {
+      "path": "website/control-panel/luckperms.mjs",
+      "sha256": "e7797debbeb5ffa4ea960e80eea709f015dfe6b300e0a2d465b2e4ce5d8d16e4"
+    },
+    {
+      "path": "website/control-panel/moderation.mjs",
+      "sha256": "7e50124223140bd2ade9c062269ccf32dea2364d8760afbe32dee50602647f46"
+    },
+    {
+      "path": "website/control-panel/native-appeal-decision.mjs",
+      "sha256": "f5ce1193af0a1655851c720d32a041ce68bb95d46290146e1f064c9464b31f95"
+    },
+    {
+      "path": "website/control-panel/native-appeal-status.mjs",
+      "sha256": "3226a6b1690d32cd19db926af292242825b8c41087f329e9358cd5e8609d13af"
+    },
+    {
+      "path": "website/control-panel/overview.mjs",
+      "sha256": "d4861d5329bbfda4e3a3ea126aed80188a0b8d1b1971e2f29a68360aa6207730"
+    },
+    {
+      "path": "website/control-panel/provision-owner.mjs",
+      "sha256": "f626649a87cc4f73dcb6aacb6d4295f0b7be49037ab141cb41ec98691c32f0b0"
+    },
+    {
+      "path": "website/control-panel/public/ban-register.mjs",
+      "sha256": "0d4ac5cbb30cff483448cdf9bdd68752543ae60445e64a8a8e964aacc4b058c4"
+    },
+    {
+      "path": "website/control-panel/public/banking.css",
+      "sha256": "68b863022b3c02306e5adcd185ef869558cb78a34bf36c91dedbd4f5a697a478"
+    },
+    {
+      "path": "website/control-panel/public/banking.mjs",
+      "sha256": "169a44a86ba24cf6b404e2c86e46bbda2365216f7be4faad2a78021861cca3bb"
+    },
+    {
+      "path": "website/control-panel/public/clan-request-gate.mjs",
+      "sha256": "b2aeb95edc0adf05f586c4d9f8459ec39a1a62aee018b1361259f844a1e2264d"
+    },
+    {
+      "path": "website/control-panel/public/clan-shop.mjs",
+      "sha256": "03ed900972dfa2e48d2355d864c1bbe067a91e33b2286ed047e508b1829a32b4"
+    },
+    {
+      "path": "website/control-panel/public/clans.css",
+      "sha256": "1377b96494ef20c2f60a736ce39881b36a79994cd96eb02a8c6202fb1942f08e"
+    },
+    {
+      "path": "website/control-panel/public/clans.mjs",
+      "sha256": "a163237fd38564ab1f82aac063a1c5c244184ef3b4732382d6d40ea07d9a57b2"
+    },
+    {
+      "path": "website/control-panel/public/commerce-settings.mjs",
+      "sha256": "43983eadabe288eb73f7f9e5a89e2ca907368cefe32138adac6ed3824035170b"
+    },
+    {
+      "path": "website/control-panel/public/community-admin.mjs",
+      "sha256": "03044303c8be84f8c87a440242e47128f66fe1f42d8f743f9dd35cdc7f39482a"
+    },
+    {
+      "path": "website/control-panel/public/exchange.css",
+      "sha256": "47174c6d95286dc15bb44273e7ccdad5e4eda9ce19d5effb9145ea81b90bd4b3"
+    },
+    {
+      "path": "website/control-panel/public/exchange.mjs",
+      "sha256": "7d020ed215d4ec56d3322bae4d00415d1b9e6181c4de39104e37046ef3c41211"
+    },
+    {
+      "path": "website/control-panel/public/game-ranks.mjs",
+      "sha256": "0b418cd5cbe5d0bcb9297325937462034c1508a6b815893aee00e9a30c472d67"
+    },
+    {
+      "path": "website/control-panel/public/git-control.css",
+      "sha256": "5cc6a79e7e5b8acf6af4a32b7c3b22e6d2a7ab38cf474f7e56d3ae61a0eea3c0"
+    },
+    {
+      "path": "website/control-panel/public/git-control.mjs",
+      "sha256": "dee2dd3f2442b88c6397c2ba9ac6ae0e899d891f27b1068aa2bd6ea6c2e2b7a5"
+    },
+    {
+      "path": "website/control-panel/public/imperial-atelier.mjs",
+      "sha256": "53224c74690fe4fbe81f7f6bb39318eddd871c32b96546c3f3ccc07e41d0010d"
+    },
+    {
+      "path": "website/control-panel/public/index.html",
+      "sha256": "4eccf54d9611bf16219ab8e11a75a381bec46b00536bbc04d7c010e10e454d1b"
+    },
+    {
+      "path": "website/control-panel/public/inventory/inventory-mount.mjs",
+      "sha256": "7921bbf0c95b1a94f730b3d0a3d37b306675a0c5930565d086cc442214a03001"
+    },
+    {
+      "path": "website/control-panel/public/inventory/inventory-view.mjs",
+      "sha256": "7d21a1c5854f02ef42d8474ed1414faaf3f0797a0490dc6ea906e51cfc9d6bfd"
+    },
+    {
+      "path": "website/control-panel/public/inventory/inventory.css",
+      "sha256": "c3c40253a468bf13300aadc82271e65555d8a0b74b336046986a8a1e0225502b"
+    },
+    {
+      "path": "website/control-panel/public/kit-cart.mjs",
+      "sha256": "b0be32b21c935c987e2f36fb777490338c5f836ac9e6bdd14672e4329423fef3"
+    },
+    {
+      "path": "website/control-panel/public/kit-generator.css",
+      "sha256": "cc8e82905ba14fd234c58efbbc776c2688cfe65155cb8dae90b5410eebed0402"
+    },
+    {
+      "path": "website/control-panel/public/kit-generator.mjs",
+      "sha256": "101c7a6516509802886434b8a6f08e62a95416b4cea3b2fdf3b4587917d67372"
+    },
+    {
+      "path": "website/control-panel/public/kit-market.css",
+      "sha256": "ecdef446c9ffefb1118478ce07cc6f130544b96e5c33f438daf74a1057220e4a"
+    },
+    {
+      "path": "website/control-panel/public/kit-market.mjs",
+      "sha256": "6202e441a49ae0e884a7769a3da0f55c4578a1ee26740f20d87d83b601112bb8"
+    },
+    {
+      "path": "website/control-panel/public/luckperms.mjs",
+      "sha256": "25a20eba62e6bd319de4ea31b2001a5f6ae1228851634a41a98ba2d830cb75b3"
+    },
+    {
+      "path": "website/control-panel/public/mail-signature.mjs",
+      "sha256": "bf5bc246b86e4b758ceaabeca3f9c0f3807a42a79269c13750f97f7f3666bae4"
+    },
+    {
+      "path": "website/control-panel/public/native-community.mjs",
+      "sha256": "f7d588ef9bcf0e59a61f3212e34d120a894b24cb7ef6a4b78bac4ebc0cb2a059"
+    },
+    {
+      "path": "website/control-panel/public/overview.css",
+      "sha256": "305a45716e5562be2703cdf0a4dd975e2d53fe3423c2ff4b8dac96dfd80e1fb4"
+    },
+    {
+      "path": "website/control-panel/public/overview.mjs",
+      "sha256": "b137346182fa84315954210a0c75cf0d6ff723273fa62aad281da1a533e00169"
+    },
+    {
+      "path": "website/control-panel/public/page-groups.mjs",
+      "sha256": "150f391f5b316b54dd077cc3fd596018689c6612430bfddca6aa8cbfd05db58b"
+    },
+    {
+      "path": "website/control-panel/public/pages.mjs",
+      "sha256": "49e8a391450111953e8f4a2f6f7c088769fa43ff164720da892e49b5f3b31a40"
+    },
+    {
+      "path": "website/control-panel/public/panel.css",
+      "sha256": "05c9114e7605ef507c9a41ea82e4c6df2796e4aece694aecd2a635eeceb2fe65"
+    },
+    {
+      "path": "website/control-panel/public/panel.js",
+      "sha256": "dc14223d7c7c9175d4d9a1152048fb0a5876ff6da824fe743f042d603ff3c5ae"
+    },
+    {
+      "path": "website/control-panel/public/quest-rewards.css",
+      "sha256": "8fdbe4db092e7e6bbdfb5681baeb7256e0f38c4bdd028db65832192baede07ad"
+    },
+    {
+      "path": "website/control-panel/public/quest-rewards.mjs",
+      "sha256": "28935b9f8f74fa63a12f41b183d99b39b96729686a016bf3d222fcb28fd0a56e"
+    },
+    {
+      "path": "website/control-panel/public/quests.css",
+      "sha256": "593f0209cd889329d665c351df7acceefd0b53011da78f6df91c7ae7773407c7"
+    },
+    {
+      "path": "website/control-panel/public/quests.mjs",
+      "sha256": "e7af9967ef3026fd782188f49e7ff037628f7eed6bce9c1d17ef2e75b2b3e565"
+    },
+    {
+      "path": "website/control-panel/public/ranks.css",
+      "sha256": "8bc244224a63b2c59cb076d1dd1ce034361d907f42977017b5a8700f55fa5bbd"
+    },
+    {
+      "path": "website/control-panel/public/ranks.mjs",
+      "sha256": "f500955a189fd4521f62c7e386571fdb01a73b0d3cc53045166e8f49dac93c12"
+    },
+    {
+      "path": "website/control-panel/public/servers.css",
+      "sha256": "9aff775226f16a65b9cf5d5afbc95893b5a9de6ae3718e9a7816ec05f15fe6dd"
+    },
+    {
+      "path": "website/control-panel/public/servers.html",
+      "sha256": "d0feef3eae5d6cee0689d8acb03ee2dc4f55426882d0343ff2d20e3b562d796e"
+    },
+    {
+      "path": "website/control-panel/public/servers.js",
+      "sha256": "ff126cec51648a7071dedf23796092d6598d17f69947e703818823e0d636ff13"
+    },
+    {
+      "path": "website/control-panel/public/site-profile.css",
+      "sha256": "ebbca0159181eb0208869e43543e7499da12ae050d5c5149101181aa0df51f6f"
+    },
+    {
+      "path": "website/control-panel/public/site-profile.mjs",
+      "sha256": "2aa3163a6182c740856b7d8e8fab2e82364b7d489f9005cd557c37b91a3fea68"
+    },
+    {
+      "path": "website/control-panel/public/staff-manual.mjs",
+      "sha256": "a884e2d1e7cb240f16b188ded0901fca24797b112b1a838f5880718cea0169e5"
+    },
+    {
+      "path": "website/control-panel/public/user-page-hero.mjs",
+      "sha256": "f3ddf1ce2c48d8ff5d52c2d29d70f139e07e7efe2e4cab2d73fcd7f0b09fedeb"
+    },
+    {
+      "path": "website/control-panel/public/webmail.mjs",
+      "sha256": "20b39189370473e6660cbfca56233ed5a716e432eadf8d154c48798a28dd22ab"
+    },
+    {
+      "path": "website/control-panel/quest-rewards.mjs",
+      "sha256": "e5fc4ad6c8df8a3cefb8f1406e6b27e0dfd198385525c7eb435e1525745e5128"
+    },
+    {
+      "path": "website/control-panel/quests.mjs",
+      "sha256": "ab5a43c662a7857609da00e3908f149ad6f99b10d2d2f7ec3c6cf5b19a8a6d60"
+    },
+    {
+      "path": "website/control-panel/server-control.mjs",
+      "sha256": "fd3aa330c334be3158584568bc29b198b87b9db92469d8f767bab1f445defe1e"
+    },
+    {
+      "path": "website/control-panel/server.mjs",
+      "sha256": "0775d548084544957ba8ddbc50c45bcab481baf500bdf607dc07af287e63fa47"
+    },
+    {
+      "path": "website/control-panel/staff-manual.mjs",
+      "sha256": "48bcc8afe40dd37779d5a956a097a165cc5346903ef4d79d4f229338ae21c7ae"
+    },
+    {
+      "path": "website/control-panel/start.mjs",
+      "sha256": "55851d934a5e0980236fe1c1687f337f3c25e9e068a75f2fbc879aac9ca5181d"
+    },
+    {
+      "path": "website/docs/ALPHA-WEBSITE-HANDOFF-20261030.md",
+      "sha256": "754bd5abc00a0e0ed375ea9a827d1f34ca3d5c47ce74753ada1c93d56b3724ec"
+    },
+    {
+      "path": "website/integrations/clans/kit-commerce-policy-v2.json",
+      "sha256": "27139e3df4056b14f2fa79e754961a159e5a6aac15b04c1a34f5fa461ec958d7"
+    },
+    {
+      "path": "website/integrations/clans/kit-commerce-policy-v2.sql",
+      "sha256": "a583e49fe070246209fdbafa4059f6e5dd235a359f5ff242511d79f0818680e6"
+    },
+    {
+      "path": "website/integrations/clans/kit-commerce.sql",
+      "sha256": "483592af31c6188f33a445db5241578eb626002b4c1f999a56c3e7c421561b28"
+    },
+    {
+      "path": "website/integrations/common/shared-footer.html",
+      "sha256": "11df967de21718ab7449705733d958774dd374c23d73572945caa887be275adc"
+    },
+    {
+      "path": "website/integrations/common/shared-header-head.html",
+      "sha256": "c0a5d88eb8c50812b39001f44d718f3372583f6319afe382d20e073a2f5c4e9c"
+    },
+    {
+      "path": "website/integrations/common/shared-header.html",
+      "sha256": "f8e3b85db64910a827b3aaf00e6a30776db8111f27983ae07b36040fd16e91f0"
+    },
+    {
+      "path": "website/integrations/common/shared-header.php",
+      "sha256": "80bbd77907b4a5cca97e96adf372998d031070a03c5938c6a8955d6e8c1a2b5c"
+    },
+    {
+      "path": "website/integrations/common/shared-memorial.html",
+      "sha256": "e7e931b325d01d12c4fb07df3e595d85f21da4ffb897d3261646c733c85ccf74"
+    },
+    {
+      "path": "website/integrations/yousmp-memorial/memorial.css",
+      "sha256": "a9e7358e93ea3baa08c6d04c85f54eb48e3eaf41816836e6f86100b92244af95"
+    },
+    {
+      "path": "website/integrations/yousmp-memorial/memorial.js",
+      "sha256": "4d683110b74d2a9429b8b569ebdac9650fcd3e14123e327e3f28e9d7307417f3"
+    },
+    {
+      "path": "website/integrations/yousmp-memorial/yousmp-memorial.php",
+      "sha256": "f329fe3164aafb883e66095c3cf1da1eccdbb4fe58f6338ecbbb58ef0c24aa4a"
+    },
+    {
+      "path": "website/node/account-admin.mjs",
+      "sha256": "7833ce56e4774d5282026c0f8e93b63f094e559bd004520e4825d2a75a04aec5"
+    },
+    {
+      "path": "website/node/ack-season-private.mjs",
+      "sha256": "fd00930ba8d652ddf667e19f5adec60350a93d0e7bf835455598d99dada57af3"
+    },
+    {
+      "path": "website/node/auth.mjs",
+      "sha256": "59e793bf8b75be0bce61552db8f77e3a89a8561c519c82c35711de157135c17f"
+    },
+    {
+      "path": "website/node/avatar.mjs",
+      "sha256": "5d255d381714d403e4fc1b5e1f0e02292ff0143dc4f8f3000e5a64192ae3df33"
+    },
+    {
+      "path": "website/node/badge-admin.mjs",
+      "sha256": "a58c45716e57e8c0c4a23d902973ee4194b2cedcc318940a625a1caac225731e"
+    },
+    {
+      "path": "website/node/community-badges.mjs",
+      "sha256": "6c2eb3fe18b12ab99688650b42f67d7b6f4aed425f323c5fdf053561b88e9ad7"
+    },
+    {
+      "path": "website/node/community-rewards.mjs",
+      "sha256": "4caf08f50ba79ff986106efa9f578a95052f9ded40880eacde7d53238d6397bf"
+    },
+    {
+      "path": "website/node/contact.mjs",
+      "sha256": "f0a5380fcdff7e03d2cccda00f8411c7b9b402dde6f69cc96a2e12804e9a3de0"
+    },
+    {
+      "path": "website/node/cp-redirects.mjs",
+      "sha256": "7c8e44a486fab42d464811635113da318984369eb071f1400e1b6398f512cfa0"
+    },
+    {
+      "path": "website/node/forgejo-proxy.mjs",
+      "sha256": "1050065d8efe084d6a71962bbd6762233bf832138ec49f64961f970d64cd7e74"
+    },
+    {
+      "path": "website/node/game-link.mjs",
+      "sha256": "090dac55ee8fd5a014598cda25107a44b5e36cbc862a60d0a4f0732852e518c3"
+    },
+    {
+      "path": "website/node/game-mysql-pool.mjs",
+      "sha256": "e55b2cc0538628c050703c6edb3c964efc7d3f43a230922535760c0fd4190697"
+    },
+    {
+      "path": "website/node/game-permission-sync.mjs",
+      "sha256": "0b5d049fa7e3d25ef7bf5b806a316efc56d88450b4ee9061993a34faab862668"
+    },
+    {
+      "path": "website/node/game-ranks.mjs",
+      "sha256": "b83bcc48b78926c4b140993d9412ff78088e89e14c2e0cb9d6a4c0914bed07a1"
+    },
+    {
+      "path": "website/node/git-identity.mjs",
+      "sha256": "1a75e4ccad1d3d41db4b245be5a8787e2e81b9bf913ddc7bb2450bbeba662f0d"
+    },
+    {
+      "path": "website/node/git-public.mjs",
+      "sha256": "831d8529827e2223ae5c01f9a9713333da8b3ec27122c5c086aea38bee9601a2"
+    },
+    {
+      "path": "website/node/initial-agent-sync.mjs",
+      "sha256": "2930d89a4b19a6c6eac9c050bc56a461fd66a3d445953f4bb5435657b3c7f27e"
+    },
+    {
+      "path": "website/node/initialize-badges.mjs",
+      "sha256": "c771c8667e308bf000e2950eb3dfd6f24cd29474d270788956acf9ee2d5f7ffb"
+    },
+    {
+      "path": "website/node/initialize-team-ranks.mjs",
+      "sha256": "24dbc4eae5a4ed99b2e89aed0417028131c170bb38d8b3c8c11a64a3854c309e"
+    },
+    {
+      "path": "website/node/integration-sso.mjs",
+      "sha256": "0aa8ef1dc487cb9ba9d83767829c8abaf0a542c94f7926ccde31981c5eca6e36"
+    },
+    {
+      "path": "website/node/issue-season-reward-private.mjs",
+      "sha256": "98a60bb13b0e660b5aeec4e52fe2206adcb3bb9ecedb34108e7924cbd05f347b"
+    },
+    {
+      "path": "website/node/kit-catalogue.mjs",
+      "sha256": "9895ad2001e00a11143140143b410b6a8ba6595bb73c3b5d94bb693866b33367"
+    },
+    {
+      "path": "website/node/mail-branding.mjs",
+      "sha256": "1dee0351aa17713c6b3610ec2d0db387b1fd37cf31b6d95e34a90bb8575effd4"
+    },
+    {
+      "path": "website/node/mail-broker.mjs",
+      "sha256": "a035dd58ec234d4b86747fc68186ee814b287955c346695c90c6014759c48060"
+    },
+    {
+      "path": "website/node/mail-identity.mjs",
+      "sha256": "de9b961b385142b641e8f6ba95be9772b110754b64361c257e7ed8b9392b2561"
+    },
+    {
+      "path": "website/node/managed-game-permissions.json",
+      "sha256": "3ec23038aad69ea09b434c036ce6ebb3af289e79bf9145cf39019352d9007356"
+    },
+    {
+      "path": "website/node/mysql.mjs",
+      "sha256": "7519d056706cd47b5ef4cf7019c1b1a236a8b1834136ec6911363c08181a9120"
+    },
+    {
+      "path": "website/node/native-agents.mjs",
+      "sha256": "364383411248546f70cb8e0f84490b7b40e3bc4fca811facf0aac0881465a12e"
+    },
+    {
+      "path": "website/node/native-forum-feed.mjs",
+      "sha256": "adee4e9dfcc7cd305fa2e8baac4b0d3232d6e6b29635c6542b3a402258d09ff0"
+    },
+    {
+      "path": "website/node/native-profiles.mjs",
+      "sha256": "d2c953d2d14e557d339d6bd90d298c83943d7652608b25444ac40f0b2c521d05"
+    },
+    {
+      "path": "website/node/native-seals.mjs",
+      "sha256": "9456a8550db1a955154f652a0decb56f3799616d986e8c3210c8771c4ff10d22"
+    },
+    {
+      "path": "website/node/native-sync-outbox.mjs",
+      "sha256": "03c5a92f1c276094b13a01a5ea5b11f882e987478f632c462d88b7e3296bcedb"
+    },
+    {
+      "path": "website/node/news.mjs",
+      "sha256": "c1609cdfbf1aa5e3be91271e38802a276b96eb3b468d17d09778a8fe02b20e93"
+    },
+    {
+      "path": "website/node/permissions.mjs",
+      "sha256": "860c35dc6245a45457f2be9f68542457dcc5ed1dcfb2cbb3515a45b536e4e6ca"
+    },
+    {
+      "path": "website/node/profile.mjs",
+      "sha256": "7ea4e5d404b3a43c76962e01329fe21917edbcb24dea5ae4e48732a59d706166"
+    },
+    {
+      "path": "website/node/public-bans.mjs",
+      "sha256": "d79975d148df6c0a027ffc908bca824ed633f9a392742157319bbc69216afa60"
+    },
+    {
+      "path": "website/node/public/forums.html",
+      "sha256": "a371ae762381c8e3bb7cf781e9dbb8bf37e1da09cf590e3c23933503b278d261"
+    },
+    {
+      "path": "website/node/public/login.css",
+      "sha256": "6b085d27f62b8ec0ab21b5be480bc96559acb7cfbd3be604102572d9915be54d"
+    },
+    {
+      "path": "website/node/public/login.html",
+      "sha256": "a407d8e33d8dc992245eeadde215361966c329a82ab2e8c292031e30fa18088b"
+    },
+    {
+      "path": "website/node/public/login.js",
+      "sha256": "e786ce1a24ed746b15ea880ba4e4fb43431d6d015a112ae22adce9bb4072f5c7"
+    },
+    {
+      "path": "website/node/rank-admin.mjs",
+      "sha256": "4e6e6a7947a6fa3e457bb8e1ce1718896da2bfd1bf90a8f211085123b8ff4ae6"
+    },
+    {
+      "path": "website/node/retired-tickets.mjs",
+      "sha256": "c0c5526da628348cdeef809c1981aa51a8fa3f5918e2f7daf33c1334d0aa9f7a"
+    },
+    {
+      "path": "website/node/schema.sql",
+      "sha256": "8e4aede6d453b249829e81856d3532ba5e820695270758c5c694bba964aef39b"
+    },
+    {
+      "path": "website/node/search-visibility.mjs",
+      "sha256": "98f9be77d87f158c404b6280eee3223a621ba78afb4e3697cdcd36bd2cf0307c"
+    },
+    {
+      "path": "website/node/server-teams.mjs",
+      "sha256": "5f0fa8ab3d43fb4d116a4bb07ef8ad182cf193daa6fbe5115ab8c77eda22579e"
+    },
+    {
+      "path": "website/node/server.mjs",
+      "sha256": "134a7944dbbeffa37bdcdf094517728ea04f0768cd1c41c2a8d4f0546aa07773"
+    },
+    {
+      "path": "website/node/shared-errors.mjs",
+      "sha256": "89e04e55f3f0523c0da602ab571822f3c3dffa63333ba816f945bffacaa0c9f0"
+    },
+    {
+      "path": "website/node/staff-mail.mjs",
+      "sha256": "2a140b70adb4fd7069e57578a5b7df3affc36bedf242d68cc65c736425b08261"
+    },
+    {
+      "path": "website/node/staff-roster.mjs",
+      "sha256": "6a1bae96bc42b1de62d0fc33087f3703263404fbcc3a01b471f00682055105bc"
+    },
+    {
+      "path": "website/node/start.mjs",
+      "sha256": "fa0e45b0a6ce800eefee6ef02cf0b78f3fcbfc35ad1e07f5dca738a786034d30"
+    },
+    {
+      "path": "website/node/world-status.mjs",
+      "sha256": "dadb2530e24eb66d07a4d1c04c3671b30b5d9d9377f157d1901732c57efb8f7c"
+    },
+    {
+      "path": "website/package-lock.json",
+      "sha256": "1a910ad644d35ca7e8f4a95a69c4061fc8967ce600fecfb8f3707591d18c5005"
+    },
+    {
+      "path": "website/package.json",
+      "sha256": "e4c3ccadb02aef2ed826bf0c41a2bb5ea36065d66db61b999358f736804d1ba8"
+    },
+    {
+      "path": "website/scripts/portal-navigation.mjs",
+      "sha256": "9a5bca3e7fb2f3a8d843c197e2bf381040374f921c9d596f5c1d8bf3386ea432"
+    },
+    {
+      "path": "website/tests/cp-redirects.test.mjs",
+      "sha256": "57d93ebae13544b271834ef55d8ba4982d670e33f9f4eebe68203dbc5e048656"
+    },
+    {
+      "path": "website/tests/game-link-clan-relink.test.mjs",
+      "sha256": "23a5a883ef3e842f08f0c55a62dd28971af57a14a4297453f8607decf9b08efa"
+    },
+    {
+      "path": "website/tests/inventory-shop-ui.test.mjs",
+      "sha256": "4bdd6eed7fd025ba1fda0999d91390e819fe06a56e3755c1b21e6980555b6b2a"
+    },
+    {
+      "path": "website/tests/kit-cart.test.mjs",
+      "sha256": "5e5466545a1e8d1086cd2df64e5fa2d3b31a6c29c3304a5387eba81291f517f5"
+    },
+    {
+      "path": "website/tests/kit-catalogue.test.mjs",
+      "sha256": "0cf80829ea3e675b67efff152b0159d546be558294fbe28facc0f9c7478a7e4d"
+    },
+    {
+      "path": "website/tests/kit-market.test.mjs",
+      "sha256": "d3dec34f36c53abf72f8db4757907473f688cd6230d2e0a9b46da0b60f433fa3"
+    },
+    {
+      "path": "website/tests/kit-studio.test.mjs",
+      "sha256": "a98d5fda7b0c7455d2a827c166efb76d26bf901a6da2295f3d4e60964de90298"
+    },
+    {
+      "path": "website/tests/moderation-feed.test.mjs",
+      "sha256": "6cef29e57b09aeb0dcc50218c16de6a16f1add3622842fad30f1e3669ec0786d"
+    },
+    {
+      "path": "website/tests/overview.test.mjs",
+      "sha256": "40a1635c16174387e56fc5ea0c502a860f62a5fef5e4d4406fada26f26fed07a"
+    },
+    {
+      "path": "website/tests/staff-menu-areas.test.mjs",
+      "sha256": "a26ec10a0a9a843543f2dc5609bdacd0fa6cb147f383c56ce789071069b044d7"
+    },
+    {
+      "path": "website/web/assets/clan-atelier-v1.webp",
+      "sha256": "391efd70fed73261033b85289f8f982f7c888a8d47ffe496c61723303d106338"
+    },
+    {
+      "path": "website/web/assets/imperial-atelier-v1.webp",
+      "sha256": "31d90829195903f3403188414cefeca4992c120defb3e6aadc940b2510d6f37a"
+    },
+    {
+      "path": "website/web/assets/nav-shop-v1.png",
+      "sha256": "7f8c3fe2fba3138d64ec735c1099743d5a98c7f90b751253ab0e222022cb7ea5"
+    },
+    {
+      "path": "website/web/assets/nav-shop-v1.webp",
+      "sha256": "0a8e5f5aa6cb42bb4af5184f7e1354f165baadb9f3752eab2ffd483d591da2bd"
+    },
+    {
+      "path": "website/web/assets/sir-patrick-stewart-memorial-v1.png",
+      "sha256": "c3e276b2cc2ab97c783ff4143ad63d9a65dcbcc920cb56248381a7ef689d072e"
+    },
+    {
+      "path": "website/web/assets/sir-patrick-stewart-memorial-v1.webp",
+      "sha256": "77461ce5daf114493c61b1599a5978a5a53c884976e9fa890b5b291e30a19a08"
+    },
+    {
+      "path": "website/web/assets/uuid-link-imperial-v1.png",
+      "sha256": "fa35d4abf139d6c0a6fac5f6e9ffecce4e6472e6fd4967807ee5600dc16f5b2d"
+    },
+    {
+      "path": "website/web/assets/yousmp-stewart-enterprise-memorial-v1.png",
+      "sha256": "c6a6ea839e20a4f841a6696f7dd62ebc187be6fadad89eb36e5ba2d9a699d52f"
+    },
+    {
+      "path": "website/web/assets/yousmp-stewart-enterprise-memorial-v1.webp",
+      "sha256": "6c129558d860679c70b49d41a9ae42adbdc6e9f355daafc99f388c84c07b4967"
+    },
+    {
+      "path": "website/web/assets/yousmp-stewart-memorial-630x280.webp",
+      "sha256": "d2c79a31b642cf08ac01cc96cb85fe32bda596994f687f37b19b86e984a90e12"
+    },
+    {
+      "path": "website/web/exchange-market.css",
+      "sha256": "e7b6558f436008087a079f776bea61e01ddb1147888637031d08736c953814c0"
+    },
+    {
+      "path": "website/web/exchange-market.js",
+      "sha256": "4e55e31c9d6e6e2bf2e87253c4ff5ce72aa8c23fb72171cc0efd0398ac6e4bc8"
+    },
+    {
+      "path": "website/web/exchange.html",
+      "sha256": "92294a5ce46f0eeb7b9de9ea1a7cfeca8ba8b1ace76d8bd5a85ec4a908ca1b75"
+    },
+    {
+      "path": "website/web/kits.css",
+      "sha256": "33387dd7d864a6317ddb957e0317a2817efac0403b2848d458fb53b1dc52ee7a"
+    },
+    {
+      "path": "website/web/kits.html",
+      "sha256": "a770f0b07cf72197ebe7211f94fd47a2e9bf7bda1da49658945997a125ba781a"
+    },
+    {
+      "path": "website/web/kits.js",
+      "sha256": "04d2a5fc4301e4899e1e0e887c96b37b6968295a3a3ee2ee8841686b3d8cff11"
+    },
+    {
+      "path": "website/web/portal-navigation.css",
+      "sha256": "4522b6948ddf53b2000047b502ede4b046a65da1ec936a1019f3057911858f10"
+    },
+    {
+      "path": "website/web/portal-navigation.js",
+      "sha256": "f6bb5973ffa914de2eddda4254c2622ace24300a02b36ccfc442565783244265"
+    },
+    {
+      "path": "website/web/shop-landing.css",
+      "sha256": "df7a097befedaffa143a1ff52336bee5eec1b44256daf67e566990ea08fa6be9"
+    },
+    {
+      "path": "website/web/shop.html",
+      "sha256": "a0abe2419b8985c92b22cc4ba699921e64c928d82bcf054b422df4f4d4093033"
+    }
+  ]
+}

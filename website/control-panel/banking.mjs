@@ -1,0 +1,29 @@
+import {identity} from '../node/auth.mjs';
+import {accessFor} from '../node/permissions.mjs';
+const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
+const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie','X-Content-Type-Options':'nosniff'}});
+export function projectBank(data,{playerUuid,staff=false}={}){
+ if(data?.currency!=='dunemarks'||!money.test(data.balanceDunemarks)||!Array.isArray(data.ledger)||data.ledger.length>200)return null;
+ if(staff?data.account!=='server':data.playerUuid?.toLowerCase()!==playerUuid?.toLowerCase()||!signed.test(data.walletDunemarks))return null;
+ if(data.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||!signed.test(r.amountDunemarks)||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
+ return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
+}
+export function createBanking(db,settings={},dependencies={}){
+ const authenticate=dependencies.authenticate||(r=>identity(r,db)),access=dependencies.access||(u=>accessFor(db,u));
+ const linked=dependencies.linked||(async u=>(await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(u.id).first())?.minecraft_uuid);
+ return async request=>{
+  const url=new URL(request.url),staff=url.pathname==='/api/bank/staff';
+  if(!['/api/bank/personal','/api/bank/staff'].includes(url.pathname))return reply({message:'Not found.'},404);
+  if(request.method!=='GET')return reply({message:'Bank transfers are handled in game.'},405);
+  if(url.search)return reply({message:'This bank does not accept account or player overrides.'},400);
+  const user=await authenticate(request);if(!user)return reply({message:'Sign in to view your bank.'},401);
+  const rights=await access(user);if(!rights?.nodes.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is not available for this account.'},403);
+  try{
+   const player=await linked(user);if(!player)return reply({linked:false});if(!uuid.test(player))throw Error();
+   if((settings.SERVER_CONTROL_TOKEN||'').length<64)throw Error();
+   const r=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433'+(staff?'/bank/staff':'/bank/player?uuid='+encodeURIComponent(player)),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(8000)});
+   if(!r.ok)throw Error();const bank=projectBank(await r.json(),{playerUuid:player,staff});if(!bank)throw Error();
+   return reply({linked:staff?undefined:true,bank,canManage:staff?rights.nodes.includes('web.bank.staff.manage'):true});
+  }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
+ };
+}

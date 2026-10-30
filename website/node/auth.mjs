@@ -1,3 +1,5 @@
+import {provisionGitIdentity} from './git-identity.mjs';
+import {alphaGrant,seasonGrant} from './community-badges.mjs';
 import {publicUser} from './permissions.mjs';
 import {randomBytes,randomUUID,createHash,scrypt as rawScrypt,timingSafeEqual} from 'node:crypto';
 import {promisify} from 'node:util';
@@ -10,7 +12,7 @@ export async function identity(request,db){
   const token=sessionToken(request);if(!token)return null;
   return db.prepare('SELECT a.id,a.username,a.display_name,a.role FROM site_sessions s JOIN site_accounts a ON a.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?').bind(digest(token),Date.now()).first();
 }
-export function createAuth(db,origin){
+export function createAuth(db,origin,settings={}){
   const attempts=new Map();
   function allowed(key,max=10,window=900000){const now=Date.now();if(attempts.size>5000)for(const [k,v]of attempts)if(v.until<now)attempts.delete(k);if(attempts.size>5000)return false;let row=attempts.get(key);if(!row||row.until<now){row={count:0,until:now+window};attempts.set(key,row);}return ++row.count<=max;}
   async function issue(user){const token=randomBytes(32).toString('base64url');await db.prepare('INSERT INTO site_sessions(token_hash,user_id,expires_at) VALUES(?,?,?)').bind(digest(token),user.id,Date.now()+604800000).run();return json({ok:true,user:await publicUser(db,user)},200,{'Set-Cookie':`${cookieName}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`});}
@@ -40,12 +42,15 @@ export function createAuth(db,origin){
     if(!/^[a-z0-9_]{3,32}$/.test(username)||typeof password!=='string'||password.length<12||password.length>256)return json({message:'Use a username of 3–32 letters, numbers or underscores and a password of 12–256 characters.'},400);
     if(!allowed(username)||!allowed('global',120,60000))return json({message:'Too many attempts. Please try again later.'},429);
     if(path==='/api/auth/register'){
+      if(!['15plus','under15'].includes(data.ageBand))return json({message:'Choose whether you are 15 or older, or under 15.'},400);
       if(!allowed('registrations',60,3600000))return json({message:'Registration is temporarily limited. Please try later.'},429);
       const salt=randomBytes(16).toString('hex'),hash=(await scrypt(password,salt,64)).toString('hex'),id=randomUUID(),now=Date.now();
       try{await db.batch([
         db.prepare('INSERT INTO site_accounts(id,username,display_name,password_salt,password_hash,role,created_at) VALUES(?,?,?,?,?,?,?)').bind(id,username,username,salt,hash,'user',now),
-        db.prepare('INSERT INTO player_profiles(user_id,display_name,minecraft_name,discord_name,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(id,username,'','',now,now)
+        db.prepare('INSERT INTO player_profiles(user_id,display_name,minecraft_name,discord_name,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(id,username,'','',now,now),
+        db.prepare('INSERT INTO site_age_declarations(user_id,age_band,declared_at) VALUES(?,?,?)').bind(id,data.ageBand,now),alphaGrant(db,id,now),seasonGrant(db,id,now)
       ]);}catch(error){if(error.code==='ER_DUP_ENTRY'||String(error.message).includes('UNIQUE constraint'))return json({message:'That username is unavailable.'},409);throw error;}
+      await provisionGitIdentity(db,{id,username,display_name:username,role:'user'},settings).catch(()=>console.error('DuneGit registration setup pending'));
       return issue({id,username,role:'user'});
     }
     const user=await db.prepare('SELECT * FROM site_accounts WHERE username=?').bind(username).first();
