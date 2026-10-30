@@ -1,111 +1,35 @@
 package com.example.dunegui;
 
-import io.papermc.paper.dialog.Dialog;
-import io.papermc.paper.registry.data.dialog.ActionButton;
-import io.papermc.paper.registry.data.dialog.DialogBase;
-import io.papermc.paper.registry.data.dialog.body.DialogBody;
-import io.papermc.paper.registry.data.dialog.action.DialogAction;
-import io.papermc.paper.registry.data.dialog.type.DialogType;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickCallback;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.time.Duration;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 
-
-/** Shared presentation layer. All gameplay callbacks run once on the server thread. */
+/** Binary-compatible bridge to the shared virtual renderer. No chest fallback. */
 public final class NativeMenus {
-    private NativeMenus() {}
-    public record Choice(String label, String description, Runnable action, String imageUrl) {
-        public Choice(String label,String description,Runnable action) { this(label,description,action,null); }
-    }
-    public static void inventory(JavaPlugin plugin, Player player, String title, Inventory model, Map<Integer,Runnable> actions) {
-        List<Choice> choices = new ArrayList<>();
-        List<String> information = new ArrayList<>();
-        List<ItemStack> illustrations = new ArrayList<>();
-        for(int slot=0;slot<model.getSize();slot++) {
-            var item=model.getItem(slot);
-            if(item==null || !item.hasItemMeta()) continue;
-            var meta=item.getItemMeta();
-            String label=ChatColor.stripColor(meta.getDisplayName());
-            if(label==null || label.isBlank()) continue;
-            String description=meta.hasLore()?String.join("\n",meta.getLore().stream().map(ChatColor::stripColor).toList()):"";
-            Runnable action=actions.get(slot);
-            boolean note=DunemarkItems.isNote(item);
-            boolean realmImage=meta.hasItemModel()&&meta.getItemModel().getNamespace().equals("dunerealms");
-            if(note||realmImage) illustrations.add(item.clone());
-            if(action==null) information.add(label+(description.isBlank()?"":"\n"+description));
-            else choices.add(new Choice(label,description,action,note?DunemarkItems.ICON_URL:null));
-        }
-        show(plugin,player,ChatColor.stripColor(title),String.join("\n\n",information),choices,illustrations);
-    }
-    public static void show(JavaPlugin plugin, Player player, String title, List<Choice> choices) {
-        show(plugin,player,title,"",choices);
-    }
-    public static void show(JavaPlugin plugin, Player player, String title, String content, List<Choice> choices) {
-        show(plugin,player,title,content,choices,List.of());
-    }
-    private static void show(JavaPlugin plugin, Player player, String title, String content, List<Choice> choices,List<ItemStack> illustrations) {
-        MenuSession session=new MenuSession(player.getUniqueId());
-        Bukkit.getScheduler().runTaskLater(plugin,session::expire,2400L);
-        List<Choice> guarded=choices.stream().map(c->new Choice(c.label(),c.description(),()-> {
-            if(!session.claim(player.getUniqueId())) return;
-            Bukkit.getScheduler().runTask(plugin,()-> { if(player.isOnline()) c.action().run(); });
-        },c.imageUrl())).toList();
-        if(Bukkit.getPluginManager().isPluginEnabled("floodgate") && Bedrock.isPlayer(player)) {
-            Bedrock.show(player,title,content,guarded); return;
-        }
-        // Dialogs were introduced with protocol 771 (Java 1.21.6). Fail closed if Via cannot identify a client.
-        if(protocol(player)>=771) {
-            List<ActionButton> buttons=guarded.stream().map(c->ActionButton.builder(Component.text(c.label()))
-                .tooltip(Component.text(c.description()))
-                .action(DialogAction.customClick((view,audience)-> {
-                    if(audience instanceof Player actor && actor.getUniqueId().equals(player.getUniqueId())) c.action().run();
-                },ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(2)).build())).build()).toList();
-            List<DialogBody> body=new ArrayList<>();
-            if(!content.isBlank())body.add(DialogBody.plainMessage(Component.text(content)));
-            for(ItemStack illustration:illustrations)body.add(DialogBody.item(illustration,null,false,true,48,48));
-            player.showDialog(Dialog.create(builder->builder.empty()
-                .base(DialogBase.builder(Component.text(title)).body(body).build())
-                .type(DialogType.multiAction(buttons).build())));
-            return;
-        }
-        player.sendMessage(Component.text(title+" (select an option below)"));
-        if(!content.isBlank()) player.sendMessage(Component.text(content));
-        for(Choice choice:guarded) player.sendMessage(Component.text("["+choice.label()+"] "+choice.description())
-            .clickEvent(net.kyori.adventure.text.event.ClickEvent.callback(audience->{
-                if(audience instanceof Player actor && actor.getUniqueId().equals(player.getUniqueId())) choice.action().run();
-            },ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(2)).build())));
-    }
-    static int protocol(Player player) {
-        if(Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) {
-            try {
-                Class<?> via=Class.forName("com.viaversion.viaversion.api.Via");
-                Object api=via.getMethod("getAPI").invoke(null);
-                return (int)Class.forName("com.viaversion.viaversion.api.ViaAPI")
-                    .getMethod("getPlayerVersion",UUID.class).invoke(api,player.getUniqueId());
-            } catch(ReflectiveOperationException | LinkageError ex) { return -1; }
-        }
-        return player.getProtocolVersion();
-    }
-    /** Loaded only when the optional Floodgate plugin is enabled. Never shades Cumulus/API classes. */
-    private static final class Bedrock {
-        static boolean isPlayer(Player player) { return org.geysermc.floodgate.api.FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId()); }
-        static void show(Player player,String title,String content,List<Choice> choices) {
-            var form=org.geysermc.cumulus.form.SimpleForm.builder().title(title).content(content);
-            for(Choice choice:choices) {
-                String label=choice.label()+ (choice.description().isBlank()?"":"\n"+choice.description());
-                if(choice.imageUrl()==null)form.button(label);
-                else form.button(label,org.geysermc.cumulus.util.FormImage.Type.URL,choice.imageUrl());
-            }
-            form.validResultHandler(response->{ int index=response.clickedButtonId(); if(index>=0 && index<choices.size()) choices.get(index).action().run(); });
-            if(!org.geysermc.floodgate.api.FloodgateApi.getInstance().sendForm(player.getUniqueId(),form.build()))
-                player.sendMessage("The menu could not be sent. Close your current screen and try again.");
-        }
-    }
+ private NativeMenus(){}
+ public record Choice(String label,String description,Runnable action,String imageUrl){
+  public Choice(String label,String description,Runnable action){this(label,description,action,null);}
+ }
+ private static Plugin renderer(){Plugin p=Bukkit.getPluginManager().getPlugin("DuneMenus");return p!=null&&p.isEnabled()?p:null;}
+ private static Object call(String name,Class<?>[] types,Object...args){
+  Plugin p=renderer();if(p==null)return null;
+  try{return p.getClass().getMethod(name,types).invoke(p,args);}catch(ReflectiveOperationException error){return null;}
+ }
+ public static void inventory(JavaPlugin plugin,Player player,String title,Inventory model,Map<Integer,Runnable> actions){inventory(plugin,player,title,model,actions,()->true);}
+ public static void inventory(JavaPlugin plugin,Player player,String title,Inventory model,Map<Integer,Runnable> actions,BooleanSupplier allowed){
+  Object result=call("show",new Class<?>[]{JavaPlugin.class,Player.class,String.class,Inventory.class,Map.class,BooleanSupplier.class},plugin,player,title,model,actions,allowed);
+  if(!Boolean.TRUE.equals(result))player.sendMessage("The Imperial Navigator is unavailable. Try again after the server finishes starting.");
+ }
+ public static boolean isCurrent(Player player,Inventory model){return Boolean.TRUE.equals(call("isCurrent",new Class<?>[]{Player.class,Inventory.class},player,model));}
+ public static void close(Player player,Inventory model){call("close",new Class<?>[]{Player.class,Inventory.class},player,model);}
+ public static void show(JavaPlugin plugin,Player player,String title,List<Choice> choices){show(plugin,player,title,"",choices);}
+ public static void show(JavaPlugin plugin,Player player,String title,String content,List<Choice> choices){
+  Object result=call("showChoices",new Class<?>[]{JavaPlugin.class,Player.class,String.class,String.class,List.class},plugin,player,title,content,choices);
+  if(!Boolean.TRUE.equals(result))player.sendMessage("The Imperial Navigator is unavailable. Try again shortly.");
+ }
+ static int protocol(Player player){return 769;}
 }

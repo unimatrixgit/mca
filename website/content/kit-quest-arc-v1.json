@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "key": "loom-of-the-desert",
+  "title": "The Loom of the Desert",
+  "audience": "All verified players; no clan or office required.",
+  "chapters": [
+    {
+      "index": 0,
+      "key": "stitch-in-the-sand",
+      "title": "A Stitch in the Sand",
+      "description": "A caravan outfitter offers you a place at the workbench. Create your first desert stillsuit and earn the trust of fellow travellers.",
+      "quality": "common",
+      "kitTemplate": {
+        "name": "Dustweave Initiate",
+        "color": "#A58E5B",
+        "lore": [
+          "A commission from The Loom of the Desert.",
+          "Shaped by the hands of a desert artisan."
+        ],
+        "pieces": 4,
+        "attributes": "Existing buyer-faction stillsuit attributes; cosmetic rarity only."
+      },
+      "minimumPriceDunemarks": 100,
+      "targetSales": 3,
+      "rewardDunemarks": 10,
+      "chapterNumber": 1
+    },
+    {
+      "index": 1,
+      "key": "colours-of-the-caravan",
+      "title": "Colours of the Caravan",
+      "description": "Your first commissions carry your name beyond the workshop. Give the caravan a recognisable set of colours and deliver your next designs.",
+      "quality": "uncommon",
+      "kitTemplate": {
+        "name": "Caravan Envoy",
+        "color": "#385B49",
+        "lore": [
+          "A commission from The Loom of the Desert.",
+          "Shaped by the hands of a desert artisan."
+        ],
+        "pieces": 4,
+        "attributes": "Existing buyer-faction stillsuit attributes; cosmetic rarity only."
+      },
+      "minimumPriceDunemarks": 200,
+      "targetSales": 5,
+      "rewardDunemarks": 25,
+      "chapterNumber": 2
+    },
+    {
+      "index": 2,
+      "key": "caravans-trust",
+      "title": "The Caravan’s Trust",
+      "description": "Experienced travellers are asking for your work. Build a rare commission and establish a record of completed deliveries.",
+      "quality": "rare",
+      "kitTemplate": {
+        "name": "Deep Desert Surveyor",
+        "color": "#365C79",
+        "lore": [
+          "A commission from The Loom of the Desert.",
+          "Shaped by the hands of a desert artisan."
+        ],
+        "pieces": 4,
+        "attributes": "Existing buyer-faction stillsuit attributes; cosmetic rarity only."
+      },
+      "minimumPriceDunemarks": 400,
+      "targetSales": 10,
+      "rewardDunemarks": 50,
+      "chapterNumber": 3
+    },
+    {
+      "index": 3,
+      "key": "patterns-of-influence",
+      "title": "Patterns of Influence",
+      "description": "Your patterns reach the Guild’s routes. Demonstrate a reputation that survives more than a passing fashion.",
+      "quality": "very_rare",
+      "kitTemplate": {
+        "name": "Guildbound Artisan",
+        "color": "#654478",
+        "lore": [
+          "A commission from The Loom of the Desert.",
+          "Shaped by the hands of a desert artisan."
+        ],
+        "pieces": 4,
+        "attributes": "Existing buyer-faction stillsuit attributes; cosmetic rarity only."
+      },
+      "minimumPriceDunemarks": 800,
+      "targetSales": 15,
+      "rewardDunemarks": 100,
+      "chapterNumber": 4
+    },
+    {
+      "index": 4,
+      "key": "legacy-in-gold",
+      "title": "A Legacy in Gold",
+      "description": "The final commission is a legacy, not a title purchased in haste. Complete a legendary design and let the delivered orders speak for your craft.",
+      "quality": "legendary",
+      "kitTemplate": {
+        "name": "Golden Dune Masterwork",
+        "color": "#B09156",
+        "lore": [
+          "A commission from The Loom of the Desert.",
+          "Shaped by the hands of a desert artisan."
+        ],
+        "pieces": 4,
+        "attributes": "Existing buyer-faction stillsuit attributes; cosmetic rarity only."
+      },
+      "minimumPriceDunemarks": 1600,
+      "targetSales": 25,
+      "rewardDunemarks": 200,
+      "chapterNumber": 5
+    }
+  ],
+  "progress": {
+    "source": "Native committed paid and delivered personal-sale receipts only.",
+    "ownership": "Seller UUID owns the versioned kit blueprint.",
+    "excludeSelfSales": true,
+    "maxPerBuyerTierUtcDay": 1,
+    "requiresPreviousChapterClaim": true,
+    "claimOncePerPlayerChapter": true
+  },
+  "rewardSource": "Existing server treasury; pending if funding is unavailable; never minted.",
+  "economics": {
+    "minimumQualifyingGrossDunemarks": 57300,
+    "minimumServerTaxDunemarks": 8595,
+    "totalRewardsDunemarks": 385,
+    "rewardsAsPercentOfTax": 4.48
+  },
+  "taxPolicies": {
+    "personalSale": {
+      "serverPercent": 15,
+      "sellerPercent": 85
+    },
+    "clanCraft": {
+      "factionPercent": 15,
+      "serverPercent": 5,
+      "craftingSinkPercent": 80
+    }
+  }
+}

@@ -108,7 +108,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
             if (!player.hasPermission("dune.admin")) { player.sendMessage("Admin only."); return true; }
             spawnNavigator(player.getLocation()); player.sendMessage("Vaerkring Routekeeper placed."); return true;
         }
-        if (!player.isOp()) { player.sendMessage(ChatColor.RED + "Operators only. Right-click an Arrakis Smuggler for missions."); return true; }
+        if (!player.hasPermission("dune.admin")) { player.sendMessage(ChatColor.RED + "Requires dune.admin. Right-click an Arrakis Smuggler for missions."); return true; }
         if (args.length == 0 || args[0].equalsIgnoreCase("admin")) { openAdmin(player); return true; }
         if (args[0].equalsIgnoreCase("smuggler")) {
             if (!getConfig().getBoolean("smugglers.enabled", true)) { player.sendMessage("Smugglers are disabled in DuneNPC/config.yml."); return true; }
@@ -129,7 +129,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
         player.sendMessage(ChatColor.GOLD + "DuneNPC: " + guild + " loaded Vaerkring Routekeepers, " + traders + " loaded smugglers, " + smugglers.activeCount() + " open contracts.");
     }
     void openAdmin(Player player) {
-        if (!player.isOp()) { player.sendMessage(ChatColor.RED + "Operators only."); return; }
+        if (!player.hasPermission("dune.admin")) { player.sendMessage(ChatColor.RED + "Requires dune.admin."); return; }
         Menu menu = new Menu();
         menu.inventory = Bukkit.createInventory(menu, 27, ChatColor.GOLD + "DuneNPC | NPC Administration");
         for (int slot = 0; slot < 27; slot++) menu.inventory.setItem(slot, icon(Material.BLACK_STAINED_GLASS_PANE, " "));
@@ -138,7 +138,9 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
         menu.inventory.setItem(14, icon(Material.WRITABLE_BOOK, "NPC and Mission Status", "Show loaded NPC counts and active contracts."));
         menu.inventory.setItem(16, icon(Material.CLOCK, "Quest Camp Guide", "Green: free to roam. Purple: active mission.", "Active contacts are stationary and lit.", "Missions expire after 30 real minutes."));
         menu.inventory.setItem(22, icon(Material.BLAZE_ROD, "Back to Dune Admin"));
-        player.openInventory(menu.inventory);
+        java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
+        for(int slot:java.util.List.of(10,12,14,22)) {String command=switch(slot){case 10->"dunenpc guildnpc";case 12->"dunenpc smuggler";case 14->"dunenpc status";default->"dune admin";};actions.put(slot,()->{if(player.hasPermission("dune.admin"))Bukkit.dispatchCommand(player,command);});}
+        com.example.dunegui.NativeMenus.inventory(this,player,"NPC Administration",menu.inventory,actions,()->player.hasPermission("dune.admin"));
     }
     private ItemStack icon(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material); ItemMeta meta = item.getItemMeta();
@@ -154,7 +156,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
         if (action.isEmpty()) return;
         Bukkit.getScheduler().runTask(this, () -> {
             if (!player.isOnline()) return;
-            player.closeInventory(); if (!player.isOp()) return;
+            player.closeInventory(); if (!player.hasPermission("dune.admin")) return;
             Bukkit.dispatchCommand(player, action.equals("back") ? "dune admin" : "dunenpc " + action);
         });
     }
@@ -162,7 +164,7 @@ public final class DuneNPC extends JavaPlugin implements Listener, CommandExecut
         if (event.getView().getTopInventory().getHolder() instanceof Menu) event.setCancelled(true);
     }
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1) return (sender.isOp() ? List.of("admin", "guildnpc", "smuggler", "status", "smuggle") : List.of("smuggle"))
+        if (args.length == 1) return (sender.hasPermission("dune.admin") ? List.of("admin", "guildnpc", "smuggler", "status", "smuggle") : List.of("smuggle"))
             .stream().filter(item -> item.startsWith(args[0].toLowerCase(Locale.ROOT))).toList();
         if (args.length == 2 && args[0].equalsIgnoreCase("smuggle")) return List.of("status", "cancel").stream()
             .filter(item -> item.startsWith(args[1].toLowerCase(Locale.ROOT))).toList();

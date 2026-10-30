@@ -49,10 +49,10 @@ final class DuneEconomy implements Economy {
     }
 
     private void loadDatabaseSettings() {
-        if (!plugin.getConfig().getBoolean("database.use-core-database", true)) return;
+        boolean useCoreDatabase=plugin.getConfig().getBoolean("database.use-core-database", true);
         File coreConfig = new File(plugin.getDataFolder().getParentFile(), "DuneCore/config.yml");
-        if (!coreConfig.isFile()) return;
-        YamlConfiguration core = YamlConfiguration.loadConfiguration(coreConfig);
+        if (useCoreDatabase&&!coreConfig.isFile()) return;
+        org.bukkit.configuration.file.FileConfiguration core = useCoreDatabase?YamlConfiguration.loadConfiguration(coreConfig):plugin.getConfig();
         if (!core.getBoolean("database.enabled", false)) return;
         sharedDatabaseRequested = true;
         jdbcUrl = core.getString("database.jdbc-url", "");
@@ -64,11 +64,13 @@ final class DuneEconomy implements Economy {
     boolean sharedDatabaseReady() { return databaseEnabled; }
 
     private Connection connect() throws SQLException {
-        try { Class.forName("org.postgresql.Driver"); }
-        catch (ClassNotFoundException ex) { throw new SQLException("PostgreSQL driver unavailable", ex); }
+        try { Class.forName(jdbcUrl.startsWith("jdbc:mysql:")?"com.mysql.cj.jdbc.Driver":"org.postgresql.Driver"); }
+        catch (ClassNotFoundException ex) { throw new SQLException("Shared SQL driver unavailable", ex); }
         java.util.Properties settings=new java.util.Properties();
         settings.setProperty("user",dbUser);settings.setProperty("password",dbPassword);
-        settings.setProperty("connectTimeout","5");settings.setProperty("socketTimeout","10");
+        boolean mysql=jdbcUrl.startsWith("jdbc:mysql:");
+        settings.setProperty("connectTimeout",mysql?"5000":"5");settings.setProperty("socketTimeout",mysql?"10000":"10");
+        if(mysql){settings.setProperty("tcpKeepAlive","true");settings.setProperty("autoReconnect","false");settings.setProperty("useAffectedRows","false");settings.setProperty("connectionTimeZone","UTC");}
         return DriverManager.getConnection(jdbcUrl,settings);
     }
 
@@ -81,7 +83,7 @@ final class DuneEconomy implements Economy {
         importLegacyFile();
         if (databaseEnabled) {
             try (Connection c = connect(); Statement s = c.createStatement()) {
-                s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_economy_balances (uuid UUID PRIMARY KEY, balance NUMERIC(20,2) NOT NULL DEFAULT 0)");
+                s.executeUpdate(SqlDialect.sql(c,"CREATE TABLE IF NOT EXISTS dune_economy_balances (uuid UUID PRIMARY KEY, balance NUMERIC(20,2) NOT NULL DEFAULT 0)"));
                 boolean empty;
                 try (ResultSet rows = s.executeQuery("SELECT NOT EXISTS (SELECT 1 FROM dune_economy_balances)")) {
                     empty = rows.next() && rows.getBoolean(1);
@@ -91,7 +93,7 @@ final class DuneEconomy implements Economy {
                     importLocalBalances(c);
                 }
                 try (ResultSet rows = s.executeQuery("SELECT uuid,balance FROM dune_economy_balances")) {
-                    while (rows.next()) balances.put(rows.getObject(1, UUID.class), money(rows.getDouble(2)));
+                    while (rows.next()) balances.put(SqlDialect.uuid(rows,1), money(rows.getDouble(2)));
                 }
             } catch (SQLException ex) {
                 plugin.getLogger().severe("Shared Solaris database unavailable; network transactions remain disabled until it recovers: " + ex.getMessage());
@@ -115,9 +117,9 @@ final class DuneEconomy implements Economy {
 
     private void importLegacyDatabase(Connection c) {
         try (Statement s = c.createStatement(); ResultSet rows = s.executeQuery("SELECT uuid,solaris FROM dune_players WHERE solaris<>0")) {
-            try (PreparedStatement insert = c.prepareStatement("INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO NOTHING")) {
+            try (PreparedStatement insert = SqlDialect.prepare(c,"INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO NOTHING")) {
                 while (rows.next()) {
-                    insert.setObject(1, rows.getObject(1, UUID.class));
+                    SqlDialect.uuid(insert,1, SqlDialect.uuid(rows,1));
                     insert.setBigDecimal(2, BigDecimal.valueOf(rows.getDouble(2)));
                     insert.addBatch();
                 }
@@ -131,17 +133,17 @@ final class DuneEconomy implements Economy {
 
     private void importLocalBalances(Connection c) {
         if (balances.isEmpty()) return;
-        try (PreparedStatement insert = c.prepareStatement(
+        try (PreparedStatement insert = SqlDialect.prepare(c,
                 "INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO NOTHING")) {
             for (Map.Entry<UUID, Double> entry : balances.entrySet()) {
-                insert.setObject(1, entry.getKey());
+                SqlDialect.uuid(insert,1, entry.getKey());
                 insert.setBigDecimal(2, BigDecimal.valueOf(entry.getValue()));
                 insert.addBatch();
             }
             insert.executeBatch();
             plugin.getLogger().info("Migrated local Solaris balances into the shared economy database.");
         } catch (SQLException ex) {
-            plugin.getLogger().warning("Could not migrate local Solaris balances to PostgreSQL: " + ex.getMessage());
+            plugin.getLogger().warning("Could not migrate local Solaris balances to shared SQL: " + ex.getMessage());
         }
     }
 
@@ -158,8 +160,8 @@ final class DuneEconomy implements Economy {
 
     private synchronized double balance(UUID id) {
         if (databaseEnabled) {
-            try (Connection c = connect(); PreparedStatement q = c.prepareStatement("SELECT balance FROM dune_economy_balances WHERE uuid=?")) {
-                q.setObject(1, id);
+            try (Connection c = connect(); PreparedStatement q = SqlDialect.prepare(c,"SELECT balance FROM dune_economy_balances WHERE uuid=?")) {
+                SqlDialect.uuid(q,1, id);
                 try (ResultSet row = q.executeQuery()) {
                     if (row.next()) {
                         double value = money(row.getDouble(1));
@@ -177,9 +179,9 @@ final class DuneEconomy implements Economy {
         value = money(value);
         balances.put(id, value);
         if (databaseEnabled) {
-            try (Connection c = connect(); PreparedStatement q = c.prepareStatement(
+            try (Connection c = connect(); PreparedStatement q = SqlDialect.prepare(c,
                     "INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO UPDATE SET balance=EXCLUDED.balance")) {
-                q.setObject(1, id); q.setBigDecimal(2, BigDecimal.valueOf(value)); q.executeUpdate();
+                SqlDialect.uuid(q,1, id); q.setBigDecimal(2, BigDecimal.valueOf(value)); q.executeUpdate();
             } catch (SQLException ex) { plugin.getLogger().severe("Solaris database save failed: " + ex.getMessage()); }
         }
         saveLocal();
@@ -199,14 +201,18 @@ final class DuneEconomy implements Economy {
         try (Connection c=connect()) {
             c.setAutoCommit(false);
             try {
-                try (PreparedStatement create=c.prepareStatement("INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,0) ON CONFLICT(uuid) DO NOTHING")) {
-                    create.setObject(1,id);create.executeUpdate();
+                try (PreparedStatement create=SqlDialect.prepare(c,"INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,0) ON CONFLICT(uuid) DO NOTHING")) {
+                    SqlDialect.uuid(create,1,id);create.executeUpdate();
                 }
                 double updated;
-                try (PreparedStatement q=c.prepareStatement("UPDATE dune_economy_balances SET balance=balance+? WHERE uuid=? AND (? OR balance+?>=0) RETURNING balance")) {
+                String update="UPDATE dune_economy_balances SET balance=balance+? WHERE uuid=? AND (? OR balance+?>=0)";
+                try (PreparedStatement q=SqlDialect.prepare(c,update+(SqlDialect.mysql(c)?"":" RETURNING balance"))) {
                     BigDecimal amount=BigDecimal.valueOf(money(delta));
-                    q.setBigDecimal(1,amount);q.setObject(2,id);q.setBoolean(3,allowNegative);q.setBigDecimal(4,amount);
-                    try (ResultSet row=q.executeQuery()) {
+                    q.setBigDecimal(1,amount);SqlDialect.uuid(q,2,id);q.setBoolean(3,allowNegative);q.setBigDecimal(4,amount);
+                    if(SqlDialect.mysql(c)){
+                        if(q.executeUpdate()!=1){c.rollback();return response(Math.abs(delta),0,EconomyResponse.ResponseType.FAILURE,"Insufficient funds.");}
+                        try(PreparedStatement read=SqlDialect.prepare(c,"SELECT balance FROM dune_economy_balances WHERE uuid=?")){SqlDialect.uuid(read,1,id);try(ResultSet row=read.executeQuery()){if(!row.next())throw new SQLException("Wallet disappeared during transaction");updated=row.getDouble(1);}}
+                    }else try (ResultSet row=q.executeQuery()) {
                         if (!row.next()) {c.rollback();return response(Math.abs(delta),0,EconomyResponse.ResponseType.FAILURE,"Insufficient funds.");}
                         updated=row.getDouble(1);
                     }
@@ -220,21 +226,25 @@ final class DuneEconomy implements Economy {
         }
     }
 
-    /** One durable credit per UUID/month. A failed shared ledger never falls back to a second ledger. */
+    /** One durable credit per UUID/reward key. S000001 is the first season; calendar keys remain monthly rewards. */
     synchronized boolean grantCommunity(UUID id,String month,int amount,String receipt) throws Exception {
-        if(!month.matches("20\\d\\d-(0[1-9]|1[0-2])")||amount<1||amount>10000||!receipt.matches("[a-f0-9]{64}"))throw new IllegalArgumentException("Invalid community grant");
+        if(!month.matches("(?:20\\d\\d-(0[1-9]|1[0-2])|S000001)")||amount<1||amount>10000||!receipt.matches("[a-f0-9]{64}"))throw new IllegalArgumentException("Invalid community grant");
         if(sharedDatabaseRequested&&!databaseEnabled)throw new IOException("Shared economy is unavailable");
         String key="community-claims."+id+"."+month;
         if(databaseEnabled){
             try(Connection c=connect()){
-                try(Statement s=c.createStatement()){s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_community_claims (uuid UUID NOT NULL, month VARCHAR(7) NOT NULL, receipt VARCHAR(64) NOT NULL, amount INTEGER NOT NULL, acked BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY(uuid,month))");}
+                try(Statement s=c.createStatement()){s.executeUpdate(SqlDialect.sql(c,"CREATE TABLE IF NOT EXISTS dune_community_claims (uuid UUID NOT NULL, month VARCHAR(7) NOT NULL, receipt VARCHAR(64) NOT NULL, amount INTEGER NOT NULL, acked BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY(uuid,month))"));}
                 c.setAutoCommit(false);
                 try{
                     int inserted;
-                    try(PreparedStatement s=c.prepareStatement("INSERT INTO dune_community_claims(uuid,month,receipt,amount) VALUES(?,?,?,?) ON CONFLICT(uuid,month) DO NOTHING")){s.setObject(1,id);s.setString(2,month);s.setString(3,receipt);s.setInt(4,amount);inserted=s.executeUpdate();}
-                    if(inserted==0){try(PreparedStatement s=c.prepareStatement("SELECT receipt,amount FROM dune_community_claims WHERE uuid=? AND month=?")){s.setObject(1,id);s.setString(2,month);try(ResultSet r=s.executeQuery()){if(!r.next()||!receipt.equals(r.getString(1))||amount!=r.getInt(2))throw new IOException("Community receipt mismatch");}}c.commit();return false;}
+                    try(PreparedStatement s=SqlDialect.prepare(c,"INSERT INTO dune_community_claims(uuid,month,receipt,amount) VALUES(?,?,?,?)"+(SqlDialect.mysql(c)?"":" ON CONFLICT(uuid,month) DO NOTHING"))){SqlDialect.uuid(s,1,id);s.setString(2,month);s.setString(3,receipt);s.setInt(4,amount);try{inserted=s.executeUpdate();}catch(SQLException duplicate){if(!SqlDialect.mysql(c)||!SqlDialect.duplicate(duplicate))throw duplicate;inserted=0;}}
+                    if(inserted==0){try(PreparedStatement s=SqlDialect.prepare(c,"SELECT receipt,amount FROM dune_community_claims WHERE uuid=? AND month=?")){SqlDialect.uuid(s,1,id);s.setString(2,month);try(ResultSet r=s.executeQuery()){if(!r.next()||!receipt.equals(r.getString(1))||amount!=r.getInt(2))throw new IOException("Community receipt mismatch");}}c.commit();return false;}
                     double updated;
-                    try(PreparedStatement s=c.prepareStatement("INSERT INTO dune_economy_balances(uuid,balance) VALUES(?,?) ON CONFLICT(uuid) DO UPDATE SET balance=dune_economy_balances.balance+EXCLUDED.balance RETURNING balance")){s.setObject(1,id);s.setBigDecimal(2,BigDecimal.valueOf(amount));try(ResultSet r=s.executeQuery()){r.next();updated=r.getDouble(1);}}
+                    String credit="INSERT INTO dune_economy_balances(uuid,balance) VALUES(?,?) ON CONFLICT(uuid) DO UPDATE SET balance=dune_economy_balances.balance+EXCLUDED.balance";
+                    try(PreparedStatement s=SqlDialect.prepare(c,credit+(SqlDialect.mysql(c)?"":" RETURNING balance"))){SqlDialect.uuid(s,1,id);s.setBigDecimal(2,BigDecimal.valueOf(amount));
+                        if(SqlDialect.mysql(c)){s.executeUpdate();try(PreparedStatement read=SqlDialect.prepare(c,"SELECT balance FROM dune_economy_balances WHERE uuid=?")){SqlDialect.uuid(read,1,id);try(ResultSet r=read.executeQuery()){if(!r.next())throw new SQLException("Wallet disappeared during reward");updated=r.getDouble(1);}}}
+                        else try(ResultSet r=s.executeQuery()){r.next();updated=r.getDouble(1);}}
+
                     c.commit();balances.put(id,money(updated));saveLocal();return true;
                 }catch(Exception error){c.rollback();throw error;}
             }
@@ -257,15 +267,15 @@ final class DuneEconomy implements Economy {
         Map<UUID,List<String>> pending=new HashMap<>();
         if(sharedDatabaseRequested&&!databaseEnabled)return pending;
         if(databaseEnabled){try(Connection c=connect();Statement s=c.createStatement()){
-            s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_community_claims (uuid UUID NOT NULL, month VARCHAR(7) NOT NULL, receipt VARCHAR(64) NOT NULL, amount INTEGER NOT NULL, acked BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY(uuid,month))");
-            try(ResultSet r=s.executeQuery("SELECT uuid,receipt FROM dune_community_claims WHERE acked=FALSE LIMIT 100")){while(r.next())pending.computeIfAbsent(r.getObject(1,UUID.class),ignored->new ArrayList<>()).add(r.getString(2));}
+            s.executeUpdate(SqlDialect.sql(c,"CREATE TABLE IF NOT EXISTS dune_community_claims (uuid UUID NOT NULL, month VARCHAR(7) NOT NULL, receipt VARCHAR(64) NOT NULL, amount INTEGER NOT NULL, acked BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY(uuid,month))"));
+            try(ResultSet r=s.executeQuery("SELECT uuid,receipt FROM dune_community_claims WHERE acked=FALSE LIMIT 100")){while(r.next())pending.computeIfAbsent(SqlDialect.uuid(r,1),ignored->new ArrayList<>()).add(r.getString(2));}
         }return pending;}
         var section=data.getConfigurationSection("community-claims");if(section==null)return pending;
         for(String uuid:section.getKeys(false)){var months=section.getConfigurationSection(uuid);if(months==null)continue;for(String month:months.getKeys(false)){String key=uuid+"."+month;if(!section.getBoolean(key+".acked"))pending.computeIfAbsent(UUID.fromString(uuid),ignored->new ArrayList<>()).add(section.getString(key+".receipt"));}}
         return pending;
     }
     synchronized void acknowledgeCommunity(UUID id,String receipt) throws Exception {
-        if(databaseEnabled){try(Connection c=connect();PreparedStatement s=c.prepareStatement("UPDATE dune_community_claims SET acked=TRUE WHERE uuid=? AND receipt=?")){s.setObject(1,id);s.setString(2,receipt);s.executeUpdate();}return;}
+        if(databaseEnabled){try(Connection c=connect();PreparedStatement s=SqlDialect.prepare(c,"UPDATE dune_community_claims SET acked=TRUE WHERE uuid=? AND receipt=?")){SqlDialect.uuid(s,1,id);s.setString(2,receipt);s.executeUpdate();}return;}
         YamlConfiguration next=new YamlConfiguration();next.loadFromString(data.saveToString());var months=next.getConfigurationSection("community-claims."+id);if(months==null)return;
         for(String month:months.getKeys(false))if(receipt.equals(months.getString(month+".receipt")))months.set(month+".acked",true);
         writeCommunitySnapshot(next);
@@ -292,23 +302,34 @@ final class DuneEconomy implements Economy {
     @Override public String format(double amount) { return String.format(java.util.Locale.US, "%,.2f %s", amount, Math.abs(amount) == 1 ? singular : plural); }
     @Override public String currencyNamePlural() { return plural; }
     @Override public String currencyNameSingular() { return singular; }
-    @Override public boolean hasAccount(String name) { return hasAccount(Bukkit.getOfflinePlayer(name)); }
+    /** Names may identify a known profile, but must never manufacture an offline
+     * UUID. Floodgate's prefixed names and Java-linked UUIDs remain distinct. */
+    private static OfflinePlayer knownPlayer(String name) {
+        if (name == null || name.isBlank()) return null;
+        org.bukkit.entity.Player online = Bukkit.getPlayerExact(name);
+        if (online != null && online.isOnline()) return online;
+        return Bukkit.getOfflinePlayerIfCached(name);
+    }
+    private EconomyResponse unknownPlayer(double amount) {
+        return response(amount, 0, EconomyResponse.ResponseType.FAILURE, "Unknown player. The player must connect first or have a cached profile.");
+    }
+    @Override public boolean hasAccount(String name) { OfflinePlayer p=knownPlayer(name); return p != null && hasAccount(p); }
     @Override public boolean hasAccount(OfflinePlayer player) { return balances.containsKey(player.getUniqueId()) || player.hasPlayedBefore() || player.isOnline(); }
     @Override public boolean hasAccount(String name, String world) { return hasAccount(name); }
     @Override public boolean hasAccount(OfflinePlayer player, String world) { return hasAccount(player); }
-    @Override public double getBalance(String name) { return getBalance(Bukkit.getOfflinePlayer(name)); }
+    @Override public double getBalance(String name) { OfflinePlayer p=knownPlayer(name); return p == null ? 0 : getBalance(p); }
     @Override public double getBalance(OfflinePlayer player) { return balance(player.getUniqueId()); }
     @Override public double getBalance(String name, String world) { return getBalance(name); }
     @Override public double getBalance(OfflinePlayer player, String world) { return getBalance(player); }
-    @Override public boolean has(String name, double amount) { return has(Bukkit.getOfflinePlayer(name), amount); }
+    @Override public boolean has(String name, double amount) { OfflinePlayer p=knownPlayer(name); return p != null && has(p, amount); }
     @Override public boolean has(OfflinePlayer player, double amount) { return amount >= 0 && getBalance(player) >= amount; }
     @Override public boolean has(String name, String world, double amount) { return has(name, amount); }
     @Override public boolean has(OfflinePlayer player, String world, double amount) { return has(player, amount); }
-    @Override public EconomyResponse withdrawPlayer(String name, double amount) { return withdraw(Bukkit.getOfflinePlayer(name), amount); }
+    @Override public EconomyResponse withdrawPlayer(String name, double amount) { OfflinePlayer p=knownPlayer(name); return p == null ? unknownPlayer(amount) : withdraw(p, amount); }
     @Override public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) { return withdraw(player, amount); }
     @Override public EconomyResponse withdrawPlayer(String name, String world, double amount) { return withdrawPlayer(name, amount); }
     @Override public EconomyResponse withdrawPlayer(OfflinePlayer player, String world, double amount) { return withdraw(player, amount); }
-    @Override public EconomyResponse depositPlayer(String name, double amount) { return deposit(Bukkit.getOfflinePlayer(name), amount); }
+    @Override public EconomyResponse depositPlayer(String name, double amount) { OfflinePlayer p=knownPlayer(name); return p == null ? unknownPlayer(amount) : deposit(p, amount); }
     @Override public EconomyResponse depositPlayer(OfflinePlayer player, double amount) { return deposit(player, amount); }
     @Override public EconomyResponse depositPlayer(String name, String world, double amount) { return depositPlayer(name, amount); }
     @Override public EconomyResponse depositPlayer(OfflinePlayer player, String world, double amount) { return deposit(player, amount); }
@@ -324,12 +345,12 @@ final class DuneEconomy implements Economy {
     @Override public EconomyResponse isBankMember(String name, String player) { return unsupported(); }
     @Override public EconomyResponse isBankMember(String name, OfflinePlayer player) { return unsupported(); }
     @Override public List<String> getBanks() { return new ArrayList<>(); }
-    @Override public boolean createPlayerAccount(String name) { return createPlayerAccount(Bukkit.getOfflinePlayer(name)); }
+    @Override public boolean createPlayerAccount(String name) { OfflinePlayer p=knownPlayer(name); return p != null && createPlayerAccount(p); }
     @Override public boolean createPlayerAccount(OfflinePlayer player) {
         UUID id = player.getUniqueId();
         if (databaseEnabled) {
-            try (Connection c=connect();PreparedStatement q=c.prepareStatement("INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO NOTHING")) {
-                q.setObject(1,id);q.setBigDecimal(2,BigDecimal.valueOf(money(plugin.getConfig().getDouble("currency.starting-balance",0))));q.executeUpdate();return true;
+            try (Connection c=connect();PreparedStatement q=SqlDialect.prepare(c,"INSERT INTO dune_economy_balances(uuid,balance) VALUES (?,?) ON CONFLICT(uuid) DO NOTHING")) {
+                SqlDialect.uuid(q,1,id);q.setBigDecimal(2,BigDecimal.valueOf(money(plugin.getConfig().getDouble("currency.starting-balance",0))));q.executeUpdate();return true;
             } catch(SQLException ex) {return false;}
         }
         if (!balances.containsKey(id)) set(id, money(plugin.getConfig().getDouble("currency.starting-balance", 0)));

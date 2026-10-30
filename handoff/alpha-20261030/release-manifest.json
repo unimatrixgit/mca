@@ -1,0 +1,82 @@
+{
+  "status": "PAUSED-NOT-RELEASED",
+  "artifacts": {
+    "pinned\\live-Core27.jar": {
+      "sha256": "1aba67f491fe470469465470b599055100f64eb5c6866cf375359663673fd327",
+      "bytes": 4105097,
+      "deployed": true
+    },
+    "release-candidates\\DuneMenus-1.1.0.jar": {
+      "sha256": "0b4766aec56ae4eca2e27b5fce90a41bc6f97e175f6076ec27ec7e2106cf2ee6",
+      "bytes": 43540,
+      "deployed": false
+    },
+    "release-candidates\\DuneStaff-1.0.1.jar": {
+      "sha256": "b9fb92bf45bf1e3c2de9e80c872dd7d3c1ebdbde83a985665f94e92c8c06495c",
+      "bytes": 42793,
+      "deployed": false
+    },
+    "release-candidates\\DuneClans-1.0.4.jar": {
+      "sha256": "3277100f4bcbb33094405e740c4c97af76553a221318d99a0601e448770e94ce",
+      "bytes": 48068,
+      "deployed": false
+    },
+    "release-candidates\\DuneBank-1.0.3.jar": {
+      "sha256": "8629ce722a79d986b587075e96bff94e43cb2eb5719e4c236abe964ee0b58b0c",
+      "bytes": 25896,
+      "deployed": false
+    },
+    "release-candidates\\DuneAtelier-1.0.2.jar": {
+      "sha256": "0e107b34d418b0d38bc8d02114853bfb77e5e180528f757d7206091352149309",
+      "bytes": 30840,
+      "deployed": false
+    },
+    "release-candidates\\DuneBan-Paper-1.0.1.jar": {
+      "sha256": "967c4d8fd91adfdca7e786b6ba1be9513c7b080c844fa413db4375ec63e064ac",
+      "bytes": 4433850,
+      "deployed": false
+    },
+    "release-candidates\\DuneRealms-Imperial-Navigator-Bedrock-v1.mcpack": {
+      "sha256": "233c25c8e469fedcb232821c847cf3a1cf46f214414a86655f98785271b20343",
+      "bytes": 10120588,
+      "deployed": false
+    }
+  },
+  "tests": {
+    "DuneMenus": {
+      "tests": 24,
+      "failures": 0,
+      "errors": 0
+    },
+    "DuneStaff": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0
+    },
+    "DuneClans": {
+      "tests": 42,
+      "failures": 0,
+      "errors": 0
+    },
+    "DuneBank": {
+      "tests": 18,
+      "failures": 0,
+      "errors": 0
+    },
+    "DuneAtelier": {
+      "tests": 16,
+      "failures": 0,
+      "errors": 0
+    },
+    "server-control": {
+      "tests": 133,
+      "failures": 0,
+      "errors": 0
+    },
+    "faction-facade": {
+      "tests": 10,
+      "failures": 0,
+      "errors": 0
+    }
+  }
+}

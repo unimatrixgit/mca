@@ -1,0 +1,68 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/imperial-menu-atlas-v2.png",
+      "height": 32,
+      "ascent": 7,
+      "chars": [
+        "",
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/imperial-portal.png",
+      "height": 48,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/faction-fremen-vrijduin-heraldic.png",
+      "height": 40,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/faction-atreides-aerdrecht-heraldic.png",
+      "height": 40,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/faction-harkonnen-harkveen-heraldic.png",
+      "height": 40,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/faction-corrino-korenholt-heraldic.png",
+      "height": 40,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "dunerealms:gui/faction-ordos-oordwijk-heraldic.png",
+      "height": 40,
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    }
+  ]
+}

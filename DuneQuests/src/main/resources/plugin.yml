@@ -1,0 +1,13 @@
+name: DuneQuests
+version: 1.0.0
+main: com.dunerealms.quests.DuneQuests
+api-version: '1.21'
+depend: [DuneCore]
+softdepend: [DuneMenus, WorldGuard, WorldEdit]
+commands:
+  dunequests:
+    description: View discovered quests and staff engine status
+    aliases: [dunequest]
+permissions:
+  dune.quests.view: {default: true}
+  dune.quests.admin: {default: op}

@@ -179,8 +179,8 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         String role=e.getRightClicked().getPersistentDataContainer().get(roleKey,PersistentDataType.STRING);
         if(role==null) return; e.setCancelled(true); if(e.getHand()!=EquipmentSlot.HAND) return;
         switch(role) {
-            case "liaison" -> { if(Bukkit.getPluginCommand("duneess")!=null) e.getPlayer().performCommand("duneess travel"); else departure(e.getPlayer(),"arrakis"); }
-            case "exchange" -> { if(Bukkit.getPluginCommand("dune")!=null) e.getPlayer().performCommand("dune exchange"); else e.getPlayer().sendMessage(ChatColor.GOLD+"Koopkring market integration requires DuneCore on this backend."); }
+            case "liaison" -> { if(Bukkit.getPluginCommand("duneess")!=null) e.getPlayer().performCommand("duneess travel"); else openNavigator(e.getPlayer()); }
+            case "exchange" -> { if(Bukkit.getPluginCommand("dune")!=null) e.getPlayer().performCommand("dune exchange"); else e.getPlayer().sendMessage(ChatColor.GOLD+"CHOAM market integration requires DuneCore on this backend."); }
             case "water","spice" -> trade(e.getPlayer(),role);
         }
     }
@@ -210,28 +210,33 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
     private void departure(Player player,String planet) {
         TravelMenu menu=new TravelMenu(planet); ItemStack confirm=new ItemStack(Material.LIME_CONCRETE); ItemMeta meta=confirm.getItemMeta();
         meta.setDisplayName("Confirm departure: "+planet); meta.setLore(List.of("DuneEss fares and access rules apply when installed.")); confirm.setItemMeta(meta);
-        menu.inventory.setItem(4,confirm);
-        com.example.dunegui.NativeMenus.show(this,player,"Guild departure",List.of(
-            new com.example.dunegui.NativeMenus.Choice("Confirm departure: "+planet,"DuneEss fares and access rules apply.",()->depart(player,planet)),
-            new com.example.dunegui.NativeMenus.Choice("Cancel","",player::closeInventory)));
+        menu.inventory.setItem(4,confirm); com.example.dunegui.NativeMenus.show(this,player,"Guild departure",List.of(new com.example.dunegui.NativeMenus.Choice("Confirm departure: "+planet,"Destination and availability will be checked.",()->depart(player,planet)),new com.example.dunegui.NativeMenus.Choice("Cancel","",player::closeInventory)));
     }
     private void depart(Player player,String planet) {
+        if(!player.isOnline()||!player.hasPermission("dunelobby.visit")||!LobbyBuilder.PLANETS.contains(planet))return;
         long now=System.currentTimeMillis(); if(now-travelCooldown.getOrDefault(player.getUniqueId(),0L)<5000) return;
         travelCooldown.put(player.getUniqueId(),now);
-        Bukkit.getScheduler().runTask(this,()-> {
-            player.closeInventory();
-            if(Bukkit.getPluginCommand("duneess")!=null) { player.performCommand("duneess travel "+planet); return; }
-            World target=Bukkit.getWorld(planet);
-            if(target!=null) { player.teleport(target.getSpawnLocation()); return; }
-            String server=getConfig().getString("servers."+planet,"");
-            if(server.isBlank()) { player.sendMessage("No destination configured."); return; }
-            try {
-                ByteArrayOutputStream bytes=new ByteArrayOutputStream(); DataOutputStream out=new DataOutputStream(bytes); out.writeUTF("Connect"); out.writeUTF(server);
-                player.sendPluginMessage(this,"BungeeCord",bytes.toByteArray()); player.sendMessage("Guild departure requested. If you remain here, the destination or proxy is unavailable.");
-            } catch(IOException ex) { player.sendMessage("Guild departure could not be requested."); }
-        });
+        if(Bukkit.getPluginCommand("duneess")!=null) { player.performCommand("duneess travel "+planet); return; }
+        World target=Bukkit.getWorld(planet);
+        if(target!=null) { player.teleport(target.getSpawnLocation()); return; }
+        String destination=getConfig().getString("servers."+planet,"");
+        if(!destination.matches("[a-z0-9_-]{1,48}")) { player.sendMessage("No destination configured."); return; }
+        try {
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream(); DataOutputStream stream=new DataOutputStream(bytes);stream.writeUTF("Connect");stream.writeUTF(destination);
+            player.sendPluginMessage(this,"BungeeCord",bytes.toByteArray());player.sendMessage("Guild departure requested. If you remain here, the destination or proxy is unavailable.");
+        }catch(IOException ex){player.sendMessage("Guild departure could not be requested.");}
     }
     @EventHandler public void drag(InventoryDragEvent e) { if(e.getView().getTopInventory().getHolder() instanceof TravelMenu) e.setCancelled(true); }
     @EventHandler public void quit(PlayerQuitEvent e) { travelCooldown.remove(e.getPlayer().getUniqueId()); }
     @Override public void onDisable() { if(lobby!=null) lobby.save(); }
+public void openNavigator(Player player) {
+        if(!player.isOnline()||!player.hasPermission("dunelobby.visit"))return;
+        java.util.List<com.example.dunegui.NativeMenus.Choice> choices=new java.util.ArrayList<>();
+        for(String planet:java.util.List.of("arrakis","kaitain","giedi_prime")) {
+            String destination=getConfig().getString("servers."+planet,"");
+            if(!destination.isBlank())choices.add(new com.example.dunegui.NativeMenus.Choice(switch(planet){case "arrakis"->"Arrakduin";case "kaitain"->"Kaiterhof";default->"Giedermark";},"Review a Guild departure.",()->departure(player,planet)));
+        }
+        choices.add(new com.example.dunegui.NativeMenus.Choice("Close","",player::closeInventory));
+        com.example.dunegui.NativeMenus.show(this,player,"Imperial Navigator","Choose an available planet.",choices);
+    }
 }

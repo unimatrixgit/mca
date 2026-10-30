@@ -1,0 +1,2 @@
+{"id":"duneban-network","name":"DuneBan Network Guard","version":"1.0.0","description":"Shared MySQL network-ban enforcement","authors":["DuneRealms"],"main":"com.dunerealms.ban.NetworkBanGuard"}
+

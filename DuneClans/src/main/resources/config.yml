@@ -1,0 +1,5 @@
+database:
+  jdbc-url: ''
+  username: ''
+  password: ''
+website: https://clans.dunerealms.com/

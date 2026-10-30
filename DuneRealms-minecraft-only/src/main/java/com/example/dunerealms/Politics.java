@@ -75,6 +75,56 @@ public final class Politics {
     public synchronized boolean isHouseOfWater(String house) { return appointed("water",house); }
     public synchronized boolean isAuthorizedSpice(String house) { return isSpiceSteward(house); }
     public synchronized boolean isAuthorizedWater(String house) { return isHouseOfWater(house); }
+    /** Fresh central authority; SQL errors propagate instead of retaining an old grant. */
+    public synchronized boolean isAuthorizedWaterFresh(String house) throws Exception {
+        if(database==null||house==null||house.isBlank())return false;
+        YamlConfiguration latest=new YamlConfiguration(); latest.loadFromString(database.loadPolitics());
+        return authorizedWater(latest,week(),house);
+    }
+    public synchronized boolean isAuthorizedSpiceFresh(String house) throws Exception {
+        if(database==null||house==null||house.isBlank())return false;
+        YamlConfiguration latest=new YamlConfiguration();latest.loadFromString(database.loadPolitics());
+        String emperor=recordWinnerId(latest,"votes.emperor."+week());
+        try{UUID.fromString(emperor);}catch(Exception invalid){return false;}
+        return Arrays.asList(HOUSES).contains(house) && latest.getLong("appointments.steward.week",-1)==week()
+            && emperor.equals(latest.getString("appointments.steward.emperor",""))
+            && house.equals(latest.getString("appointments.steward.house",""));
+    }
+    static boolean authorizedWater(YamlConfiguration record,long bucket,String house) {
+        if(house==null||house.isBlank()||!Arrays.asList(HOUSES).contains(house))return false;
+        String emperor=recordWinnerId(record,"votes.emperor."+bucket);
+        try{UUID.fromString(emperor);}catch(Exception invalid){return false;}
+        return record.getLong("appointments.water.week",-1)==bucket
+            && emperor.equals(record.getString("appointments.water.emperor",""))
+            && house.equals(record.getString("appointments.water.house",""));
+    }
+    public synchronized Map<String,String> currentPoliticalOffices(UUID id) throws Exception {
+        if(database==null||id==null)return Map.of();
+        YamlConfiguration latest=new YamlConfiguration();latest.loadFromString(database.loadPolitics());
+        return electedOffices(latest,week(),id,factions.getOrDefault(id,""));
+    }
+    static Map<String,String> electedOffices(YamlConfiguration record,long bucket,UUID id,String faction) {
+        if(id==null)return Map.of();
+        String uuid=id.toString();Map<String,String> offices=new LinkedHashMap<>();
+        if(uuid.equals(recordWinnerId(record,"votes.emperor."+bucket)))offices.put("emperor","emperor:"+bucket+":"+uuid);
+        String emperor=recordWinnerId(record,"votes.emperor."+bucket);
+        boolean electedEmperor;
+        try{UUID.fromString(emperor);electedEmperor=true;}catch(Exception invalid){electedEmperor=false;}
+        for(String house:HOUSES)if(house.equals(faction)&&uuid.equals(recordWinnerId(record,"votes.house."+bucket+"."+house))) {
+            offices.put("house-leader:"+house,"house-leader:"+house+":"+bucket+":"+uuid);
+            for(String appointment:new String[]{"water","steward"}) {
+                String root="appointments."+appointment;
+                if(electedEmperor && record.getLong(root+".week",-1)==bucket
+                    && emperor.equals(record.getString(root+".emperor",""))
+                    && house.equals(record.getString(root+".house",""))) {
+                    String office=appointment.equals("water")?"water-steward":"spice-steward";
+                    offices.put(office+":"+house,office+":"+house+":"+bucket+":"+uuid+":"+emperor);
+                }
+            }
+        }
+        return Collections.unmodifiableMap(offices);
+    }
+
     public synchronized boolean freeArrakis(String house) {
         refresh();
         return (isSpiceSteward(house) || isHouseOfWater(house))

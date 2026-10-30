@@ -12,10 +12,11 @@ import java.sql.*;
 import java.util.*;
 import java.util.Base64;
 
-/** PostgreSQL-backed network player state and shared politics state. */
+/** SQL-backed network player state and shared politics state (PostgreSQL or MySQL 8). */
 public final class SharedDatabase implements AutoCloseable {
     private final JavaPlugin plugin;
     private final String url, user, password;
+    private final boolean mysql;
     // Main-thread only. A dedicated connection owns the advisory lock until quit.
     private final Map<UUID, Connection> sessions = new HashMap<>();
 
@@ -24,12 +25,18 @@ public final class SharedDatabase implements AutoCloseable {
         url = plugin.getConfig().getString("database.jdbc-url", "");
         user = plugin.getConfig().getString("database.username", "");
         password = plugin.getConfig().getString("database.password", "");
+        mysql = url.startsWith("jdbc:mysql:");
 
         if (url.isBlank()) {
             throw new SQLException("database.jdbc-url is required");
         }
 
         try (Connection c = connect(); Statement s = c.createStatement()) {
+            if (mysql) {
+                initializeMysql(c, s);
+                initializeWaterCareers();
+                return;
+            }
             c.setAutoCommit(false);
             s.execute("SELECT pg_advisory_xact_lock(1146441285)");
             s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_players (uuid UUID PRIMARY KEY, faction TEXT NOT NULL DEFAULT '', solaris INTEGER NOT NULL DEFAULT 0, inventory TEXT)");
@@ -46,20 +53,124 @@ public final class SharedDatabase implements AutoCloseable {
             s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_bounties (target UUID PRIMARY KEY, world TEXT NOT NULL, reward INTEGER NOT NULL, claimed BOOLEAN NOT NULL DEFAULT FALSE, hunter UUID)");
             c.commit();
         }
+        initializeWaterCareers();
+    }
+
+    public void initializeWaterCareers() throws SQLException {
+        try (Connection c=connect(); Statement s=c.createStatement()) {
+            s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_water_careers (uuid VARCHAR(36) PRIMARY KEY, career VARCHAR(16) NOT NULL, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+        }
+    }
+    public String loadWaterCareer(UUID id) throws SQLException {
+        Objects.requireNonNull(id,"player UUID");
+        try(Connection c=connect(); PreparedStatement q=c.prepareStatement("SELECT career FROM dune_water_careers WHERE uuid=?")) {
+            q.setString(1,id.toString());try(ResultSet rows=q.executeQuery()) {
+                if(!rows.next())return "none";
+                String career=rows.getString(1);return "smuggler".equals(career)||"guild".equals(career)?career:"none";
+            }
+        }
+    }
+    public void saveWaterCareer(UUID id,String career) throws SQLException {
+        Objects.requireNonNull(id,"player UUID");
+        if(!"guild".equals(career)&&!"smuggler".equals(career))throw new IllegalArgumentException("Explicit guild or smuggler career required");
+        String sql=mysql?"INSERT INTO dune_water_careers(uuid,career) VALUES(?,?) ON DUPLICATE KEY UPDATE career=VALUES(career),updated_at=CURRENT_TIMESTAMP":"INSERT INTO dune_water_careers(uuid,career) VALUES(?,?) ON CONFLICT(uuid) DO UPDATE SET career=EXCLUDED.career,updated_at=CURRENT_TIMESTAMP";
+        try(Connection c=connect();PreparedStatement q=c.prepareStatement(sql)) {q.setString(1,id.toString());q.setString(2,career);q.executeUpdate();}
     }
 
     public Connection connect() throws SQLException {
-        try { Class.forName("org.postgresql.Driver"); }
-        catch (ClassNotFoundException ex) { throw new SQLException("PostgreSQL driver unavailable", ex); }
+        try { Class.forName(mysql ? "com.mysql.cj.jdbc.Driver" : "org.postgresql.Driver"); }
+        catch (ClassNotFoundException ex) { throw new SQLException((mysql ? "MySQL" : "PostgreSQL") + " driver unavailable", ex); }
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
-        properties.setProperty("connectTimeout", "5");
-        properties.setProperty("socketTimeout", "10");
+        properties.setProperty("connectTimeout", mysql ? "5000" : "5");
+        properties.setProperty("socketTimeout", mysql ? "10000" : "10");
         properties.setProperty("tcpKeepAlive", "true");
-        properties.setProperty("ApplicationName", "DuneRealms-Core");
+        if (mysql) {
+            // Reconnecting transparently would discard the named session lock.
+            properties.setProperty("autoReconnect", "false");
+            properties.setProperty("useAffectedRows", "false");
+            properties.setProperty("connectionTimeZone", "UTC");
+            properties.setProperty("forceConnectionTimeZoneToSession", "true");
+            properties.setProperty("allowMultiQueries", "false");
+        } else properties.setProperty("ApplicationName", "DuneRealms-Core");
         return DriverManager.getConnection(url, properties);
     }
+
+    private void initializeMysql(Connection c, Statement s) throws SQLException {
+        // MySQL DDL implicitly commits. A connection-scoped lock, not a pretend
+        // DDL transaction, serializes idempotent upgrades across the backends.
+        String schemaLock = "dune:core:schema:v1";
+        if (!acquireMysqlLock(c, schemaLock, 10)) throw new SQLException("Network schema initialization is busy");
+        try {
+            for (String ddl : mysqlSchema()) s.executeUpdate(ddl);
+            Map<String,String> upgrades = new LinkedHashMap<>();
+            upgrades.put("inventory_view", "JSON");
+            upgrades.put("inventory_updated_at", "DATETIME(6) NULL");
+            upgrades.put("experience_level", "INTEGER NULL");
+            upgrades.put("experience_progress", "FLOAT NULL");
+            upgrades.put("total_experience", "INTEGER NULL");
+            upgrades.put("held_slot", "INTEGER NULL");
+            upgrades.put("session_open", "BOOLEAN NOT NULL DEFAULT FALSE");
+            for (Map.Entry<String,String> column : upgrades.entrySet()) {
+                try (ResultSet found = c.getMetaData().getColumns(c.getCatalog(), null, "dune_players", column.getKey())) {
+                    if (!found.next()) s.executeUpdate("ALTER TABLE dune_players ADD COLUMN " + column.getKey() + " " + column.getValue());
+                }
+            }
+            // A trigger shares the inventory UPDATE's own transaction, including
+            // ordinary autocommit saves. Never emit on unchanged autosave rows.
+            try (PreparedStatement q = c.prepareStatement("SELECT 1 FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?")) {
+                q.setString(1, "dune_players_faction_event");
+                try (ResultSet found = q.executeQuery()) {
+                    if (!found.next()) s.executeUpdate(mysqlFactionTrigger());
+                }
+            }
+            s.executeUpdate("INSERT INTO dune_politics (id,yaml) VALUES (1,'') ON DUPLICATE KEY UPDATE id=id");
+        } finally { releaseMysqlLock(c, schemaLock); }
+    }
+
+    static String mysqlFactionTrigger() {
+        return "CREATE TRIGGER dune_players_faction_event AFTER UPDATE ON dune_players FOR EACH ROW BEGIN IF NOT (OLD.faction <=> NEW.faction) THEN INSERT INTO dune_game_events(topic) VALUES('politics'); END IF; END";
+    }
+
+    static List<String> mysqlSchema() {
+        String uuid = "VARCHAR(36) CHARACTER SET ascii COLLATE ascii_bin";
+        String engine = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        return List.of(
+            "CREATE TABLE IF NOT EXISTS dune_players (uuid " + uuid + " PRIMARY KEY, faction VARCHAR(32) NOT NULL DEFAULT '', solaris INTEGER NOT NULL DEFAULT 0, inventory LONGTEXT, inventory_view JSON, inventory_updated_at DATETIME(6) NULL, experience_level INTEGER NULL, experience_progress FLOAT NULL, total_experience INTEGER NULL, held_slot INTEGER NULL, session_open BOOLEAN NOT NULL DEFAULT FALSE)" + engine,
+            "CREATE TABLE IF NOT EXISTS dune_politics (id INTEGER PRIMARY KEY, yaml LONGTEXT NOT NULL)" + engine,
+            "CREATE TABLE IF NOT EXISTS dune_arrakis_permits (player " + uuid + " PRIMARY KEY, expires_at BIGINT NOT NULL)" + engine,
+            "CREATE TABLE IF NOT EXISTS dune_bounties (target " + uuid + " PRIMARY KEY, world VARCHAR(64) NOT NULL, reward INTEGER NOT NULL, claimed BOOLEAN NOT NULL DEFAULT FALSE, hunter " + uuid + ")" + engine,
+            "CREATE TABLE IF NOT EXISTS dune_game_events (id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, topic VARCHAR(64) NOT NULL, created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6))" + engine
+        );
+    }
+
+    private static boolean acquireMysqlLock(Connection c, String name, int seconds) throws SQLException {
+        try (PreparedStatement q = c.prepareStatement("SELECT GET_LOCK(?,?)")) {
+            q.setString(1, name); q.setInt(2, seconds);
+            try (ResultSet r = q.executeQuery()) { return r.next() && r.getInt(1) == 1; }
+        }
+    }
+
+    private static void releaseMysqlLock(Connection c, String name) throws SQLException {
+        try (PreparedStatement q = c.prepareStatement("SELECT RELEASE_LOCK(?)")) {
+            q.setString(1, name); q.execute();
+        }
+    }
+
+    private void bindUuid(PreparedStatement q, int index, UUID id) throws SQLException {
+        if (mysql) q.setString(index, id.toString()); else q.setObject(index, id);
+    }
+
+    private void closeOwnedConnection(UUID id, Connection c) throws SQLException {
+        SQLException failure = null;
+        if (mysql) try { releaseMysqlLock(c, "dune:profile:" + id); } catch (SQLException ex) { failure = ex; }
+        try { c.close(); } catch (SQLException ex) { if (failure == null) failure = ex; else failure.addSuppressed(ex); }
+        if (failure != null) throw failure;
+    }
+
+    private static Integer integer(Object value) { return value == null ? null : ((Number)value).intValue(); }
+    private static Float decimal(Object value) { return value == null ? null : ((Number)value).floatValue(); }
 
     public boolean isLoaded(UUID id) { return sessions.containsKey(id); }
 
@@ -69,7 +180,10 @@ public final class SharedDatabase implements AutoCloseable {
         Connection c = connect();
         boolean retained = false;
         try {
-            try (PreparedStatement lock = c.prepareStatement("SELECT pg_try_advisory_lock(?)")) {
+            if (mysql) {
+                if (!acquireMysqlLock(c, "dune:profile:" + id, 0))
+                    throw new SQLException("Profile is still active on another backend; reconnect shortly");
+            } else try (PreparedStatement lock = c.prepareStatement("SELECT pg_try_advisory_lock(?)")) {
                 lock.setLong(1, id.getMostSignificantBits() ^ id.getLeastSignificantBits());
                 try (ResultSet r = lock.executeQuery()) {
                     if (!r.next() || !r.getBoolean(1))
@@ -77,8 +191,8 @@ public final class SharedDatabase implements AutoCloseable {
                 }
             }
             try (PreparedStatement ins = c.prepareStatement(
-                    "INSERT INTO dune_players(uuid,faction) VALUES (?,?) ON CONFLICT DO NOTHING")) {
-                ins.setObject(1, id);
+                    mysql ? "INSERT INTO dune_players(uuid,faction) VALUES (?,?) ON DUPLICATE KEY UPDATE uuid=uuid" : "INSERT INTO dune_players(uuid,faction) VALUES (?,?) ON CONFLICT DO NOTHING")) {
+                bindUuid(ins, 1, id);
                 ins.setString(2, factions.getOrDefault(id, ""));
                 ins.executeUpdate();
             }
@@ -88,7 +202,7 @@ public final class SharedDatabase implements AutoCloseable {
             Float progress;
             try (PreparedStatement q = c.prepareStatement(
                     "SELECT faction,inventory,experience_level,experience_progress,total_experience,held_slot,session_open FROM dune_players WHERE uuid=?")) {
-                q.setObject(1, id);
+                bindUuid(q, 1, id);
                 try (ResultSet r = q.executeQuery()) {
                     if (!r.next()) throw new SQLException("Missing network profile");
                     if (r.getBoolean("session_open"))
@@ -96,10 +210,10 @@ public final class SharedDatabase implements AutoCloseable {
                     faction = r.getString("faction");
                     String blob = r.getString("inventory");
                     if (blob != null && !blob.isBlank()) inventory = decode(blob);
-                    level = (Integer) r.getObject("experience_level");
-                    progress = (Float) r.getObject("experience_progress");
-                    total = (Integer) r.getObject("total_experience");
-                    slot = (Integer) r.getObject("held_slot");
+                    level = integer(r.getObject("experience_level"));
+                    progress = decimal(r.getObject("experience_progress"));
+                    total = integer(r.getObject("total_experience"));
+                    slot = integer(r.getObject("held_slot"));
                 }
             }
             // Decode and validate everything before changing the player or marking a session open.
@@ -110,8 +224,8 @@ public final class SharedDatabase implements AutoCloseable {
                     || (slot != null && (slot < 0 || slot > 8)))
                 throw new IOException("Network experience or selected slot is invalid");
             try (PreparedStatement q = c.prepareStatement("UPDATE dune_players SET session_open=TRUE WHERE uuid=?")) {
-                q.setObject(1, id);
-                q.executeUpdate();
+                bindUuid(q, 1, id);
+                if (q.executeUpdate() != 1) throw new SQLException("Network profile disappeared before load");
             }
             // Keep the durable marker if any application step fails: do not overwrite the profile.
             if (inventory != null) p.getInventory().setContents(inventory);
@@ -123,7 +237,7 @@ public final class SharedDatabase implements AutoCloseable {
             sessions.put(id, c);
             retained = true;
         } finally {
-            if (!retained) c.close();
+            if (!retained) closeOwnedConnection(id, c);
         }
     }
 
@@ -139,7 +253,7 @@ public final class SharedDatabase implements AutoCloseable {
             writePlayer(p, factions, true);
         } finally {
             Connection c = sessions.remove(p.getUniqueId());
-            if (c != null) c.close();
+            if (c != null) closeOwnedConnection(p.getUniqueId(), c);
         }
     }
 
@@ -149,7 +263,7 @@ public final class SharedDatabase implements AutoCloseable {
         // Never reconnect here: a replacement connection would not own the session lock.
         String inventory = encode(p.getInventory().getContents());
         try (PreparedStatement q = c.prepareStatement(
-                "UPDATE dune_players SET faction=?,inventory=?,experience_level=?,experience_progress=?,total_experience=?,held_slot=?,session_open=?,inventory_view=?::jsonb,inventory_updated_at=CURRENT_TIMESTAMP WHERE uuid=?")) {
+                "UPDATE dune_players SET faction=?,inventory=?,experience_level=?,experience_progress=?,total_experience=?,held_slot=?,session_open=?,inventory_view=" + (mysql ? "?" : "?::jsonb") + ",inventory_updated_at=CURRENT_TIMESTAMP WHERE uuid=?")) {
             q.setString(1, factions.getOrDefault(p.getUniqueId(), ""));
             q.setString(2, inventory);
             q.setInt(3, p.getLevel());
@@ -158,7 +272,7 @@ public final class SharedDatabase implements AutoCloseable {
             q.setInt(6, p.getInventory().getHeldItemSlot());
             q.setBoolean(7, !release);
             q.setString(8, InventoryWebSnapshot.capture(p));
-            q.setObject(9, p.getUniqueId());
+            bindUuid(q, 9, p.getUniqueId());
             if (q.executeUpdate() != 1) throw new SQLException("Network profile disappeared during save");
         } catch (SQLException ex) {
             try {
@@ -202,7 +316,7 @@ public final class SharedDatabase implements AutoCloseable {
             if (!recovered) {
                 // Unknown commit result: never perform an ordinary quit save over the evidence.
                 sessions.remove(p.getUniqueId());
-                try { c.close(); } catch (SQLException close) { ex.addSuppressed(close); }
+                try { closeOwnedConnection(p.getUniqueId(), c); } catch (SQLException close) { ex.addSuppressed(close); }
                 p.kickPlayer("Exchange storage interrupted. An administrator must review your network profile.");
             }
             throw ex;
@@ -212,7 +326,7 @@ public final class SharedDatabase implements AutoCloseable {
     }
 
     @Override public void close() {
-        for (Connection c : sessions.values()) try { c.close(); }
+        for (Map.Entry<UUID,Connection> session : sessions.entrySet()) try { closeOwnedConnection(session.getKey(), session.getValue()); }
         catch (SQLException ex) { plugin.getLogger().warning("Profile connection close failed: " + ex.getMessage()); }
         sessions.clear();
     }
@@ -227,6 +341,10 @@ public final class SharedDatabase implements AutoCloseable {
     }
 
     public void savePolitics(String yaml) throws SQLException {
+        if (mysql) {
+            saveMysqlPolitics(yaml);
+            return;
+        }
         try (Connection c = connect();
              PreparedStatement q = c.prepareStatement(
                      "UPDATE dune_politics SET yaml=? WHERE id=1")) {
@@ -235,15 +353,31 @@ public final class SharedDatabase implements AutoCloseable {
         }
     }
 
+    private void saveMysqlPolitics(String yaml) throws SQLException {
+        try (Connection c = connect()) {
+            c.setAutoCommit(false);
+            try {
+                int changed;
+                try (PreparedStatement q = c.prepareStatement("UPDATE dune_politics SET yaml=? WHERE id=1 AND BINARY yaml<>BINARY ?")) {
+                    q.setString(1, yaml); q.setString(2, yaml); changed = q.executeUpdate();
+                }
+                if (changed > 0) try (PreparedStatement q = c.prepareStatement("INSERT INTO dune_game_events(topic) VALUES('politics')")) {
+                    q.executeUpdate();
+                }
+                c.commit();
+            } catch (SQLException ex) { try { c.rollback(); } catch (SQLException rollback) { ex.addSuppressed(rollback); } throw ex; }
+        }
+    }
+
     /** Short-lived, single-use authorization for an Emperor-approved arrival. */
     public void issueArrakisPermit(UUID player, long expiresAt)
             throws SQLException {
         try (Connection c = connect();
              PreparedStatement q = c.prepareStatement(
-                     "INSERT INTO dune_arrakis_permits(player,expires_at) "
+                     mysql ? "INSERT INTO dune_arrakis_permits(player,expires_at) VALUES (?,?) ON DUPLICATE KEY UPDATE expires_at=VALUES(expires_at)" : "INSERT INTO dune_arrakis_permits(player,expires_at) "
                      + "VALUES (?,?) ON CONFLICT(player) "
                      + "DO UPDATE SET expires_at=EXCLUDED.expires_at")) {
-            q.setObject(1, player);
+            bindUuid(q, 1, player);
             q.setLong(2, expiresAt);
             q.executeUpdate();
         }
@@ -253,10 +387,11 @@ public final class SharedDatabase implements AutoCloseable {
         try (Connection c = connect();
              PreparedStatement q = c.prepareStatement(
                      "DELETE FROM dune_arrakis_permits "
-                     + "WHERE player=? AND expires_at>? RETURNING player")) {
-            q.setObject(1, player);
+                     + "WHERE player=? AND expires_at>?" + (mysql ? "" : " RETURNING player"))) {
+            bindUuid(q, 1, player);
             q.setLong(2, System.currentTimeMillis());
 
+            if (mysql) return q.executeUpdate() == 1;
             try (ResultSet r = q.executeQuery()) {
                 return r.next();
             }
@@ -267,11 +402,11 @@ public final class SharedDatabase implements AutoCloseable {
             throws SQLException {
         try (Connection c = connect();
              PreparedStatement q = c.prepareStatement(
-                     "INSERT INTO dune_bounties(target,world,reward,claimed,hunter) "
+                     mysql ? "INSERT INTO dune_bounties(target,world,reward,claimed,hunter) VALUES(?,?,?,FALSE,NULL) ON DUPLICATE KEY UPDATE world=VALUES(world),reward=VALUES(reward),claimed=FALSE,hunter=NULL" : "INSERT INTO dune_bounties(target,world,reward,claimed,hunter) "
                      + "VALUES(?,?,?,FALSE,NULL) ON CONFLICT(target) "
                      + "DO UPDATE SET world=EXCLUDED.world,"
                      + "reward=EXCLUDED.reward,claimed=FALSE,hunter=NULL")) {
-            q.setObject(1, target);
+            bindUuid(q, 1, target);
             q.setString(2, world);
             q.setInt(3, reward);
             q.executeUpdate();
@@ -279,6 +414,7 @@ public final class SharedDatabase implements AutoCloseable {
     }
 
     public int claimBounty(UUID target, UUID hunter) throws SQLException {
+        if (mysql) return claimMysqlBounty(target, hunter);
         try (Connection c = connect();
              PreparedStatement q = c.prepareStatement(
                      "UPDATE dune_bounties SET claimed=TRUE,hunter=? "
@@ -289,6 +425,27 @@ public final class SharedDatabase implements AutoCloseable {
             try (ResultSet r = q.executeQuery()) {
                 return r.next() ? r.getInt(1) : 0;
             }
+        }
+    }
+
+    private int claimMysqlBounty(UUID target, UUID hunter) throws SQLException {
+        try (Connection c = connect()) {
+            c.setAutoCommit(false);
+            try {
+                int reward;
+                try (PreparedStatement q = c.prepareStatement("SELECT reward FROM dune_bounties WHERE target=? AND claimed=FALSE FOR UPDATE")) {
+                    bindUuid(q, 1, target);
+                    try (ResultSet r = q.executeQuery()) {
+                        if (!r.next()) { c.rollback(); return 0; }
+                        reward = r.getInt(1);
+                    }
+                }
+                try (PreparedStatement q = c.prepareStatement("UPDATE dune_bounties SET claimed=TRUE,hunter=? WHERE target=? AND claimed=FALSE")) {
+                    bindUuid(q, 1, hunter); bindUuid(q, 2, target);
+                    if (q.executeUpdate() != 1) throw new SQLException("Bounty changed before claim");
+                }
+                c.commit(); return reward;
+            } catch (SQLException ex) { try { c.rollback(); } catch (SQLException rollback) { ex.addSuppressed(rollback); } throw ex; }
         }
     }
 

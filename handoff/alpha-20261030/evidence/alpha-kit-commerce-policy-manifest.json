@@ -1,0 +1,23 @@
+{
+  "status": "local-tested-not-deployed",
+  "pythonTests": 133,
+  "files": {
+    "kit_commerce.py": "29395a483fdb3f6d94b36fa57587e3a1391d6e4ed8a44159cbb488dd47d960e6",
+    "test_kit_commerce.py": "3ba24aaa006490b3e214846e7e4c35bdbfafed3ed94b92acea37c619503f3828",
+    "test_kit_allocations.py": "655fa1a645e7bda8081d9630a9a2c0b5378de424f6c3ebbaa06b2aaa6093559a",
+    "test_kit_authority.py": "9e97883cc93835a1ed8793ff531e40dd5bb5857eb17ef0352a6f1ea960daf7f1"
+  },
+  "probe": {
+    "path": "output/probe-mixed-kit-commerce.py",
+    "sha256": "952cf73fff70a8d08355a24e37ea1ca9d73dfdd140ff4611c36d0c4fdce559fd"
+  },
+  "migration": "kit_commerce.sales_constraint_migration(cursor) returns one atomic MySQL8 ALTER; root must backup and pause checkout before applying; no historical financial UPDATE",
+  "policy": {
+    "personal_sale": "75% seller economy wallet /25% server",
+    "official_sale": "80% current officeholder economy wallet /20% server",
+    "faction_sale": "60% actual designer personal BANK /25% owning faction BANK /15% server",
+    "server_sale": "100% server; protected verified publisher; no invented price/publication"
+  },
+  "authority": "Unified trusted SQL row; native current elected terms; no caller rate flag; seller tier override DB-only personal quality gate; no fake claims/rewards",
+  "migrationMetadataRegression": "Actual MySQL escaped literal quotes normalized before charset introducer stripping; plan-only idempotency fixture included; no DDL executed by child"
+}

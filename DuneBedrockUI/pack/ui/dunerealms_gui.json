@@ -1,0 +1,363 @@
+{
+  "namespace": "dunerealms_gui",
+  "routed_long_form": {
+    "type": "panel",
+    "size": [
+      "100% - 16px",
+      "100% - 16px"
+    ],
+    "max_size": [
+      420,
+      340
+    ],
+    "bindings": [
+      {
+        "binding_name": "#title_text"
+      },
+      {
+        "binding_type": "view",
+        "source_property_name": "(not ((#title_text - 'DRUI|') = #title_text))",
+        "target_property_name": "#visible"
+      }
+    ],
+    "controls": [
+      {
+        "background": {
+          "type": "image",
+          "texture": "textures/dunerealms/ui/panel",
+          "nineslice_size": 3,
+          "size": [
+            "100%",
+            "100%"
+          ],
+          "alpha": 0.98,
+          "layer": 0
+        }
+      },
+      {
+        "header@dunerealms_gui.header": {
+          "layer": 2
+        }
+      },
+      {
+        "scroll@common.scrolling_panel": {
+          "size": [
+            "100% - 16px",
+            "100% - 88px"
+          ],
+          "offset": [
+            0,
+            80
+          ],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "$show_background": false,
+          "$scrolling_content": "dunerealms_gui.body",
+          "$scroll_size": [
+            5,
+            "100% - 4px"
+          ],
+          "$scrolling_pane_size": [
+            "100% - 6px",
+            "100% - 2px"
+          ],
+          "$scrolling_pane_offset": [
+            0,
+            0
+          ],
+          "layer": 2
+        }
+      }
+    ]
+  },
+  "header": {
+    "type": "panel",
+    "size": [
+      "100%",
+      76
+    ],
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "controls": [
+      {
+        "crest": {
+          "type": "image",
+          "texture": "textures/dunerealms/ui/imperial-portal",
+          "size": [
+            64,
+            64
+          ],
+          "offset": [
+            4,
+            4
+          ],
+          "anchor_from": "top_left",
+          "anchor_to": "top_left"
+        }
+      },
+      {
+        "title": {
+          "type": "label",
+          "size": [
+            "100% - 82px",
+            32
+          ],
+          "offset": [
+            72,
+            13
+          ],
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "text": "#text",
+          "font_scale_factor": 1.2,
+          "color": [
+            0.92,
+            0.8,
+            0.51
+          ],
+          "shadow": false,
+          "bindings": [
+            {
+              "binding_name": "#title_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#title_text - 'DRUI|')",
+              "target_property_name": "#text"
+            }
+          ]
+        }
+      },
+      {
+        "subtitle": {
+          "type": "label",
+          "text": "DUNEREALMS  /  IMPERIAL NAVIGATOR",
+          "color": [
+            0.59,
+            0.72,
+            0.69
+          ],
+          "font_scale_factor": 0.65,
+          "size": [
+            "100% - 82px",
+            12
+          ],
+          "offset": [
+            72,
+            52
+          ],
+          "anchor_from": "top_left",
+          "anchor_to": "top_left"
+        }
+      }
+    ]
+  },
+  "body": {
+    "type": "stack_panel",
+    "size": [
+      "100% - 12px",
+      "100%c"
+    ],
+    "orientation": "vertical",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "controls": [
+      {
+        "description": {
+          "type": "label",
+          "text": "#form_text",
+          "size": [
+            "100%",
+            "default"
+          ],
+          "color": [
+            0.73,
+            0.82,
+            0.77
+          ],
+          "bindings": [
+            {
+              "binding_name": "#form_text"
+            }
+          ]
+        }
+      },
+      {
+        "spacer": {
+          "type": "panel",
+          "size": [
+            "100%",
+            8
+          ]
+        }
+      },
+      {
+        "cards": {
+          "type": "stack_panel",
+          "size": [
+            "100%",
+            "100%c"
+          ],
+          "orientation": "vertical",
+          "factory": {
+            "name": "buttons",
+            "control_ids": {
+              "button": "dunerealms_gui.card",
+              "label": "@server_form.dynamic_label",
+              "header": "@server_form.dynamic_header",
+              "divider": "@settings_common.option_group_section_divider"
+            }
+          },
+          "collection_name": "form_buttons",
+          "bindings": [
+            {
+              "binding_name": "#form_button_contents",
+              "binding_name_override": "#collection_length"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "card": {
+    "type": "panel",
+    "size": [
+      "100%",
+      54
+    ],
+    "controls": [
+      {
+        "action": {
+          "type": "button",
+          "size": [
+            "100%",
+            48
+          ],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "sound_name": "random.click",
+          "default_control": "normal",
+          "hover_control": "hover",
+          "pressed_control": "pressed",
+          "locked_control": "normal",
+          "button_mappings": [
+            {
+              "from_button_id": "button.menu_select",
+              "to_button_id": "button.form_button_click",
+              "mapping_type": "pressed"
+            }
+          ],
+          "bindings": [
+            {
+              "binding_type": "collection_details",
+              "binding_collection_name": "form_buttons"
+            }
+          ],
+          "controls": [
+            {
+              "normal": {
+                "type": "image",
+                "texture": "textures/dunerealms/ui/card",
+                "size": [
+                  "100%",
+                  "100%"
+                ],
+                "nineslice_size": 3,
+                "layer": 0
+              }
+            },
+            {
+              "hover": {
+                "type": "image",
+                "texture": "textures/dunerealms/ui/card-hover",
+                "size": [
+                  "100%",
+                  "100%"
+                ],
+                "nineslice_size": 3,
+                "layer": 0
+              }
+            },
+            {
+              "pressed": {
+                "type": "image",
+                "texture": "textures/dunerealms/ui/card-pressed",
+                "size": [
+                  "100%",
+                  "100%"
+                ],
+                "nineslice_size": 3,
+                "layer": 0
+              }
+            },
+            {
+              "icon": {
+                "type": "image",
+                "size": [
+                  34,
+                  34
+                ],
+                "offset": [
+                  8,
+                  0
+                ],
+                "anchor_from": "left_middle",
+                "anchor_to": "left_middle",
+                "layer": 3,
+                "bindings": [
+                  {
+                    "binding_name": "#form_button_texture",
+                    "binding_name_override": "#texture",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  },
+                  {
+                    "binding_name": "#form_button_texture_file_system",
+                    "binding_name_override": "#texture_file_system",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  },
+                  {
+                    "binding_type": "view",
+                    "source_property_name": "(not ((#texture = '') or (#texture = 'loading')))",
+                    "target_property_name": "#visible"
+                  }
+                ]
+              }
+            },
+            {
+              "label": {
+                "type": "label",
+                "text": "#form_button_text",
+                "size": [
+                  "100% - 56px",
+                  "default"
+                ],
+                "anchor_from": "left_middle",
+                "anchor_to": "left_middle",
+                "offset": [
+                  48,
+                  0
+                ],
+                "color": [
+                  0.94,
+                  0.88,
+                  0.71
+                ],
+                "shadow": false,
+                "layer": 4,
+                "bindings": [
+                  {
+                    "binding_name": "#form_button_text",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

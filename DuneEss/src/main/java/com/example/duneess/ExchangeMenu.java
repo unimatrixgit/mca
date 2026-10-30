@@ -69,7 +69,18 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
     }
     private ItemStack icon(Material material,String name,String... lore) {
         ItemStack item=new ItemStack(material); ItemMeta meta=item.getItemMeta();
-        meta.setDisplayName(name); meta.setLore(Arrays.asList(lore)); item.setItemMeta(meta); return item;
+        meta.setDisplayName(name); meta.setLore(Arrays.asList(lore));
+        String model=navigationModel(name);
+        if(model!=null) meta.setItemModel(new NamespacedKey("dunerealms",model));
+        item.setItemMeta(meta); return item;
+    }
+    static String navigationModel(String name) {
+        String label=ChatColor.stripColor(name).toLowerCase(Locale.ROOT);
+        if(Set.of("add items / sell","choose another item").contains(label)) return "gui_market";
+        if(Set.of("review listing","confirm / add listing","confirm purchase","confirm reclaim","reclaim listing").contains(label)) return "gui_confirm";
+        if(label.startsWith("planet:")||label.equals("planet filter")||PLANETS.contains(label)) return "gui_compass";
+        if(label.equals("trading guide")) return "gui_contract";
+        return null;
     }
     private Screen screen(Player p,String title) {
         Screen s=new Screen(p.getUniqueId());
@@ -99,9 +110,8 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         }
         s.inventory.setItem(29,com.example.dunegui.DunemarkItems.icon(ChatColor.GOLD+"Buy / All Items",List.of(ChatColor.GRAY+"Pay with Dunemarks from your wallet.")));
         s.actions.put(29,()->browse(p,"all",0,false,false));
-        button(s,31,Material.CHEST,"Sell Held Item",()->{
-            p.closeInventory(); p.sendMessage(ChatColor.YELLOW+"Hold the item to list, then /exchange sell <amount> <price-each>. Example: /exchange sell 16 25");
-        },"Tagged Dune items and their attributes are preserved.","Price is for ONE item.");
+        button(s,31,Material.CHEST,"Add Items / Sell",()->chooseListingItem(p),
+            "Choose an inventory stack, quantity and price.","Nothing is removed until you confirm.");
         button(s,33,Material.BOOK,"My Listings",()->browse(p,"all",0,true,false),"Cancel and reclaim your unsold items.");
         button(s,40,Material.COMPASS,"Planet: "+planets.getOrDefault(p.getUniqueId(),"all"),()->planetMenu(p));
         button(s,38,Material.PAPER,"Trading Guide",()->{
@@ -193,21 +203,94 @@ final class ExchangeMenu implements Listener, CommandExecutor, TabCompleter {
         // Capacity is checked immediately before the transaction on this same server thread.
         if (!excess.isEmpty()) throw new IllegalArgumentException("Inventory changed; the trade was rolled back. Make room and retry.");
     }
-    private void sell(Player p,int amount,BigDecimal price) throws SQLException {
-        ExchangeStore.validate(amount,price);
-        ItemStack held=p.getInventory().getItemInMainHand();
-        if(held.getType().isAir()||amount>held.getAmount()) throw new IllegalArgumentException("Hold at least that many items in your main hand.");
-        // Never let operator tools become tradeable through the public exchange.
-        if(held.hasItemMeta()) for(NamespacedKey key:held.getItemMeta().getPersistentDataContainer().getKeys())
+    private void checkListable(ItemStack item) {
+        if(item.hasItemMeta()) for(NamespacedKey key:item.getItemMeta().getPersistentDataContainer().getKeys())
             if(key.getKey().contains("admin")) throw new IllegalArgumentException("Administrative tools cannot be listed.");
+    }
+    static int adjustedQuantity(int amount,int delta,int available) {
+        if(available<1) throw new IllegalArgumentException("The selected stack is empty. Choose an item again.");
+        return Math.max(1,Math.min(Math.min(64,available),amount+delta));
+    }
+    static BigDecimal adjustedPrice(BigDecimal price,int cents) {
+        return price.add(BigDecimal.valueOf(cents,2)).max(new BigDecimal("0.01")).min(new BigDecimal("1000000.00")).setScale(2);
+    }
+    static ItemStack listingStack(Player p,int slot,ItemStack expected,int amount) {
+        if(slot<0||slot>=36||expected==null||expected.getType().isAir()) throw new IllegalArgumentException("Choose an item from your inventory.");
+        ItemStack current=p.getInventory().getItem(slot);
+        if(current==null||current.getType().isAir()||!current.isSimilar(expected)||current.getAmount()<amount)
+            throw new IllegalArgumentException("The selected stack changed. Choose the item again; nothing was listed.");
+        return current;
+    }
+    private void chooseListingItem(Player p) {
+        if(!connected(p)) return;
+        Screen s=screen(p,"Add Items");
+        for(int slot=0;slot<36;slot++) {
+            final int inventorySlot=slot;ItemStack item=p.getInventory().getItem(slot);
+            if(item==null||item.getType().isAir()) {s.inventory.setItem(slot,icon(Material.GRAY_STAINED_GLASS_PANE,"Empty inventory slot"));continue;}
+            ItemStack expected=item.clone();expected.setAmount(1);
+            ItemStack display=item.clone();ItemMeta meta=display.getItemMeta();
+            List<String> lore=new ArrayList<>(meta.hasLore()?meta.getLore():List.of());
+            lore.add(ChatColor.GOLD+"Click to choose this stack for sale");lore.add(ChatColor.GRAY+"Inventory slot "+(slot+1)+" · Available: "+item.getAmount());
+            meta.setLore(lore);display.setItemMeta(meta);s.inventory.setItem(slot,display);
+            s.actions.put(slot,()->execute(p,()->{ItemStack current=listingStack(p,inventorySlot,expected,1);checkListable(current);listingDraft(p,inventorySlot,expected,1,new BigDecimal("1.00"));}));
+        }
+        button(s,40,Material.PAPER,"Choose your item",()->{},"Select a stack above. Items stay in your inventory.","Price is per item. Confirm before anything is reserved.");
+        com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
+    }
+    private void listingDraft(Player p,int slot,ItemStack expected,int amount,BigDecimal price) {
+        execute(p,()->{
+            ItemStack current=listingStack(p,slot,expected,amount);checkListable(current);
+            Screen s=screen(p,"Set Listing");
+            ItemStack preview=expected.clone();preview.setAmount(amount);s.inventory.setItem(4,preview);
+            button(s,10,Material.ARROW,"Quantity -8",()->listingDraft(p,slot,expected,adjustedQuantity(amount,-8,current.getAmount()),price));
+            button(s,11,Material.ARROW,"Quantity -1",()->listingDraft(p,slot,expected,adjustedQuantity(amount,-1,current.getAmount()),price));
+            s.inventory.setItem(13,icon(Material.CHEST,"Quantity: "+amount,"Available in selected stack: "+current.getAmount()));
+            button(s,15,Material.ARROW,"Quantity +1",()->listingDraft(p,slot,expected,adjustedQuantity(amount,1,current.getAmount()),price));
+            button(s,16,Material.ARROW,"Quantity +8",()->listingDraft(p,slot,expected,adjustedQuantity(amount,8,current.getAmount()),price));
+            button(s,19,Material.CHEST,"Use Entire Stack",()->listingDraft(p,slot,expected,Math.min(64,current.getAmount()),price));
+            s.inventory.setItem(22,icon(Material.GOLD_NUGGET,"Each: "+price+" Dunemarks","Total asking price: "+price.multiply(BigDecimal.valueOf(amount))+" Dunemarks","Payment is received only when another player buys."));
+            int[] changes={-1000,-100,-1,1,100,1000};int[] slots={28,29,30,32,33,34};
+            for(int i=0;i<changes.length;i++){final int cents=changes[i];button(s,slots[i],Material.GOLD_NUGGET,(cents>0?"+":"")+BigDecimal.valueOf(cents,2)+" Dunemarks each",()->listingDraft(p,slot,expected,amount,adjustedPrice(price,cents)));}
+            button(s,36,Material.GOLD_NUGGET,"-1000.00 Dunemarks each",()->listingDraft(p,slot,expected,amount,adjustedPrice(price,-100000)));
+            button(s,37,Material.GOLD_NUGGET,"-100.00 Dunemarks each",()->listingDraft(p,slot,expected,amount,adjustedPrice(price,-10000)));
+            button(s,39,Material.GOLD_NUGGET,"+100.00 Dunemarks each",()->listingDraft(p,slot,expected,amount,adjustedPrice(price,10000)));
+            button(s,41,Material.GOLD_NUGGET,"+1000.00 Dunemarks each",()->listingDraft(p,slot,expected,amount,adjustedPrice(price,100000)));
+            button(s,38,Material.CHEST,"Choose Another Item",()->chooseListingItem(p));
+            button(s,40,Material.LIME_CONCRETE,"Review Listing",()->confirmListing(p,slot,expected,amount,price),"No items have been removed yet.");
+            com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
+        });
+    }
+    private void confirmListing(Player p,int slot,ItemStack expected,int amount,BigDecimal price) {
+        execute(p,()->{
+            listingStack(p,slot,expected,amount);ExchangeStore.validate(amount,price);
+            Screen s=screen(p,"Confirm Listing");ItemStack preview=expected.clone();preview.setAmount(amount);s.inventory.setItem(22,preview);
+            s.inventory.setItem(13,icon(Material.PAPER,"Sell "+amount+" at "+price+" Dunemarks EACH","Total asking price: "+price.multiply(BigDecimal.valueOf(amount))+" Dunemarks","Confirm reserves exactly these items in the shared exchange.","Cancel to keep all items. No currency is granted now."));
+            java.util.concurrent.atomic.AtomicBoolean submitted=new java.util.concurrent.atomic.AtomicBoolean();
+            button(s,30,Material.LIME_CONCRETE,"Confirm / Add Listing",()->{if(!submitted.compareAndSet(false,true))return;p.closeInventory();if(connected(p))execute(p,()->sellInventory(p,slot,expected,amount,price));});
+            button(s,32,Material.RED_CONCRETE,"Cancel / Edit",()->listingDraft(p,slot,expected,amount,price));
+            com.example.dunegui.NativeMenus.inventory(plugin,p,s.title,s.inventory,s.actions);
+        });
+    }
+    private void sell(Player p,int amount,BigDecimal price) throws SQLException {
+        ItemStack held=p.getInventory().getItemInMainHand();
+        if(held==null||held.getType().isAir()) throw new IllegalArgumentException("Hold an item in your main hand.");
+        sellInventory(p,p.getInventory().getHeldItemSlot(),held,amount,price);
+    }
+    private void sellInventory(Player p,int slot,ItemStack expected,int amount,BigDecimal price) throws SQLException {
+        ExchangeStore.validate(amount,price);
+        ItemStack held=listingStack(p,slot,expected,amount);
+        checkListable(held);
         ItemStack unit=held.clone(); unit.setAmount(1);
         String name=unit.hasItemMeta()&&unit.getItemMeta().hasDisplayName()?ChatColor.stripColor(unit.getItemMeta().getDisplayName()):unit.getType().name();
         if(name.length()>120) name=name.substring(0,120);
         final String displayName=name;
         atomic(p, scoped -> {
+            ItemStack current=listingStack(p,slot,unit,amount);
+            checkListable(current);
             scoped.list(p.getUniqueId(),p.getName(),origin(p),category(unit),unit.getType().name(),amount,price,
                 Base64.getEncoder().encodeToString(unit.serializeAsBytes()),displayName);
-            held.setAmount(held.getAmount()-amount);
+            ItemStack remaining=current.clone();remaining.setAmount(current.getAmount()-amount);
+            p.getInventory().setItem(slot,remaining.getAmount()==0?null:remaining);
         });
         p.sendMessage(ChatColor.GREEN+"Listed "+amount+" "+name+" at "+price+" Dunemarks each.");
     }

@@ -1,0 +1,10 @@
+name: DuneStaff
+version: 1.0.1
+main: com.dunerealms.staff.DuneStaff
+api-version: '1.21.4'
+depend: [DuneCore, DuneMenus, DuneEss]
+commands:
+  dunecase:
+    description: Assigned support casework and audited target actions
+    usage: /dunecase [ticket-id]
+

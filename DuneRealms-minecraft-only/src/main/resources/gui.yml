@@ -9,7 +9,7 @@ backgrounds:
   default: GRAY_STAINED_GLASS_PANE
 
 # Edit icons, names, lore, slots and actions. Reload with /dune guireload.
-# Actions: open:<menu>, dune:<subcommand>, close, none.
+# Actions: open:<menu>, dune:<subcommand>, itemexchange, close, none.
 # Dynamic lists: server_jobs, factions, planets.
 menus:
   main:
@@ -67,6 +67,12 @@ menus:
         name: "&eChoose Faction"
         lore: ["&7Select your homeworld"]
         action: "open:factions"
+      itemexchange:
+        slot: 40
+        icon: CHEST
+        name: "&6Item Exchange"
+        lore: ["&7Buy player-listed items", "&7List items from your inventory"]
+        action: "itemexchange"
   serverjobs:
     title: "&6Dune | CHOAM Jobs"
     size: 54

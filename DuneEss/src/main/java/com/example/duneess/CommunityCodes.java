@@ -11,7 +11,7 @@ import java.net.http.*;
 import java.time.Duration;
 import java.util.*;
 
-/** Authenticated website bridge; rewards are always credited by the UUID/month ledger. */
+/** Authenticated website bridge; rewards use a durable UUID/reward-key ledger. */
 final class CommunityCodes implements CommandExecutor,TabCompleter {
     private final DuneEss plugin;
     private final HttpClient http=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).build();
@@ -49,10 +49,10 @@ final class CommunityCodes implements CommandExecutor,TabCompleter {
             JsonObject response=post(linking?"/api/game-link/consume":"/api/community/game/prepare",body);
             Bukkit.getScheduler().runTask(plugin,()->{try{
                 if(linking){player.sendMessage(com.example.dunegui.PublicNames.text("Website account linked to your Minecraft UUID. Refresh the account panel."));return;}
-                if(response.has("delivered")&&response.get("delivered").getAsBoolean()){player.sendMessage("This Minecraft UUID has already received that month's reward.");return;}
+                if(response.has("delivered")&&response.get("delivered").getAsBoolean()){player.sendMessage("This Minecraft UUID has already received this reward.");return;}
                 String month=response.get("month").getAsString(),receipt=response.get("receipt").getAsString();int amount=response.get("amount").getAsInt();
                 boolean granted=((DuneEconomy)plugin.economy()).grantCommunity(uuid,month,amount,receipt);
-                player.sendMessage(com.example.dunegui.PublicNames.text(granted?"Community reward credited: "+amount+" Dunemarks. Thank you, everyone!":"This UUID has already claimed that month's reward. No duplicate currency credited."));
+                player.sendMessage(com.example.dunegui.PublicNames.text(granted?"Community reward credited: "+amount+" Dunemarks. Thank you, everyone!":"This UUID has already claimed this reward. No duplicate currency credited."));
                 syncReceipts();
             }catch(Exception error){plugin.getLogger().warning("Community reward could not be committed: "+error.getClass().getSimpleName());player.sendMessage(com.example.dunegui.PublicNames.text("The reward could not be confirmed. Your code remains available; try again later."));}finally{busy.remove(uuid);}});
         }catch(Exception error){Bukkit.getScheduler().runTask(plugin,()->{busy.remove(uuid);player.sendMessage(com.example.dunegui.PublicNames.text("Website request failed. Check the account panel or public code page and try again later."));});}});

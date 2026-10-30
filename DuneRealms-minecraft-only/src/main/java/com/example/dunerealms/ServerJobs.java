@@ -107,6 +107,17 @@ final class ServerJobs {
         save();
     }
     List<String> offerIds() { return List.copyOf(offers); }
+    record OfferView(String id,String title,int required,int pay,long minutes,int fine) {}
+    record ActiveView(String title,int harvested,int required,int pay,long secondsLeft) {}
+    List<OfferView> offerViews() {
+        return offers.stream().map(templates::get).filter(Objects::nonNull)
+            .map(t->new OfferView(t.id(),t.title(),t.spiceRequired(),t.pay(),t.limitSeconds()/60,(int)Math.ceil(t.pay()*0.05))).toList();
+    }
+    ActiveView activeView(Player player) {
+        Active current=active.get(player.getUniqueId());if(current==null)return null;
+        Template t=templates.get(current.id());if(t==null)return null;
+        return new ActiveView(t.title(),current.harvested(),t.spiceRequired(),t.pay(),Math.max(0,current.acceptedAt()+t.limitSeconds()-Instant.now().getEpochSecond()));
+    }
     String describe(String id) {
         Template t=templates.get(id);
         return t==null ? "Unavailable" : t.title()+" | "+t.spiceRequired()+" spice | "+t.pay()+" Solaris | "+(t.limitSeconds()/60)+" min | 5% failure fine";

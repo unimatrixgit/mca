@@ -1,0 +1,46 @@
+[
+  {
+    "module": "DuneClans",
+    "version": "1.0.4",
+    "candidate": "dunerealms-story-update\\DuneClans\\build\\libs\\DuneClans-1.0.4.jar",
+    "sha256": "3277100f4bcbb33094405e740c4c97af76553a221318d99a0601e448770e94ce",
+    "baseline": "output\\clan-fee-split-20261029\\DuneClans-1.0.3.jar",
+    "baselineSha256": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+    "tests": 42,
+    "changedClasses": [
+      "com/dunerealms/clans/DuneClans$TransactionFailure.class",
+      "com/dunerealms/clans/DuneClans$View.class",
+      "com/dunerealms/clans/DuneClans.class"
+    ],
+    "addedClasses": []
+  },
+  {
+    "module": "DuneBank",
+    "version": "1.0.3",
+    "candidate": "dunerealms-story-update\\DuneBank\\build\\libs\\DuneBank-1.0.3.jar",
+    "sha256": "8629ce722a79d986b587075e96bff94e43cb2eb5719e4c236abe964ee0b58b0c",
+    "baseline": "output\\personal-staff-bank-20261029\\DuneBank-1.0.2.jar",
+    "baselineSha256": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+    "tests": 18,
+    "changedClasses": [
+      "com/dunerealms/bank/DuneBank$Failure.class",
+      "com/dunerealms/bank/DuneBank.class"
+    ],
+    "addedClasses": []
+  },
+  {
+    "module": "DuneAtelier",
+    "version": "1.0.2",
+    "candidate": "dunerealms-story-update\\DuneAtelier\\build\\libs\\DuneAtelier-1.0.2.jar",
+    "sha256": "0e107b34d418b0d38bc8d02114853bfb77e5e180528f757d7206091352149309",
+    "baseline": "dunerealms-story-update\\DuneAtelier\\build\\libs\\DuneAtelier-1.0.0.jar",
+    "baselineSha256": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+    "tests": 16,
+    "changedClasses": [
+      "com/dunerealms/atelier/ArcStore.class",
+      "com/dunerealms/atelier/DuneAtelier.class"
+    ],
+    "addedClasses": [],
+    "additionalScope": "Explicit later instruction: personal arc excludes official/faction/server receipts through immutable commerce_kind column. Requires SQL migration before this JAR."
+  }
+]

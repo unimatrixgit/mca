@@ -1,0 +1,11 @@
+package com.dunerealms.ban;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import java.time.*;
+import java.util.UUID;
+class BanRulesTest {
+ @Test void scopesAndUsernameNeverBecomeArbitraryTargets(){for(String s:new String[]{"network","global;op","LOCAL","","https://attacker"})assertThrows(IllegalArgumentException.class,()->BanRules.scope(s));assertEquals("local",BanRules.scope("local"));assertEquals("global",BanRules.scope("global"));for(String s:new String[]{"x","fake\nstop","00000000-0000-4000-8000-000000000001","a/b"})assertThrows(IllegalArgumentException.class,()->BanRules.username(s));assertEquals("Player_123",BanRules.username("Player_123"));}
+ @Test void reasonsAndDurationsAreBounded(){for(String s:new String[]{null,"bad","hello\nstop","hello§cworld","x".repeat(501)})assertThrows(IllegalArgumentException.class,()->BanRules.reason(s));assertEquals("Valid reason",BanRules.reason(" Valid reason "));assertNull(BanRules.duration(null));assertEquals(60000L,BanRules.duration(Duration.ofMinutes(1)));for(Duration d:new Duration[]{Duration.ZERO,Duration.ofMillis(999),Duration.ofDays(3651),Duration.ofSeconds(-5)})assertThrows(IllegalArgumentException.class,()->BanRules.duration(d));}
+ @Test void exactSnapshotAndProtectedTargetsAreRequired(){UUID actor=UUID.randomUUID(),target=UUID.randomUUID();assertThrows(IllegalArgumentException.class,()->BanRules.target(actor,actor,false,false));assertThrows(IllegalArgumentException.class,()->BanRules.target(actor,target,true,false));assertThrows(IllegalArgumentException.class,()->BanRules.target(actor,target,false,true));assertDoesNotThrow(()->BanRules.target(actor,target,false,false));assertEquals(1793232000000L,BanRules.created("2026-10-29T00:00:00Z"));for(String s:new String[]{"today","0","","2026-10-29;DROP"})assertThrows(IllegalArgumentException.class,()->BanRules.created(s));}
+ @Test void publicNoticeContainsReasonAndReferenceWithoutCredentials(){var r=new BanRecord(UUID.randomUUID(),UUID.randomUUID(),"Demo",UUID.randomUUID(),"Moderator","Recorded reason",1793232000000L,null,"arrakis");assertTrue(r.notice().contains("Recorded reason"));assertTrue(r.notice().contains(r.id().toString()));assertEquals("2026-10-29T00:00:00Z",r.createdText());assertEquals("forever",r.expiresText());}
+}

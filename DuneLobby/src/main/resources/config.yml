@@ -5,10 +5,8 @@ world: guild_lobby
 # Used only when DuneEss is absent. No fare is charged by the lobby.
 servers:
   arrakis: arrakis
-  caladan: caladan
   giedi_prime: giedi-prime
   kaitain: kaitain
-  sigma_draconis_iv: sigma-draconis-iv
 # Barter is self contained and does not create Solaris or counterfeit DuneCore tags.
 water-price-emeralds: 4
 spice-price-emeralds: 8
@@ -20,6 +18,6 @@ rules:
   - Ask staff before building outside authorised areas.
 news:
   - Welcome to the Vaerkring.
-  - Five planetary departures are available in the starport.
+  - Three planetary departures are available in the starport: Arrakduin, Kaiterhof and Giedermark.
   - Official trade is in the Exchange. Discreet trade is down the side passage.
   - These are lobby notices; configure live news separately.

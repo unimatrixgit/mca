@@ -1,13 +1,15 @@
 plugins { java }
 group = "com.example"
-version = "1.0.13"
+version = "1.1.0"
 repositories { mavenCentral(); maven("https://repo.papermc.io/repository/maven-public/"); maven("https://jitpack.io") }
 dependencies {
+    compileOnly("net.luckperms:api:5.5")
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
     }
     implementation("org.postgresql:postgresql:42.7.4")
+    implementation("com.mysql:mysql-connector-j:26.10.0")
     testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("org.mockito:mockito-core:5.15.2")

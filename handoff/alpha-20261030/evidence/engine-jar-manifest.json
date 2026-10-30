@@ -1,0 +1,78 @@
+{
+  "DuneProtect.jar": {
+    "sha256": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+    "descriptor": "name: DuneProtect\nversion: 1.0.0\nmain: com.example.duneprotect.DuneProtect\napi-version: '1.21'\nsoftdepend: [CoreProtect, WorldEdit, WorldGuard]\ndescription: Dune command entry point for the original protection plugins\ncommands:\n  duneprotect:\n    description: Block history, building tools and protected regions\n    usage: /duneprotect inspect|lookup|rollback|restore|worldedit|worldguard\npermissions:\n  duneprotect.inspect:\n    default: op\n  duneprotect.lookup:\n    default: op\n  duneprotect.rollback:\n    default: op\n  duneprotect.restore:\n    default: op\n  duneprotect.worldedit:\n    default: op\n  duneprotect.regions:\n    default: op\n"
+  },
+  "DuneCore-1.0.10.jar": {
+    "sha256": "1aba67f491fe470469465470b599055100f64eb5c6866cf375359663673fd327",
+    "descriptor": "name: DuneCore\r\nversion: 1.0.27\nmain: com.example.dunerealms.DuneCore\r\napi-version: '1.21.4'\r\ndepend: [Vault, DuneEss]\r\nsoftdepend: [floodgate, ViaVersion, DuneTerrain, DiscordSRV]\r\ndescription: Dune factions, Arrakis gameplay, politics, and server mechanics\r\ncommands:\r\n  dune:\r\n    description: Dune realms commands\r\n    usage: /dune help\r\npermissions:\r\n  dune.admin:\r\n    default: op\r\n\n  dune.moderation.ban:\n    description: Open and confirm local profile bans\n    default: op\n\n  dune.moderation.unban:\n    description: Review and remove local profile bans\n    default: op\n\n  dune.moderation.protected:\n    description: Exclude this player from GUI bans\n    default: op\n\n  dune.tickets.view:\n    description: Open canonical own-ticket links\n    default: true\n\n  dune.tickets.staff:\n    description: Show staff ticket desk link; website ACLs remain required\n    default: op\n"
+  },
+  "ViaVersion.jar": {
+    "sha256": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+    "descriptor": "name: ViaVersion\nmain: com.viaversion.viaversion.ViaVersionPlugin\nauthors: [ _MylesC, creeper123123321, Gerrygames, kennytv, Matsv, EnZaXD, RK_01 ]\nversion: \"5.12.2\"\ndescription: \"Allows the connection of newer clients to older server versions for Minecraft servers.\"\nwebsite: \"https://viaversion.com\"\napi-version: 1.13\nfolia-supported: true\nloadbefore: [ ProtocolLib ]\ncommands:\n  viaversion:\n    permission: viaversion.command # The permission is also referenced here to filter root suggestions (/via<tab>)\n    description: Shows ViaVersion Version and more.\n    aliases: [ viaver, vvbukkit ]\npermissions:\n  viaversion.admin:\n    default: op\n    children:\n      viaversion.command.autoteam: true\n      viaversion.command.debug: true\n      viaversion.command.displayleaks: true\n      viaversion.command.dontbugme: true\n      viaversion.command.dump: true\n      viaversion.command.list: true\n      viaversion.command.pps: true\n      viaversion.command.reload: true\n"
+  },
+  "DuneBan-Paper-1.0.0.jar": {
+    "sha256": "805051e6b05ca249544dfa0940ceaca9bfe69a39cad9cf21570bfd5dbe3bcdc7",
+    "descriptor": "name: DuneBan\nversion: 1.0.0\nmain: com.dunerealms.ban.DuneBan\napi-version: '1.21'\nsoftdepend: [DuneCore, LuckPerms]\ncommands:\n  duneban:\n    description: Create an explicitly local or global ban\n  duneunban:\n    description: Remove an exact reviewed local or global ban\npermissions:\n  dune.ban.local: {default: op}\n  dune.ban.global: {default: op}\n  dune.unban.local: {default: op}\n  dune.unban.global: {default: op}\n  dune.ban.protected: {default: false}\n"
+  },
+  "DuneEss-1.0.2.jar": {
+    "sha256": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+    "descriptor": "name: DuneEss\r\nversion: 1.0.11\nmain: com.example.duneess.DuneEss\r\napi-version: '1.21.4'\r\ndepend: [Vault]\r\nsoftdepend: [floodgate, ViaVersion, DuneTerrain]\r\nprefix: DuneRealms Essentials\r\ndescription: DuneRealms Essentials - Dunemarks economy, Vault provider, spice sales, and Arrakduin travel\r\ncommands:\r\n  communitycode:\r\n    description: Claim one community currency reward per UUID and monthly goal\r\n    usage: /communitycode <code>\r\n  linkwebsite:\r\n    description: Verify your Minecraft UUID for a website account\r\n    usage: /linkwebsite <private-code>\r\n  exchange:\r\n    description: CHOAM interplanetary player marketplace\r\n    usage: /exchange\r\n    aliases: [choam, market]\r\n  duneess:\r\n    description: Solaris, travel, and Arrakis administration\r\n    usage: /duneess help\r\n    aliases: [dess]\r\n  essentials:\r\n    description: Open DuneRealms Essentials\r\n    permission: duneess.basics\r\n  home:\r\n    description: Teleport to a saved home\r\n    permission: duneess.basics\r\n  sethome:\r\n    description: Save a named home\r\n    permission: duneess.basics\r\n  delhome:\r\n    description: Remove a named home\r\n    permission: duneess.basics\r\n  homes:\r\n    description: Choose a saved home\r\n    permission: duneess.basics\r\n  tpa:\r\n    description: Request player teleportation\r\n    permission: duneess.basics\r\n  tpaccept:\r\n    description: Accept a teleport request\r\n    permission: duneess.basics\r\n  tpdeny:\r\n    description: Decline a teleport request\r\n    permission: duneess.basics\r\n  spawn:\r\n    description: Return to world spawn\r\n    permission: duneess.basics\r\n  server:\r\n    description: Open Guild server travel\r\n    permission: duneess.basics\r\npermissions:\r\n  duneess.basics:\r\n    default: true\r\n  dune.admin:\r\n    default: op\r\n"
+  },
+  "worldguard-bukkit-7.0.13-dist.jar": {
+    "sha256": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5",
+    "descriptor": "name: WorldGuard\nmain: com.sk89q.worldguard.bukkit.WorldGuardPlugin\nversion: \"7.0.13+82fdc65\"\ndepend: [WorldEdit]\nsoftdepend: [CommandBook]\napi-version: \"1.21\"\n"
+  },
+  "DuneClans-1.0.0.jar": {
+    "sha256": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+    "descriptor": "name: DuneClans\r\nversion: 1.0.3\r\nmain: com.dunerealms.clans.DuneClans\r\napi-version: '1.21.4'\r\ndepend: [DuneCore, DuneMenus]\r\ncommands:\r\n  duneclan:\r\n    description: Clan bank, shop and stillsuit kits\r\n    aliases: [clanshop]\r\npermissions:\r\n  dune.clans.view:\r\n    default: true\r\n"
+  },
+  "Vault-2.5.0.jar": {
+    "sha256": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+    "descriptor": "name: Vault\nversion: 2.5.0\nmain: net.milkbowl.vault.Vault\nauthors: [ Sleaker, Cerea1, Mung3r, Kainzo, Foulest ]\napi-version: 1.13\nfolia-supported: true\nload: STARTUP\n\npermissions:\n  vault.main:\n    description: Allows access to all Vault commands.\n    default: op\n  vault.info:\n    description: Allows access to the Vault info command.\n    default: op\n  vault.convert:\n    description: Allows access to the Vault convert command.\n    default: op\n"
+  },
+  "DuneItems-1.0.2.jar": {
+    "sha256": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+    "descriptor": "name: DuneItems\r\nversion: 1.0.5\r\nmain: com.example.duneitems.DuneItems\r\napi-version: '1.21.4'\r\nsoftdepend: [DuneCore, DuneMenus]\r\nauthors: [DuneRealms]\r\ndescription: Original DuneRealms crafting items\r\ncommands:\r\n  duneitems:\r\n    description: Give an original DuneRealms item\r\n    usage: /duneitems offices | give <player> <water_vial|smugglers_water_vial> [count]\r\npermissions:\r\n  duneitems.admin:\r\n    description: Give DuneRealms custom items\r\n    default: op\r\n"
+  },
+  "DuneMenus-1.0.0.jar": {
+    "sha256": "f4b8e79bb1404a1947959b25e061e31458ac33b7c09ef01d052b31d4152291bd",
+    "descriptor": "name: DuneMenus\nversion: 1.0.0\nmain: com.example.dunemenus.DuneMenus\napi-version: '1.21.4'\nsoftdepend: [floodgate, Typewriter]\ncommands:\n  navigator:\n    description: Open the Imperial Navigator\n  dunemenus:\n    description: Private single-use navigator callbacks\n    usage: /dune\n"
+  },
+  "DuneNPC-1.0.0.jar": {
+    "sha256": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+    "descriptor": "name: DuneNPC\r\nversion: 1.0.2\nmain: com.example.dunenpc.DuneNPC\r\napi-version: '1.21'\r\ndepend: [DuneCore, DuneEss, Vault]\r\nsoftdepend: [DuneTerrain]\r\ndescription: Guild Navigators, roaming smugglers, timed missions and quest camps\r\ncommands:\r\n  dunenpc:\r\n    description: NPC administration and smuggling mission status\r\n    usage: /dunenpc admin | smuggle status | smuggle cancel\r\n"
+  },
+  "DuneBank-1.0.2.jar": {
+    "sha256": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+    "descriptor": "name: DuneBank\r\nversion: 1.0.2\r\nmain: com.dunerealms.bank.DuneBank\r\napi-version: '1.21.4'\r\ndepend: [DuneCore, DuneMenus]\r\ncommands:\r\n  dunebank:\r\n    description: Personal Dunemarks bank\r\n    aliases: [bank, pbank]\r\n  staffbank:\r\n    description: Central network staff Dunemarks bank\r\npermissions:\r\n  dunebank.use:\r\n    default: true\r\n  dunebank.staff.view:\r\n    default: false\r\n  dunebank.staff.deposit:\r\n    default: false\r\n  dunebank.staff.manage:\r\n    default: false\r\n"
+  },
+  "worldedit-bukkit-7.3.19.jar": {
+    "sha256": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+    "descriptor": "name: WorldEdit\nmain: com.sk89q.worldedit.bukkit.WorldEditPlugin\nversion: \"7.4.2+7450-eb8e82c\"\nload: STARTUP\napi-version: 1.21.4\nfolia-supported: true\nsoftdepend: [Vault]\nauthor: EngineHub\nwebsite: https://enginehub.org/worldedit\n"
+  },
+  "DuneAtelier-1.0.0.jar": {
+    "sha256": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+    "descriptor": "name: DuneAtelier\nversion: 1.0.0\nmain: com.dunerealms.atelier.DuneAtelier\napi-version: '1.21.4'\ndepend: [DuneCore, DuneMenus]\ncommands:\n  duneatelier:\n    description: Kits Exchange, paid item deliveries and the Loom of the Desert\n    aliases: [kitsexchange]\npermissions:\n  dune.atelier.view:\n    default: true\n  dune.atelier.redeem:\n    default: true\n"
+  },
+  "LuckPerms-Bukkit.jar": {
+    "sha256": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+    "descriptor": "name: LuckPerms\nversion: 5.5.88\ndescription: A permissions plugin\nauthor: Luck\nwebsite: https://luckperms.net\nmain: me.lucko.luckperms.bukkit.loader.BukkitLoaderPlugin\nload: STARTUP\n\n# Mark the plugin as 1.13 compatible to avoid CB having to perform quite as much unnecessary\n# remapping when the plugin is loaded. Note that despite what this setting might otherwise imply,\n# LP is still compatible with pre-1.13 releases.\napi-version: 1.13\nfolia-supported: true\n\n# Load LuckPerms before Vault. This means that all plugins that (soft-)depend\n# on Vault depend on LuckPerms too.\n#\n# This fixes issues caused by plugins obtaining the Vault service provider instance\n# only once when they initially enable. (if they haven't depended on LP, our registration\n# won't be there yet)\nloadbefore: [Vault]\n\n# Soft depend on LilyPad for messaging service impl\n# Soft depend on ViaVersion for adventure protocol facet\nsoftdepend: [LilyPad-Connect, ViaVersion]\n\ncommands:\n  luckperms:\n    description: Manage permissions\n    aliases: [lp, perm, perms, permission, permissions]\n"
+  },
+  "DuneQuests-1.0.0.jar": {
+    "sha256": "da6a9b70c39aca4b88a6c80b1ef2a0cdad30311857b521e6bf890adeacf0ff37",
+    "descriptor": "name: DuneQuests\nversion: 1.0.0\nmain: com.dunerealms.quests.DuneQuests\napi-version: '1.21'\ndepend: [DuneCore]\nsoftdepend: [DuneMenus, WorldGuard, WorldEdit]\ncommands:\n  dunequests:\n    description: View discovered quests and staff engine status\n    aliases: [dunequest]\npermissions:\n  dune.quests.view: {default: true}\n  dune.quests.admin: {default: op}\n"
+  },
+  "floodgate-spigot.jar": {
+    "sha256": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+    "descriptor": "name: floodgate\ndescription: Allows Bedrock players to join Java edition servers while keeping the server in online mode\nversion: 2.2.5-SNAPSHOT (b141-81b65cc)\nauthor: GeyserMC\nwebsite: https://geysermc.org\nmain: org.geysermc.floodgate.SpigotPlugin\napi-version: 1.13\nfolia-supported: true"
+  },
+  "CoreProtect-CE-24.1.jar": {
+    "sha256": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+    "descriptor": "name: CoreProtect\nmain: net.coreprotect.CoreProtect\nversion: 24.1\nbranch: master\napi-version: 1.16\nfolia-supported: true\nwebsite: http://coreprotect.net\nauthor: Intelli\nsoftdepend: [WorldEdit]\ndescription: >\n             Provides block protection for your server.\ncommands:\n  co:\n    description: Utilize the plugin\n    permission: coreprotect.co\n    permission-message: \u00a73CoreProtect \u00a7f- You do not have permission to do that.\n    usage: /<command> <params>\n  core:\n    description: Utilize the plugin\n    permission: coreprotect.core\n    permission-message: \u00a73CoreProtect \u00a7f- You do not have permission to do that.\n    usage: /<command> <params>\n  coreprotect:\n    description: Utilize the plugin\n    permission: coreprotect.coreprotect\n    permission-message: \u00a73CoreProtect \u00a7f- You do not have permission to do that.\n    usage: /<command> <params>\npermissions:\n    coreprotect.*:\n        description: Gives access to all CoreProtect actions and commands\n        default: op\n        children: \n            coreprotect.rollback: true\n            coreprotect.restore: true\n            coreprotect.inspect: true\n            coreprotect.help: true\n            coreprotect.purge: true\n            coreprotect.lookup: true\n            coreprotect.lookup.near: true\n            coreprotect.lookup.chat: true\n            coreprotect.lookup.command: true\n            coreprotect.lookup.session: true\n            coreprotect.lookup.username: true\n            coreprotect.lookup.block: true\n            coreprotect.lookup.sign: true\n            coreprotect.lookup.click: true\n            coreprotect.lookup.container: true\n            coreprotect.lookup.inventory: true\n            coreprotect.lookup.item: true\n            coreprotect.lookup.kill: true\n            coreprotect.teleport: true\n            coreprotect.reload: true\n            coreprotect.status: true\n            coreprotect.consumer: true\n            coreprotect.networking: true\n            coreprotect.give: false\n    coreprotect.co:\n      "
+  },
+  "DuneTerrain-1.0.7.jar": {
+    "sha256": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+    "descriptor": "name: DuneTerrain\r\nversion: 1.0.12\r\nmain: com.example.duneterrain.DuneTerrain\r\napi-version: '1.21'\r\nload: STARTUP\r\ndescription: Configurable Dune planet terrain and spawn generator for Paper\r\nsoftdepend: [DuneEss]\r\n\r\n"
+  }
+}

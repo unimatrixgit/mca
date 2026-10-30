@@ -1,0 +1,12 @@
+name: DuneClans
+version: 1.0.4
+main: com.dunerealms.clans.DuneClans
+api-version: '1.21.4'
+depend: [DuneCore, DuneMenus]
+commands:
+  duneclan:
+    description: Clan bank, shop and stillsuit kits
+    aliases: [clanshop]
+permissions:
+  dune.clans.view:
+    default: true
