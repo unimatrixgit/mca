@@ -1,0 +1,20 @@
+name: DuneBank
+version: 1.0.3
+main: com.dunerealms.bank.DuneBank
+api-version: '1.21.4'
+depend: [DuneCore, DuneMenus]
+commands:
+  dunebank:
+    description: Personal Dunemarks bank
+    aliases: [bank, pbank]
+  staffbank:
+    description: Central network staff Dunemarks bank
+permissions:
+  dunebank.use:
+    default: true
+  dunebank.staff.view:
+    default: false
+  dunebank.staff.deposit:
+    default: false
+  dunebank.staff.manage:
+    default: false

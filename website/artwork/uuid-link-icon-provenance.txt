@@ -1,0 +1,6 @@
+Asset: website/web/assets/uuid-link-imperial-v1.png
+Method: built-in imagegen, transparent_background=true.
+Generated 2026-10-29. Original generated PNG preserved unchanged.
+
+Prompt:
+Use case: logo-brand. Asset type: a compact transparent-background UI icon for DuneRealms website, replacing an asterisk annotation that means a verified Minecraft UUID/account link is required. Create ONE premium imperial identity-link emblem. A bold gold interlocking chain-link motif fused with a small blue faceted identity crystal and a simple engraved fingerprint/rune at center, restrained circular imperial gold bezel. Original desert science-fantasy heraldry, dark emerald, royal sapphire blue and warm metallic gold matching DuneRealms. Strong clean silhouette, front-facing symmetrical composition, crisp broad shapes and minimal interior detail so it remains readable at 20–24 pixels. Jewel-like dimensional craftsmanship but no busy filigree, no characters, no scenery, no lettering, no text, no watermark. Isolated centered single icon, tight balanced framing, genuine alpha transparency around and through the emblem; no background plate, no drop-shadow rectangle.

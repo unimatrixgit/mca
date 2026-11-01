@@ -1,0 +1,7 @@
+<?php
+require __DIR__.'/client.inc.php';
+$nav->setActiveNav('home');$page_title='Support service targets';
+require CLIENTINC_DIR.'header.inc.php';
+?>
+<section class="dune-service-terms"><h1>Support service targets</h1><p>Every request joins the queue for its department. These calendar-time targets guide how we handle unresolved tickets; they are not guaranteed resolution times or a promise of a first response within that period.</p><table class="list" width="100%"><thead><tr><th>Department</th><th>Handling target</th><th>Requests</th></tr></thead><tbody><tr><td>Support</td><td>48 hours</td><td>General account and game assistance</td></tr><tr><td>Forum support</td><td>48 hours</td><td>Forum help and reported posts</td></tr><tr><td>Ban appeals</td><td>72 hours</td><td>Review of a recorded ban</td></tr><tr><td>Sales</td><td>72 hours</td><td>Sales enquiries</td></tr><tr><td>Legal</td><td>7 days</td><td>Legal enquiries and parental requests</td></tr></tbody></table><h2>Your ticket</h2><p>The assigned service target and deadline appear in relevant ticket emails. A request may take longer when investigation or information from you is needed. Keep replies in the existing ticket so staff have the full history. An appeal does not suspend a ban.</p><p>These internal service targets do not replace statutory deadlines or affect your rights.</p><p><a class="button" href="/open.php">Open a request</a> <a href="/tickets.php">Your tickets</a></p></section>
+<?php require CLIENTINC_DIR.'footer.inc.php'; ?>

@@ -45,7 +45,7 @@ final class DenseSpice implements Listener {
             if(!c.isLoaded())return;
             Location loc=e.getWorld().getHighestBlockAt(a[0]+15,a[1]+15).getLocation().add(.5,1,.5);
             Villager seller=e.getWorld().spawn(loc,Villager.class,v->{
-                v.setCustomName(ChatColor.GOLD+"Spice Seller · +35%");v.setCustomNameVisible(true);
+                v.setCustomName(ChatColor.GOLD+"Spice Buyer · +35%");v.setCustomNameVisible(true);
                 v.setAI(false);v.setInvulnerable(true);v.setPersistent(true);v.setRemoveWhenFarAway(false);
                 v.getPersistentDataContainer().set(new NamespacedKey("dunerealms","spice-seller"),PersistentDataType.BYTE,(byte)1);
             });
@@ -56,9 +56,24 @@ final class DenseSpice implements Listener {
         e.setDropItems(false);e.setExpToDrop(0);
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void reward(BlockBreakEvent e) {
-        Block b=e.getBlock();if(!marked(b))return;consume(b);
-        if(b.getType()==Material.ORANGE_TERRACOTTA && e.getPlayer().getGameMode()!=GameMode.CREATIVE)
-            b.getWorld().dropItemNaturally(b.getLocation(),DuneTerrain.spiceItem(Math.max(1,Math.min(64,plugin.getConfig().getInt("dense-spice.yield",4)))));
+        Block b=e.getBlock();if(!marked(b))return;
+        if(b.getType()!=Material.ORANGE_TERRACOTTA || e.getPlayer().getGameMode()==GameMode.CREATIVE){consume(b);return;}
+        org.bukkit.inventory.ItemStack reward;
+        try {
+            org.bukkit.plugin.Plugin core=Bukkit.getPluginManager().getPlugin("DuneCore");
+            if(core==null||!core.isEnabled())throw new IllegalStateException("Core item authority unavailable");
+            int amount=Math.max(1,Math.min(64,plugin.getConfig().getInt("dense-spice.yield",4)));
+            Object item=core.getClass().getMethod("createMinedSpice",org.bukkit.entity.Player.class,int.class,Location.class,boolean.class)
+                .invoke(core,e.getPlayer(),amount,b.getLocation(),true);
+            if(!(item instanceof org.bukkit.inventory.ItemStack stack)||!stack.hasItemMeta())throw new IllegalStateException("Missing dense reward");
+            var tags=stack.getItemMeta().getPersistentDataContainer();
+            if(!"spice".equals(tags.get(new NamespacedKey("dunerealms","item"),PersistentDataType.STRING))
+                ||!"rare".equals(tags.get(new NamespacedKey("dunerealms","quality"),PersistentDataType.STRING)))throw new IllegalStateException("Ungraded dense reward");
+            reward=stack;
+        }catch(Exception unavailable){
+            e.setCancelled(true);e.getPlayer().sendMessage(ChatColor.RED+"Dense spice harvesting is temporarily unavailable. Your deposit has been preserved.");return;
+        }
+        consume(b);b.getWorld().dropItemNaturally(b.getLocation(),reward);
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void place(BlockPlaceEvent e) { if(marked(e.getBlock()))consume(e.getBlock()); }
     @EventHandler(ignoreCancelled=true) public void push(BlockPistonExtendEvent e) { if(e.getBlocks().stream().anyMatch(this::marked))e.setCancelled(true); }

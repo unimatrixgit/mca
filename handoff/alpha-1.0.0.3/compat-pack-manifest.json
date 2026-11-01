@@ -1,0 +1,12 @@
+{
+  "file": "DuneRealms-Imperial-GUI-1.21.8-v6.zip",
+  "sha1": "0003421ad9e0d92ddd1c5c3711d1b0657eb82207",
+  "sha256": "d79b61619820e2a3dff19a8509f6c495eb4844396b993602137a6255b9cab3ce",
+  "clientEvidence": "Minecraft26.3 accepted and loaded v5; missing GUI atlas sprite warnings. Custom glyph absent in dialog screenshot.",
+  "changes": [
+    "default-font PUA fallback",
+    "explicit GUI atlas sprite registration",
+    "navy/gold nine-slice buttons",
+    "pack version range26.3"
+  ]
+}

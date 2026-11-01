@@ -64,8 +64,9 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
     private SharedDatabase sharedDatabase;
     public SharedDatabase sharedDatabase(){return sharedDatabase;}
     private boolean sharesPlayerInventory() {
-        String planet=getConfig().getString("network.local-planet", "arrakis").toLowerCase(java.util.Locale.ROOT).replace('-', '_');
-        return sharedDatabase!=null && java.util.Set.of("arrakis","giedi_prime","kaitain","caladan","sigma_draconis_iv").contains(planet);
+        return sharedDatabase!=null && NetworkProfileScope.allowed(
+            getConfig().getString("network.local-planet", "arrakis"),
+            getConfig().getBoolean("network.share-lobby-inventory",false));
     }
     public void transactNetworkInventory(Player player, java.util.function.Consumer<java.sql.Connection> operation) throws Exception {
         if (!sharesPlayerInventory()) throw new java.sql.SQLException("Shared planetary profiles are required to trade");
@@ -73,7 +74,53 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         sharedDatabase.transaction(player, selected, operation);
     }
 
+    /** Staff case authority and faction metadata share the target's fenced profile checkpoint. */
+    public void adminAssignFaction(Player actor, Player target, String faction,
+            java.util.function.Consumer<java.sql.Connection> lockedCaseAuthority) throws Exception {
+        Objects.requireNonNull(actor, "Staff actor required");
+        Objects.requireNonNull(target, "Online target required");
+        Objects.requireNonNull(lockedCaseAuthority, "Locked case authority required");
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Faction administration requires the server thread");
+        if (!actor.isOnline() || !target.isOnline() || !actor.hasPermission("dune.admin"))
+            throw new SecurityException("Current staff permission and online identities are required");
+        if (faction == null || !Set.of("Fremen", "Atreides", "Harkonnen", "Corrino", "Ordos").contains(faction))
+            throw new IllegalArgumentException("Exact canonical faction required");
+        UUID targetId = Objects.requireNonNull(target.getUniqueId(), "Target identity required");
+        boolean hadPrevious = selected.containsKey(targetId);
+        String previous = selected.get(targetId);
+        try {
+            transactNetworkInventory(target, connection -> {
+                lockedCaseAuthority.accept(connection);
+                if (!Bukkit.isPrimaryThread() || !actor.isOnline() || !target.isOnline()
+                        || !actor.hasPermission("dune.admin"))
+                    throw new SecurityException("Staff authority changed before the faction update");
+                selected.put(targetId, faction);
+            });
+        } catch (Exception failure) {
+            // Never persist or reconnect here: Core may have fenced an unknown commit result.
+            if (hadPrevious) selected.put(targetId, previous);
+            else selected.remove(targetId);
+            throw failure;
+        }
+    }
+
     public Politics politics(){return politics;}
+    /** Item authority is current online identity plus central appointments/career, never OP. */
+    public String waterVialCraftingRole(UUID id) {
+        if(id==null||!isEnabled()||sharedDatabase==null||politics==null)return "none";
+        Player p=Bukkit.getPlayer(id);if(p==null||!p.isOnline())return "none";
+        try {
+            if(politics.isAuthorizedWaterFresh(factionOf(p)))return "official";
+            return "smuggler".equals(sharedDatabase.loadWaterCareer(id))?"smuggler":"none";
+        }catch(Exception unavailable){getLogger().warning("Water authority unavailable: "+unavailable.getClass().getSimpleName());return "none";}
+    }
+    /** Office keys map to UUID-bound election terms; absence revokes outfit access. */
+    public Map<String,String> currentPoliticalOffices(UUID id) {
+        if(id==null||!isEnabled()||politics==null||sharedDatabase==null)return Map.of();
+        Player p=Bukkit.getPlayer(id);if(p==null||!p.isOnline())return Map.of();
+        try{return politics.currentPoliticalOffices(id);}catch(Exception unavailable){return Map.of();}
+    }
+
     public String factionOf(Player player){return selected.getOrDefault(player.getUniqueId(),"");}
     public void persistPlayers(){savePlayers();}
     private ArrakisWater arrakisWater;
@@ -317,6 +364,8 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         meta.getPersistentDataContainer().set(itemKey,PersistentDataType.STRING,"stillsuit");
         meta.getPersistentDataContainer().set(armorFactionKey,PersistentDataType.STRING,faction.toLowerCase(Locale.ROOT));
         applyNetheriteStats(meta,"CHESTPLATE");
+        meta.getPersistentDataContainer().set(new NamespacedKey("dunerealms","quality"),PersistentDataType.STRING,"common");
+        java.util.List<String> qualityLore=new ArrayList<>(meta.getLore());qualityLore.add(ChatColor.WHITE+"Common");meta.setLore(qualityLore);
         winged.setItemMeta(meta);
         p.getInventory().setItem(elytraSlot,null);
         p.getInventory().setChestplate(winged);
@@ -365,6 +414,8 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
                 if(m==Material.LEATHER_LEGGINGS)meta.addEnchant(Enchantment.SWIFT_SNEAK,3,true);
             }
             if(faction.equalsIgnoreCase("Corrino"))meta.addEnchant(Enchantment.PROTECTION,3,true);
+            meta.getPersistentDataContainer().set(new NamespacedKey("dunerealms","quality"),PersistentDataType.STRING,"common");
+            meta.setLore(List.of(ChatColor.WHITE+"Common",ChatColor.GRAY+"A standard-issue desert stillsuit."));
             armor.setItemMeta(meta);
             items.add(armor);
         }
@@ -376,6 +427,14 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         ItemStack[] armor=player.getInventory().getArmorContents();
         if(armor.length!=4)return "";
         for(ItemStack piece:armor) {
+            if(piece!=null && piece.hasItemMeta() && piece.getItemMeta().getPersistentDataContainer().has(new NamespacedKey("dunerealms","political_office"))) {
+                org.bukkit.plugin.Plugin items=Bukkit.getPluginManager().getPlugin("DuneItems");
+                if(items==null||!items.isEnabled())return "";
+                try {
+                    Object allowed=items.getClass().getMethod("isOfficeGearEligible",Player.class,ItemStack.class).invoke(items,player,piece);
+                    if(!Boolean.TRUE.equals(allowed))return "";
+                }catch(Exception denied){return "";}
+            }
             if(!is(piece,"stillsuit"))return "";
             String tagged=piece.getItemMeta().getPersistentDataContainer().get(armorFactionKey,PersistentDataType.STRING);
             if(!faction.equals(tagged))return "";
@@ -526,7 +585,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
         if (args.length > 0 && (args[0].equalsIgnoreCase("admin") || args[0].equalsIgnoreCase("adminitem"))) {
             if (sender instanceof Player player) {
                 if (args[0].equalsIgnoreCase("adminitem")) {
-                    if (!player.isOp()) player.sendMessage(ChatColor.RED + "Operators only.");
+                    if (!player.hasPermission("dune.admin")) player.sendMessage(ChatColor.RED + "Requires dune.admin.");
                     else { adminGui.giveRod(player); player.sendMessage("The admin rod is supplied when an inventory slot is free."); }
                 } else adminGui.open(player);
             } else sender.sendMessage("Run this command in-game.");
@@ -829,7 +888,7 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
                 amount -= credited;
             }
         }
-        block.getWorld().dropItemNaturally(block.getLocation(), spiceDrop(p, amount));
+        block.getWorld().dropItemNaturally(block.getLocation(), spiceDrop(p, amount, block.getLocation()));
         scheduleSpiceRespawn(block.getLocation());
     }
     private void scheduleSpiceRespawn(Location location) {
@@ -858,12 +917,20 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             }
         }
     }
-    private ItemStack spiceDrop(Player miner, int amount) {
+    private ItemStack spiceDrop(Player miner, int amount) {return spiceDrop(miner,amount,null);}
+    private ItemStack spiceDrop(Player miner,int amount,Location source) {return createMinedSpice(miner,amount,source,SpiceQuality.dense(source));}
+    public ItemStack createMinedSpice(Player miner,int amount,Location source) {return spiceDrop(miner,amount,source);}
+    /** Dense=true is reserved for Terrain's authenticated chunk-ledger harvest. */
+    public ItemStack createMinedSpice(Player miner,int amount,Location source,boolean authenticatedDense) {
+        if(miner==null||amount<1||amount>64)throw new IllegalArgumentException("Valid miner and stack amount required");
         ItemStack spice = custom(Material.ORANGE_DYE, "Melange Spice", "spice").asQuantity(amount);
         ItemMeta meta = spice.getItemMeta();
         String faction = selected.getOrDefault(miner.getUniqueId(), "Unaffiliated");
         meta.setLore(List.of(ChatColor.GOLD + "Price: " + spiceSellPrice() + " Solaris each",
             ChatColor.GRAY + "Mined by: " + miner.getName() + " ; faction: " + faction));
+        boolean licensed=false;
+        try{licensed=politics!=null&&politics.isAuthorizedSpiceFresh(factionOf(miner));}catch(Exception unavailable){licensed=false;}
+        SpiceQuality.decorate(meta,licensed,authenticatedDense,source);
         spice.setItemMeta(meta);
         return spice;
     }

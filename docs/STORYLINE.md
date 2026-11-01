@@ -4,7 +4,7 @@ Original supporting story outline for dunerealms.com. This is a narrative refere
 
 ## Characters
 
-- **Tavren Sile**, an independent freight surveyor, checks cargo measurements against arrival receipts. His reputation rests on a shipment he once certified incorrectly; he wants to correct the record without concealing his own mistake.
+- **Tavren II Aedrecht**, an independent freight surveyor, checks cargo measurements against arrival receipts. His reputation rests on a shipment he once certified incorrectly; he wants to correct the record without concealing his own mistake.
 - **Mira Vesk**, a water-route coordinator, protects the crews who depend on reliable deliveries. She distrusts Tavren's paperwork until his measurements explain shortages her crews have been blamed for.
 - **Archivist Elian Voss**, a civilian records custodian on Kaiterhof, preserves conflicting shipment reports. Elian must decide whether to release evidence that also exposes negligence in the archive.
 

@@ -1,0 +1,5 @@
+# Empty database overrides inherit the private DuneCore MySQL connection.
+database:
+  jdbc-url: ''
+  username: ''
+  password: ''

@@ -1,10 +1,1 @@
-{
-  "pack": {
-    "pack_format": 46,
-    "supported_formats": {
-      "min_inclusive": 46,
-      "max_inclusive": 64
-    },
-    "description": "dunerealms.com — desert creatures and Dunemark GUI notes (Java 1.21.4–1.21.8)"
-  }
-}
+{"pack": {"pack_format": 46, "supported_formats": {"min_inclusive": 46, "max_inclusive": 97}, "description": "DuneRealms Imperial Navigator | Java 1.21.4 through 26.3", "min_format": 46, "max_format": [97, 1]}}

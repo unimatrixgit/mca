@@ -1,0 +1,8 @@
+{
+  "base": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+  "artifact": "DuneEss-1.0.11-sqltime1.jar",
+  "sha256": "cea63019e519a9b37ef8d812628f20f2d8d9ff936f2ea443a09d0e324c859902",
+  "changedClasses": [
+    "com/example/duneess/SqlDialect.class"
+  ]
+}

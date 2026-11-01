@@ -1,6 +1,6 @@
 import {categories,planets,materialName,demoListings,validListings,filterListings,listingInstruction} from './exchange-data.js';
 const $=id=>document.getElementById(id);
-const state={items:[],page:0,demo:true,loading:false};
+const state={items:[],page:0,demo:false,loading:false};
 const perPage=12;
 const categoryIcons={ores:'◆',spice:'✦',building:'▦',equipment:'⚒',farming:'❧',misc:'◎'};
 function element(tag,className,value) {
@@ -48,8 +48,8 @@ async function load() {
     state.items=items; state.demo=false;
     $('market-status').textContent='Connected to the game market · Read only · Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   } catch {
-    state.items=demoListings; state.demo=true;
-    $('market-status').textContent='Game market not connected — showing '+demoListings.length+' fictional demo offers. Refresh to check the connection.';
+    state.items=[]; state.demo=false;
+    $('market-status').textContent='The live market is temporarily unavailable. Refresh to retry; no demonstration offers are shown.';
   } finally {
     state.loading=false; state.page=0; $('market-refresh').disabled=false; render();
   }
@@ -64,4 +64,4 @@ $('market-refresh').addEventListener('click',load);
 $('market-prev').addEventListener('click',()=>{state.page--;render();});
 $('market-next').addEventListener('click',()=>{state.page++;render();});
 // Render the demonstration immediately while the first connection check is in flight.
-state.items=demoListings; render(); load();
+state.items=[]; render(); load();

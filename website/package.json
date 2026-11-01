@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
-    "start": "node --env-file-if-exists=.env node/server.mjs"
+    "start": "node --env-file-if-exists=.env node/server.mjs",
+    "generate": "node scripts/generate.mjs"
   },
   "dependencies": {
     "altcha": "3.5.0",

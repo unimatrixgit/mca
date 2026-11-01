@@ -394,7 +394,7 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
                     data.setBlock(x, h + 1, z, flowerTypes[random.nextInt(flowerTypes.length)]);
                 }
                 if (plugin.getConfig().getBoolean(path + "vegetation.trees", false)
-                    && surface == Material.GRASS_BLOCK && random.nextDouble() < treeChance && x >= 3 && x <= 12 && z >= 3 && z <= 12) {
+                    && (surface == Material.GRASS_BLOCK || surface == Material.DIRT || surface == Material.COARSE_DIRT) && h >= waterLevel && random.nextDouble() < treeChance && x >= 3 && x <= 12 && z >= 3 && z <= 12) {
                     placeJungleTree(data, x, h + 1, z, random, maxY);
                 }
             }
@@ -464,7 +464,7 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             double variation = plugin.getConfig().getDouble("planets.arrakis.terrain.height-variation", 11);
             double scale = Math.max(0.001, plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale", 0.02));
             int worldMinX = chunkX * 16, worldMinZ = chunkZ * 16;
-            int reach = (int)Math.ceil(maxRadius * 2.0) + 3;
+            int reach = (int)Math.ceil(maxRadius * 3.5) + 3;
             int firstCellX = Math.floorDiv(worldMinX - reach, spacing), lastCellX = Math.floorDiv(worldMinX + 15 + reach, spacing);
             int firstCellZ = Math.floorDiv(worldMinZ - reach, spacing), lastCellZ = Math.floorDiv(worldMinZ + 15 + reach, spacing);
             for (int cellX = firstCellX; cellX <= lastCellX; cellX++) for (int cellZ = firstCellZ; cellZ <= lastCellZ; cellZ++) {
@@ -594,14 +594,18 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
         private void placeJungleTree(ChunkData data, int x, int y, int z, Random random, int maxY) {
             int height = 4 + random.nextInt(4);
-            if (y + height + 2 >= maxY || data.getType(x, y - 1, z) != Material.GRASS_BLOCK) return;
-            for (int dy = 0; dy < height; dy++) data.setBlock(x, y + dy, z, Material.JUNGLE_LOG);
+            Material ground=data.getType(x,y-1,z);
+            if (y + height + 2 >= maxY || !(ground==Material.GRASS_BLOCK||ground==Material.DIRT||ground==Material.COARSE_DIRT)) return;
+            Material log=Material.JUNGLE_LOG,leaf=Material.JUNGLE_LEAVES;
+            if(planet.equals("kaitain")){boolean birch=random.nextBoolean();log=birch?Material.BIRCH_LOG:Material.OAK_LOG;leaf=birch?Material.BIRCH_LEAVES:Material.OAK_LEAVES;}
+            else if(planet.equals("giedi_prime")){log=Material.OAK_LOG;leaf=Material.OAK_LEAVES;}
+            for (int dy = 0; dy < height; dy++) data.setBlock(x, y + dy, z, log);
             for (int dy = height - 2; dy <= height + 1; dy++) {
                 int radius = dy >= height ? 1 : 2;
                 for (int dx = -radius; dx <= radius; dx++) for (int dz = -radius; dz <= radius; dz++) {
                     if (Math.abs(dx) == radius && Math.abs(dz) == radius && random.nextBoolean()) continue;
                     int lx = x + dx, lz = z + dz, ly = y + dy;
-                    if (lx >= 0 && lx < 16 && lz >= 0 && lz < 16 && data.getType(lx, ly, lz).isAir()) data.setBlock(lx, ly, lz, Material.JUNGLE_LEAVES);
+                    if (lx >= 0 && lx < 16 && lz >= 0 && lz < 16 && data.getType(lx, ly, lz) == Material.AIR) data.setBlock(lx, ly, lz, leaf);
                 }
             }
         }
@@ -662,6 +666,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             long anchorZ = cellZ * spacing + 8 + Math.floorMod(h2, spacing - 16);
             if (Math.floorDiv(anchorX, 16) != cx || Math.floorDiv(anchorZ, 16) != cz) return;
             int x = (int) anchorX, z = (int) anchorZ;
+            int minGap=Math.max(192,plugin.getConfig().getInt("planets.arrakis.highlands.min-spacing",300));
+            int maxGap=Math.max(minGap,plugin.getConfig().getInt("planets.arrakis.highlands.max-spacing",500));
+            int minRadius=Math.max(6,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.min-radius",65));
+            int maxRadius=Math.max(minRadius,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.max-radius",90));
+            double scale=Math.max(.001,plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale",.02));
+            if(RockPlateaus.regionDepth(x,z,minGap,maxGap,minRadius,maxRadius,scale)>=-.15)return;
             int y = region.getHighestBlockYAt(x, z);
             if (y < world.getMinHeight() + 40 || y > world.getMaxHeight() - 4 || y - 36 < world.getMinHeight()) return;
 

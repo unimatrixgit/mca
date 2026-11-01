@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "href": "https://cp.dunerealms.com/#shop",
+      "introducedIn": "1.0.0.2",
+      "badge": "NEW"
+    },
+    {
+      "href": "https://wiki.dunerealms.com/",
+      "introducedIn": "1.0.0.2",
+      "badge": "NEW"
+    },
+    {
+      "href": "https://clans.dunerealms.com/",
+      "introducedIn": "1.0.0.2",
+      "badge": "NEW"
+    },
+    {
+      "href": "https://cp.dunerealms.com/",
+      "updatedIn": "1.0.0.2",
+      "badge": "UPDATE"
+    },
+    {
+      "href": "https://cp.dunerealms.com/#exchange",
+      "updatedIn": "1.0.0.2",
+      "badge": "UPDATE"
+    },
+    {
+      "href": "https://support.dunerealms.com/",
+      "updatedIn": "1.0.0.2",
+      "badge": "UPDATE"
+    },
+    {
+      "href": "https://www.dunerealms.com/staff.html",
+      "updatedIn": "1.0.0.2",
+      "badge": "UPDATE"
+    }
+  ]
+}

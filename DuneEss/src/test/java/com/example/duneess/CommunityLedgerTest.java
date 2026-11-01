@@ -13,6 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommunityLedgerTest {
  @TempDir Path directory;
  DuneEss plugin(){DuneEss plugin=mock(DuneEss.class);when(plugin.getDataFolder()).thenReturn(directory.resolve("DuneEss").toFile());when(plugin.getConfig()).thenReturn(new YamlConfiguration());when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());return plugin;}
+ @Test void seasonRewardHasIndependentDurableReceiptAndCannotBeClaimedTwice() throws Exception {
+  DuneEss plugin=plugin();DuneEconomy ledger=new DuneEconomy(plugin);UUID uuid=UUID.randomUUID();OfflinePlayer player=mock(OfflinePlayer.class);when(player.getUniqueId()).thenReturn(uuid);
+  assertTrue(ledger.grantCommunity(uuid,"S000001",5000,"d".repeat(64)));
+  assertTrue(ledger.grantCommunity(uuid,"2026-10",50,"e".repeat(64)));
+  DuneEconomy restarted=new DuneEconomy(plugin);assertFalse(restarted.grantCommunity(uuid,"S000001",5000,"d".repeat(64)));assertEquals(5050,restarted.getBalance(player));
+  assertThrows(Exception.class,()->restarted.grantCommunity(uuid,"S000001",5000,"f".repeat(64)));
+  assertThrows(IllegalArgumentException.class,()->restarted.grantCommunity(uuid,"S000002",5000,"f".repeat(64)));
+  assertThrows(IllegalArgumentException.class,()->restarted.grantCommunity(uuid,"S000001",10001,"d".repeat(64)));
+ }
  @Test void creditsOnceAcrossRestartAndRetainsReceiptUntilAcknowledged() throws Exception {
   DuneEss plugin=plugin();UUID uuid=UUID.randomUUID();OfflinePlayer player=mock(OfflinePlayer.class);when(player.getUniqueId()).thenReturn(uuid);String receipt="a".repeat(64);
   DuneEconomy first=new DuneEconomy(plugin);assertTrue(first.grantCommunity(uuid,"2026-10",50,receipt));assertEquals(50,first.getBalance(player));

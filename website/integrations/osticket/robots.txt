@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /scp/
+Disallow: /tickets.php
+Disallow: /view.php
+Disallow: /login.php
+Disallow: /logout.php
+Disallow: /open.php
+Disallow: /appeal.php
+Disallow: /profile.php
+Disallow: /account.php
+Disallow: /dune-sso.php
+Disallow: /ajax.php
+Disallow: /file.php
+Disallow: /include/
+Disallow: /api/
+Disallow: /setup/
+Sitemap: https://support.dunerealms.com/sitemap.xml

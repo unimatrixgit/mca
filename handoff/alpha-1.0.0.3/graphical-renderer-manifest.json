@@ -1,0 +1,12 @@
+{
+  "file": "DuneMenus-1.2.0-graphical.jar",
+  "sha256": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+  "changedClasses": [
+    "com/example/dunemenus/DuneMenus$Bedrock.class",
+    "com/example/dunemenus/DuneMenus.class",
+    "com/example/dunemenus/GraphicalMenu.class",
+    "com/example/dunemenus/GraphicalMenu$Screen.class"
+  ],
+  "testsPassed": 31,
+  "legacyJavaDialogRoute": false
+}

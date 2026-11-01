@@ -1,0 +1,47 @@
+/* Native MyBB surfaces. Signature medals are managed by their own stylesheet. */
+body.dune-forum{--forum-ink:#eee5cd;--forum-muted:#b8c7b7;--forum-gold:#dec17c;--forum-line:#49634d}
+body.dune-forum #content{color:var(--forum-ink)}
+body.dune-forum .post{border:1px solid var(--forum-line);border-radius:7px;overflow:hidden;margin-bottom:18px;background:#10271f}
+body.dune-forum .post .post_author{background:linear-gradient(110deg,#203f32,#173127)!important;border:0!important;border-bottom:1px solid #8f814a!important;padding:16px!important;color:var(--forum-ink)!important}
+body.dune-forum .post .author_information,body.dune-forum .post .author_statistics,body.dune-forum .post .author_information .smalltext{color:var(--forum-muted)!important;line-height:1.65}
+body.dune-forum .post .author_information .largetext a,body.dune-forum .post .author_information .largetext a *{color:#ead18f!important;text-decoration:none}
+body.dune-forum .post .author_avatar img{border:1px solid #a38e52!important;border-radius:7px;background:#10241c!important;padding:4px!important}
+body.dune-forum .post .post_content{background:#10271f!important;color:var(--forum-ink)!important;padding:16px!important}
+body.dune-forum .post .post_head{border-bottom:1px solid #43604a!important;color:var(--forum-muted)!important;padding-bottom:10px;margin-bottom:14px}
+body.dune-forum .post .post_head .post_date{color:var(--forum-muted)!important}
+body.dune-forum .post .post_body{line-height:1.75;color:var(--forum-ink)!important}
+body.dune-forum .post_controls{background:#18362a!important;border:0!important;border-top:1px solid #576c4b!important;padding:10px 12px!important;min-height:32px}
+body.dune-forum .postbit_buttons a,body.dune-forum .postbit_buttons a:visited{display:inline-block;background:#244735!important;background-image:none!important;border:1px solid #718052!important;border-radius:5px!important;box-shadow:none!important;color:#f0dfb2!important;padding:7px 10px!important;margin:3px 3px!important;text-decoration:none!important;font:600 12px/1.4 system-ui,sans-serif!important}
+body.dune-forum .postbit_buttons a:hover{background:#345b40!important;border-color:#d3b568!important;color:#fff1c9!important}
+body.dune-forum .postbit_buttons a span{color:inherit!important}
+body.dune-forum .tfoot{background:#1c3a2c!important;background-image:none!important;border-top:1px solid #778151!important;color:var(--forum-ink)!important;padding:13px!important;line-height:1.65}
+body.dune-forum .tfoot a{color:#e4c784!important}
+body.dune-forum .thead{background:linear-gradient(110deg,#2a4936,#1c3b2c)!important;color:#efdcaa!important;border-bottom:1px solid #8e814b!important;padding:12px!important}
+body.dune-forum .tcat{background:#203f31!important;color:#ddcfaa!important;border-color:#48634b!important;padding:10px!important}
+body.dune-forum .trow1,body.dune-forum .trow2{color:var(--forum-ink)!important;border-color:#385742!important}
+body.dune-forum .trow1{background:#142e24!important}
+body.dune-forum .trow2{background:#18372a!important}
+body.dune-forum input.textbox,body.dune-forum textarea,body.dune-forum select{background:#0c241b!important;color:#eee6cf!important;border:1px solid #718052!important;border-radius:5px;padding:9px!important;box-shadow:none!important}
+body.dune-forum input.textbox::placeholder,body.dune-forum textarea::placeholder{color:#b5c4af!important;opacity:1}
+body.dune-forum input.button,body.dune-forum button.button,body.dune-forum a.button{background:#c5a355!important;background-image:none!important;border:1px solid #e4c77a!important;border-radius:5px!important;color:#13271b!important;text-shadow:none!important;box-shadow:none!important;padding:10px 15px!important;font-weight:700!important}
+body.dune-forum input.button:hover,body.dune-forum button.button:hover,body.dune-forum a.button:hover{background:#debe72!important}
+body.dune-forum .pagination a,body.dune-forum .pagination .pagination_current{background:#1e3e2e!important;color:#ead3a1!important;border:1px solid #61734e!important;border-radius:4px;padding:6px 10px!important}
+body.dune-forum .pagination .pagination_current{background:#c5a355!important;color:#10251c!important}
+body.dune-forum .popup_menu,body.dune-forum .popup_menu .popup_item_container{background:#1c3b2c!important;border-color:#6c7950!important;color:var(--forum-ink)!important}
+body.dune-forum .popup_menu .popup_item{color:#e6d09b!important}
+body.dune-forum .popup_menu .popup_item:hover{background:#30553b!important}
+body.dune-forum .float_right .textbox{max-width:230px;box-sizing:border-box}
+@media(max-width:650px){body.dune-forum .post .author_statistics{float:none;clear:both;padding-top:9px}body.dune-forum .post_controls .float_left,body.dune-forum .post_controls .float_right{float:none;display:block}body.dune-forum .tfoot .float_right{float:none;display:block;margin-top:10px}body.dune-forum .tfoot form{display:flex;gap:8px;flex-wrap:wrap}}
+
+/* A restrained imperial frame for the author identity panel. */
+body.dune-forum .post .post_author{position:relative;isolation:isolate;background:linear-gradient(110deg,#234536ed,#163429ed),url('https://www.dunerealms.com/assets/ornament.webp') center/cover!important;box-shadow:inset 0 2px #d2b56655,inset 0 -3px #0a1d16;padding:19px 22px!important}
+body.dune-forum .post .post_author::before{content:"";position:absolute;inset:7px;pointer-events:none;z-index:-1;border:1px solid #b59c4e55;background:linear-gradient(#d6bd79,#d6bd79) left top/21px 2px no-repeat,linear-gradient(#d6bd79,#d6bd79) left top/2px 21px no-repeat,linear-gradient(#d6bd79,#d6bd79) right top/21px 2px no-repeat,linear-gradient(#d6bd79,#d6bd79) right top/2px 21px no-repeat,linear-gradient(#d6bd79,#d6bd79) left bottom/21px 2px no-repeat,linear-gradient(#d6bd79,#d6bd79) left bottom/2px 21px no-repeat,linear-gradient(#d6bd79,#d6bd79) right bottom/21px 2px no-repeat,linear-gradient(#d6bd79,#d6bd79) right bottom/2px 21px no-repeat;border-radius:3px}
+body.dune-forum .post .post_author::after{content:"";position:absolute;left:48%;top:50%;transform:translate(-50%,-50%);width:116px;height:116px;background:url('https://www.dunerealms.com/assets/nav-staff-v2.webp') center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
+body.dune-forum .post .author_avatar{margin-right:17px!important}
+body.dune-forum .post .author_avatar img{border-color:#d6b563!important;border-radius:8px!important;box-shadow:0 0 0 2px #10271d,0 0 0 3px #a58b4866,0 4px 9px #0004;background:#203d2c!important}
+body.dune-forum .post .author_information{padding-top:3px}
+body.dune-forum .post .author_information .largetext{font-size:18px;letter-spacing:.015em;text-shadow:0 2px 2px #0004}
+body.dune-forum .post .author_information .smalltext{display:inline-block;margin-top:4px;color:#d0d9bc!important;font-size:12px}
+body.dune-forum .post .author_statistics{position:relative;border:1px solid #8c82485e;border-left:2px solid #baa25e;background:#0c24187a;box-shadow:inset 0 0 0 2px #d4bd6010;border-radius:4px;padding:9px 14px!important;line-height:1.65;font-size:11px;color:#ced8bd!important}
+body.dune-forum .post .author_statistics a{color:#e7c77d!important}
+@media(max-width:650px){body.dune-forum .post .post_author{padding:19px!important}body.dune-forum .post .post_author::after{left:auto;right:22px;top:25px;transform:none;width:75px;height:75px;opacity:.07}body.dune-forum .post .author_statistics{margin-top:13px;display:inline-block;max-width:calc(100% - 30px)}body.dune-forum .post .author_information .largetext{font-size:17px}}

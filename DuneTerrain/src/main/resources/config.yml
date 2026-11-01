@@ -7,11 +7,11 @@ server:
 # Guild Navigator settings are now managed by DuneNPC/config.yml.
 
 sietches:
-  enabled: true
+  enabled: false
   spacing: 2000
-  # Additional sites only in Dune-highlands; open-desert grid stays unchanged.
+  # Sietch generation is disabled, including mountain sites.
   highlands:
-    enabled: true
+    enabled: false
     frequency-multiplier: 3
     minimum-per-region: 3
 
@@ -48,8 +48,8 @@ planets:
     highlands: {enabled: true, biome: 'dunerealms:dune-highlands', mountain-rise: 32, spire-height: 40, min-spacing: 300, max-spacing: 500}
     # Legacy spacing/enabled below are superseded by highlands settings.
     # Upper terraces are hard capped at 3 levels and 5 blocks between levels.
-    # Radius 45-55 gives approximately 90-110 blocks across, including a rough edge.
-    darkstone-islands: {enabled: true, spacing: 750, min-radius: 45, max-radius: 55, max-height: 14, max-plateaus: 3, plateau-interval: 5}
+    # Broad overlapping ridges use a 65-90 block base radius.
+    darkstone-islands: {enabled: true, spacing: 750, min-radius: 65, max-radius: 90, max-height: 14, max-plateaus: 3, plateau-interval: 5}
     # Arrakis: spice only, no mineable ores.
     ores: {min-y: -48, max-y: 48, vein-size: 5}
   giedi_prime:
@@ -57,10 +57,10 @@ planets:
     spawn: {x: 0, z: 0}
     terrain: {base-height: 61, height-variation: 5, noise-scale: 0.02}
     biome: SWAMP
-    surface: BLACKSTONE
-    filler: DEEPSLATE
+    surface: DIRT
+    filler: BLACKSTONE
     water: {level: 63, swamp-pools: true, coverage: 0.18}
-    vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 0}
+    vegetation: {trees: true, tree-chance: 0.006, flowers-per-chunk: 0}
     # Giedi Prime: Harkonnen heavy industry.
     ores: {min-y: -48, max-y: 48, vein-size: 6, COAL_ORE: 22, IRON_ORE: 20, COPPER_ORE: 14, REDSTONE_ORE: 10, ANCIENT_DEBRIS: 5}
     # Diamond-like deep Overworld distribution; debris only on Giedi Prime.
@@ -73,7 +73,7 @@ planets:
     surface: GRASS_BLOCK
     filler: DIRT
     water: {level: 0, swamp-pools: false, coverage: 0.18}
-    vegetation: {trees: false, tree-chance: 0.0, flowers-per-chunk: 64}
+    vegetation: {trees: true, tree-chance: 0.018, flowers-per-chunk: 64}
     # Kaitain: imperial precious minerals.
     ores: {min-y: -48, max-y: 48, vein-size: 4, GOLD_ORE: 16, EMERALD_ORE: 12, DIAMOND_ORE: 7, LAPIS_ORE: 7}
   caladan:

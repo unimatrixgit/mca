@@ -1,14 +1,30 @@
 name: DuneCore
-version: 1.0.13
+version: 1.1.0
 main: com.example.dunerealms.DuneCore
 api-version: '1.21.8'
 depend: [Vault, DuneEss]
-softdepend: [floodgate, ViaVersion, DuneTerrain, DiscordSRV]
+softdepend: [LuckPerms, floodgate, ViaVersion, DuneTerrain, DiscordSRV]
 description: Dune factions, Arrakis gameplay, politics, and server mechanics
 commands:
   dune:
+    aliases: [dunecore]
     description: Dune realms commands
     usage: /dune help
 permissions:
   dune.admin:
+    default: op
+  dune.moderation.ban:
+    description: Open and confirm local profile bans
+    default: op
+  dune.moderation.unban:
+    description: Review and remove local profile bans
+    default: op
+  dune.moderation.protected:
+    description: Exclude this player from GUI bans
+    default: op
+  dune.tickets.view:
+    description: Open canonical own-ticket links
+    default: true
+  dune.tickets.staff:
+    description: Show the staff ticket desk link; website permissions remain required
     default: op

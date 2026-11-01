@@ -1,0 +1,14 @@
+name: DuneMenus
+version: 1.2.0-graphical
+main: com.example.dunemenus.DuneMenus
+api-version: '1.21.4'
+softdepend: [floodgate, ViaVersion, Typewriter]
+commands:
+  dunestaff:
+    description: Open your permitted staff operations
+    usage: /dunestaff
+  navigator:
+    description: Open the Imperial Navigator
+  dunemenus:
+    description: Private single-use navigator callbacks
+    usage: /dune

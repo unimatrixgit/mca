@@ -1,0 +1,10 @@
+<?php
+if(PHP_SAPI!=='cli')exit(1);
+$c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);$db=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
+$design=json_decode(file_get_contents($argv[1]??__DIR__.'/email-templates.json'),true);if(count($design)!==19)throw new Exception('Incomplete template set');
+$db->beginTransaction();try{
+ $group=$db->query("SELECT tpl_id FROM drsupport_email_template_group WHERE name='DuneRealms Theme'")->fetchColumn();if(!$group){$db->exec("INSERT INTO drsupport_email_template_group(name,isactive,lang,notes,created,updated) VALUES('DuneRealms Theme',1,'en_US','Shared green and gold HTML emails with native ticket links and SLA',NOW(),NOW())");$group=$db->lastInsertId();}
+ foreach($db->query('SELECT code_name,subject FROM drsupport_email_template WHERE tpl_id=1')->fetchAll()as$row){$code=$row['code_name'];if(!isset($design[$code]))throw new Exception('Unmapped template '.$code);$q=$db->prepare('SELECT id FROM drsupport_email_template WHERE tpl_id=? AND code_name=?');$q->execute([$group,$code]);$id=$q->fetchColumn();if($id){$q=$db->prepare('UPDATE drsupport_email_template SET body=?,updated=NOW() WHERE id=?');$q->execute([$design[$code]['body'],$id]);}else{$q=$db->prepare('INSERT INTO drsupport_email_template(tpl_id,code_name,subject,body,notes,created,updated) VALUES(?,?,?,?,?,NOW(),NOW())');$q->execute([$group,$code,$row['subject'],$design[$code]['body'],'DuneRealms shared email theme']);}}
+ $q=$db->prepare("UPDATE drsupport_config SET value=? WHERE namespace='core' AND `key`='default_template_id'");$q->execute([$group]);$q=$db->prepare("UPDATE drsupport_department SET tpl_id=? WHERE name IN ('Support','Forum support','Ban appeals','Sales','Legal')");$q->execute([$group]);$db->commit();echo "19 themed templates installed as active default; original group retained.\n";
+}catch(Throwable $e){$db->rollBack();throw $e;}
+

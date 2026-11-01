@@ -217,7 +217,9 @@ final class Smugglers implements Listener {
                 "Illegal delivery triggers the existing bounty system."));
             holder.inventory.setItem(22, icon(Material.BARRIER, "Cancel Contract", "No cargo or Solaris is taken."));
         }
-        player.openInventory(holder.inventory);
+        java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
+        for(int slot:java.util.List.of(11,15,13,22)){final int selected=slot;actions.put(slot,()->select(player,holder,selected));}
+        com.example.dunegui.NativeMenus.inventory(plugin,player,"Smuggler Contracts",holder.inventory,actions,()->plugin.getConfig().getBoolean("smugglers.enabled",true)&&!sanctioned(player));
     }
     private Contract offer(String commodity, Entity trader) {
         int amount = Math.max(1, Math.min(commodity.equals("spice") ? 4096 : 36,
@@ -335,5 +337,33 @@ final class Smugglers implements Listener {
         });
         try { data.save(file); return true; }
         catch (IOException exception) { plugin.getLogger().severe("Cannot save smuggling contracts: " + exception.getMessage()); return false; }
+    }
+private void select(Player player,Menu menu,int slot) {
+            if (!player.isOnline()) return;
+            player.closeInventory();
+            expireContracts();
+            if (!plugin.getConfig().getBoolean("smugglers.enabled", true)) return;
+            if (sanctioned(player)) { player.sendMessage(ChatColor.RED + "Imperial sanction: smuggling contracts are unavailable."); return; }
+            Entity trader = Bukkit.getEntity(menu.trader);
+            if (trader == null || !trader.isValid() || !tagged(trader)
+                || !trader.getWorld().getName().equalsIgnoreCase("arrakis") || player.getWorld() != trader.getWorld()
+                || player.getLocation().distanceSquared(trader.getLocation()) > 64) {
+                player.sendMessage(ChatColor.RED + "Return to the smuggler to trade."); return;
+            }
+            Contract active = contracts.get(player.getUniqueId());
+            if (active == null && (slot == 11 || slot == 15)) {
+                contracts.put(player.getUniqueId(), offer(slot == 11 ? "spice" : "water", trader));
+                if (!save()) { contracts.remove(player.getUniqueId()); player.sendMessage("Contract could not be saved. Try again."); return; }
+                updateCamps();
+                player.sendMessage(ChatColor.GOLD + (slot == 11
+                    ? "Smuggler: 'The melange must vanish from the Imperial ledger. My distant contact will pay for your silence.'"
+                    : "Smuggler: 'The hidden sietch has no water to spare. Reach my distant contact, and its people will remember.'"));
+                player.sendMessage("Carry the cargo to another smuggler 64+ blocks from here. /dune smuggle status shows your contract.");
+                player.sendMessage("You have 30 real minutes, including offline time. Your contact will wait at this lit camp until the contract ends.");
+            } else if (active != null && slot == 22) {
+                contracts.remove(player.getUniqueId());
+                if (!save()) contracts.put(player.getUniqueId(), active);
+                else { updateCamps(); player.sendMessage("Smuggling contract cancelled."); }
+            } else if (active != null && slot == 13) deliver(player, trader, active);
     }
 }

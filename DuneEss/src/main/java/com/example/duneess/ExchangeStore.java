@@ -24,15 +24,15 @@ final class ExchangeStore {
     void initialize() throws SQLException {
         try (Connection c = connections.open(); Statement s = c.createStatement()) {
             s.setQueryTimeout(5);
-            s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_exchange_listings (id BIGSERIAL PRIMARY KEY, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, origin VARCHAR(48) NOT NULL, category VARCHAR(24) NOT NULL, material VARCHAR(80) NOT NULL, quantity INT NOT NULL CHECK(quantity>0), price NUMERIC(20,2) NOT NULL CHECK(price>0))");
-            s.executeUpdate("ALTER TABLE dune_exchange_listings ADD COLUMN IF NOT EXISTS payload TEXT");
-            s.executeUpdate("ALTER TABLE dune_exchange_listings ADD COLUMN IF NOT EXISTS display_name VARCHAR(120)");
-            s.executeUpdate("CREATE TABLE IF NOT EXISTS dune_exchange_sales (id BIGSERIAL PRIMARY KEY, listing_id BIGINT NOT NULL, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, buyer UUID NOT NULL, buyer_name VARCHAR(32) NOT NULL, material VARCHAR(80) NOT NULL, display_name VARCHAR(120), quantity INTEGER NOT NULL CHECK(quantity>0), unit_price NUMERIC(20,2) NOT NULL CHECK(unit_price>0), total_price NUMERIC(20,2) NOT NULL CHECK(total_price>0), origin VARCHAR(48) NOT NULL, sold_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-            s.executeUpdate("CREATE INDEX IF NOT EXISTS dune_exchange_sales_seller_id ON dune_exchange_sales(seller,id DESC)");
+            s.executeUpdate(SqlDialect.sql(c,"CREATE TABLE IF NOT EXISTS dune_exchange_listings (id BIGSERIAL PRIMARY KEY, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, origin VARCHAR(48) NOT NULL, category VARCHAR(24) NOT NULL, material VARCHAR(80) NOT NULL, quantity INT NOT NULL CHECK(quantity>0), price NUMERIC(20,2) NOT NULL CHECK(price>0))"));
+            SqlDialect.column(c,s,"dune_exchange_listings","payload",SqlDialect.mysql(c)?"MEDIUMTEXT":"TEXT");
+            SqlDialect.column(c,s,"dune_exchange_listings","display_name","VARCHAR(120)");
+            s.executeUpdate(SqlDialect.sql(c,"CREATE TABLE IF NOT EXISTS dune_exchange_sales (id BIGSERIAL PRIMARY KEY, listing_id BIGINT NOT NULL, seller UUID NOT NULL, seller_name VARCHAR(32) NOT NULL, buyer UUID NOT NULL, buyer_name VARCHAR(32) NOT NULL, material VARCHAR(80) NOT NULL, display_name VARCHAR(120), quantity INTEGER NOT NULL CHECK(quantity>0), unit_price NUMERIC(20,2) NOT NULL CHECK(unit_price>0), total_price NUMERIC(20,2) NOT NULL CHECK(total_price>0), origin VARCHAR(48) NOT NULL, sold_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP)"));
+            SqlDialect.index(c,s,"dune_exchange_sales_seller_id","dune_exchange_sales","seller,id DESC");
         }
     }
     private PreparedStatement prepare(Connection c, String sql) throws SQLException {
-        PreparedStatement q = c.prepareStatement(sql); q.setQueryTimeout(5); return q;
+        PreparedStatement q = SqlDialect.prepare(c,sql); q.setQueryTimeout(5); return q;
     }
     static void validate(int amount, BigDecimal price) {
         if (amount < 1 || amount > 64 || price == null || price.signum() <= 0 || price.scale() > 2
@@ -44,7 +44,7 @@ final class ExchangeStore {
         validate(amount, price);
         try (Connection c = connections.open(); PreparedStatement q = prepare(c,
                 "INSERT INTO dune_exchange_listings(seller,seller_name,origin,category,material,quantity,price,payload,display_name) VALUES(?,?,?,?,?,?,?,?,?)")) {
-            q.setObject(1,seller); q.setString(2,name); q.setString(3,origin); q.setString(4,category);
+            SqlDialect.uuid(q,1,seller); q.setString(2,name); q.setString(3,origin); q.setString(4,category);
             q.setString(5,material); q.setInt(6,amount); q.setBigDecimal(7,price); q.setString(8,payload); q.setString(9,displayName);
             q.executeUpdate();
         }
@@ -59,7 +59,7 @@ final class ExchangeStore {
             int k=1;
             if (!category.equals("all")) q.setString(k++,category);
             if (!planet.equals("all")) q.setString(k++,planet);
-            if (owner!=null) q.setObject(k++,owner);
+            if (owner!=null) SqlDialect.uuid(q,k++,owner);
             q.setInt(k,Math.max(0,page)*28);
             try (ResultSet r=q.executeQuery()) {
                 List<Listing> rows=new ArrayList<>(); while(r.next()) rows.add(read(r)); return rows;
@@ -75,7 +75,7 @@ final class ExchangeStore {
         }
     }
     private Listing read(ResultSet r) throws SQLException {
-        return new Listing(r.getLong("id"),r.getObject("seller",UUID.class),r.getString("seller_name"),
+        return new Listing(r.getLong("id"),SqlDialect.uuid(r,"seller"),r.getString("seller_name"),
             r.getString("origin"),r.getString("category"),r.getString("material"),r.getInt("quantity"),
             r.getBigDecimal("price"),r.getString("payload"),r.getString("display_name"));
     }
@@ -93,14 +93,14 @@ final class ExchangeStore {
                     try(PreparedStatement debit=prepare(c,"UPDATE dune_economy_balances SET balance=balance-? WHERE uuid=? AND balance>=?");
                         PreparedStatement credit=prepare(c,"UPDATE dune_economy_balances SET balance=balance+? WHERE uuid=?");
                         PreparedStatement stock=prepare(c,offer.quantity()==1?"DELETE FROM dune_exchange_listings WHERE id=?":"UPDATE dune_exchange_listings SET quantity=quantity-1 WHERE id=?")) {
-                        debit.setBigDecimal(1,offer.price()); debit.setObject(2,buyer); debit.setBigDecimal(3,offer.price());
+                        debit.setBigDecimal(1,offer.price()); SqlDialect.uuid(debit,2,buyer); debit.setBigDecimal(3,offer.price());
                         if(debit.executeUpdate()!=1) throw new IllegalArgumentException("Insufficient Solaris or shared wallet unavailable.");
-                        credit.setBigDecimal(1,offer.price()); credit.setObject(2,offer.seller());
+                        credit.setBigDecimal(1,offer.price()); SqlDialect.uuid(credit,2,offer.seller());
                         if(credit.executeUpdate()!=1) throw new IllegalArgumentException("Seller wallet unavailable; no payment taken.");
                         stock.setLong(1,id); if(stock.executeUpdate()!=1) throw new SQLException("Listing changed.");
                         try (PreparedStatement sale = prepare(c, "INSERT INTO dune_exchange_sales(listing_id,seller,seller_name,buyer,buyer_name,material,display_name,quantity,unit_price,total_price,origin) VALUES(?,?,?,?,?,?,?,1,?,?,?)")) {
-                            sale.setLong(1, id); sale.setObject(2, offer.seller()); sale.setString(3, offer.sellerName());
-                            sale.setObject(4, buyer); sale.setString(5, buyerName);
+                            sale.setLong(1, id); SqlDialect.uuid(sale,2, offer.seller()); sale.setString(3, offer.sellerName());
+                            SqlDialect.uuid(sale,4, buyer); sale.setString(5, buyerName);
                             sale.setString(6, offer.material()); sale.setString(7, offer.displayName());
                             sale.setBigDecimal(8, offer.price()); sale.setBigDecimal(9, offer.price()); sale.setString(10, offer.origin());
                             sale.executeUpdate();
@@ -115,7 +115,7 @@ final class ExchangeStore {
         try(Connection c=connections.open()) {
             c.setAutoCommit(false);
             try(PreparedStatement q=prepare(c,"SELECT * FROM dune_exchange_listings WHERE id=? AND seller=? FOR UPDATE")) {
-                q.setLong(1,id); q.setObject(2,owner);
+                q.setLong(1,id); SqlDialect.uuid(q,2,owner);
                 try(ResultSet r=q.executeQuery()) {
                     if(!r.next()) throw new IllegalArgumentException("This listing is unavailable or belongs to another player.");
                     Listing offer=read(r);

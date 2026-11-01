@@ -74,9 +74,18 @@ public final class ArrakisWater implements Listener {
         if(args.length<2){p.sendMessage(ChatColor.AQUA+"/dune water guild|smuggler|sell|status");return;}
         String mode=args[1].toLowerCase(Locale.ROOT);
         if(mode.equals("guild")||mode.equals("smuggler")){
-            careers.put(p.getUniqueId(),mode);p.sendMessage(ChatColor.GREEN+"Water career selected: "+mode);return;
+            try {
+                if(plugin.sharedDatabase()==null)throw new IllegalStateException("Shared database required");
+                plugin.sharedDatabase().saveWaterCareer(p.getUniqueId(),mode);
+                careers.put(p.getUniqueId(),mode);p.sendMessage(ChatColor.GREEN+"Water career selected: "+mode);
+            }catch(Exception unavailable){p.sendMessage(ChatColor.RED+"Water career could not be saved. Try again later.");}
+            return;
         }
-        if(mode.equals("status")){p.sendMessage("Water career: "+careers.getOrDefault(p.getUniqueId(),"guild")+". Water is worth half of spice; smuggling pays +45% with local retaliation risk.");return;}
+        if(mode.equals("status")){
+            try {String career=plugin.sharedDatabase()==null?"none":plugin.sharedDatabase().loadWaterCareer(p.getUniqueId());
+                p.sendMessage("Water career: "+career+". Crafting authority: "+plugin.waterVialCraftingRole(p.getUniqueId()));
+            }catch(Exception unavailable){p.sendMessage(ChatColor.RED+"Water career unavailable. Try again later.");}return;
+        }
         if(!mode.equals("sell")){p.sendMessage("/dune water guild|smuggler|sell|status");return;}
         int count=0;
         for(ItemStack item:p.getInventory().getStorageContents())if(tagged(item))count+=item.getAmount();

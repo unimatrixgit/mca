@@ -1,0 +1,16 @@
+name: DuneBan
+version: 1.0.2
+main: com.dunerealms.ban.DuneBan
+api-version: '1.21'
+softdepend: [DuneCore, DuneMenus, LuckPerms]
+commands:
+  duneban:
+    description: Create an explicitly local or global ban
+  duneunban:
+    description: Remove an exact reviewed local or global ban
+permissions:
+  dune.ban.local: {default: op}
+  dune.ban.global: {default: op}
+  dune.unban.local: {default: op}
+  dune.unban.global: {default: op}
+  dune.ban.protected: {default: false}

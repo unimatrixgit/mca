@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createBanRegister} from '../control-panel/ban-register.mjs';
+const origin='https://cp.dunerealms.com',id='99df636d-a654-469a-b29b-ffba56252fee';
+function fixture({permission=true,liveCreated='2026-10-29 07:22:14 +0000',ack={ok:true,confirmed:true,absent:true,key:'arrakis:069a79f4-44e9-4726-a5be-fca90e38aaf5'}}={}){
+ const ban={id,active:1,source_key:'arrakis:uuid:original',native_key:'arrakis:069a79f4-44e9-4726-a5be-fca90e38aaf5',scope:'arrakis',created_text:'2026-10-29 07:22:14 +0000'},writes=[],calls=[];
+ const db={prepare(sql){return{bind(...args){return{first:async()=>sql.startsWith('SELECT * FROM moderation_bans')?ban:null,run:async()=>{writes.push({sql,args});}};}};},batch:async list=>{writes.push({batch:list});}};
+ const app=createBanRegister(db,{CP_ORIGIN:origin,SERVER_CONTROL_TOKEN:'s'.repeat(64)},{authenticate:async()=>({id:'staff-id',username:'CurrentStaff'}),can:async(_,node)=>node!=='web.bans.manage'||permission,moderation:{sync:async()=>({sources:['arrakis'],bans:[{key:ban.native_key,created:liveCreated}]})},fetcher:async(url,options)=>{calls.push({url,body:JSON.parse(options.body)});return Response.json(ack);}});
+ const request=(body={},site=origin)=>app(new Request(origin+'/api/ban-register',{method:'POST',headers:{Origin:site,'Content-Type':'application/json'},body:JSON.stringify({action:'remove',banId:id,reason:'Staff review completed',...body})}));return{request,writes,calls};
+}
+test('Unban requires manage permission and the exact control-panel origin',async()=>{const denied=fixture({permission:false});assert.equal((await denied.request()).status,403);assert.equal(denied.calls.length,0);const cross=fixture();assert.equal((await cross.request({},'https://other.example')).status,403);assert.equal(cross.calls.length,0);});
+test('A replaced native ban cannot be removed using a stale website record',async()=>{const f=fixture({liveCreated:'replacement'});assert.equal((await f.request()).status,409);assert.equal(f.calls.length,0);assert.equal(f.writes.length,0);});
+test('Partial provider success never marks a ban removed',async()=>{const f=fixture({ack:{ok:true}});assert.equal((await f.request()).status,503);assert.equal(f.writes.filter(w=>w.batch).length,0);assert.equal(f.writes.length,1);});
+test('Only an exact native absence acknowledgement records success; browser key/actor are ignored',async()=>{const f=fixture();const r=await f.request({key:'network:attacker',created:'fake',actor:'FakeStaff'});assert.equal(r.status,200);assert.equal((await r.json()).confirmed,true);assert.equal(f.calls[0].body.actor,'CurrentStaff');assert.equal(f.calls[0].body.key,'arrakis:069a79f4-44e9-4726-a5be-fca90e38aaf5');assert.equal(f.calls[0].body.created,'2026-10-29 07:22:14 +0000');assert.equal(f.writes.filter(w=>w.batch).length,1);});
+test('Acknowledgement for another ban is rejected',async()=>{const f=fixture({ack:{ok:true,confirmed:true,absent:true,key:'network:different'}});assert.equal((await f.request()).status,503);assert.equal(f.writes.filter(w=>w.batch).length,0);});

@@ -1,5 +1,33 @@
 # DuneRealms server controls
 
+## Two-host deployment (29 October 2026)
+
+The same standard-library agent now has three fixed deployment modes, selected only by the service environment `DUNE_CONTROL_MODE`. Invalid values abort startup. No request can select a host, URL, unit name, filesystem path or binding address.
+
+| Mode | Local units / ban sources | Remote units | Bind |
+|---|---|---|---|
+| `legacy` (default for rollback) | Existing Arrakis, lobby and proxy | None | `127.0.0.1:25573` |
+| `gateway` (old host) | `dune-lobby`, `dune-proxy`; lobby ban file only | Arrakis, Kaitain, Giedi Prime through fixed `http://10.77.0.2:25573` | `127.0.0.1:25573` |
+| `planets` (new host) | `dune-arrakis`, `dune-kaitain`, `dune-giedi_prime` | None | `10.77.0.2:25573` |
+
+Both agents read the same existing private capability from `/etc/dunerealms-server-control.secret`; no credential is committed. Add `Environment=DUNE_CONTROL_MODE=gateway` to the old service and `Environment=DUNE_CONTROL_MODE=planets` to the new service, then reload systemd/restart the agent. The new service must start after `wg-quick@wg0.service` (or the actual fixed WireGuard unit) and have read access to its three planet folders and write access to their console FIFOs. Keep the existing filesystem sandbox. New planet directories are `/opt/dunerealms/servers/arrakis`, `/opt/dunerealms/servers/kaitain` and `/opt/dunerealms/servers/giedi_prime`.
+
+Do not expose port 25573 publicly. The new host's firewall should permit it only from the old host's WireGuard address. HTTP is transported inside WireGuard; the gateway disables HTTP environment proxies and all redirects so the bearer cannot move to another destination. Responses have a 256-KiB cap. Existing website SSH forwarding remains unchanged: website loopback15433 → old host loopback25573.
+
+The gateway returns five server cards. An unavailable or malformed remote status creates three explicit unavailable planet cards while preserving the two local service cards. Actions/logs relay only enumerated internal IDs `arrakis`, `kaitain`, `giedi_prime`; power jobs and one-line command validation/cooldown remain authoritative at the planet agent. A relay timeout never reports success and never retries a mutation automatically. An operator must refresh status before choosing whether to retry. Existing duplicate/running-action checks prevent immediate replay; this API does not promise exactly-once service/console execution after an ambiguous network timeout.
+
+Ban reads aggregate the lobby and all three planet sources. Missing/malformed/unreachable sources fail the entire read with503; an outage cannot masquerade as an empty ban register. Removal of a remote ban forwards its exact original `created` snapshot and UUID key. The planet agent retains both before-write and confirmation-loop stale-ban guards, fixed UUID-only `pardon`, source-file validation and console FIFO checks. The gateway accepts removal200 only when `ok`, `confirmed` and `absent` are all true and the exact requested key matches. A timeout, conflict, malformed success or changed key never approves an appeal.
+
+LuckPerms editor/apply commands relay to the new Arrakis console. Validation remains fixed `lp editor groups`, `lp applyedits <code>` or `lp trusteditor <code>` with current actor attribution; no arbitrary command or remote URL is used. The gateway validates returned editor URLs against exact `https://luckperms.net/editor/<session>` and redacts sessions in logs. Before the database cutover, group listing retains the old local PostgreSQL query. At cutover, explicitly set `DUNE_LUCKPERMS_MYSQL=1`: it reads fixed `luckperms_groups`/`luckperms_group_permissions` tables from central `duneluckperms`, using `/etc/dunerealms-luckperms-mysql.json`. Failure never silently falls back to stale PostgreSQL. The planet agent deliberately rejects group reads.
+
+Website integration requires only `control-panel/server-control.mjs`, `control-panel/public/servers.js` and `control-panel/public/servers.html`. These add the two fixed IDs, dropdown labels and Velocity status mapping (`giedi_prime` → `giedi-prime`). Do not replace the entire live CP server during this rollout. Current website rank/node and Origin checks remain unchanged.
+
+The global DuneBan provider adds fixed `network` scope and reports `globalConnected=true` only after the shared gameplay ban query succeeds. Its MySQL removal transaction locks the same InnoDB player-lock row as DuneBan, checks the original UTC millisecond creation value, records revocation metadata, and verifies absence after commit. Failure, replacement, malformed snapshot or unavailable database never returns confirmed removal. Local scope and network scope remain distinct even for the same player UUID.
+
+Both central MySQL reads use private SSH forwards: host `127.0.0.1`, port `13307`, not an exposed database listener. `/etc/dunerealms-gameplay-mysql.json` requires database `dunegameplay`; `/etc/dunerealms-luckperms-mysql.json` requires `duneluckperms`; both files contain root-provisioned `username` and `password`. PyMySQL (and its MySQL8 authentication dependencies) must be installed. No request can alter these endpoints or credentials. Global provider startup must follow schema provisioning and the authenticated tunnel.
+
+Validation: 29 Python tests cover legacy operations, isolated host modes, remote identity/path allowlists, malformed responses, exact ban confirmation, new-planet stale-ban guards, failed-source aggregation, action replay/cooldown, no-redirect transport, bounded responses, authentication, LuckPerms routing/explicit MySQL cutover, and parameterized global ban transactions. Five CP server-control tests cover current authorization, actor attribution, fixed planet IDs and injected-target rejection. Three ban-feed tests validate all five scopes and ensure malformed/unavailable sources do not retire stored history. These are automated tests; deployment and authenticated live relay smoke checks are separate.
+
 The separate server-operations page is https://cp.dunerealms.com/servers, linked from account Administration. It preserves the account panel at the root. It manages the three existing systemd services: Arrakis, the Vaerkring lobby and the Velocity gateway. It does not create or reset worlds.
 
 Capabilities: status, player counts, service memory, recent journal output, start/stop/restart, and one-line console commands for the two Paper servers. Proxy console input is deliberately unavailable because that service has no console FIFO. Actions are asynchronous and their outcome appears in status. Console command acceptance means delivery to the server; inspect logs for command success.

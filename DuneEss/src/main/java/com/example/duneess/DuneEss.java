@@ -27,11 +27,14 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCompleter, Listener {
     private static final List<String> PLANETS = List.of("arrakis", "giedi_prime", "kaitain", "caladan", "sigma_draconis_iv", "spacing_guild");
     private DuneEconomy economy;
+    private RankBridge ranks;
+    private PlayerLabels labels;
     String balanceLabel(Player player) { return economy.format(economy.getBalance(player)); }
     private ExchangeMenu exchangeMenu;
     private EssentialsBasics basics;
@@ -84,6 +87,8 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         helpActionKey = new NamespacedKey(this, "help_action");
         economy = new DuneEconomy(this);
         new CommunityCodes(this);
+        ranks=new RankBridge(this);
+        labels=new PlayerLabels(this,ranks);
         getServer().getServicesManager().register(Economy.class, economy, this, ServicePriority.Highest);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         PluginCommand command = Objects.requireNonNull(getCommand("duneess"));
@@ -95,19 +100,25 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         exchangeMenu = new ExchangeMenu(this);
         exchangeMenu.register();
         for (Player player : Bukkit.getOnlinePlayers()) economy.createPlayerAccount(player);
+        SpiceBuyer.install(this);
         getLogger().info("DuneRealms Essentials enabled as the Dunemarks Vault provider.");
     }
 
     @Override public void onDisable() {
+        if(labels!=null)labels.close();
         getServer().getServicesManager().unregister(Economy.class, economy);
     }
 
     public Economy economy() { return economy; }
+    public void syncPoliticalRanks(UUID uuid,String house,Set<String> offices){if(ranks!=null)ranks.identity(uuid,house,offices);}
+    public void syncCargoPath(UUID uuid,String source,String commodity,long expiresAt){if(ranks!=null)ranks.path(uuid,source,commodity,expiresAt);}
+    public void syncSmugglingPaths(UUID uuid,boolean spice,boolean water){if(ranks!=null)ranks.paths(uuid,spice,water);}
+
 
     /** Free faction selection arrival, routed through DuneEss so Core owns no player-facing teleport command logic. */
     public void factionArrival(Player player, String planet) {
-        planet = planet.toLowerCase(Locale.ROOT);
-        if (!PLANETS.contains(planet)) return;
+        planet = GuildRoutes.canonical(planet);
+        if (!guildDestinations().contains(planet)) return;
         if (planet.equals("arrakis") && !callCoreArrakisAuthorization(player)) {
             player.sendMessage(ChatColor.RED + "Arrakis travel was not authorized.");
             return;
@@ -121,6 +132,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             return;
         }
         World world = Bukkit.getWorld(planet);
+        if (world == null && planet.equals("spacing_guild")) world = Bukkit.getWorld("guild_lobby");
         if (world == null) { player.sendMessage(ChatColor.RED + "That planet is not loaded on this server."); return; }
         if (player.teleport(world.getSpawnLocation())) {
             player.sendMessage(ChatColor.AQUA + "Faction arrival: " + planet);
@@ -128,31 +140,22 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         }
     }
 
-    private void loadCoreSettings() {
-        File coreFile = new File(getDataFolder().getParentFile(), "DuneCore/config.yml");
-        YamlConfiguration core = YamlConfiguration.loadConfiguration(coreFile);
-        if (getConfig().getBoolean("database.use-core-database", true) && core.getBoolean("database.enabled", false)) {
-            jdbcUrl = core.getString("database.jdbc-url", "");
-            dbUser = core.getString("database.username", "");
-            dbPassword = core.getString("database.password", "");
-        }
-        boolean useCore = getConfig().getBoolean("network.use-core-settings", true);
-        networkEnabled = useCore ? core.getBoolean("network.enabled", getConfig().getBoolean("network.enabled", false)) : getConfig().getBoolean("network.enabled", false);
-        localPlanet = useCore ? core.getString("network.local-planet", getConfig().getString("network.local-planet", "arrakis")) : getConfig().getString("network.local-planet", "arrakis");
-    }
+    private void loadCoreSettings(){
+  YamlConfiguration core=YamlConfiguration.loadConfiguration(new File(getDataFolder().getParentFile(),"DuneCore/config.yml"));
+  boolean useCoreDatabase=getConfig().getBoolean("database.use-core-database",true);
+  var database=useCoreDatabase?core:getConfig();
+  if(database.getBoolean("database.enabled",false)){jdbcUrl=database.getString("database.jdbc-url","");dbUser=database.getString("database.username","");dbPassword=database.getString("database.password","");}
+  boolean useCore=getConfig().getBoolean("network.use-core-settings",true);
+  networkEnabled=useCore?core.getBoolean("network.enabled",getConfig().getBoolean("network.enabled",false)):getConfig().getBoolean("network.enabled",false);
+  localPlanet=useCore?core.getString("network.local-planet",getConfig().getString("network.local-planet","arrakis")):getConfig().getString("network.local-planet","arrakis");
+ }
 
     String localPlanet() { return localPlanet; }
 
-    Connection connectEconomyDatabase() throws java.sql.SQLException {
-        if (jdbcUrl.isBlank() || !economy.sharedDatabaseReady())
-            throw new java.sql.SQLException("No shared economy database configured");
-        Properties properties = new Properties();
-        properties.setProperty("user", dbUser);
-        properties.setProperty("password", dbPassword);
-        properties.setProperty("connectTimeout", "5");
-        properties.setProperty("socketTimeout", "5");
-        return DriverManager.getConnection(jdbcUrl, properties);
-    }
+    Connection connectEconomyDatabase()throws SQLException{
+  if(jdbcUrl.isBlank()||!economy.sharedDatabaseReady())throw new SQLException("No shared economy database configured");
+  return SqlDialect.connect(jdbcUrl,dbUser,dbPassword);
+ }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length==0 && sender instanceof Player player) { basics.menu(player); return true; }
@@ -324,29 +327,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
 
     @EventHandler(ignoreCancelled=true)
     public void spiceSeller(org.bukkit.event.player.PlayerInteractEntityEvent event) {
-        if(!event.getRightClicked().getPersistentDataContainer().has(new NamespacedKey("dunerealms","spice-seller"),PersistentDataType.BYTE))return;
-        event.setCancelled(true);
-        if(event.getHand()!=org.bukkit.inventory.EquipmentSlot.HAND)return;
-        Player player=event.getPlayer();
-        Inventory menu=Bukkit.createInventory(null,9,"Spice Seller");
-        int quantity=16;
-        double price=java.math.BigDecimal.valueOf(Math.max(1,getConfig().getInt("currency.spice-price",15)))
-            .multiply(new java.math.BigDecimal("1.35")).multiply(java.math.BigDecimal.valueOf(quantity)).doubleValue();
-        ItemStack offer=new ItemStack(Material.ORANGE_DYE,quantity); ItemMeta meta=offer.getItemMeta();
-        meta.setDisplayName("Buy 16 spice · "+economy.format(price));
-        meta.setLore(List.of("35% above standard spice price", "Confirm purchase"));offer.setItemMeta(meta);menu.setItem(4,offer);
-        Map<Integer,Runnable> actions=new HashMap<>();
-        actions.put(4,()->{
-            // Recheck proximity and capacity at confirmation; never charge for undeliverable goods.
-            if(!event.getRightClicked().isValid() || !player.getWorld().equals(event.getRightClicked().getWorld())
-                || player.getLocation().distanceSquared(event.getRightClicked().getLocation())>64)return;
-            ItemStack spice=new ItemStack(Material.ORANGE_DYE,quantity);ItemMeta sm=spice.getItemMeta();
-            sm.setDisplayName(ChatColor.GOLD+"Melange Spice");sm.getPersistentDataContainer().set(spiceKey,PersistentDataType.STRING,"spice");spice.setItemMeta(sm);
-            if(player.getInventory().firstEmpty()<0){player.sendMessage("Make an empty inventory slot first.");return;}
-            if(!economy.withdrawPlayer(player,price).transactionSuccess()){player.sendMessage("Not enough Dunemarks, or economy unavailable.");return;}
-            player.getInventory().addItem(spice);player.sendMessage(ChatColor.GOLD+"Bought 16 spice for "+economy.format(price)+".");
-        });
-        com.example.dunegui.NativeMenus.inventory(this,player,"Spice Seller · +35%",menu,actions);
+        SpiceBuyer.open(this,event);
     }
 
     private void sellSpice(Player player) {
@@ -378,19 +359,26 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
         return gross;
     }
 
+    private List<String> guildDestinations() {
+        YamlConfiguration core = YamlConfiguration.loadConfiguration(new File(getDataFolder().getParentFile(), "DuneCore/config.yml"));
+        return GuildRoutes.available(networkEnabled, localPlanet == null ? "" : localPlanet,
+            getConfig(), core, p -> Bukkit.getWorld(p) != null || (p.equals("spacing_guild") && Bukkit.getWorld("guild_lobby") != null));
+    }
+
     private void openTravelMenu(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.DARK_AQUA + "Vaerkring Travel");
-        for (int i = 0; i < PLANETS.size(); i++) {
-            String planet = PLANETS.get(i);
+        List<String> destinations = guildDestinations();
+        for (int i = 0; i < destinations.size(); i++) {
+            String planet = destinations.get(i);
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + com.example.dunegui.PlanetSigils.label(planet) + " — " + getConfig().getInt("currency.travel-price", 100) + " Dunemarks");
+            meta.setDisplayName(ChatColor.GOLD + com.example.dunegui.PlanetSigils.label(planet) + " — " + travelFare(player, planet) + " Dunemarks");
             meta.getPersistentDataContainer().set(new NamespacedKey(this, "planet"), PersistentDataType.STRING, planet);
             item.setItemMeta(meta);
             inventory.setItem(i, com.example.dunegui.PlanetSigils.apply(item,planet));
         }
         java.util.Map<Integer,Runnable> actions=new java.util.HashMap<>();
-        for(int i=0;i<PLANETS.size();i++) { String planet=PLANETS.get(i); actions.put(i,()->travel(player,planet)); }
+        for(int i=0;i<destinations.size();i++) { String planet=destinations.get(i); actions.put(i,()->travel(player,planet)); }
         com.example.dunegui.NativeMenus.inventory(this,player,"Vaerkring Travel",inventory,actions);
     }
 
@@ -406,8 +394,8 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
     }
 
     private void travel(Player player, String planet) {
-        planet = planet.toLowerCase(Locale.ROOT);
-        if (!PLANETS.contains(planet)) { player.sendMessage(ChatColor.RED + "Unknown planet."); return; }
+        planet = GuildRoutes.canonical(planet);
+        if (!guildDestinations().contains(planet)) { player.sendMessage(ChatColor.RED + "That Guild destination is unavailable, or you are already there."); return; }
         if (planet.equals("arrakis") && !callCoreArrakisAuthorization(player)) { player.sendMessage(ChatColor.RED + "Arrakis travel was not authorized."); return; }
         if (networkEnabled && !planet.equalsIgnoreCase(localPlanet)) {
             String server = getConfig().getString("network.servers." + planet, "");
@@ -418,15 +406,16 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
             if (server.isBlank()) { player.sendMessage(ChatColor.RED + "The Guild server for " + planet + " is not configured."); return; }
             int fare = travelFare(player, planet);
             if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Dunemarks for the Guild fare."); return; }
-            if (fare > 0) economy.withdrawPlayer(player, fare);
+            if (fare > 0 && !economy.withdrawPlayer(player, fare).transactionSuccess()) { player.sendMessage(ChatColor.RED + "The Guild could not collect your fare. Please try again."); return; }
             if (!sendToServer(player, server, planet) && fare > 0) economy.depositPlayer(player, fare);
             return;
         }
         World world = Bukkit.getWorld(planet);
+        if (world == null && planet.equals("spacing_guild")) world = Bukkit.getWorld("guild_lobby");
         if (world == null) { player.sendMessage(ChatColor.RED + "That planet is not loaded on this server."); return; }
         int fare = travelFare(player, planet);
         if (fare > 0 && !economy.has(player, fare)) { player.sendMessage(ChatColor.RED + "Not enough Dunemarks for the Guild fare."); return; }
-        if (fare > 0) economy.withdrawPlayer(player, fare);
+        if (fare > 0 && !economy.withdrawPlayer(player, fare).transactionSuccess()) { player.sendMessage(ChatColor.RED + "The Guild could not collect your fare. Please try again."); return; }
         if (!player.teleport(world.getSpawnLocation())) {
             if (fare > 0) economy.depositPlayer(player, fare);
             player.sendMessage(ChatColor.RED + "Vaerkring travel failed. Your fare was returned.");
@@ -583,7 +572,7 @@ public final class DuneEss extends JavaPlugin implements CommandExecutor, TabCom
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(args.length==1)return complete(List.of("help","balance","sell","travel","admin"),args[0]);
         if(args[0].equalsIgnoreCase("help")&&args.length==2)return complete(List.of("1","2","3","4","next","previous","menu"),args[1]);
-        if(args[0].equalsIgnoreCase("travel")&&args.length==2)return complete(PLANETS,args[1]);
+        if(args[0].equalsIgnoreCase("travel")&&args.length==2)return complete(guildDestinations(),args[1]);
         if(args[0].equalsIgnoreCase("admin")&&sender.hasPermission("dune.admin")){
             if(args.length==2)return complete(List.of("solari","teleport","spicebloom"),args[1]);
             if(args[1].equalsIgnoreCase("teleport")&&args.length==3)return complete(List.of("arrakis","sietch","spiceblow"),args[2]);

@@ -46,11 +46,11 @@ class RockPlateausTest {
             for (int z = -760; z <= -576; z++) {
                 assertTrue(Math.abs(shape.depth(-49,z) - shape.depth(-48,z)) < .2);
             }
-            for (int p = -120; p <= 120; p++) {
-                assertTrue(shape.depth(-54 + 82, -668 + p) < 0);
-                assertTrue(shape.depth(-54 - 82, -668 + p) < 0);
-                assertTrue(shape.depth(-54 + p, -668 + 82) < 0);
-                assertTrue(shape.depth(-54 + p, -668 - 82) < 0);
+            for (int p = -220; p <= 220; p++) {
+                assertTrue(shape.depth(-54 + 200, -668 + p) < 0);
+                assertTrue(shape.depth(-54 - 200, -668 + p) < 0);
+                assertTrue(shape.depth(-54 + p, -668 + 200) < 0);
+                assertTrue(shape.depth(-54 + p, -668 - 200) < 0);
             }
         }
     }

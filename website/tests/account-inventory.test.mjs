@@ -14,7 +14,7 @@ test('Real panel session and verified-link schema isolate inventory/sales; unlin
   assert.equal((await req('/api/inventory')).status,401);
   const cookies=[];
   for(const [username,uuid]of [['alice',aliceUuid],['bobby',bobUuid]]){
-   const r=await req('/api/auth/register',null,{username,password:'long test password 123'});assert.equal(r.status,200);const cookie=r.headers.get('set-cookie').split(';')[0];cookies.push(cookie);
+   const r=await req('/api/auth/register',null,{username,password:'long test password 123',ageBand:'15plus'});assert.equal(r.status,200);const cookie=r.headers.get('set-cookie').split(';')[0];cookies.push(cookie);
    const account=await db.prepare('SELECT id FROM site_accounts WHERE username=?').bind(username).first();
    await db.prepare('INSERT INTO site_game_links(user_id,minecraft_uuid,minecraft_name,linked_at) VALUES(?,?,?,?)').bind(account.id,uuid,username,1).run();
   }

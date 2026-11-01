@@ -1,0 +1,139 @@
+/* Native osTicket presentation: client and staff share the DuneRealms palette. */
+body.dune-support #content,body.dune-support #ticketInfo,body.dune-support #ticketThread{color:#e8e1ce;font-family:Arial,sans-serif}
+body.dune-support #ticketInfo{width:100%;max-width:none;margin:20px 0;border:1px solid #476353;border-radius:6px;overflow:hidden;background:#142e26}
+body.dune-support #ticketInfo h1{font-size:23px;line-height:1.4;padding:16px;margin:0;background:#1c3b30;color:#f0d99e!important;overflow-wrap:anywhere}
+body.dune-support table.infoTable{border-collapse:collapse;background:#142e26!important;color:#e8e1ce!important}
+body.dune-support table.infoTable td,body.dune-support table.infoTable th{background:#142e26!important;color:#e8e1ce!important;border-bottom:1px solid #345345;padding:10px 12px;text-align:left;line-height:1.5}
+body.dune-support table.infoTable th{font-weight:400;color:#b8cbbb!important;width:130px}
+body.dune-support table.infoTable thead td{background:#254638!important;color:#f0d99e!important;font-weight:700;border-bottom:1px solid #a88b4b}
+body.dune-support .thread-entry{margin-top:20px;margin-bottom:20px}
+body.dune-support .thread-entry .header{background:#244738!important;color:#e9dfc5!important;border:1px solid #66805a!important;border-bottom-color:#a88b4b!important;padding:12px 16px;line-height:1.5}
+body.dune-support .thread-entry .header:before,body.dune-support .thread-entry .header:after{border-right-color:#244738!important}
+body.dune-support .thread-entry .header .faded,body.dune-support .thread-entry .header time{color:#b8cbbb!important}
+body.dune-support .thread-entry .thread-body{background:#142e26!important;color:#eee6d2!important;border:1px solid #476353!important;padding:18px!important;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+body.dune-support .thread-entry .thread-body p,body.dune-support .thread-entry .thread-body div{color:inherit}
+body.dune-support .thread-entry .thread-body h3{color:#efd69a;margin:18px 0 8px;font-size:17px}
+body.dune-support .thread-entry .thread-body table td{padding:6px 12px;border-bottom:1px solid #345345}
+body.dune-support input[type=submit],body.dune-support input[type=button],body.dune-support button,body.dune-support .button,body.dune-support .action-button{background:#c3a159!important;color:#12251c!important;border:1px solid #e1c783!important;border-radius:4px!important;padding:7px 13px;font:600 14px/1.35 Arial,sans-serif;box-shadow:none!important;text-shadow:none!important}
+body.dune-support button:hover,body.dune-support .button:hover{background:#dbc17e!important}
+body.dune-support #content .redactor-toolbar,body.dune-support #content .redactor-editor,body.dune-support #content .redactor-box{background:#142e26!important;color:#eee6d2!important;border-color:#476353!important}
+body.dune-support #content .redactor-editor{min-height:160px}
+body.dune-support #reply{background:#142e26;border:1px solid #476353;border-radius:6px;padding:16px;box-sizing:border-box}
+body.dune-support .thread-entry .avatar img{border:1px solid #a88b4b;border-radius:5px}
+@media(max-width:700px){body.dune-support #ticketInfo>div{float:none!important;width:100%!important}body.dune-support #ticketInfo h1{font-size:18px}body.dune-support .thread-entry.avatar{margin-left:0}body.dune-support .thread-entry>span.avatar{display:none}}
+
+body.dune-support .redactor-toolbar a,body.dune-support .redactor-toolbar button,body.dune-support .redactor-statusbar{background:#244738!important;color:#efd69a!important;border-color:#476353!important}body.dune-support .redactor-styles{background:#142e26!important;color:#eee6d2!important}body.dune-support #content table.list th,body.dune-support #content table.list thead td{background:#254638!important;color:#f0d99e!important}body.dune-support #content table.list td{background:#142e26!important;color:#e8e1ce!important;border-color:#345345!important}body.dune-support #content table.list tr:hover td{background:#244738!important}
+
+
+body.dune-support #nav,body.dune-support #sub_nav,body.dune-support #response_options,body.dune-support .response-tabs,body.dune-support #ticket_tabs{background:#17362a!important;border-color:#52704d!important}body.dune-support #nav li,body.dune-support #nav li a,body.dune-support .response-tabs li,body.dune-support .response-tabs a,body.dune-support #ticket_tabs li,body.dune-support #ticket_tabs a{background:#17362a!important;color:#e9d7aa!important;border-color:#52704d!important;box-shadow:none!important}body.dune-support #nav li.active a,body.dune-support .response-tabs li.active a,body.dune-support #ticket_tabs li.active a{background:#c3a159!important;color:#10251c!important}body.dune-support #response_options{border:1px solid #66805a!important;border-radius:6px;padding:14px;box-sizing:border-box}body.dune-support .thread-entry .thread-body{box-shadow:none!important;border-bottom-color:#476353!important}body.dune-support .thread-entry .thread-body h3{padding:10px 14px;background:#244738;border:1px solid #66805a;border-left:3px solid #c3a159;border-radius:4px;margin:20px 0 10px}body.dune-support .thread-event .description,body.dune-support .thread-event .description a,body.dune-support .thread-event .description b{color:#c9d8c9!important}body.dune-support .thread-event .type-icon{background:#244738!important;color:#e9d7aa!important;border:1px solid #66805a}body.dune-support .thread-entry{border-color:#476353!important}body.dune-support #content .tabs,body.dune-support #content .tabs li,body.dune-support #content .tabs a{background:#17362a!important;color:#e9d7aa!important;border-color:#52704d!important}
+
+
+/* Native navigation and popovers, including staff queue dropdowns. */
+body.dune-support #nav{display:flex;gap:6px;padding:8px 10px!important;border:1px solid #476353!important;border-bottom:2px solid #a88b4b!important;border-radius:6px 6px 0 0;margin-top:12px!important;box-sizing:border-box}
+body.dune-support #nav>li{border:0!important;margin:0!important;box-shadow:none!important}
+body.dune-support #nav>li>a{display:block;border:1px solid #476353!important;border-radius:4px;padding:10px 18px!important;font-weight:600;text-shadow:none!important}
+body.dune-support #nav>li.active,body.dune-support #nav>li.active>a{background:#c3a159!important;color:#10251c!important}
+body.dune-support #nav>li>a:hover,body.dune-support #sub_nav a:hover{background:#355640!important;color:#fff0c8!important}
+body.dune-support #sub_nav,body.dune-support #customQ_nav{padding:8px 10px!important;border:1px solid #476353!important;background:#142e26!important;box-sizing:border-box}
+body.dune-support #sub_nav>li>a,body.dune-support #sub_nav>li>span{padding:8px 12px!important;border-radius:4px!important;color:#e9d7aa!important;background-color:#17362a!important;border:1px solid #345345!important}
+body.dune-support #sub_nav li.active>a,body.dune-support #sub_nav a.active{background-color:#355640!important;color:#fff0c8!important;border-color:#a88b4b!important}
+body.dune-support #nav ul,body.dune-support #sub_nav ul,body.dune-support .dropdown-menu,body.dune-support .action-dropdown ul,body.dune-support ul.options,body.dune-support .select2-dropdown{background:#18372b!important;color:#eee6d2!important;border:1px solid #a88b4b!important;border-radius:4px!important;box-shadow:0 5px 14px #0007!important}
+body.dune-support #nav ul li,body.dune-support #sub_nav ul li,body.dune-support .dropdown-menu li,body.dune-support .dropdown-menu a,body.dune-support .action-dropdown li,body.dune-support .action-dropdown a,body.dune-support ul.options li{background:#18372b!important;color:#eee6d2!important;border-color:#345345!important}
+body.dune-support .dropdown-menu a:hover,body.dune-support .action-dropdown a:hover,body.dune-support .select2-results__option--highlighted{background:#355640!important;color:#fff0c8!important}
+body.dune-support #info{background:#17362a!important;color:#d8e2ce!important;border:1px solid #476353!important;border-radius:4px;padding:10px 14px!important}
+body.dune-support #basic_search{background:#17362a!important;border:1px solid #476353!important;border-radius:5px!important;padding:10px!important}
+body.dune-support .response-tabs,body.dune-support #ticket_tabs{padding:8px!important;box-sizing:border-box;border:1px solid #476353!important;border-radius:5px 5px 0 0}
+body.dune-support .response-tabs a,body.dune-support #ticket_tabs a{border:1px solid #66805a!important;border-radius:4px!important;padding:8px 14px!important;text-shadow:none!important}
+
+
+body.dune-support #nav>li>a::before,body.dune-support #sub_nav>li>a::before{content:'';display:inline-block;width:26px;height:26px;margin-right:8px;vertical-align:middle;background:url('https://www.dunerealms.com/assets/nav-support-v2.webp') center/contain no-repeat}
+body.dune-support #nav a[href*='dashboard']::before{background-image:url('https://www.dunerealms.com/assets/nav-home-v2.webp')}
+body.dune-support #nav a[href*='tasks']::before,body.dune-support #nav a[href*='kb.php']::before{background-image:url('https://www.dunerealms.com/assets/nav-manual-v2.webp')}
+body.dune-support #nav a[href*='users']::before,body.dune-support #nav a[href*='staff']::before{background-image:url('https://www.dunerealms.com/assets/nav-account-v2.webp')}
+body.dune-support #nav a[href*='settings']::before,body.dune-support #nav a[href*='manage']::before{background-image:url('https://www.dunerealms.com/assets/nav-clan-v2.webp')}
+body.dune-support #nav>li>a{line-height:26px!important;white-space:nowrap}body.dune-support #sub_nav>li>a{line-height:24px!important;background-image:none!important}body.dune-support #sub_nav>li>a::before{width:22px;height:22px;margin-right:6px}
+body.dune-support #ticketInfo,body.dune-support #response_options,body.dune-support #reply{box-shadow:0 3px 12px #0003}
+body.dune-support #content{line-height:1.55}body.dune-support #content h2{margin:18px 0 12px!important;font-size:23px;line-height:1.35}body.dune-support #content h3{line-height:1.45}
+body.dune-support #content table.ticket_info{background:#142e26!important;border:1px solid #476353!important;border-radius:5px}body.dune-support #content table.ticket_info td{padding:8px 12px!important;color:#e8e1ce!important}
+body.dune-support #response_options table td{padding:8px!important}body.dune-support .thread-body{white-space:normal}body.dune-support .thread-body>div>h3{clear:both}
+@media(max-width:800px){body.dune-support #nav{flex-wrap:wrap}body.dune-support #nav>li>a{padding:6px 9px!important}body.dune-support #sub_nav{display:flex;flex-wrap:wrap;gap:5px}body.dune-support #nav>li>a::before{width:22px;height:22px}}
+
+
+body.dune-support #content select{height:auto!important;min-height:34px!important;line-height:1.4!important;padding:6px 10px!important;box-sizing:border-box;color:#eee6d2!important;background:#10261f!important}body.dune-support .select2-container--default .select2-selection--single,body.dune-support .select2-container--default .select2-selection--multiple{background:#10261f!important;border:1px solid #66805a!important;min-height:34px!important;height:auto!important;color:#eee6d2!important}body.dune-support .select2-selection__rendered,body.dune-support .select2-selection__placeholder{color:#d2dfcd!important;line-height:30px!important}body.dune-support .redactor-in:before,body.dune-support .redactor-placeholder:before,body.dune-support .redactor-in[data-placeholder]:before{color:#aebfae!important}body.dune-support .redactor-in,body.dune-support .redactor-in p{color:#eee6d2!important}body.dune-support .redactor-statusbar{background:#17362a!important;border-color:#476353!important}
+
+
+body.dune-support #nav{height:auto!important;min-height:62px!important;align-items:center;flex-wrap:wrap;overflow:visible!important}body.dune-support #nav>li{height:auto!important;line-height:normal!important;float:none!important}body.dune-support #customQ_nav{height:auto!important;min-height:62px!important;position:relative!important;padding:0!important;clear:both}body.dune-support #sub_nav{position:relative!important;inset:auto!important;height:auto!important;min-height:60px!important;display:flex!important;align-items:center;flex-wrap:wrap;gap:6px;margin:0!important;float:none!important}body.dune-support #sub_nav>li{height:auto!important;float:none!important;line-height:normal!important;margin:0!important}body.dune-support #basic_search{height:auto!important;min-height:46px!important;margin:12px 0!important;box-sizing:border-box;clear:both}body.dune-support .priority{color:#10251c!important}body.dune-support #content table.list{width:100%!important}
+
+
+/* Shared native lists, task screens, settings and dialog surfaces. */
+body.dune-support #content table.list{border-collapse:separate!important;border-spacing:0!important;border:1px solid #60714d!important;border-radius:7px;overflow:hidden;background:#142e26!important;font-size:14px;line-height:1.5}
+body.dune-support #content table.list th{padding:12px 14px!important;border:0!important;border-bottom:2px solid #aa8a47!important;font-size:12px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;background:#254638!important}
+body.dune-support #content table.list th a{color:#e9cf91!important}
+body.dune-support #content table.list td{padding:12px 14px!important;border:0!important;border-bottom:1px solid #345345!important;vertical-align:middle;background:#142e26!important;color:#e4e3d2!important}
+body.dune-support #content table.list tbody tr:nth-child(even) td{background:#19382c!important}
+body.dune-support #content table.list tbody tr:hover td{background:#284a37!important}
+body.dune-support #content table.list td a{color:#e6c477!important;text-decoration:none}
+body.dune-support #content table.list td a:hover{text-decoration:underline;color:#ffe2a3!important}
+body.dune-support #content table.list td .truncate{max-width:100%!important;white-space:normal;overflow-wrap:anywhere;display:block}
+body.dune-support #content table.list td[style*="background-color"]>div{display:inline-block;background:#294b36!important;color:#d6edb6!important;border:1px solid #718457;border-radius:999px;padding:3px 10px;font:600 12px/1.4 Arial,sans-serif}
+body.dune-support #content table.list td[style*="#FF"]>div{background:#603b29!important;color:#ffe0b3!important;border-color:#b17d42}
+body.dune-support #content table.list tfoot td{background:#10291f!important;padding:10px 14px!important;border-top:1px solid #60714d!important;font-size:12px}
+body.dune-support #content input[type=checkbox]{accent-color:#c3a159;width:16px;height:16px}
+body.dune-support #content .Icon.webTicket{background-image:url('https://www.dunerealms.com/assets/nav-support-v2.webp')!important;background-size:contain!important;width:23px;height:23px;vertical-align:middle;margin-right:5px}
+body.dune-support #content .page-header,body.dune-support #content .section-title{background:#1b3b2e!important;color:#ecd6a0!important;border-color:#60714d!important;padding:12px 16px}
+body.dune-support #content .form-header,body.dune-support #content .form_table th,body.dune-support #content table.form_table thead td{background:#254638!important;color:#efd69a!important;border-color:#60714d!important;padding:12px!important}
+body.dune-support #content table.form_table,body.dune-support #content .form_table td,body.dune-support #content table.custom-data td{background:#142e26!important;color:#e4e3d2!important;border-color:#345345!important;padding:10px 12px!important}
+body.dune-support #content fieldset{background:#142e26!important;border:1px solid #60714d!important;border-radius:6px;padding:16px;margin:16px 0}
+body.dune-support #content legend{color:#efd69a!important;padding:0 8px;font-weight:600}
+body.dune-support .dialog,body.dune-support .dialog .body,body.dune-support .dialog .header,body.dune-support .dialog .footer,body.dune-support #popup,body.dune-support .tip_content,body.dune-support .tooltip,body.dune-support .ui-dialog,body.dune-support .ui-dialog-content{background:#17362a!important;color:#e4e3d2!important;border-color:#60714d!important}
+body.dune-support .dialog h3,body.dune-support .ui-dialog-titlebar{background:#254638!important;color:#efd69a!important;border-color:#60714d!important}
+body.dune-support input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]),body.dune-support textarea{background:#10261f!important;color:#eee6d2!important;border:1px solid #60714d!important;border-radius:4px;box-shadow:none!important}
+body.dune-support input::placeholder,body.dune-support textarea::placeholder{color:#a8baa8!important;opacity:1}
+body.dune-support .faded,body.dune-support .muted,body.dune-support .hint,body.dune-support .form_table em{color:#acbfac!important}
+body.dune-support #content .content,body.dune-support #content .tab_content{background:#142e26!important;color:#e4e3d2!important;border-color:#60714d!important}
+body.dune-support #content a:focus-visible,body.dune-support button:focus-visible,body.dune-support input:focus-visible{outline:2px solid #f1d38a!important;outline-offset:3px}
+@media(max-width:800px){body.dune-support #tickets,body.dune-support #tasks{overflow-x:auto}body.dune-support #content table.list{min-width:680px}body.dune-support #content table.list td{padding:10px!important}}
+
+body.dune-support .dialog select,body.dune-support #popup select{height:auto!important;min-height:36px!important;line-height:1.4!important;padding:7px 10px!important;background:#10261f!important;color:#eee6d2!important;border:1px solid #60714d!important;box-sizing:border-box}body.dune-support .dialog .redactor-box,body.dune-support .dialog .redactor-in{border-color:#60714d!important}
+body.dune-support #ticket_tabs,body.dune-support .response-tabs{height:auto!important;min-height:54px!important;overflow:visible!important;display:flex!important;align-items:center;flex-wrap:wrap;gap:6px}body.dune-support #ticket_tabs li,body.dune-support .response-tabs li{height:auto!important;float:none!important;margin:0!important;line-height:normal!important}body.dune-support #ticket_tabs a,body.dune-support .response-tabs a{display:block!important;line-height:22px!important;height:auto!important;position:static!important}
+
+/* Final shared layout pass: profile, directory and reporting screens. */
+body.dune-support #content{padding:22px!important;box-sizing:border-box}
+body.dune-support #content>h2:first-child{display:flex;align-items:center;gap:10px;padding:0 0 14px!important;border-bottom:1px solid #60714d;margin:0 0 20px!important;color:#efd69a!important}
+body.dune-support ul.clean.tabs{display:flex!important;align-items:center;flex-wrap:wrap;gap:7px;height:auto!important;min-height:58px!important;margin:16px 0 0!important;padding:9px!important;background:#17362a!important;border:1px solid #60714d!important;border-bottom:2px solid #a88b4b!important;border-radius:7px 7px 0 0;box-sizing:border-box;overflow:visible!important}
+body.dune-support ul.clean.tabs li{height:auto!important;float:none!important;margin:0!important;background:transparent!important;border:0!important;line-height:normal!important}
+body.dune-support ul.clean.tabs li a{display:block!important;position:static!important;height:auto!important;line-height:22px!important;padding:9px 18px!important;border:1px solid #52704d!important;border-radius:4px!important;background:#1a392c!important;color:#e8d5a7!important;box-shadow:none!important}
+body.dune-support ul.clean.tabs li.active a,body.dune-support ul.clean.tabs li.active,body.dune-support ul.clean.tabs a.active{background:#c3a159!important;color:#14261c!important}
+body.dune-support .dashboard-stats{width:100%!important;border-collapse:separate!important;border-spacing:0!important;background:#142e26!important;border:1px solid #60714d!important;border-radius:0 0 7px 7px;overflow:hidden;font-size:14px}
+body.dune-support .dashboard-stats th{background:#254638!important;color:#efd69a!important;padding:14px 12px!important;border:0!important;border-bottom:2px solid #a88b4b!important;font-size:12px;letter-spacing:.03em}
+body.dune-support .dashboard-stats td{padding:13px 12px!important;border:0!important;border-bottom:1px solid #345345!important;color:#e4e3d2!important}
+body.dune-support .dashboard-stats tr:nth-child(even) td{background:#19382c!important}
+body.dune-support .dashboard-stats tr:hover td{background:#284a37!important}
+body.dune-support .dashboard-stats td:not(:first-child){font-variant-numeric:tabular-nums}
+body.dune-support #content .tab_content{padding:20px!important;border:1px solid #60714d!important;border-top:0!important;border-radius:0 0 7px 7px;box-sizing:border-box}
+body.dune-support #content table.form_table{border-collapse:separate!important;border-spacing:0!important;border:1px solid #476353!important;border-radius:7px;margin:16px 0!important;overflow:hidden}
+body.dune-support #content table.form_table td{border-bottom:1px solid #345345!important;vertical-align:middle;line-height:1.55!important;padding:12px 16px!important}
+body.dune-support #content table.form_table td.section-break,body.dune-support #content .section-break{background:#254638!important;color:#efd69a!important;font-size:16px;font-weight:600;padding:13px 16px!important;border-bottom:1px solid #a88b4b!important}
+body.dune-support #content input[type=text],body.dune-support #content input[type=email],body.dune-support #content input[type=password]{min-height:38px;line-height:1.4!important;padding:8px 10px!important;box-sizing:border-box;max-width:100%}
+body.dune-support #content .form_table img.avatar{border:1px solid #a88b4b;border-radius:8px;background:#244738}
+body.dune-support #content .sticky.bar,body.dune-support #content .sticky{background:#10291f!important;border-color:#476353!important}
+body.dune-support #content table.list thead select{background:#254638!important;color:#efd69a!important;border-color:#718457!important;min-height:36px!important}
+body.dune-support #content .form_table .faded{font-size:12px;line-height:1.5}
+body.dune-support #content table.form_table td input+input{margin-left:5px}
+@media(max-width:800px){body.dune-support #content{padding:14px!important}body.dune-support .dashboard-stats{display:block;overflow-x:auto}body.dune-support ul.clean.tabs li a{padding:7px 12px!important}body.dune-support #content table.form_table td{padding:10px!important}}
+
+body.dune-support .dialog form p.full-width{display:flex!important;align-items:center;justify-content:space-between;gap:12px;clear:both!important;height:auto!important;min-height:56px!important;margin:16px 0 0!important;padding:12px 0 0!important;box-sizing:border-box;overflow:visible!important}body.dune-support .dialog form p.full-width .buttons{float:none!important;display:flex!important;gap:8px}body.dune-support .dialog form:after{content:'';display:block;clear:both}body.dune-support #content table.two-column>tbody>tr.header>th,body.dune-support #content table.two-column>tbody>tr>th[colspan]{padding:12px 16px!important;background:#254638!important;color:#efd69a!important;border:1px solid #60714d!important;border-left:3px solid #c3a159!important;border-radius:4px;font-weight:600}body.dune-support #content table.two-column{border-spacing:0 7px!important}body.dune-support #content table.two-column td{border-bottom-color:#345345!important;padding:8px 12px!important}
+
+body.dune-support #clientLogin{display:block!important;max-width:960px!important;margin:22px 0!important;padding:24px!important;background:#142e26!important;background-image:none!important;color:#e8e1ce!important;border:1px solid #60714d!important;border-top:3px solid #b49451!important;border-radius:7px!important;box-shadow:0 5px 18px #0003!important;box-sizing:border-box}
+body.dune-support #clientLogin>div{display:grid!important;grid-template-columns:minmax(240px,1fr) minmax(200px,1fr);gap:26px}
+body.dune-support #clientLogin .login-box{display:block!important;width:auto!important;float:none!important;padding:0!important;margin:0!important;background:transparent!important;box-shadow:none!important;border:0!important}
+body.dune-support #clientLogin .login-box label{display:block;color:#e8d5a7!important;font-weight:600;font-size:14px;line-height:1.5;margin:0 0 16px}
+body.dune-support #clientLogin .login-box input:not([type=submit]){display:block;width:100%!important;max-width:none!important;margin-top:6px;padding:10px 12px!important;min-height:42px!important;box-sizing:border-box}
+body.dune-support #clientLogin .instructions{display:block!important;padding:16px 130px 100px 20px!important;margin:0!important;min-height:180px;background:#19382c url('https://www.dunerealms.com/assets/nav-account-full-v2.webp') right 15px bottom 12px/110px auto no-repeat!important;border:1px solid #476353!important;border-radius:6px;color:#c5d3bd!important;line-height:1.6;box-sizing:border-box}
+body.dune-support #clientLogin .instructions a{color:#efd69a!important;font-weight:600}
+@media(max-width:650px){body.dune-support #clientLogin{padding:18px!important}body.dune-support #clientLogin>div{grid-template-columns:1fr}.dune-support #clientLogin .instructions{min-height:140px;padding-bottom:30px!important}}
+
+body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child){display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:16px!important;border:1px solid #a58c4e!important;border-radius:9px!important;box-shadow:inset 0 0 0 3px #d6b76112,0 3px 12px #0002!important;background:linear-gradient(#d8bd73,#d8bd73) left 7px top 7px/18px 1px no-repeat,linear-gradient(#d8bd73,#d8bd73) left 7px top 7px/1px 18px no-repeat,linear-gradient(#d8bd73,#d8bd73) right 7px top 7px/18px 1px no-repeat,linear-gradient(#d8bd73,#d8bd73) right 7px top 7px/1px 18px no-repeat,linear-gradient(#d8bd73,#d8bd73) left 7px bottom 7px/18px 1px no-repeat,linear-gradient(#d8bd73,#d8bd73) right 7px bottom 7px/18px 1px no-repeat,linear-gradient(110deg,#193c2e,#102b22)!important}
+body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child) table,body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child) tbody,body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child) tr,body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child) td{background:transparent!important;background-color:transparent!important}
+body.dune-support :is(.dune-managed-signature-panel,.dune-ticket-signature>div:first-child) img{background:transparent!important;background-color:transparent!important;box-shadow:none!important;object-fit:contain}
+

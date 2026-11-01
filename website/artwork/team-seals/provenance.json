@@ -1,0 +1,11 @@
+{
+  "mode": "Built-in imagegen, separate team seal generations",
+  "reference": "website/web/assets/imperial-seal.png",
+  "files": {
+    "support": "129e7b95-e695-4f86-b153-3b3055096d10",
+    "ban-appeals": "af9874aa-61a5-4d73-8231-23c02d5297d9",
+    "forum-support": "82d35364-68b5-497e-b995-b3457a729b5a",
+    "legal": "77164f14-61f4-4596-8861-e6a68b4a926d",
+    "sales": "674e7b3a-45fd-465e-87b9-3d9a61710b39"
+  }
+}

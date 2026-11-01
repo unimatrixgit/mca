@@ -1,0 +1,239 @@
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ Real panel session and verified-link schema isolate inventory/sales; unlink and logout revoke reads (196.9077ms)
+✔ Inventory module assets are served with safe MIME; private runtime adapters stay inaccessible (48.8916ms)
+✔ Panel serves shared theme assets without exposing private source paths (28.3008ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ Panel verifies UUID ownership, consumes private links once and preserves eligibility on relink (238.9786ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ Personal rewards start after UUID link, are private, and move to history only after delivery (159.3239ms)
+DuneGit registration setup pending
+✔ Password changes require current password and revoke other sessions; staff actions reject player injection (415.4599ms)
+DuneGit registration setup pending
+✔ Staff goals are fixed, audited, month-bound and unreached codes remain private (127.5398ms)
+DuneGit registration setup pending
+✔ registration requires an explicit age band and cannot grant privileges (130.386ms)
+✔ clan writes require authentication, game access, same origin and a verified Minecraft identity (58.4609ms)
+✔ creation reserves case-insensitive name/tag and one membership without changing website rank (39.2167ms)
+✔ join requests remain private to reviewers and only acceptance creates membership (33.1422ms)
+✔ officers can review but cannot change ranks or another clan; owner cannot abandon the banner (27.5547ms)
+✔ ownership transfer updates both roles atomically and archive keeps history while releasing members (14.6302ms)
+✔ stale versions and acceptance into a second clan roll back every attempted membership change (10.5775ms)
+✔ transaction guard rechecks reviewer role even if the caller predicts a concurrent version (11.6195ms)
+✔ a member can leave or withdraw after unlinking without gaining management rights (10.304ms)
+✔ unlinking and moving a Minecraft UUID to another website account cannot create a second clan membership (3.8243ms)
+✔ Alpha excludes staff, season includes everyone, closed phases do not grant new accounts (8.522ms)
+✔ Dedicated plus VIP requires all three earned seals and excludes staff (5.2838ms)
+✔ season codes bind verified UUID and disappear only after authenticated receipt acknowledgement (82.4345ms)
+✔ Contact email requires an authentic, unexpired, single-use CAPTCHA proof (95.8062ms)
+✔ Forged proof and concurrent replay never reveal the email twice (28.0713ms)
+✔ Retired journal routes and data are no longer served (70.9685ms)
+✔ Every public page has one visible notice and no retired story content (160.3953ms)
+✔ Live legacy feed labels display original names without mutating identifiers (2.75ms)
+✔ personal tickets and account tools stay separate from staff administration (2.1648ms)
+✔ account, support and exchange always use CP; forum stays public (52.8112ms)
+✔ Diplomacy is honestly disconnected without its configured channel (54.9787ms)
+✔ Fresh verified snapshots return public offices only (41.0222ms)
+✔ Wrong publishers, stale data and invalid offices are rejected (3.7903ms)
+✔ Exchange and diplomacy payloads cannot cross feed types (0.9315ms)
+✔ All Vaerkring denominations have full artwork, downloadable GUI sizes and the imperial seal (8.3878ms)
+✔ The zero Leto II tribute is explicitly a separate non-game design (4.2114ms)
+✔ own listings use only the session account verified UUID, ignoring forged owner parameters (51.2922ms)
+✔ unlinked own listings never fall back to the public listing query (1.7841ms)
+✔ listing API requires session, rejects mutations and unknown views, and preserves all listings (3.5872ms)
+✔ paused or failed market never leaks connection details (6.3484ms)
+✔ Demo market covers every category and planet, with enough listings for pagination (4.0899ms)
+✔ Search includes material names, categories, planets and sellers without mutating source (2.1119ms)
+✔ Live validation rejects invalid data and duplicate IDs; empty live market stays empty (1.0197ms)
+✔ Unconnected API stays unavailable, never fabricates live listings or allows trading (72.202ms)
+✔ Connected gateway sends the token only upstream and exposes sanitized read-only offers (2.3112ms)
+✔ Unconfigured feeds return no fabricated data (76.4768ms)
+✔ multipart snapshots assemble in reverse Discord order with correct prices (32.6748ms)
+✔ Incomplete and forged snapshots are rejected (1.0676ms)
+✔ Stale snapshots do not masquerade as live offers (3.3461ms)
+✔ Malformed offers cannot inject prices or unsupported types (0.8785ms)
+✔ Announcements are assigned concrete categories (0.7ms)
+✔ Forgejo subpath streams git bodies, preserves auth, strips website identity and cookies (128.1887ms)
+✔ only server-resolved identity reaches Forgejo; private SSO cookies and forged headers are stripped (52.1724ms)
+✔ rank management does not grant native MyBB administration (1.6944ms)
+✔ existing intended leadership remains explicitly authorised and forum team remains moderator (0.5005ms)
+✔ native SSO, guard and admin CP use the same explicit PHP ACL helper (1.249ms)
+✔ Anonymous readers can browse but cannot post (68.9756ms)
+✔ Topics and replies persist, with public identity IDs excluded (105.7527ms)
+✔ Cross-site writes and forged management attempts fail (5.2383ms)
+✔ Closed topics reject replies and can be reopened by their owner (4.921ms)
+✔ Post validation, rate limits and parameterized search resist abuse (4.0533ms)
+✔ Reports are visible only to moderators; removal hides rather than erases (6.2385ms)
+✖ game ticket bridge authenticates capability, rejects malformed requests and does not trust website identity headers (53.7182ms)
+✔ own summaries bind verified UUID to immutable account and never expose other tickets or private fields (20.3616ms)
+✔ unlinked identity returns no tickets and own permission remains mandatory (9.3268ms)
+✔ staff summaries intersect current central departments and native visibility, never granting Legal from stale membership (43.6269ms)
+✔ assigned-only staff cannot enumerate department tickets; explicit legal and sales nodes are still required (31.1339ms)
+✔ summary results are capped, plain text bounded and unavailable storage fails without secrets (23.2507ms)
+✔ ownership comes from immutable repository owner id, not collaborator access or a username (115.2141ms)
+✔ self API fails closed without a central session and rejects mutations (53.0203ms)
+✔ public Git identity contains verified public fields only (3.6931ms)
+✔ unverified or mismatched destinations never become public verified links (0.5951ms)
+✔ authored homepage retains one public ban module after its existing portal sections (2.4332ms)
+✔ SSO binds fixed callbacks to a live account session and consumes codes once (76.4209ms)
+✔ LuckPerms live groups require a session and the page permission (64.9552ms)
+✔ full editor is owner-only even when a custom rank has every editor node (2.8394ms)
+✔ editor creation enforces Origin and returns only an official session URL (13.6177ms)
+✔ only exact editor apply/trust commands reach the private game agent (5.2164ms)
+✔ LuckPerms rejects malformed groups and unsupported routes (4.0079ms)
+✔ SmartTemplates reply uses canonical identity and cursor without fabricating quoted correspondence (49.1325ms)
+✔ confirmed Unimatrix mail identity overrides only that immutable account and mailbox (1.5085ms)
+✔ mailbox lookup requires a session and returns only that session user mapping (4.459ms)
+✔ signature download is own active mailbox only, escapes identity and contains no credentials (4.0916ms)
+✔ mail password change requires origin and reauthentication; broker target is always the session user (304.652ms)
+✔ approval waits for positive matching game confirmation, leaves pending on outage or unconfirmed response (55.1481ms)
+✔ confirmed approval removes linked ban state, records decision and does not repeat on replay (2.4ms)
+✔ deny never calls game host and reopen explicitly restores pending without reapplying ban (4.0074ms)
+✔ demo decisions cannot mutate a game ban and arbitrary tickets/permissions are rejected (2.0147ms)
+✔ native closure and reopen project pending state without manufacturing a decision (1.3042ms)
+✔ closed native tickets do not block a fresh appeal; reopened undecided tickets do, with ownership preserved (4.2534ms)
+✔ only currently matching owner and corestaff receive personal seals (2.0988ms)
+✔ unknown and ordinary agents never get a personal seal (0.2716ms)
+✔ effective assigned ranks authorize seal and removing them revokes it (0.2005ms)
+✔ department seal requires current ticket staff access (0.2694ms)
+✔ multiple assigned teams receive only their department seals (1.4205ms)
+✔ unimatrix owner receives all managed staff seals without other personal seals (0.3587ms)
+✔ recognition allows Streamer but excludes owners and other staff (0.6705ms)
+✔ only current entitled ranks can select network role seals (0.5763ms)
+✔ rank mutation and event roll back together when the transaction fails (5.0301ms)
+✔ failed delivery survives database reopen and retries after durable backoff (61.9312ms)
+✔ change committed during delivery is retained and competing workers do not overlap (1.7619ms)
+✔ empty queue never loads native state; a crashed worker lease is recoverable (1.4958ms)
+DuneGit registration setup pending
+✔ External hosting rejects forged identity, protects sessions and keeps private data private (189.9569ms)
+✔ MySQL profile upserts retain bound values (0.4098ms)
+✔ user overview counts only that immutable account and ignores supplied account IDs (70.8084ms)
+✔ support and appeal staff stats stay separated by their website permissions (9.8508ms)
+✔ unavailable native data never becomes a fake zero, and authentication is required (2.8149ms)
+✔ closed native appeals disappear from counters and generic reopen does not erase final decisions (14.3779ms)
+✔ Normal bundles reject four and eleven tasks, accepting five and ten (9.8035ms)
+✔ A release moves selected products once and preserves later pending work (0.5973ms)
+✔ Workflow agreements and unfinished tasks cannot inflate a release (0.4542ms)
+✔ Duplicate prompt identities and colliding version filenames are rejected (0.6074ms)
+✔ A single urgent bugfix publishes independently with problem, repair and checks (0.6647ms)
+✔ Urgent fixes cannot be held in a normal feature queue (0.4031ms)
+✔ Future normal and urgent records generate safe pages and one urgent news card per surface (483.1843ms)
+✔ positive votes and deterministic UUID tie break (20.975ms)
+✔ elected and appointed offices follow game facts (4.6797ms)
+✔ term rollover removes former offices (0.3687ms)
+✔ replacement emperor invalidates appointments (0.5484ms)
+✔ forum updates preserve unrelated groups and remove lost offices (0.5265ms)
+✔ unlinked or name-only identity cannot receive offices (0.5025ms)
+✔ Portal data requires authentication and same-origin writes (78.0527ms)
+✔ Tickets are tied to profiles and appeals require a Minecraft name (16.0403ms)
+✔ Other players cannot read or alter a private ticket (14.7483ms)
+✔ Only authorised staff can triage; replies carry verified staff roles (10.7832ms)
+✔ Owners close and reopen tickets; closed cases block replies and rate limits apply (16.0922ms)
+✔ Private profiles and ticket history persist after database restart (150.9652ms)
+✔ portal navigation preserves the exact approved order and canonical destinations (4.5624ms)
+✔ shared header uses one illustration per destination and page markers use full artwork (0.7856ms)
+✔ repeated header publication retains exactly one versioned stylesheet and script (0.7805ms)
+✔ staff roster menu addition preserves all domain context mappings (1.2806ms)
+✔ post deletion rejects unauthenticated, unprivileged and cross-origin requests (70.1977ms)
+✔ a stale editor cannot delete a changed post (9.5654ms)
+✔ deletion retains the post and records an audit event (9.9481ms)
+✔ staff guides use feature categories and documented permission nodes (2.5929ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ staff manual is protected on the server and responds to permission revocation (159.9995ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ session exports effective rank/node permissions; unprivileged rank requests fail (124.6979ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ corestaff creates lower ranks but cannot edit owners or assign owner access (131.7464ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+Native synchronization queued for retry
+✔ matrix edits change backend access immediately and stale saves cannot overwrite (117.1432ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+Native synchronization queued for retry
+✔ rank assignment invalidates the target sessions and owner accounts remain protected (110.6868ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ website matrix contains only web nodes; game export is retired (120.6527ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ legacy cp assignments migrate once without granting game nodes (109.0241ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+✔ native editor assets require owner and both website editor gates (108.2226ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+Native synchronization queued for retry
+✔ dictated role catalog separates website and game teams without giving support ban access (116.2027ms)
+DuneGit registration setup pending
+DuneGit registration setup pending
+DuneGit registration setup pending
+Native synchronization queued for retry
+Native synchronization queued for retry
+✔ multiple ranks union departments, revoke removed access and protect secondary Owners (116.837ms)
+✔ legacy ticket reads and mutations are retired without forwarding identity or private data (75.5342ms)
+✔ roster username resolves Minecraft skin without exposing IDs or using overrides (66.439ms)
+✔ unlinked staff receive face fallback; failed linked skin receives 64px crop-compatible Steve (3.2949ms)
+✔ roster rejects malformed paths, unknown accounts and non-GET requests (1.9316ms)
+✔ published news is crawlable and escaped, legacy links redirect permanently, drafts stay absent (111.0344ms)
+✔ server controls require session, staff role and explicit operator allowlist (52.8878ms)
+✔ operator status/log paths are fixed and reject arbitrary targets (8.5912ms)
+✔ mutations enforce origin and single command, overwrite spoofed actor, and audit intent (24.8461ms)
+✔ upstream failures do not expose secrets (2.9221ms)
+✔ shared notice serves the same accessible page with correct denial status (70.8709ms)
+✔ shared asset allowlist rejects arbitrary paths and writes (1.647ms)
+✔ public social links use HTTPS and matching platform hosts (1.2547ms)
+DuneGit registration setup pending
+✔ CP profile updates preserve private birthday and export only public fields (64.4614ms)
+✔ News and Streamer roster visibility never grants broad ticket access or changes ranks (25.8188ms)
+✔ public roster follows current effective roles, excludes users and never exports private identity fields (9.4796ms)
+✔ anonymous roster HTML escapes names, shares header and supports HEAD without a body (43.4296ms)
+✔ team tables contain member cards and only validated public profile details (7.0369ms)
+✔ team tables keep leadership first, members in effective-rank order and full-width uncached styles (3.4303ms)
+✔ all staff portraits use username-resolved Minecraft or Steve images, never a seal as the main portrait (3.5314ms)
+✔ Built Worker serves all seventeen separate pages and site assets (97.388ms)
+✔ Built Worker retains unconnected feed state without leaking secrets (1.1458ms)
+✔ Unsupported paths and write requests are rejected (0.7614ms)
+✔ Live status is cached and only known server fields reach the browser (50.5145ms)
+✔ Missing, failed and stale monitoring never invent online or offline status (2.1919ms)
+ℹ tests 166
+ℹ suites 0
+ℹ pass 165
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3071.1299
+
+✖ failing tests:
+
+test at tests\game-tickets.test.mjs:29:1
+✖ game ticket bridge authenticates capability, rejects malformed requests and does not trust website identity headers (53.7182ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 400
+  
+      at TestContext.<anonymous> (file:///C:/Users/thoma/.codex/.chatgpt-projects/g-p-6acd5d4af4f881918b3b7e32664e02cb/dunerealms-story-update/website/tests/game-tickets.test.mjs:33:100)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

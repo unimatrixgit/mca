@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{publicKitCatalogue,createKitCatalogueBridge,createPublicKitMarket}from'../node/kit-catalogue.mjs';
+const listing={listingId:'11111111-1111-1111-1111-111111111111',listingVersion:1,blueprintVersion:1,priceCents:10000,name:'Test kit',sellerName:'Designer',quality:'common',completedSales:0,commerceKind:'personal_sale',sellerUuid:'private',code:'secret',color:'#385B49'},data={currency:'dunemarks',listings:[listing]};
+test('public catalogue projects only approved public fields and rejects corrupt prices',()=>{const out=publicKitCatalogue(data);assert.equal(out.listings[0].sellerUuid,undefined);assert.equal(out.listings[0].code,undefined);assert.throws(()=>publicKitCatalogue({...data,listings:[{...listing,priceCents:1.1}]}));assert.throws(()=>publicKitCatalogue({...data,listings:[{...listing,commerceKind:'free_admin'}]}))});
+test('private catalogue bridge fails closed without read credentials and never calls game API',async()=>{let calls=0;const route=createKitCatalogueBridge({EXCHANGE_READ_TOKEN:'r'.repeat(32),SERVER_CONTROL_TOKEN:'s'.repeat(64)},{fetcher:async()=>{calls++;return Response.json(data)}});assert.equal((await route(new Request('http://localhost/internal/kits/catalogue'))).status,401);assert.equal(calls,0)});
+test('public route is read-only and returns unavailable rather than fake listings',async()=>{const route=createPublicKitMarket({EXCHANGE_READ_TOKEN:'r'.repeat(32)},{fetcher:async()=>Response.json({}, {status:503})});assert.equal((await route(new Request('https://site/api/kits/catalogue',{method:'POST'}))).status,405);assert.equal((await route(new Request('https://site/api/kits/catalogue'))).status,503)});
+
+import {clanKitCatalogue} from '../node/clan-kit-catalogue.mjs';
+import {DatabaseSync} from 'node:sqlite';
+test('clan catalogue automatically reflects saved edits and excludes closed clans',async()=>{
+ const sql=new DatabaseSync(':memory:');sql.exec(`CREATE TABLE site_accounts(id TEXT,username TEXT);CREATE TABLE site_clans(id TEXT,name TEXT,owner_id TEXT,active INT);CREATE TABLE site_clan_kits(id TEXT,clan_id TEXT,name TEXT,color TEXT,lore_json TEXT,version INT,shop_price_cents INT);INSERT INTO site_accounts VALUES('owner','unimatrix999');INSERT INTO site_clans VALUES('clan','House Unimatrix','owner',1);INSERT INTO site_clan_kits VALUES('11111111-1111-1111-1111-111111111111','clan','Desert kit','#56078B','[]',1,20000);`);
+ const db={prepare:q=>({all:async()=>({results:sql.prepare(q).all()})})};
+ let rows=await clanKitCatalogue(db);assert.equal(rows[0].ownerName,'unimatrix999');assert.equal(rows[0].priceCents,20000);assert.equal(publicKitCatalogue({currency:'dunemarks',listings:rows}).listings[0].purchaseAvailable,false);
+ sql.exec("UPDATE site_clan_kits SET name='Updated clan kit',version=2,shop_price_cents=30000");rows=await clanKitCatalogue(db);assert.equal(rows[0].name,'Updated clan kit');assert.equal(rows[0].listingVersion,2);assert.equal(rows[0].priceCents,30000);
+ sql.exec('UPDATE site_clans SET active=0');assert.deepEqual(await clanKitCatalogue(db),[]);sql.close();
+});

@@ -10,7 +10,7 @@ header nav>a{border-top-color:#b7b083;border-left-color:#b7b083;background:linea
 .lore-frieze img{display:block;width:100%;height:190px;object-fit:cover}
 .lore-frieze figcaption{display:flex;justify-content:center;gap:36px;padding:13px 5%;font:20px VT323,monospace;letter-spacing:.1em;color:#d8bb7f;background:linear-gradient(#22362d,#142923);border-top:1px solid #a88c4655;text-align:center}
 .lore-frieze figcaption span:nth-child(2){color:#9fc1bb}
-footer{background:linear-gradient(#122723ec,#0b1c19f5),url('assets/ornament.webp') center/700px;border-bottom-color:#b6914c}footer small{color:#d1b06c}
+footer{background:linear-gradient(#122723ec,#0b1c19f5),url('assets/ornament.webp') center/cover no-repeat;border-bottom-color:#b6914c}footer small{color:#d1b06c}
 .portal-tabs a,.ticket-status{border-top-color:#bcab79}.private-ticket{border-color:#b59860}.portal-support-card{border-color:#bca267}
 @media(max-width:600px){.lore-frieze img{height:155px;object-position:48% center}.lore-frieze figcaption{gap:7px 17px;flex-wrap:wrap;font-size:17px;padding:13px 7%}}
 

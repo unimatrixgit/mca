@@ -1,0 +1,12 @@
+{
+  "mode": "Built-in imagegen, separate office generations",
+  "reference": "website/web/assets/imperial-seal.png",
+  "files": {
+    "emperor": "f35d576d-35c2-4870-a752-e4f7d86360eb",
+    "house_leader": "5b1b0b17-e1a7-466e-93ef-e512a9a68453",
+    "specerhuis": "966a38eb-fa6f-4e77-920f-8fe2c8aee117",
+    "welvaart": "3b0a7a4d-98a9-47e7-b4b3-95a8958c28bb",
+    "guild_staff": "4a92d6fb-c1ae-4590-9784-c709c143679e",
+    "landsraad": "2650129a-d80f-4ef9-a69c-68f6bad7e57a"
+  }
+}

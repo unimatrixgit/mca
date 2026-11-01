@@ -1,0 +1,23 @@
+name: DuneProtect
+version: 1.0.0
+main: com.example.duneprotect.DuneProtect
+api-version: '1.21'
+softdepend: [CoreProtect, WorldEdit, WorldGuard]
+description: Dune command entry point for the original protection plugins
+commands:
+  duneprotect:
+    description: Block history, building tools and protected regions
+    usage: /duneprotect inspect|lookup|rollback|restore|worldedit|worldguard
+permissions:
+  duneprotect.inspect:
+    default: op
+  duneprotect.lookup:
+    default: op
+  duneprotect.rollback:
+    default: op
+  duneprotect.restore:
+    default: op
+  duneprotect.worldedit:
+    default: op
+  duneprotect.regions:
+    default: op

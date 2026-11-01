@@ -1,0 +1,14 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const web=new URL('../web/',import.meta.url),file=new URL('index.html',web);let html=readFileSync(file,'utf8');
+const hero=html.match(/<section class="hero"[\s\S]*?<\/section>/)?.[0],menu=html.match(/<nav id="realm-menu"[\s\S]*?<\/nav>/)?.[0]||'';
+if(!hero)throw Error('The original 01 / Get the plugin hero must be preserved');
+function module(title,id,kind,archive=false){return '<section class="dispatch-module" id="'+id+'"><div class="dispatch-heading"><h2>'+title+'</h2><a href="'+(kind==='forum'?'https://forums.dunerealms.com/':'news-archive.html')+'">'+(kind==='forum'?'All discussions':'News archive')+' →</a></div><div data-news-module="'+kind+'"'+(archive?' data-archive="true"':'')+'></div></section>';}
+function assets(s){if(!s.includes('href="home-news.css"'))s=s.replace('</head>','<link rel="stylesheet" href="home-news.css"><script src="home-news.js" defer></script></head>');return s;}
+html=assets(html).replace('<body>','<body class="home-news">').replace(/<main id="main">[\s\S]*?<\/main>/,'<main id="main">'+module('News from the realms','home-news','news')+hero+module('Latest forum posts','home-forum','forum')+menu+'<section class="dispatch-module" id="home-bans"><div class="dispatch-heading"><h2>Latest bans &amp; appeals</h2><span>PUBLIC MODERATION REGISTER · LATEST 9</span></div><div id="portal-ban-cards" class="dispatch-grid"><p>Loading moderation records…</p></div></section></main>');
+html=html.replace(/<section class="faction-frieze"[\s\S]*?<\/section>/g,'').replace(/<figure class="lore-frieze"[\s\S]*?<\/figure>/g,'');writeFileSync(file,html);
+const archive=html.replace(/<title>[^<]+<\/title>/,'<title>News archive — dunerealms.com</title>').replace(/<main id="main">[\s\S]*?<\/main>/,'<main id="main">'+hero+menu+'<article id="news-full-post" class="dispatch-full" hidden></article>'+module('News archive','archive-news','news',true)+'</main>');writeFileSync(new URL('news-archive.html',web),archive);
+for(const [name,title,section] of [['exchange','Exchange','exchange-content'],['forums','Community forums','forum-section'],['tickets','Support tickets','portal-section']]){
+ const path=new URL(name+'.html',web);let page=assets(readFileSync(path,'utf8')).replace('<body>','<body class="tool-page">').replace(/<section class="(?:choam-hero|page-intro[^"]*)"[\s\S]*?<\/section>/g,'').replace(/<section class="faction-frieze"[\s\S]*?<\/section>/g,'');
+ if(!page.includes('class="tool-title"'))page=page.replace('<section class="'+section+'">','<section class="'+section+'"><h1 class="tool-title">'+title+'</h1>');writeFileSync(path,page);
+}
+console.log('Built news portal, chronological archive and compact community tool pages.');

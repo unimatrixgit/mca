@@ -1,0 +1,7 @@
+package com.example.dunemenus;
+import org.junit.jupiter.api.Test;import org.bukkit.entity.Player;import org.bukkit.inventory.Inventory;import java.util.*;import static org.junit.jupiter.api.Assertions.*;import static org.mockito.Mockito.*;
+class GraphicalMenuTest {
+ @Test void sixCardHitRegionsAreDisjointAndNeverUseFooter(){Set<Integer> all=new HashSet<>();for(int center:GraphicalMenu.CENTERS)for(int slot:GraphicalMenu.region(center)){assertTrue(slot>=9&&slot<45);assertTrue(all.add(slot));}assertEquals(36,all.size());}
+ @Test void anotherPlayerCannotOwnTheScreen()throws Exception{var h=new VirtualDispatchTest.Harness();var screen=new GraphicalMenu.Screen(h.id,h.view);Inventory inventory=mock(Inventory.class);screen.inventory=inventory;when(inventory.getHolder()).thenReturn(screen);GraphicalMenu.screens.put(h.id,screen);Player other=mock(Player.class);when(other.getUniqueId()).thenReturn(UUID.randomUUID());assertFalse(GraphicalMenu.owned(inventory,other));assertTrue(GraphicalMenu.owned(inventory,h.player));GraphicalMenu.forget(h.player);assertFalse(GraphicalMenu.owned(inventory,h.player));}
+ @Test void revokedAuthorityPreventsScreenAction()throws Exception{var h=new VirtualDispatchTest.Harness();var screen=new GraphicalMenu.Screen(h.id,h.view);GraphicalMenu.screens.put(h.id,screen);assertTrue(GraphicalMenu.usable(screen,h.player,h.plugin));h.allowed.set(false);assertFalse(GraphicalMenu.usable(screen,h.player,h.plugin));GraphicalMenu.forget(h.player);}
+}

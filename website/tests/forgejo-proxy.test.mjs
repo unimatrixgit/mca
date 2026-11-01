@@ -5,3 +5,16 @@ test('Forgejo subpath streams git bodies, preserves auth, strips website identit
  const proxy=createForgejoProxy({FORGEJO_URL:'http://127.0.0.1:'+upstream.address().port,PUBLIC_ORIGIN:'https://dunerealms.com'});const server=createServer((req,res)=>{if(!proxy(req,res)){res.statusCode=404;res.end();}});await listen(server);
  try{const base='http://127.0.0.1:'+server.address().port;const redirected=await fetch(base+'/git',{redirect:'manual'});assert.equal(redirected.status,308);assert.equal(redirected.headers.get('location'),'/git/');const r=await fetch(base+'/git/unimatrix/MC.git/git-receive-pack',{method:'POST',headers:{Authorization:'Basic test',Cookie:'__Host-dune_session=private; forgejo_session=abc','X-Webauth-User':'admin'},body:Buffer.alloc(90000)});const data=await r.json();assert.equal(data.path,'/unimatrix/MC.git/git-receive-pack');assert.equal(data.auth,'Basic test');assert.ok(!data.cookie.includes('private'));assert.equal(data.forged,undefined);assert.equal(data.bytes,90000);assert.match(r.headers.get('set-cookie'),/Path=\/git\//);}finally{await close(server);await close(upstream);}
 });
+test('only server-resolved identity reaches Forgejo; private SSO cookies and forged headers are stripped',async()=>{
+ const upstream=createServer((req,res)=>res.end(JSON.stringify(req.headers)));await listen(upstream);
+ const proxy=createForgejoProxy({FORGEJO_URL:'http://127.0.0.1:'+upstream.address().port,PUBLIC_ORIGIN:'https://www.dunerealms.com',FORGEJO_AUTH_HEADER:'x-dunegit-user-test'},async()=> 'verified_owner');
+ const server=createServer((req,res)=>{if(!proxy(req,res)){res.statusCode=404;res.end();}});await listen(server);
+ try{
+  const base='http://127.0.0.1:'+server.address().port;
+  const r=await fetch(base+'/git/',{headers:{'X-DuneGit-User':'forged_admin',Cookie:'__Host-dune_git_session=private; forgejo_session=native'}}),headers=await r.json();
+  assert.equal(headers['x-dunegit-user'],undefined);assert.equal(headers['x-dunegit-user-test'],'verified_owner');assert.ok(!headers.cookie.includes('private'));assert.ok(headers.cookie.includes('native'));
+  assert.match(r.headers.get('content-security-policy'),/frame-ancestors 'self' https:\/\/cp.dunerealms.com/);
+  const token=await fetch(base+'/git/api/v1/user',{headers:{Authorization:'token test','X-DuneGit-User':'forged_admin'}});assert.equal((await token.json())['x-dunegit-user'],undefined);
+  assert.equal((await fetch(base+'/git/sso/callback?code=fake')).status,404);
+ }finally{await close(server);await close(upstream);}
+});

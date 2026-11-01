@@ -1,0 +1,8 @@
+# Exact internal planet ID, or lobby. Never a client-supplied value.
+server-id: arrakis
+# Blank uses the existing private DuneCore database configuration.
+# Keep credentials in private server files; never commit live values.
+database:
+  jdbc-url: ''
+  username: ''
+  password: ''

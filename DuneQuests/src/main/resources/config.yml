@@ -1,0 +1,6 @@
+# Only Arrakis owns automatic encounter scheduling. Other servers may show own quest history.
+server-id: arrakis
+database:
+  jdbc-url: ''
+  username: ''
+  password: ''

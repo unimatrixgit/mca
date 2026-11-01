@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import{officesFor,winner,mergeManagedGroups}from '../node/political-offices.mjs';
+const a='00000000-0000-4000-8000-000000000001',b='00000000-0000-4000-8000-000000000002',week=2964,now=week*604800000;
+const state={votes:{emperor:{[week]:{tally:{[b]:2,[a]:2}}},house:{[week]:{Atreides:{tally:{[a]:1}}}}},appointments:{water:{week,emperor:a,house:'Atreides'}}};
+test('positive votes and deterministic UUID tie break',()=>{assert.equal(winner(state.votes.emperor[week]),a);assert.equal(winner({tally:{[a]:0,[b]:-1}}),'');});
+test('elected and appointed offices follow game facts',()=>assert.deepEqual(officesFor(state,{uuid:a,faction:'Atreides'},now).roles,['emperor','house_leader','welvaart','landsraad']));
+test('term rollover removes former offices',()=>assert.deepEqual(officesFor(state,{uuid:a,faction:'Atreides'},now+604800000).roles,[]));
+test('replacement emperor invalidates appointments',()=>{const changed=structuredClone(state);changed.votes.emperor[week].tally[b]=3;assert.deepEqual(officesFor(changed,{uuid:a,faction:'Atreides'},now).roles,['house_leader','landsraad']);});
+test('forum updates preserve unrelated groups and remove lost offices',()=>assert.equal(mergeManagedGroups('2,8,19',[8,9],[9]),'2,9,19'));
+test('unlinked or name-only identity cannot receive offices',()=>assert.throws(()=>officesFor(state,{uuid:'Unimatrix',faction:'Atreides'},now)));

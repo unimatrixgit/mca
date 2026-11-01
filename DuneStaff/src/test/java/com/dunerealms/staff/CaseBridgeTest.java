@@ -1,0 +1,12 @@
+package com.dunerealms.staff;
+import org.junit.jupiter.api.Test;import static org.junit.jupiter.api.Assertions.*;
+import com.google.gson.*;import java.nio.*;import java.util.*;import java.util.concurrent.*;import java.util.concurrent.Flow.*;
+class CaseBridgeTest {
+ JsonObject context(){return JsonParser.parseString("{\"ticketId\":\"229211\",\"contextVersion\":3,\"assignedAgentUuid\":\"10000000-0000-0000-0000-000000000001\",\"creatorUuid\":null,\"suspectUuid\":\"00000000-0000-0000-0009-01f09764757f\",\"canTake\":false,\"canSetSuspect\":true,\"actions\":{\"teleport\":true,\"inspectInventory\":true,\"editInventory\":false,\"adjustEconomy\":false,\"editFaction\":false}}").getAsJsonObject();}
+ @Test void canonicalContractKeepsBedrockIdentityAndNullableCreator()throws Exception{var c=CaseBridge.parse(context());assertEquals(229211,c.ticket());assertEquals(3,c.version());assertNull(c.creator());assertEquals(UUID.fromString("00000000-0000-0000-0009-01f09764757f"),c.suspect());assertTrue(c.inspect());assertFalse(c.economy());assertFalse(c.faction());}
+ @Test void absentOrNonBooleanFlagsNeverDefaultToEnabled(){JsonObject row=context();row.getAsJsonObject("actions").remove("editInventory");assertThrows(Exception.class,()->CaseBridge.parse(row));row.getAsJsonObject("actions").addProperty("editInventory","true");assertThrows(Exception.class,()->CaseBridge.parse(row));}
+ @Test void invalidIdsAndUnknownIdentityCannotBecomeTargets(){for(String value:List.of("0","01","-1","1.0","9999999999999999999")){JsonObject row=context();row.addProperty("ticketId",value);assertThrows(Exception.class,()->CaseBridge.parse(row));}JsonObject row=context();row.addProperty("suspectUuid",".unknown");assertThrows(Exception.class,()->CaseBridge.parse(row));}
+ @Test void bridgeOriginIsFixedAndSecretsMustBePrivateLength(){assertThrows(IllegalArgumentException.class,()->new CaseBridge("https://evil.example","x".repeat(64)));assertThrows(IllegalArgumentException.class,()->new CaseBridge("https://cp.dunerealms.com","short"));}
+ @Test void oversizedResponseCancelsBeforeBufferingUnboundedData(){CaseBridge.LimitedBody body=new CaseBridge.LimitedBody();class Sub implements Subscription{boolean cancelled;public void request(long n){}public void cancel(){cancelled=true;}}Sub sub=new Sub();body.onSubscribe(sub);body.onNext(List.of(ByteBuffer.wrap(new byte[262145])));assertTrue(sub.cancelled);assertThrows(CompletionException.class,()->body.getBody().toCompletableFuture().join());}
+}
+

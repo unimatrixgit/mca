@@ -35,6 +35,8 @@ arrakis-sun:
 
 # One Paper backend per planet, connected through Velocity's BungeeCord plugin messaging support.
 network:
+  # Optional Guild-lobby profile bridge; requires the same authoritative database.
+  share-lobby-inventory: false
   enabled: true
   local-planet: arrakis  # Match server.planet in DuneTerrain on this backend
   servers:

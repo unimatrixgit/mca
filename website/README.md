@@ -1,4 +1,4 @@
-# Project Dune website
+# DuneRealms website
 
 A responsive website styled from the illustrated plugin manual. Includes Arrakis gameplay, accessible House/planet tabs, DuneNPC missions, administrator tools, downloads and installation instructions. Separate pages provide the 57-chapter browsable manual with all 68 illustrated icons, Races & Houses, Exchange and News.
 
@@ -18,3 +18,11 @@ See [Forums and player support](FORUMS-PORTAL.md) for independent forums, the Yo
 The standalone [Sietch Armoury](https://project-dune.bonnystoat9.chatgpt.site/armoury.html) contains all 68 illustrated item entries and full suit abilities. [Diplomacy](https://project-dune.bonnystoat9.chatgpt.site/diplomacy.html) reads the DuneCore 1.0.10 current-office snapshot via a dedicated DiscordSRV channel.
 
 See [Patchnote workflow](PATCHNOTES.md) for the 5–10 product-task bundle policy, permanent DUNE request IDs, pending queue, urgent bugfix reports and source-driven public archive. Staff and contributor records are on `staff.html`; Patch Notes is on `patch-notes.html`.
+
+## Alpha release builds
+
+Run `node scripts/build.mjs` (or `npm run build`) to package the current authored `web/` pages and `worker/` code. Packaging does not rewrite page content or run the older content generators. It writes only `dist/`, with assets collected in a stable order.
+
+`npm run generate` is a separate legacy authoring operation. These generators recreate pages from older templates and are not part of the Alpha release build. Review their output before using it; do not run them as a deployment prerequisite.
+
+The Node main site, account panel, native forum/support integrations and game JARs have separate deployment steps. A successful website build is not evidence that those components have been published or tested in game.

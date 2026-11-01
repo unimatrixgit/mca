@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: logo-brand. Create a single ornate imperial DuneRealms community achievement seal for verified DuneGit repository owners. Transparent background, square composition, entire circular medallion visible with generous safe padding. Rich polished antique gold relief, dark emerald and sapphire enamel, fine concentric engraved borders, symmetrical laurel branches and small imperial crown. Center: elegant branching version-control diagram with three connected gold nodes and an open code ledger, clearly readable silhouette at small 48px size. Premium fantasy MMORPG heraldic craftsmanship matching gold imperial staff seals. Exact text: top arc 'DUNEREALMS.COM'; central ribbon 'DUNEGIT'; bottom ribbon 'REPOSITORY OWNER'. No other words, no watermark, no mockup, no background scene.",
+  "transparent_background": true,
+  "master": "dunegit-owner-master.png",
+  "badge": "dunegit-owner",
+  "eligibility": "Verified linked identity owns at least one repository; collaborators excluded; existing staff display restrictions apply"
+}

@@ -1,0 +1,37 @@
+{
+  "mode": "Built-in imagegen, original imperial network insignia",
+  "jobs": [
+    {
+      "kind": "department",
+      "key": "department-network-staff",
+      "role": "",
+      "label": "NETWORK STAFF",
+      "prompt": "Create an extremely official original DuneRealms imperial department seal, heavily ornate minted GOLD relief, enormous geometrical citadel crown, deep midnight SAPPHIRE enamel, gold laurelbranches, concentricengravedrings, formal scrollwork, amethystdiamonds. Central golden connected network of desert citadel towers around a radiant imperial star, precise linked nodes, allregalheraldry no contemporarycorporatelogo. Exact ribbon \"NETWORK STAFF\", arc \"DUNEREALMS.COM\". Distinct from Legal justice scales. Very authoritative impressive craftsmanship and clearly readable NETWORK STAFF. Full square entire roundseal+ribbonwithunclippedpadding, transparentoutside. Referenceforfinishandpalette, replacelegalimagery. Originalinsignia, nofranchisecopy.",
+      "source": "C:\\Users\\thoma\\.codex\\generated_images\\01a18425-1548-7693-a599-e5dc4f6cc2fa\\exec-98a88a5d-7977-4dae-9d29-0caaf8c9b938.png"
+    },
+    {
+      "kind": "team",
+      "key": "team-network-staff",
+      "role": "",
+      "label": "NETWORK STAFF TEAM",
+      "prompt": "Create an extremely official original DuneRealms imperial team seal, heavily ornate minted GOLD relief, enormous geometrical citadel crown, deep midnight SAPPHIRE enamel, gold laurelbranches, concentricengravedrings, formal scrollwork, amethystdiamonds. Central golden connected network of desert citadel towers around a radiant imperial star, precise linked nodes, allregalheraldry no contemporarycorporatelogo. Exact ribbon \"NETWORK STAFF TEAM\", arc \"DUNEREALMS.COM\". Distinct from Legal justice scales. Very authoritative impressive craftsmanship and clearly readable NETWORK STAFF. Full square entire roundseal+ribbonwithunclippedpadding, transparentoutside. Referenceforfinishandpalette, replacelegalimagery. Originalinsignia, nofranchisecopy.",
+      "source": "C:\\Users\\thoma\\.codex\\generated_images\\01a18425-1548-7693-a599-e5dc4f6cc2fa\\exec-2594c040-1889-40bf-864d-33783a47207a.png"
+    },
+    {
+      "kind": "rank",
+      "key": "rank-network-staff",
+      "role": "NETWORKSTAFF",
+      "label": "Network Staff",
+      "prompt": "Create an exceptionally official original imperial DuneRealms NETWORK STAFF rank insignia, a grand sapphire-enamel shield crowned by a massive gilded desert citadel crown, gold imperial laurel and precise sunburst, layered minted gold relief, filigree and amethyst diamonds. Center linked citadel towers around a radiant central diamond, network authority imagery, distinct shield silhouette from circular department/teamseals. Exact dominant gold title 'NETWORK STAFF', smaller 'DUNEREALMS.COM'. No personal username, no OWNER title, not a player recognition award. Deep luxurious royal blue, gold and tiny imperial-purple accents. Entire shield and ribbon fullyvisiblewithpadding, squarecanvastransparentoutside. Original heraldry, no copied franchise insignia. Heavy art readable at62px and richlydetailedlarge.",
+      "source": "C:\\Users\\thoma\\.codex\\generated_images\\01a18425-1548-7693-a599-e5dc4f6cc2fa\\exec-8dfb3fca-dcc7-4b5a-91dc-40f985055e57.png"
+    },
+    {
+      "kind": "main-admin",
+      "key": "main-network-admin-grmacken",
+      "role": "MAINNETWORKADMIN",
+      "label": "grmacken",
+      "prompt": "Create a very official original DuneRealms imperial personal seal for exact username 'grmacken' with exact role 'MAIN NETWORK ADMIN'. Heavy minted metallic GOLD, elaborate royal citadel crown, sapphire enamel, imperial purple accents, geometric laurel wreath, central radiant connected network-citadel star, exceptional engraved filigree and multilayer gold rims. Exact arc 'DUNEREALMS.COM', large gold name 'grmacken', clear ribbon 'MAIN NETWORK ADMIN'. This is a named administrator seal, NOT Owner; do not include OWNER. Distinct premium personal authoritative medallion, complete square full circularseal+ribbonwithpadding, transparentoutside. Original heraldry, no franchisecopy. Highly readable name and mainroleat71px, richgoldrelieflarge.",
+      "source": "C:\\Users\\thoma\\.codex\\generated_images\\01a18425-1548-7693-a599-e5dc4f6cc2fa\\exec-9cdfd2a2-57cd-4a1e-b67c-573f07ed59bd.png"
+    }
+  ]
+}

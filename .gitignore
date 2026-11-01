@@ -14,3 +14,7 @@ __pycache__/
 # Private database credentials and manual profile recovery snapshots
 /network/database/.env
 **/inventory-recovery/
+
+# Native LuckPermsWeb builds are reproducible from pinned upstream plus the theme.
+/website/control-panel/native-editor/
+

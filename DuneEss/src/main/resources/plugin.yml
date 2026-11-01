@@ -1,9 +1,9 @@
 name: DuneEss
-version: 1.0.4
+version: 1.1.0
 main: com.example.duneess.DuneEss
 api-version: '1.21.8'
 depend: [Vault]
-softdepend: [floodgate, ViaVersion, DuneCore, DuneTerrain]
+softdepend: [LuckPerms, floodgate, ViaVersion, DuneTerrain]
 prefix: DuneRealms Essentials
 description: DuneRealms Essentials - Dunemarks economy, Vault provider, spice sales, and Arrakduin travel
 commands:
@@ -56,3 +56,6 @@ permissions:
     default: true
   dune.admin:
     default: op
+
+  duneess.labels.hidden:
+    default: false

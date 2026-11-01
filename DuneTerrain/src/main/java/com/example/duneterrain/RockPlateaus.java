@@ -27,10 +27,18 @@ final class RockPlateaus {
         double depth(long x, long z) {
             double dx = (x - centerX) / radius, dz = (z - centerZ) / radius;
             double u = dx * cosine + dz * sine, v = -dx * sine + dz * cosine;
+            // Three overlapping asymmetric summits share a terrain-aligned spine.
+            // Their connected shoulders form a short range, rather than isolated mesas.
+            double relief = 0.12 * (terrain(x, z, scale) - terrain(centerX, centerZ, scale));
+            return Math.max(lobe(u,v,seed,relief), Math.max(
+                lobe((u-1.15)/.88,(v-.22)/.88,seed ^ 0x52414e47454cL,relief),
+                lobe((u+1.10)/.92,(v+.18)/.92,seed ^ 0x52414e474552L,relief)));
+        }
+        private double lobe(double u,double v,long seed,double relief) {
             // Low-frequency domain warping produces connected promontories, bays and uneven terraces.
             double warpedU = u + 0.14 * noise(u * 2.0 + 17, v * 2.0 - 9, seed);
             double spine = 0.24 * noise(u * 2.2 - 31, 7, seed ^ 0x51ed2705L)
-                + 0.12 * (terrain(x, z, scale) - terrain(centerX, centerZ, scale));
+                + relief;
             double width = 0.57 + 0.14 * noise(u * 2.5, 13, seed ^ 0x6eed0e9dL);
             double cross = (v - spine + 0.10 * noise(u * 3, v * 3, ~seed)) / width;
             double envelope = Math.pow(Math.pow(Math.abs(warpedU), 2.6) + Math.pow(Math.abs(cross), 2.6), 1.0 / 2.6);
@@ -50,7 +58,7 @@ final class RockPlateaus {
         return (int)Math.floor(Math.min(64,height) * shoulder * Math.pow(ridge,3) * broken);
     }
     static int highestGround(Shape shape, int baseHeight, double variation) {
-        int extent = (int)Math.ceil(shape.radius() * 2.0) + 3;
+        int extent = (int)Math.ceil(shape.radius() * 3.5) + 3;
         int highest = Integer.MIN_VALUE;
         for (int x = (int)shape.centerX() - extent; x <= shape.centerX() + extent; x++)
             for (int z = (int)shape.centerZ() - extent; z <= shape.centerZ() + extent; z++) {
@@ -81,7 +89,7 @@ final class RockPlateaus {
     }
     static double regionDepth(int x, int z, int minimumGap, int maximumGap, int minimum, int maximum, double scale) {
         int spacing = (minimumGap + maximumGap) / 2;
-        int reach = (int)Math.ceil(maximum * 2.0) + 3;
+        int reach = (int)Math.ceil(maximum * 3.5) + 3;
         double depth = -1;
         for (int cx = Math.floorDiv(x - reach, spacing); cx <= Math.floorDiv(x + reach, spacing); cx++)
             for (int cz = Math.floorDiv(z - reach, spacing); cz <= Math.floorDiv(z + reach, spacing); cz++) {

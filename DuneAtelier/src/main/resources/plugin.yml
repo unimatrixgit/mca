@@ -1,0 +1,14 @@
+name: DuneAtelier
+version: 1.0.2
+main: com.dunerealms.atelier.DuneAtelier
+api-version: '1.21.4'
+depend: [DuneCore, DuneMenus]
+commands:
+  duneatelier:
+    description: Kits Exchange, paid item deliveries and the Loom of the Desert
+    aliases: [kitsexchange]
+permissions:
+  dune.atelier.view:
+    default: true
+  dune.atelier.redeem:
+    default: true
