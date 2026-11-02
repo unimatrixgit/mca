@@ -1,6 +1,7 @@
 <?php
 if(!defined('IN_MYBB')&&!defined('ROOT_DIR'))exit;
 require_once __DIR__.'/community-seals.php';
+require_once __DIR__.'/staff-closures.php';
 function dune_signature_db(){
  static$p;if(!$p){$c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);$p=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);}return$p;
 }
@@ -16,11 +17,22 @@ function dune_signature_group($badges,$label,$fluid=false){
  foreach($badges as[$url,$caption]){$caption=htmlspecialchars($caption,ENT_QUOTES);$cells.='<td style="padding:0 3px;vertical-align:middle;background:transparent"><img src="'.htmlspecialchars($url,ENT_QUOTES).'" title="'.$caption.'" alt="'.$caption.'" width="48" height="48" style="display:block;width:'.$dimension.';height:'.$dimension.';object-fit:contain;border:0;background:transparent"></td>';}
  return '<td style="padding:0 8px;vertical-align:top;border-right:1px solid #506847;background:transparent"><div style="font-size:10px;line-height:14px;color:#d8c58e;margin-bottom:5px;white-space:nowrap">'.htmlspecialchars($label,ENT_QUOTES).'</div><table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width:auto;table-layout:auto;white-space:nowrap;margin:0;background:transparent"><tbody style="background:transparent"><tr style="background:transparent">'.$cells.'</tr></tbody></table></td>';
 }
-function dune_signature_staff_badges($account){
+function dune_signature_staff_badges($account,$verifiedStats=null){
  $personal=[];$teams=[];$names=['support'=>'Support','ban-appeals'=>'Ban appeals','forum-support'=>'Forum support','legal'=>'Legal','sales'=>'Sales','network-staff'=>'Network staff','dev'=>'Development'];
  if(!empty($account['personal_path'])&&preg_match('~^/assets/seals/(?:(owner|corestaff|main-network-admin)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$account['personal_path'],$m)){$kind=!empty($m[1])?$m[1]:'rank';$host=in_array($kind,['main-network-admin','rank'],true)?'https://support.dunerealms.com':'https://www.dunerealms.com';$personal[]=[$host.$account['personal_path'],['owner'=>'Owner','corestaff'=>'Corestaff','main-network-admin'=>'Main network administrator','rank'=>'Network Staff'][$kind]];}
- foreach(json_decode($account['departments_json']??'[]',true)?:[]as$key)if(isset($names[$key])){if($key==='network-staff'&&!is_file(__DIR__.'/osticket/assets/seals/department-network-staff-150.png'))continue;$version=$key==='legal'&&is_file(__DIR__.'/osticket/assets/seals/department-legal-v2-150.png')?'-v2':'';$host=($version||$key==='network-staff')?'https://support.dunerealms.com':'https://www.dunerealms.com';$teams[]=[$host.'/assets/seals/department-'.$key.$version.'-150.png',$names[$key].' · Department'];}
- foreach(json_decode($account['teams_json']??'[]',true)?:[]as$key)if(isset($names[$key])&&is_file(__DIR__.'/osticket/assets/seals/team-'.$key.'.png'))$teams[]=['https://support.dunerealms.com/assets/seals/team-'.$key.'.png',$names[$key].' · Team'];
+ $stats=func_num_args()>1?$verifiedStats:dune_staff_closures_for($account['website_id']);
+ foreach(array_unique(json_decode($account['departments_json']??'[]',true)?:[])as$key)if(isset($names[$key])){
+  if($key==='network-staff'&&!is_file(__DIR__.'/osticket/assets/seals/department-network-staff-150.png'))continue;
+  $version=$key==='legal'&&is_file(__DIR__.'/osticket/assets/seals/department-legal-v2-150.png')?'-v2':'';
+  $host=($version||$key==='network-staff')?'https://support.dunerealms.com':'https://www.dunerealms.com';
+  $relative='/assets/seals/department-'.$key.$version.'-150.png';$url=$host.$relative;$caption=$names[$key].' · Department';
+  if(dune_department_personal_earned($stats,$key)){
+   $earned=dune_personal_department_asset($account,$key,dune_department_art_source($relative));
+   if($earned){$url=$earned;$caption=$names[$key].' · '.$account['username'].' · Personal department seal (25+ resolved)';}
+  }
+  $teams[]=[$url,$caption];
+ }
+ // A department is represented once. Do not repeat a second generic team medal.
  return[$personal,$teams];
 }
 function dune_signature_extra_roles($id){
@@ -36,7 +48,7 @@ function dune_render_managed_signature($id,$context='forum'){
  foreach(dune_community_seal_keys($id)as$key)if(is_file(__DIR__.'/osticket/assets/seals/'.$key.'.png'))$recognition[]=['https://support.dunerealms.com/assets/seals/'.$key.'.png',$labels[$key]];
  $count=max(1,count($personal)+count($teams)+count($roles)+count($recognition)+count($offices));$fluid=$context!=='email';$layout=$fluid?'display:block;width:100%;container-type:inline-size;--dune-seal-size:clamp(48px,calc((100cqw - 120px) / '.$count.'),96px);':'display:inline-block;';
  $html='<div class="dune-managed-signature-panel" style="'.$layout.'position:relative;max-width:100%;padding:12px;margin-top:8px;border:1px solid #a18b4a;border-radius:9px;background:linear-gradient(135deg,#173b2d,#0e281f);box-shadow:inset 0 0 0 1px #365340;color:#e8e0c9;box-sizing:border-box;overflow-x:auto"><span aria-hidden="true" style="position:absolute;left:3px;top:3px;width:8px;height:8px;border-left:1px solid #dcc176;border-top:1px solid #dcc176;pointer-events:none"></span><span aria-hidden="true" style="position:absolute;right:3px;bottom:3px;width:8px;height:8px;border-right:1px solid #dcc176;border-bottom:1px solid #dcc176;pointer-events:none"></span><div style="font-size:12px;line-height:16px;margin:0">'.nl2br(htmlspecialchars($p['closing'],ENT_QUOTES)).'</div><div style="font-size:12px;line-height:16px;margin:8px 0 10px;font-weight:bold">'.htmlspecialchars($a['username'],ENT_QUOTES).'</div>';
- $groups=dune_signature_group($personal,'Personal',$fluid).dune_signature_group($roles,'Roles',$fluid).dune_signature_group($teams,'Departments & teams',$fluid).dune_signature_group($offices,'Elected offices',$fluid).dune_signature_group($recognition,'Recognition',$fluid);
+ $groups=dune_signature_group($personal,'Personal',$fluid).dune_signature_group($roles,'Roles',$fluid).dune_signature_group($teams,'Departments',$fluid).dune_signature_group($offices,'Elected offices',$fluid).dune_signature_group($recognition,'Recognition',$fluid);
  if($groups)$html.='<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width:auto;table-layout:auto;white-space:nowrap;margin:0;background:transparent"><tbody style="background:transparent"><tr style="background:transparent">'.$groups.'</tr></tbody></table>';
  if($context==='forum'&&$p['banner_url']!=='')$html.='<div class="dune-user-signature-banner" style="margin-top:10px;padding-top:8px;border-top:1px solid #506847"><div style="font-size:10px;color:#aebcad;margin-bottom:4px">Personal banner</div><img src="'.htmlspecialchars($p['banner_url'],ENT_QUOTES).'" alt="Personal forum signature banner" style="display:block;max-width:100%;max-height:120px;width:auto;height:auto;object-fit:contain;border-radius:6px"></div>';
  return $html.'</div>';
@@ -44,7 +56,7 @@ function dune_render_managed_signature($id,$context='forum'){
 function dune_signature_bbcode($id){
  $a=dune_signature_account($id);if(!$a)return'';$p=dune_signature_preferences($id);[$personal,$teams]=dune_signature_staff_badges($a);
  $bb=str_replace(['[',']'],['&#91;','&#93;'],$p['closing'])."\n\n[b]".str_replace(['[',']'],['&#91;','&#93;'],$a['username'])."[/b]\n\n";
- foreach([['Personal seals',$personal],['Departments & teams',$teams]]as[$label,$badges])if($badges){$bb.='[b]'.$label."[/b]\n";foreach($badges as[$url,$caption])$bb.='[img=48x48]'.$url.'[/img] ';$bb.="\n\n";}
+ foreach([['Personal seals',$personal],['Departments',$teams]]as[$label,$badges])if($badges){$bb.='[b]'.$label."[/b]\n";foreach($badges as[$url,$caption])$bb.='[img=48x48]'.$url.'[/img] ';$bb.="\n\n";}
  foreach(dune_community_seal_keys($id)as$key)if(is_file(__DIR__.'/osticket/assets/seals/'.$key.'.png'))$bb.='[img=48x48]https://support.dunerealms.com/assets/seals/'.$key.'.png[/img] ';
  if($p['banner_url']!=='')$bb.="\n\n[img]".$p['banner_url'].'[/img]';return trim($bb);
 }
