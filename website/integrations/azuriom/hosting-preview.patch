@@ -1,0 +1,18 @@
+--- a/plugins/shop/resources/views/categories/show.blade.php
++++ b/plugins/shop/resources/views/categories/show.blade.php
+@@ -40,6 +40,7 @@
+                     </div>
+                 @endif
+ 
++                @if(!in_array($category->slug, ['minecraft-hosting','website-hosting','web','entry-hosting','cloud-hosting','dedicated-hosting']))
+                 @forelse($category->packages as $package)
+                     <div class="col-md-4">
+                         <div class="card h-100">
+@@ -77,6 +78,7 @@
+                         </div>
+                     </div>
+                 @endforelse
++                @endif
+             </div>
+         </div>
+     </div>
