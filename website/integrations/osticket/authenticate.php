@@ -36,6 +36,8 @@ class DuneAccountsPlugin extends Plugin {
  var $config_class='DuneAccountsConfig';
  function bootstrap(){
   UserAuthenticationBackend::register(new DuneClientAuthentication());StaffAuthenticationBackend::register(new DuneStaffAuthentication());
+  require_once '/home/dunerealms/apps/integrations/managed-signatures.php';
+  dune_register_closure_signature_events();
   if(PHP_SAPI==='cli')return;
   $file=basename($_SERVER['SCRIPT_NAME']??'');
   if(in_array($file,['dune-sso.php','cron.php','api.php'],true))return;
