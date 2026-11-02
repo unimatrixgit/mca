@@ -22,7 +22,7 @@ import {createContact} from './contact.mjs';
 import {createGameLink} from './game-link.mjs';
 import {createCommunityRewards} from './community-rewards.mjs';
 import {createPublicNews,initializeNews} from './news.mjs';
-import {publicBanCards,publicBanList} from './public-bans.mjs';
+import {publicBanCards,publicBanList,publicAppealCards} from './public-bans.mjs';
 const root=new URL('./public/',import.meta.url);
 const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; frame-src 'self' https://cp.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://cp.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://www.dunerealms.com; connect-src 'self' https://cp.dunerealms.com https://www.dunerealms.com; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"};
 export function createApplication(db,settings={}) {
@@ -46,6 +46,7 @@ export function createApplication(db,settings={}) {
     if(url.pathname.startsWith('/api/community/'))return rewards(request);
     if(url.pathname==='/api/game-link'||url.pathname.startsWith('/api/game-link/'))return gameLink(request);
     if(url.pathname.startsWith('/api/contact/'))return contact(request);
+    if(url.pathname==='/api/public/appeals'&&request.method==='GET')return publicAppealCards(db,request);
     if(url.pathname==='/api/public/ban-list'&&request.method==='GET')return publicBanList(db,request);
     if(url.pathname==='/api/public/bans'&&request.method==='GET')return publicBanCards(db);
     if(url.pathname==='/api/worlds')return request.method==='GET'?worldStatus().then(r=>{const h=new Headers(r.headers);h.set('Access-Control-Allow-Origin','*');return new Response(r.body,{status:r.status,headers:h});}):new Response('Method not allowed',{status:405});

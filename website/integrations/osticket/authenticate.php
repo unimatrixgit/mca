@@ -60,7 +60,7 @@ class DuneAccountsPlugin extends Plugin {
   }
   if($file==='open.php'&&($_SERVER['REQUEST_METHOD']??'')==='POST'&&!$identity['linked']&&empty($identity['gameLinkExempt'])){
    $topic=Topic::lookup((int)($_POST['topicId']??0));
-   if(!$topic||!in_array($topic->getName(),['Ban appeal','Parental consent request [Preview]','Parental data removal [Preview]'],true)){dune_account_required('support');}
+   if(!$topic||!in_array($topic->getName(),['Ban appeal','Parental consent request [Preview]','Parental data removal [Preview]','GDPR data removal request'],true)){dune_account_required('support');}
   }
  }
 }
