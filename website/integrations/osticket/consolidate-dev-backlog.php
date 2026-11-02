@@ -1,0 +1,18 @@
+<?php
+if(PHP_SAPI!=='cli')exit(1);
+$dir='/home/dunerealms/.config/dev-team-20261102';$c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);$db=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
+$plan=json_decode(file_get_contents($dir.'/consolidation-plan.json'),true,512,JSON_THROW_ON_ERROR);$owner=$db->query("SELECT id FROM site_accounts WHERE username='unimatrix999' AND role='owners'")->fetchColumn();if(!$owner)throw new RuntimeException('Authorising owner missing.');
+if(!is_file($dir.'/before-consolidation.json')){file_put_contents($dir.'/before-consolidation.json',json_encode($db->query('SELECT * FROM dune_dev_tasks')->fetchAll(),JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR));chmod($dir.'/before-consolidation.json',0600);}
+$db->exec('CREATE TABLE IF NOT EXISTS dune_dev_task_links(child_ticket_id INT UNSIGNED PRIMARY KEY,parent_ticket_id INT UNSIGNED NOT NULL,INDEX dev_parent(parent_ticket_id)) ENGINE=InnoDB');
+$_SERVER['REQUEST_METHOD']='CLI';$_SERVER['SCRIPT_NAME']='dev-consolidation.php';$_SERVER['HTTP_HOST']='support.dunerealms.com';$_SERVER['REMOTE_ADDR']='127.0.0.1';chdir(__DIR__);require 'main.inc.php';
+function find_dev($db,$key){$q=$db->prepare('SELECT * FROM dune_dev_tasks WHERE task_key=?');$q->execute(['backlog:'.$key]);$row=$q->fetch();if(!$row)throw new RuntimeException('Task mapping missing: '.$key);return$row;}
+function close_grouped($db,$row,$owner,$state,$note){
+ if($row['approval']===$state)return;
+ if($row['approval']!=='approved')throw new RuntimeException('Unexpected task state; manual review required.');
+ $ticket=Ticket::lookup($row['ticket_id']);$errors=[];if(!$ticket||(!$ticket->isClosed()&&!$ticket->setStatus(3,$note,$errors,false,true)))throw new RuntimeException('Native consolidation close failed.');
+ $q=$db->prepare('UPDATE dune_dev_tasks SET approval=?,decision_note=?,updated_at=NOW() WHERE ticket_id=? AND approval=?');$q->execute([$state,$note,$row['ticket_id'],$row['approval']]);
+ $q=$db->prepare('INSERT INTO dune_dev_task_events(ticket_id,actor_id,action,note,created_at) VALUES(?,?,?,?,NOW())');$q->execute([$row['ticket_id'],$owner,$state,'Owner-authorised administrative grouping. Previous approval: '.$row['approval'].'. '.$note]);
+}
+$count=0;foreach($plan['groups']as$group){$parent=find_dev($db,$group['parent']);foreach($group['children']as$key){$child=find_dev($db,$key);$q=$db->prepare('INSERT INTO dune_dev_task_links(child_ticket_id,parent_ticket_id) VALUES(?,?) ON DUPLICATE KEY UPDATE parent_ticket_id=VALUES(parent_ticket_id)');$q->execute([$child['ticket_id'],$parent['ticket_id']]);close_grouped($db,$child,$owner,'consolidated','Merged into Dev work package: https://support.dunerealms.com/dev-tasks.php?id='.$parent['ticket_id'].'. Original requirements and history retained. This is administrative consolidation, NOT task completion.');$count++;}}
+foreach($plan['superseded']as$key){$child=find_dev($db,$key);close_grouped($db,$child,$owner,'superseded',$key==='next-alpha-vip-legendary-plus-generator'?'Superseded by Owner-approved cosmetic-only supporter policy. Paid competitive enchantment/bonus rewards must not be implemented.':'Account/Staff Center split already delivered in published Alpha 1.0.0.3; preserve existing implementation, no duplicate work.');}
+echo json_encode(['consolidated'=>$count,'superseded'=>count($plan['superseded']),'active'=>$db->query("SELECT COUNT(*) FROM dune_dev_tasks WHERE approval IN ('approved','pending')")->fetchColumn(),'groups'=>count($plan['groups'])],JSON_PRETTY_PRINT);

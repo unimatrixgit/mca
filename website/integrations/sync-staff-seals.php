@@ -40,11 +40,11 @@ $p->beginTransaction();try{
    $q=$p->prepare('INSERT INTO dune_community_badges(website_id,badge_key,username) VALUES(?,?,?)');foreach(array_unique($a['communityBadges'])as$key)$q->execute([$a['id'],$key,$a['username']??'']);
   }
   $personal=$a['personal']??null;if($personal&&!preg_match('~^/assets/seals/(?:(?:owner|corestaff|main-network-admin)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$personal))throw new Exception('Invalid personal seal');
-  $departments=$a['departments']??array_filter([$a['department']??null]);if(!is_array($departments)||count($departments)>6)throw new Exception('Invalid departments');
-  foreach($departments as$department)if(!in_array($department,['support','ban-appeals','forum-support','legal','sales','network-staff'],true))throw new Exception('Invalid department');
+  $departments=$a['departments']??array_filter([$a['department']??null]);if(!is_array($departments)||count($departments)>7)throw new Exception('Invalid departments');
+  foreach($departments as$department)if(!in_array($department,['support','ban-appeals','forum-support','legal','sales','network-staff','dev'],true))throw new Exception('Invalid department');
   $paths=array_filter(array_merge([$personal],array_map(fn($department)=>dune_department_seal_path($department),array_unique($departments))));
-  $teams=$a['teams']??$departments;if(!is_array($teams)||count($teams)>6)throw new Exception('Invalid teams');
-  foreach($teams as$team)if(!in_array($team,['support','ban-appeals','forum-support','legal','sales','network-staff'],true))throw new Exception('Invalid team');
+  $teams=$a['teams']??$departments;if(!is_array($teams)||count($teams)>7)throw new Exception('Invalid teams');
+  foreach($teams as$team)if(!in_array($team,['support','ban-appeals','forum-support','legal','sales','network-staff','dev'],true))throw new Exception('Invalid team');
   $teamPaths=[];foreach(array_unique($teams)as$team){$path='/assets/seals/team-'.$team.'.png';if(is_file('/home/dunerealms/apps/integrations/osticket'.$path))$teamPaths[]=$path;}
   $username=(string)($a['username']??'DuneRealms staff');
   $q=$p->prepare('INSERT INTO dune_signature_accounts(website_id,username,personal_path,departments_json,teams_json) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE username=VALUES(username),personal_path=VALUES(personal_path),departments_json=VALUES(departments_json),teams_json=VALUES(teams_json)');$q->execute([$a['id'],$username,$personal,json_encode(array_values($departments)),json_encode(array_values($teams))]);
@@ -55,7 +55,7 @@ $p->beginTransaction();try{
   if($staffId){$badges=[];foreach($allPaths as$path){$file=basename($path,'.png');$label=str_starts_with($file,'owner-')?'Owner':(str_starts_with($file,'corestaff-')?'Corestaff':ucwords(str_replace('-',' ',preg_replace('/(?:-v2)?-150$/','',$file))));$badges[]=[$path,$label];}
    $html=$badges?'<div style="margin:8px 0;color:#e6dfc9"><p style="margin:0">With regards,</p><p style="margin:8px 0 12px"><strong>'.htmlspecialchars($username,ENT_QUOTES).'</strong></p></div>'.dune_seal_table($badges):'';dune_update_native_signature($p,'agent',(int)$staffId,$html?"\n".$html:'');}
  }
- foreach(['Support'=>'support','Ban appeals'=>'ban-appeals','Forum support'=>'forum-support','Legal'=>'legal','Sales'=>'sales','Network staff'=>'network-staff']as$name=>$slug){$q=$p->prepare('SELECT id FROM drsupport_department WHERE name=?');$q->execute([$name]);if($id=$q->fetchColumn())dune_update_native_signature($p,'department',(int)$id,"\n".dune_seal_html(dune_department_seal_path($slug),$name));}
+ foreach(['Support'=>'support','Ban appeals'=>'ban-appeals','Forum support'=>'forum-support','Legal'=>'legal','Sales'=>'sales','Network staff'=>'network-staff','Dev team'=>'dev']as$name=>$slug){$q=$p->prepare('SELECT id FROM drsupport_department WHERE name=?');$q->execute([$name]);if($id=$q->fetchColumn())dune_update_native_signature($p,'department',(int)$id,"\n".dune_seal_html(dune_department_seal_path($slug),$name));}
  $p->commit();
 }catch(Throwable$e){$p->rollBack();throw$e;}
 $_SERVER['SCRIPT_NAME']='/dune-sso.php';$_SERVER['REQUEST_METHOD']='GET';$_SERVER['REMOTE_ADDR']='127.0.0.1';$_SERVER['HTTP_HOST']='forums.dunerealms.com';define('IN_MYBB',1);chdir('/home/dunerealms/apps/integrations/mybb');require 'global.php';require_once './staff-seal-signatures.php';

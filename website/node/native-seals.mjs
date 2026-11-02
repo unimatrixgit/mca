@@ -12,12 +12,12 @@ export function staffSealFor(account,manifest){
 }
 export function departmentFor(nodes){
  if(!nodes.includes('web.tickets.staff'))return null;
- return [['web.tickets.support','support'],['web.tickets.appeals','ban-appeals'],['web.forum.moderate','forum-support'],['web.tickets.legal','legal'],['web.tickets.sales','sales'],['web.tickets.network','network-staff']].find(([node])=>nodes.includes(node))?.[1]||null;
+ return [['web.tickets.support','support'],['web.tickets.appeals','ban-appeals'],['web.forum.moderate','forum-support'],['web.tickets.legal','legal'],['web.tickets.sales','sales'],['web.tickets.network','network-staff'],['web.tickets.dev','dev']].find(([node])=>nodes.includes(node))?.[1]||null;
 }
 export function departmentsFor(nodes,ranks=[],username=''){
- if(ranks.some(rank=>['owners','corestaff'].includes(rank))&&!(ranks.includes('owners')&&['unimatrix999','dunerealms'].includes(username.toLowerCase())))return[departmentFor(nodes)].filter(Boolean);
+ if(ranks.some(rank=>['owners','corestaff'].includes(rank))&&!(ranks.includes('owners')&&['unimatrix999','dunerealms'].includes(username.toLowerCase())))return[...new Set([departmentFor(nodes),nodes.includes('web.tickets.dev')?'dev':null].filter(Boolean))];
  if(!nodes.includes('web.tickets.staff'))return[];
- return [['web.tickets.support','support'],['web.tickets.appeals','ban-appeals'],['web.forum.moderate','forum-support'],['web.tickets.legal','legal'],['web.tickets.sales','sales'],['web.tickets.network','network-staff']].filter(([node])=>nodes.includes(node)).map(([,department])=>department);
+ return [['web.tickets.support','support'],['web.tickets.appeals','ban-appeals'],['web.forum.moderate','forum-support'],['web.tickets.legal','legal'],['web.tickets.sales','sales'],['web.tickets.network','network-staff'],['web.tickets.dev','dev']].filter(([node])=>nodes.includes(node)).map(([,department])=>department);
 }
 export async function syncNativeSeals(db){
  const script='/home/dunerealms/apps/integrations/sync-staff-seals.php',manifestFile='/home/dunerealms/apps/integrations/seal-manifest.json';

@@ -24,6 +24,7 @@ if(dashboard&&!embedded){
  const accountButton=makeButton('Account Center',()=>navigate(lastAccount,'account'));
  const staffButton=makeButton('Staff Center',()=>{const available=staffAreasFor(user);if(available.length)navigate(lastStaff||staffPortals.find(([area])=>available.includes(area))[2],'staff');});
  centers.append(accountButton,staffButton);
+ const devLink=document.createElement('a');devLink.href='https://support.dunerealms.com/dev-tasks.php';devLink.textContent='Dev Center';devLink.hidden=true;devLink.className='cp-dev-link';centers.append(devLink);
  for(const [key,definition]of Object.entries(accountPortals)){
   const section=document.createElement('section');section.id=definition.home;section.className='cp-portal-overview';
   const eyebrow=document.createElement('p');eyebrow.className='eyebrow';eyebrow.textContent='ACCOUNT CENTER';
@@ -43,6 +44,7 @@ if(dashboard&&!embedded){
  function paint(){
   centers.hidden=portalNav.hidden=breadcrumb.hidden=!user;if(!user){document.body.removeAttribute('data-cp-center');return;}
   const active=dashboard.querySelector(':scope>section.cp-page-active')?.id||location.hash.slice(1)||'user-home';
+  devLink.hidden=!(user.ranks?.includes('vip')||user.permissions?.some(n=>['web.tickets.dev','web.menu.staffmanual','web.tickets.staff','web.forum.moderate','web.posts.edit'].includes(n)));decorate(devLink,'seals/team-dev-150.png');
   const staffAreas=staffAreasFor(user),baseArea=pageArea(active),isStaff=baseArea.endsWith('-staff')||baseArea==='webmail';
   const center=isStaff?'staff':'account';document.body.dataset.cpCenter=center;staffButton.hidden=!staffAreas.length;
   accountButton.setAttribute('aria-pressed',String(center==='account'));staffButton.setAttribute('aria-pressed',String(center==='staff'));

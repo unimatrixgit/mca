@@ -8,6 +8,7 @@ function socialIcon(key){return '<svg class="roster-social-icon" viewBox="0 0 24
 const teams=[
  // Leadership first, then the operational departments. Members are ordered by effective rank level.
  ['Network staff','web.tickets.network','rank-network-staff-150.png'],
+ ['Dev team','web.tickets.dev','team-dev-150.png'],
  ['Legal team','web.tickets.legal','department-legal-v2-150.png'],
  ['Player support','web.tickets.support','department-support-150.png'],
  ['Ban appeals','web.tickets.appeals','department-ban-appeals-150.png'],
@@ -16,6 +17,7 @@ const teams=[
  ['Sales team','web.tickets.sales','department-sales-150.png']
 ];
 function sealFor(user,ranks){
+ if(ranks.includes('web_dev'))return '/assets/seals/rank-dev-150.png';
  if(ranks.includes('owners')&&['unimatrix999','dunerealms','grmacken','richwjr'].includes(user.username.toLowerCase()))return '/assets/seals/owner-'+user.username.toLowerCase()+'-150.png';
  if(ranks.includes('web_net_admin')&&user.username.toLowerCase()==='grmacken')return '/assets/seals/main-network-admin-grmacken-150.png';
  if(ranks.includes('web_network'))return '/assets/seals/rank-network-staff-150.png';
