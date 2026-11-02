@@ -108,3 +108,8 @@ header .dune-memorial{width:200px;padding:12px 12px 15px;box-sizing:border-box;b
 /* Preserve memorial contrast against native application quote styles */
 header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:#e6dcc5!important;font:italic 11px/1.5 Georgia,serif!important;margin:5px 0!important}header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote::before,header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote::after{display:none!important}
 
+
+/* One canonical responsive header for website, Boards and Support. */
+@media(min-width:1241px){body>header.dune-site-header>button.menu-toggle{display:none!important}}
+@media(max-width:1240px){body>header.dune-site-header>button.menu-toggle{display:flex!important}body>header.dune-site-header>nav[aria-label="Main navigation"]:not(.open){display:none!important}body>header.dune-site-header>nav[aria-label="Main navigation"].open{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));width:100%!important;max-width:100%!important;box-sizing:border-box}body>header.dune-site-header>nav[aria-label="Main navigation"]>a{min-width:0;white-space:normal}}
+header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:#e6dcc5!important;font:italic 11px/1.5 Georgia,serif!important;margin:5px 0!important}header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote::before,header.dune-site-header .dune-memorial .dune-memorial-dedication blockquote::after{display:none!important}

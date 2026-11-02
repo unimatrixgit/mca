@@ -1,0 +1,58 @@
+--- a/plugins/shop/src/Models/Package.php
++++ b/plugins/shop/src/Models/Package.php
+@@ -567,13 +567,16 @@
+                     ], [
+                         $item->quantity, $this->id, $this->name, $item->price, $item->payment->transaction_id,
+                     ], $command))
+-                    ->map(fn (string $command) => $item->replaceVariables($command))
++                    ->map(fn (string $command) => $item->replaceVariables(\Azuriom\Support\DuneShopGameIdentity::expand($command,['uuid'=>$item->variables['_dune_minecraft_uuid']??null,'name'=>$item->variables['_dune_minecraft_name']??null])))
+                     ->all();
+ 
+                 return $command;
+             })
+             ->filter(fn (array $command) => $command['server'] !== null);
+ 
+-        $this->sendServerCommands($commands, $item->payment->user);
++        $recipient=clone $item->payment->user;
++        $recipient->setAttribute('dune_delivery_uuid',$item->variables['_dune_minecraft_uuid']??null);
++        $recipient->setAttribute('dune_delivery_name',$item->variables['_dune_minecraft_name']??null);
++        $this->sendServerCommands($commands, $recipient);
+     }
+ }
+--- a/app/Http/Controllers/Api/ServerController.php
++++ b/app/Http/Controllers/Api/ServerController.php
+@@ -73,10 +73,11 @@
+         ], $request->json('full', false));
+ 
+         $users = User::whereIn($uidKey ? 'game_id' : 'name', $players)->get();
++        $onlineUuids=array_map(function($uuid){$v=strtolower(str_replace('-','',$uuid));return strlen($v)===32?substr($v,0,8).'-'.substr($v,8,4).'-'.substr($v,12,4).'-'.substr($v,16,4).'-'.substr($v,20):'';},array_keys($players));
+         $commands = $server->commands()
+-            ->with('user')
+-            ->where(function (Builder $query) use ($users) {
+-                $query->whereIn('user_id', $users->modelKeys())
++            ->with('user')->whereNotNull('dune_minecraft_uuid')->whereNotNull('dune_minecraft_name')
++            ->where(function (Builder $query) use ($onlineUuids) {
++                $query->whereIn('dune_minecraft_uuid', $onlineUuids)
+                     ->orWhere('need_online', false);
+             })
+             ->limit(100)
+@@ -251,7 +252,7 @@
+ 
+     protected function mapLegacyCommands(Collection $commands): Collection
+     {
+-        return $commands->groupBy('user.name')
++        return $commands->groupBy('dune_minecraft_name')
+             ->map(fn (Collection $group) => $group->pluck('command'));
+     }
+ 
+--- a/app/Http/Middleware/VerifyServerToken.php
++++ b/app/Http/Middleware/VerifyServerToken.php
+@@ -16,6 +16,8 @@
+      */
+     public function handle(Request $request, Closure $next): Response
+     {
++        abort_unless($request->is('api/azlink') && in_array($request->method(),['GET','POST'],true),403,'Only game status and command polling are enabled.');
++
+         $token = $request->header('Azuriom-Link-Token');
+ 
+         abort_if($token === null, 401, 'No server key provided.');

@@ -6,3 +6,22 @@ body .main,body .content,body .wrapper{background:#10271f;color:#eee4cb}body .si
 body h1,body h2,body h3,body .h1,body .h2,body .h3,body label,body .form-label{color:#e7ce91!important}body .form-text{color:#b5c6b9!important}
 
 .dune-vip-package{padding:20px;border:1px solid #b99a4c;border-radius:14px;background:linear-gradient(145deg,#153a30,#0b201b);color:#eee6ce}.dune-vip-package>p:first-child{text-align:center}.dune-vip-package img{display:block;margin:0 auto;object-fit:contain;filter:drop-shadow(0 4px 12px #b99a4c44)}.dune-vip-package h2{color:#e8cb7c;text-align:center}.dune-vip-package h3{margin-top:22px;padding-top:16px;border-top:1px solid #587356;color:#e8cb7c}.dune-vip-package li{margin:9px 0;line-height:1.6}.dune-vip-package>p:last-child{font-style:italic;text-align:center;color:#d5bc75}
+
+/* Shared DuneRealms storefront language: emerald, antique gold, clear type. */
+body.dune-shop-front{font:15px/1.65 Manrope,Arial,sans-serif!important;background:radial-gradient(ellipse at top,#1b3e30,#10251e 65%)!important}
+.dune-shop-front :is(h1,h2,h3,h4,h5,.h1,.h2,.h3,.h4,.h5){font-family:Manrope,Arial,sans-serif!important;letter-spacing:-.025em;line-height:1.25;color:#e7ce91!important;font-weight:700}
+.dune-shop-front h1{font-size:clamp(27px,4vw,38px);margin-bottom:28px}
+.dune-shop-front .navbar{border-bottom:1px solid #9b804b66;background:#112b22!important;padding:12px 20px}
+.dune-shop-front .navbar-brand{font-size:18px;font-weight:700;letter-spacing:.02em}
+.dune-shop-front :is(.card,.list-group,.modal-content){border:1px solid #7b7449!important;border-radius:14px!important;box-shadow:0 9px 24px #0002;background:#17372a!important}
+.dune-shop-front .card{height:100%;transition:border-color .15s,box-shadow .15s}
+.dune-shop-front .card:hover{border-color:#c6a55e!important;box-shadow:0 12px 28px #0004}
+.dune-shop-front .card-img-top{width:100%;height:280px;object-fit:contain;padding:25px;background:radial-gradient(ellipse,#35503a55,#112b2366);border-bottom:1px solid #8a764444}
+.dune-shop-front .card-body{padding:24px}.dune-shop-front .card h4{font-size:24px}.dune-shop-front .card h5{font-size:23px;color:#f1d58a!important;margin:12px 0 22px}
+.dune-shop-front :is(.btn-primary,.btn-success){background:linear-gradient(135deg,#d3b56c,#b29448)!important;border:1px solid #e1c98b!important;color:#10261f!important;font:700 14px/1.4 Manrope,Arial,sans-serif;border-radius:8px;padding:11px 20px;box-shadow:inset 0 1px #fff3,0 3px 8px #0002}
+.dune-shop-front :is(.btn-primary,.btn-success):hover{background:#e1c98b!important;filter:brightness(1.06)}
+.dune-shop-front :is(.form-control,.form-select){border-radius:8px;border-color:#72815d!important;min-height:42px}.dune-shop-front :is(.form-control,.form-select):focus{box-shadow:0 0 0 3px #d1ad6030;border-color:#d1ad60!important}
+.dune-shop-front .list-group-item{padding:14px 18px;border-color:#496046!important}.dune-shop-front .list-group-item.active{background:linear-gradient(100deg,#3c5035,#263e2b)!important;border-left:3px solid #d4b46a!important}
+.dune-shop-front .modal-dialog{max-width:900px}.dune-shop-front .modal-header,.dune-shop-front .modal-footer{background:#142f25;border-color:#7b744966}.dune-shop-front .modal-body{padding:20px}.dune-shop-front .modal-header .btn-close{filter:invert(1);opacity:.75}
+.dune-shop-front footer{border-top:1px solid #7b744944;font-size:12px;color:#abbeb0;padding:20px!important}.dune-shop-front .alert{border-radius:10px;line-height:1.6}
+@media(max-width:650px){.dune-shop-front .card-img-top{height:225px}.dune-shop-front .card-body{padding:20px}.dune-shop-front .modal-body{padding:12px}.dune-shop-front .navbar{padding:10px}.dune-shop-front main{padding-top:20px!important}}

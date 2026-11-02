@@ -16,6 +16,8 @@ class DuneShopRankHooks
     public static function register(): void
     {
         Package::saving(function (Package $package) {
+            if(request()->routeIs('shop.admin.packages.store','shop.admin.packages.update') && ($package->commands||$package->getOriginal('commands')) && $package->isDirty('commands') && !DuneShopGameIdentity::mayConfigure(request()->attributes->get('dune_identity',[])))throw ValidationException::withMessages(['commands'=>'Only authorised network console operators can configure server commands.']);
+
             if (request()->routeIs('shop.admin.packages.store','shop.admin.packages.update')) {
                 $package->dune_website_rank = request()->input('dune_website_rank','user');
                 $required=request()->input('dune_required_ranks',[]);
@@ -32,7 +34,10 @@ class DuneShopRankHooks
             if ($item->buyable instanceof Package) {
                 $rank=$item->buyable->dune_website_rank??'user';
                 if (!DuneShopRanks::allowedRank($rank)) throw new \RuntimeException('Protected package rank');
-                $variables=$item->variables??[];$variables['_dune_website_rank']=$rank;$item->variables=$variables;
+                $variables=$item->variables??[];$variables['_dune_website_rank']=$rank;
+                $gameCommands=array_merge($item->buyable->commands??[],json_decode(setting('shop.commands')?:'[]',true,16,JSON_THROW_ON_ERROR));
+                if($gameCommands){$recipient=DuneShopGameIdentity::linked($item->payment->user->dune_account_id??'');if(!$recipient)throw ValidationException::withMessages(['minecraft'=>'Link your Minecraft account before buying a package with in-game rewards.']);$variables['_dune_minecraft_uuid']=$recipient['uuid'];$variables['_dune_minecraft_name']=$recipient['name'];}
+                $item->variables=$variables;
             }
         });
         Event::listen(PaymentPaid::class,function (PaymentPaid $event) {
@@ -44,6 +49,7 @@ class DuneShopRankHooks
     }
     public static function hasRequiredWebsiteRole(Package $package): bool
     {
+        if(($package->commands||setting('shop.commands'))&&!DuneShopGameIdentity::linked(request()->attributes->get('dune_identity')['id']??''))return false;
         $required=json_decode($package->dune_required_ranks??'[]',true,8,JSON_THROW_ON_ERROR);
         if(!$required)return true;
         if(!is_array($required)||array_filter($required,fn($r)=>!is_string($r)||!DuneShopRanks::allowedRank($r)))return false;

@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {renderNewsBody} from '../node/news-format.mjs';
+test('article headings, lists and HTTPS signup links render safely',()=>{const h=renderNewsBody('## Join us\n\n- Java\n- Bedrock\n\n[Sign up](https://support.dunerealms.com/alpha-signup.php)');assert(h.includes('<h3>Join us</h3>'));assert(h.includes('<ul><li>Java</li><li>Bedrock</li></ul>'));assert(h.includes('href="https://support.dunerealms.com/alpha-signup.php"'));});
+test('article text never becomes executable markup or javascript links',()=>{const h=renderNewsBody('<img src=x onerror=alert(1)>\n\n[bad](javascript:alert(1))');assert(!h.includes('<img'));assert(!h.includes('href="javascript:'));assert(h.includes('&lt;img'));});
