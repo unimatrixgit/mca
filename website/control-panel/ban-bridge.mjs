@@ -8,7 +8,7 @@ export function createBanBridge(db,settings,dependencies={}){
  const moderation=createModeration(db,settings,dependencies);
  let lastSync=0,lastError=null,pending=null;
  async function sync(){if(pending)return pending;if(Date.now()-lastSync<15000){if(lastError)throw lastError;return;}lastSync=Date.now();pending=moderation.sync().then(()=>{lastError=null;}).catch(error=>{lastError=error;throw error;}).finally(()=>{pending=null;});return pending;}
- async function publicBans(){try{await sync();}catch{}const{results}=await db.prepare('SELECT id,source_key,player_name,banned_by,reason,scope,created_text,expires_text FROM moderation_bans WHERE active=1 ORDER BY first_seen DESC,id DESC LIMIT 9').all();return json({bans:results.map(({source_key,...ban})=>({...ban,demo:source_key.startsWith('demo:')}))});}
+ async function publicBans(){try{await sync();}catch{}const{results}=await db.prepare('SELECT id,source_key,player_name,banned_by,reason,scope,created_text,expires_text FROM moderation_bans WHERE active=1 ORDER BY REPLACE(created_text,"T"," ") DESC,first_seen DESC,id DESC LIMIT 12').all();return json({bans:results.map(({source_key,...ban})=>({...ban,banned_by:/^(console|0)$/i.test(String(ban.banned_by).trim())?'Network':ban.banned_by,demo:source_key.startsWith('demo:')}))});}
  async function handle(request){
   const expected=Buffer.from('Bearer '+(settings.INTEGRATION_SSO_SECRET||'')),supplied=Buffer.from(request.headers.get('authorization')||'');
   if(request.method!=='POST'||(settings.INTEGRATION_SSO_SECRET||'').length<32||expected.length!==supplied.length||!timingSafeEqual(expected,supplied))return json({message:'Unauthorized'},401);

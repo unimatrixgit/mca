@@ -1,6 +1,7 @@
 import {communitySealEligible} from './community-badges.mjs';
 import {badgesFor} from './community-badges.mjs';
 export const NODES={
+ 'web.shop.support':'Read shop purchases and payment status; manage coupons and discounts',
  'web.bank.personal.view':'View your personal Dunemarks bank *','web.bank.staff.view':'View the shared server treasury *','web.bank.staff.deposit':'Deposit into the shared server treasury *','web.bank.staff.manage':'Manage the shared server treasury through authorised game controls *',
  'web.quests.view':'View your discovered quests','web.quests.manage':'Manage native quest definitions and encounter history',
  'web.git.admin':'Administer the DuneGit platform (network leadership)',
@@ -55,6 +56,7 @@ export const DEFAULT_RANKS=[
 ];
 DEFAULT_RANKS.push(...[['game_quests','Quest Team',45,['web.quests.manage']],['game_restoration','Restoration Team',60,[]]].map(([key,label,level,extra])=>({key,label,level,kind:'access',nodes:[...basic,'web.menu.staffmanual',...extra]})));
 for(const rank of DEFAULT_RANKS)if(rank.nodes.includes('web.menu.staffmanual'))rank.nodes=[...new Set([...rank.nodes,'web.bank.staff.view','web.bank.staff.deposit'])];
+for(const rank of DEFAULT_RANKS)if(rank.key.startsWith('web_'))rank.nodes=[...new Set([...rank.nodes,'web.menu.bans','web.bans.view','web.shop.support'])];
 export const rankKey=role=>role==='player'?'user':role;
 export async function rankFor(db,key){
  const row=await db.prepare('SELECT rank_key,label,rank_level,kind,permissions_json,version FROM cp_ranks WHERE rank_key=?').bind(rankKey(key)).first();

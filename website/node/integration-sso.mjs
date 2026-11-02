@@ -7,7 +7,7 @@ import {accessFor} from './permissions.mjs';
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 export function createIntegrationSSO(db,settings={}){
- const clients={git:'https://www.dunerealms.com/git/sso/callback',mybb:'https://forums.dunerealms.com/dune-sso.php',osticket:'https://support.dunerealms.com/dune-sso.php'};
+ const clients={git:'https://www.dunerealms.com/git/sso/callback',mybb:'https://forums.dunerealms.com/dune-sso.php',osticket:'https://support.dunerealms.com/dune-sso.php',shop:'https://cp.dunerealms.com/store/dune-login'};
  return async request=>{
   const url=new URL(request.url),client=url.searchParams.get('client');
   if(url.pathname==='/sso/authorize'){

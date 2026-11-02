@@ -21,6 +21,9 @@ test('SSO binds fixed callbacks to a live account session and consumes codes onc
  assert.equal((await sso(req('/internal/integrations/redeem',{...payload,client:'osticket'}))).status,401);
  const redeemed=await sso(req('/internal/integrations/redeem',payload));assert.equal(redeemed.status,200);const profile=await redeemed.json();assert.equal(profile.id,'user-1');assert.equal(profile.publicProfile.bio,'Desert streams');assert.equal(profile.publicProfile.socials.twitch,'https://twitch.tv/caravan');assert(!Object.hasOwn(profile.publicProfile,'birthday'));assert.deepEqual(profile.ranks,['user']);assert.equal(profile.rankLabel,'User');assert.equal(profile.rankLevel,10);assert.deepEqual(profile.communityBadges,['alpha-tester','season-tavren-ii']);
  assert.equal((await sso(req('/internal/integrations/redeem',payload))).status,401);
+ const shopRedirect=await sso(new Request(url.replace('client=mybb','client=shop')+'&redirect_uri=https://evil.invalid',{headers:{Cookie:'__Host-dune_session='+token}}));
+ const shopCallback=new URL(shopRedirect.headers.get('Location'));assert.equal(shopCallback.origin,'https://cp.dunerealms.com');assert.equal(shopCallback.pathname,'/store/dune-login');
+ const shopCode={client:'shop',code:shopCallback.searchParams.get('code')};assert.equal((await sso(req('/internal/integrations/redeem',{...shopCode,client:'mybb'}))).status,401);assert.equal((await sso(req('/internal/integrations/redeem',shopCode))).status,200);assert.equal((await sso(req('/internal/integrations/redeem',shopCode))).status,401);
  assert.equal((await sso(req('/internal/integrations/identity',{sessionRef:ref}))).status,200);
  await db.prepare('INSERT INTO site_age_declarations VALUES(?,?,?)').bind('user-1','under15',Date.now()).run();
  const restricted=await sso(req('/internal/integrations/identity',{sessionRef:ref}));assert.equal((await restricted.json()).forumAllowed,false);
