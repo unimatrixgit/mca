@@ -2,6 +2,10 @@ body.cp-centers-ready .cp-area-tabs{display:none!important}
 .cp-center-nav,.cp-portal-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:16px 22px;background:#10271f;border:1px solid #52694c}
 .cp-center-nav{border-radius:12px 12px 0 0;border-bottom:0;margin-top:18px}
 .cp-center-nav button{font-size:16px;font-weight:600;min-height:46px}
+.cp-center-nav .cp-dev-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;box-sizing:border-box;padding:12px 18px;border:1px solid #568099;border-radius:9px;background:linear-gradient(140deg,#1b3945,#102c30);color:#c7dce8;font-family:inherit;font-size:16px;font-weight:600;line-height:1.4;text-decoration:none;box-shadow:inset 0 1px #c2e1ef0b,0 3px 8px #0002}
+.cp-center-nav .cp-dev-link:hover{border-color:#d1b466;background:linear-gradient(140deg,#244a4b,#16362e);color:#f3deb0}
+.cp-center-nav .cp-dev-link:focus-visible{outline:2px solid #e4c77d;outline-offset:3px}
+.cp-center-nav .cp-dev-link[hidden]{display:none!important}
 .cp-center-nav button[aria-pressed=true]{background:#d5b468;color:#10241c;border-color:#ecd294}
 .cp-portal-nav{border-radius:0 0 12px 12px;padding-top:0;border-top:0}
 .cp-portal-nav button{color:#c4cdb7;background:#142e24;min-height:42px}

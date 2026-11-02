@@ -41,7 +41,7 @@ class DuneAccountsPlugin extends Plugin {
   if(in_array($file,['dune-sso.php','cron.php','api.php'],true))return;
   if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')!=='xmlhttprequest')ob_start('dune_shared_header');
   $identity=dune_ticket_identity();
-  if(!is_array($identity)||!is_array($identity['permissions']??null)){if(in_array($file,['index.php','service-targets.php'],true)&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))return;if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')==='xmlhttprequest'){http_response_code(401);exit('Sign in again to continue.');}$target='/dune-sso.php';if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$target.='?staff=1';elseif($file==='appeal.php')$target.='?appeal='.rawurlencode($_GET['banId']??'');header('Location: '.$target);exit;}
+  if(!is_array($identity)||!is_array($identity['permissions']??null)){if(in_array($file,['index.php','service-targets.php'],true)&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))return;if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')==='xmlhttprequest'){http_response_code(401);exit('Sign in again to continue.');}$target='/dune-sso.php';if($file==='dev-tasks.php')$target.='?dev=1';if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$target.='?staff=1';elseif($file==='appeal.php')$target.='?appeal='.rawurlencode($_GET['banId']??'');header('Location: '.$target);exit;}
   if($file==='login.php'&&str_contains($_SERVER['SCRIPT_NAME']??'','/scp/')&&($_SERVER['REQUEST_METHOD']??'')==='GET'){
    if(!in_array('web.tickets.staff',$identity['permissions'],true)){http_response_code(403);exit('Staff ticket permission required.');}
    $now=time();if($now-(int)($_SESSION['dune_staff_renew_attempt']??0)<5){http_response_code(503);exit('Support sign-in could not be renewed. Return to the Account centre and retry the staff ticket desk.');}
@@ -52,6 +52,7 @@ class DuneAccountsPlugin extends Plugin {
    $email=$identity['id'].'@accounts.dunerealms.invalid';$name=htmlspecialchars($identity['username'],ENT_QUOTES,'UTF-8');
    ob_start(function($html)use($email,$name){if(!str_contains($html,'<html'))return $html;$html=preg_replace('/(?<=>)\s*'.preg_quote($email,'/').'\s*(?=<)/','Website account: '.$name,$html);return str_replace('</body>','<script src="/dune-appeal-routing.js" defer></script></body>',$html);});
   }
+  if($file==='open.php'){ $requested=Topic::lookup((int)($_GET['topicId']??$_POST['topicId']??0));if($requested&&$requested->getName()==='Development task'){header('Location: /dev-tasks.php',true,303);exit;}}
   if($file==='open.php'&&(int)($_GET['topicId']??$_POST['topicId']??0)===2){header('Location: /appeal.php',true,303);exit;}
   if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/')&&!in_array('web.tickets.staff',$identity['permissions'],true)){http_response_code(403);exit('Staff ticket permission required.');}
   if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/')&&!dune_ticket_staff_scope_current($identity,$_SESSION['dune_staff_scope']??null)){

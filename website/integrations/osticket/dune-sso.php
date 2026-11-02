@@ -1,7 +1,7 @@
 <?php
 require '/home/dunerealms/apps/integrations/bridge.php';
 require __DIR__.'/main.inc.php';
-if(!isset($_GET['code'])){$_SESSION['dune_staff_requested']=($_GET['staff']??'')==='1';if(array_key_exists('appeal',$_GET))$_SESSION['dune_appeal_requested']=preg_match('/^[a-f0-9-]{36}$/i',$_GET['appeal'])?$_GET['appeal']:'';dune_begin_sso('osticket');}
+if(!isset($_GET['code'])){if(($_GET['dev']??'')==='1')$_SESSION['dune_dev_requested']=true;$_SESSION['dune_staff_requested']=($_GET['staff']??'')==='1';if(array_key_exists('appeal',$_GET))$_SESSION['dune_appeal_requested']=preg_match('/^[a-f0-9-]{36}$/i',$_GET['appeal'])?$_GET['appeal']:'';dune_begin_sso('osticket');}
 $identity=dune_finish_sso('osticket');
 // A newly verified central sign-in must issue fresh native idle-time tokens.
 unset($_SESSION[':token']['client'],$_SESSION['TTD']);
@@ -26,4 +26,5 @@ if(!empty($_SESSION['dune_staff_requested'])&&in_array('web.tickets.staff',$iden
  header('Location: /scp/');exit;
 }
 if(isset($_SESSION['dune_appeal_requested'])){$id=$_SESSION['dune_appeal_requested'];unset($_SESSION['dune_appeal_requested']);header('Location: /appeal.php?banId='.rawurlencode($id));exit;}
+if(!empty($_SESSION['dune_dev_requested'])){unset($_SESSION['dune_dev_requested']);header('Location: /dev-tasks.php');exit;}
 header('Location: /tickets.php');exit;
