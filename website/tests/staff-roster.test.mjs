@@ -48,3 +48,18 @@ test('all staff portraits use username-resolved Minecraft or Steve images, never
   const html=await(await createStaffRoster(db)(new Request('https://www.dunerealms.com/staff.html'))).text();assert(html.includes('roster-skin-face'));assert(html.includes('roster-skin-hat'));assert(html.includes('class="roster-steve-avatar"'));assert(!html.includes('49d2fe76-7977-4d49-bd39-e48fc8c648b8'));assert(html.includes('Introduction coming soon.'));assert(!html.includes('class="roster-rank-label"'));
  }finally{db.close();}
 });
+
+test('hierarchy groups effective levels, sorts ties and keeps each person once',async()=>{
+ const {staffHierarchy}=await import('../node/staff-roster.mjs');
+ const people=[{username:'beta',level:55,rankLabels:['Dev Team']},{username:'owner',level:100,rankLabels:['Owner']},{username:'alpha',level:55,rankLabels:['Legal Team']}];
+ const bands=staffHierarchy(people);assert.deepEqual(bands.map(b=>b.level),[100,55]);assert.deepEqual(bands[1].members.map(p=>p.username),['alpha','beta']);assert.equal(people[0].username,'beta');
+});
+test('hierarchy deduplicates equivalent web/game labels and reflects revocation',async()=>{
+ const db=setup();try{
+ await db.prepare("INSERT INTO site_accounts(id,username,role) VALUES('a','helper','web_support')").run();
+ await db.prepare("INSERT INTO cp_account_ranks(user_id,rank_key) VALUES('a','game_support')").run();
+ let roster=await publicStaffRoster(db);assert.deepEqual(roster[0].rankLabels,['Support Team']);
+ let html=await(await createStaffRoster(db)(new Request('https://www.dunerealms.com/staff.html'))).text();assert(html.includes('Staff hierarchy'));assert(html.includes('href="#staff-team-3"'));assert(html.includes('id="staff-team-3"'));assert(!html.includes('reporting to'));
+ await db.prepare("DELETE FROM cp_account_ranks WHERE user_id='a'").run();await db.prepare("UPDATE site_accounts SET role='user' WHERE id='a'").run();html=await(await createStaffRoster(db)(new Request('https://www.dunerealms.com/staff.html'))).text();assert(!html.includes('class="roster-hierarchy"'));
+ }finally{db.close();}
+});
