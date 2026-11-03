@@ -23,3 +23,6 @@ The page is server-rendered HTML; it does not parse JSON from form responses. At
 ## Release state
 
 Candidate only, NOT deployed. Do not close344 until remaining route/replay checks, authenticated rejection probes, browser checks and backed-up merge/rollout verification succeed. Never use real tickets as disposable approval or completion fixtures. No credentials, message bodies or paid receipts are modified by the policy tests.
+
+## 3 November follow-up — approved Bug354
+Bug354 is now explicitly approved and is being delivered through this existing candidate. Its bounded acceptance is Unicode/type/origin/CSRF validation plus rejected-only served probes. The broader344 successful replay/concurrency and cross-role browser audit remains separate and open; deploying this correction does not complete344.
