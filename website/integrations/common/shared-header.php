@@ -16,7 +16,7 @@ function dune_shared_header($html) {
  $html=preg_replace('~https://www\.dunerealms\.com/portal-navigation\.(js|css)(?:\?[^\"\s>]*)?~','/dune-navigation.$1?v=shared-20261102',$html);
  if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$html=str_ireplace('</head>','<script src="/dune-appeal-routing.js" defer></script></head>',$html);
  if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'){
-  $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-osticket-theme.css?v=20261102-theme"></head>',$html);
+  $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-osticket-theme.css?v=20261103-alpha"></head>',$html);
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-ticket-compose.css?v=4"><script src="/dune-ticket-compose.js?v=4" defer></script></head>',$html);
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-support.css?v=signature-4"></head>',$html);
   $html=preg_replace('/<body\b(?![^>]*\bclass=)/i','<body class="dune-support"',$html,1);
@@ -37,3 +37,4 @@ function dune_shared_header($html) {
  require_once __DIR__.'/native-seo.php';
  return dune_native_seo($html);
 }
+
