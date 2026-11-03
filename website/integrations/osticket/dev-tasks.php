@@ -10,6 +10,7 @@ $esc=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');$errors=[];$
 $_SESSION['dune_dev_csrf']??=bin2hex(random_bytes(32));$_SESSION['dune_dev_submission']??=bin2hex(random_bytes(32));
 $team=dune_dev_team($identity);$owner=dune_dev_owner($identity);$priorityEditor=dune_dev_priority_editor($identity);
 if($_SERVER['REQUEST_METHOD']==='POST'){
+ if(!dune_dev_origin_valid($_SERVER['HTTP_ORIGIN']??null)){http_response_code(403);exit('Invalid request origin.');}
  if(!is_string($_POST['csrf']??null)||!hash_equals($_SESSION['dune_dev_csrf'],$_POST['csrf'])){http_response_code(403);exit('Invalid request token. Reload the form.');}
  $action=$_POST['action']??'';
  try{
@@ -37,21 +38,21 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    }
   }elseif($action==='brief'){
    if(!$priorityEditor)throw new RuntimeException('Only the authorised reviewers and Dev can edit execution briefs.');
-   $id=filter_var($_POST['id']??'',FILTER_VALIDATE_INT);$brief=is_string($_POST['brief']??null)?trim($_POST['brief']):'';if(!$id||strlen($brief)<30||strlen($brief)>30000)throw new RuntimeException('Enter an execution brief of 30–30,000 characters.');
+   $id=dune_dev_id($_POST['id']??null);$brief=is_string($_POST['brief']??null)?trim($_POST['brief']):'';if(!$id||!dune_dev_text_valid($brief,30,30000))throw new RuntimeException('Enter an execution brief of 30–30,000 characters.');
    $q=$db->prepare("UPDATE dune_dev_tasks SET execution_spec=?,updated_at=NOW() WHERE ticket_id=? AND approval='approved'");$q->execute([$brief,$id]);if(!$q->rowCount())throw new RuntimeException('Only an approved task can have an execution brief.');
    $q=$db->prepare('INSERT INTO dune_dev_task_events(ticket_id,actor_id,action,note,created_at) VALUES(?,?,?,?,NOW())');$q->execute([$id,$identity['id'],'brief-updated',$brief]);
    header('Location: /dev-tasks.php?id='.$id.'&saved=1',true,303);exit;
   }elseif($action==='priority'){
    if(!$priorityEditor)throw new RuntimeException('Only the authorised reviewers and Dev can set task priority.');
-   $id=filter_var($_POST['id']??'',FILTER_VALIDATE_INT);$priority=$_POST['priority']??'';if(!$id||!in_array($priority,['Low','Medium','High'],true))throw new RuntimeException('Select Low, Medium or High.');
+   $id=dune_dev_id($_POST['id']??null);$priority=$_POST['priority']??'';if(!$id||!in_array($priority,['Low','Medium','High'],true))throw new RuntimeException('Select Low, Medium or High.');
    $q=$db->prepare('UPDATE dune_dev_tasks SET priority=?,updated_at=NOW() WHERE ticket_id=?');$q->execute([$priority,$id]);
    $q=$db->prepare('INSERT INTO dune_dev_task_events(ticket_id,actor_id,action,note,created_at) SELECT ticket_id,?,?,?,NOW() FROM dune_dev_tasks WHERE ticket_id=?');$q->execute([$identity['id'],'priority-changed',$priority,$id]);
    header('Location: /dev-tasks.php?id='.$id.'&saved=1',true,303);exit;
   }elseif(in_array($action,['approve','deny','complete'],true)){
    if(!$team||($action!=='complete'&&!$owner))throw new RuntimeException('Only unimatrix999 or grmacken can approve or deny tasks.');
-   $id=filter_var($_POST['id']??'',FILTER_VALIDATE_INT);if(!$id)throw new RuntimeException('Invalid task.');
+   $id=dune_dev_id($_POST['id']??null);if(!$id)throw new RuntimeException('Invalid task.');
    $note=is_string($_POST['note']??null)?trim($_POST['note']):'';
-   if(strlen($note)<10||strlen($note)>10000)throw new RuntimeException('Provide a decision reason or completion report of 10–10,000 characters.');
+   if(!dune_dev_text_valid($note,10,10000))throw new RuntimeException('Provide a decision reason or completion report of 10–10,000 characters.');
    $lock='dev-ticket:'.$id;$q=$db->prepare('SELECT GET_LOCK(?,5)');$q->execute([$lock]);if(!(int)$q->fetchColumn())throw new RuntimeException('Task is being updated. Retry shortly.');
    try{
     $q=$db->prepare('SELECT * FROM dune_dev_tasks WHERE ticket_id=?');$q->execute([$id]);$row=$q->fetch();$ticket=Ticket::lookup($id);

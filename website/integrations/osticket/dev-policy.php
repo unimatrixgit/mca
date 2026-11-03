@@ -1,4 +1,8 @@
 <?php
+// UTF-8 code-point limits match the human-facing character contract; reject malformed bytes.
+function dune_dev_text_valid($value,$min,$max){return is_string($value)&&mb_check_encoding($value,'UTF-8')&&mb_strlen(trim($value),'UTF-8')>=$min&&mb_strlen(trim($value),'UTF-8')<=$max;}
+function dune_dev_id($value){return is_string($value)&&preg_match('/^[1-9][0-9]*$/D',$value)&&filter_var($value,FILTER_VALIDATE_INT)!==false?(int)$value:false;}
+function dune_dev_origin_valid($origin){return $origin===null||$origin==='https://support.dunerealms.com';}
 // Central SSO identity only. Never accept ranks or actor IDs from submitted fields.
 function dune_dev_team($identity) {
  return is_array($identity) && (bool)array_intersect($identity['ranks']??[], ['owners','official_account','corestaff','web_network','web_net_admin','web_dev']);
@@ -14,7 +18,7 @@ function dune_dev_owner($identity) {
 }
 function dune_dev_transition($identity,$action,$state,$note) {
  if(!dune_dev_team($identity)||($action!=='complete'&&!dune_dev_owner($identity)))throw new RuntimeException('Only unimatrix999 or grmacken can approve or deny tasks.');
- if(!is_string($note)||strlen(trim($note))<10||strlen($note)>10000)throw new RuntimeException('Provide a decision reason or completion report of 10–10,000 characters.');
+ if(!dune_dev_text_valid($note,10,10000))throw new RuntimeException('Provide a decision reason or completion report of 10–10,000 characters.');
  if($action==='complete'&&$state==='approved')return 'completed';
  if($action==='approve'&&$state==='pending')return 'approved';
  if($action==='deny'&&$state==='pending')return 'denied';
@@ -44,7 +48,7 @@ function dune_dev_validate($input) {
  $values=[];$errors=[];
  foreach(dune_dev_fields() as$key=>[$label,$required,$max,$type,$hint]) {
   $value=is_string($input[$key]??null)?trim($input[$key]):'';
-  if(($required&&$value==='')||strlen($value)>$max||($type==='select'&&!in_array($value,$hint,true)))$errors[]=$label.': enter a valid value (maximum '.$max.' characters).';
+  if(($required&&$value==='')||!dune_dev_text_valid($value,0,$max)|| (isset($input[$key])&&!is_string($input[$key]))||($type==='select'&&!in_array($value,$hint,true)))$errors[]=$label.': enter a valid value (maximum '.$max.' characters).';
   $values[$key]=$value;
  }
  if(($input['privacy']??'')!=='1')$errors[]='Confirm that the request contains no passwords, tokens or unnecessary personal data.';
