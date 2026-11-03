@@ -1,7 +1,7 @@
 <?php
 // Central SSO identity only. Never accept ranks or actor IDs from submitted fields.
 function dune_dev_team($identity) {
- return is_array($identity) && (bool)array_intersect($identity['ranks']??[], ['owners','corestaff','web_network','web_net_admin','web_dev']);
+ return is_array($identity) && (bool)array_intersect($identity['ranks']??[], ['owners','official_account','corestaff','web_network','web_net_admin','web_dev']);
 }
 function dune_dev_submitter($identity) {
  if (!is_array($identity)) return false;

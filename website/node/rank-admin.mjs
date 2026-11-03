@@ -1,3 +1,4 @@
+import {isOwnerRank} from './permissions.mjs';
 import {nativeSyncChange,drainNativeSyncOutbox} from './native-sync-outbox.mjs';
 import {randomUUID} from 'node:crypto';
 import {identity} from './auth.mjs';
@@ -15,7 +16,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
  if(!access.nodes.includes('web.ranks.manage'))return json({message:'Rank-management permission required.'},403);
  if(request.method==='GET'&&url.pathname==='/api/ranks'&&!url.search){
   const {results}=await db.prepare('SELECT rank_key,label,rank_level,kind,permissions_json,version FROM cp_ranks ORDER BY rank_level,rank_key').all();
-  return json({sections:RANK_SECTIONS,catalog:Object.entries(WEBSITE_NODES).map(([node,label])=>({node,label,scope:'Website'})),ranks:results.filter(r=>r.kind==='access').map(r=>({key:r.rank_key,section:rankSection(r.rank_key),label:r.label,level:Number(r.rank_level),kind:r.kind,nodes:JSON.parse(r.permissions_json).filter(n=>Object.hasOwn(WEBSITE_NODES,n)),version:Number(r.version),editable:r.rank_key!=='owners'&&(access.rank==='owners'||Number(r.rank_level)<access.level)})),actor:{rank:access.rank,nodes:access.nodes}});
+  return json({sections:RANK_SECTIONS,catalog:Object.entries(WEBSITE_NODES).map(([node,label])=>({node,label,scope:'Website'})),ranks:results.filter(r=>r.kind==='access').map(r=>({key:r.rank_key,section:rankSection(r.rank_key),label:r.label,level:Number(r.rank_level),kind:r.kind,nodes:JSON.parse(r.permissions_json).filter(n=>Object.hasOwn(WEBSITE_NODES,n)),version:Number(r.version),editable:!isOwnerRank(r.rank_key)&&(isOwnerRank(access.rank)||Number(r.rank_level)<access.level)})),actor:{rank:access.rank,nodes:access.nodes}});
  }
  if(request.method!=='POST'||url.search)return json({message:'Invalid rank request.'},400);
  if(request.headers.get('origin')!==origin)return json({message:'Origin rejected.'},403);
@@ -24,7 +25,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
  if(url.pathname==='/api/ranks/create'){
   if(!validKey(body.key)||body.key.length>16||DEFAULT_RANKS.some(r=>r.key===body.key)||typeof body.label!=='string'||!body.label.trim()||body.label.length>40||!['user','vip','staff','corestaff'].includes(body.base))return json({message:'Use a unique rank ID of 3–16 lowercase letters, digits or underscores, a label, and a base rank.'},400);
   const base=await rankFor(db,body.base);
-  if(access.rank!=='owners'&&base.level>=access.level)return json({message:'You can only create ranks below your own.'},403);
+  if(!isOwnerRank(access.rank)&&base.level>=access.level)return json({message:'You can only create ranks below your own.'},403);
   const nodes=base.nodes.filter(n=>access.nodes.includes(n));
   try{await db.batch([db.prepare('INSERT INTO cp_ranks(rank_key,label,rank_level,kind,permissions_json,version) VALUES(?,?,?,?,?,1)').bind(body.key,body.label.trim(),base.level,'access',JSON.stringify(nodes)),audit('rank-created',body.key)]);}catch(error){if(error.code==='ER_DUP_ENTRY'||String(error.message).includes('UNIQUE'))return json({message:'That rank already exists.'},409);throw error;}
   return json({ok:true},201);
@@ -32,8 +33,8 @@ export function createRankAdmin(db,settings,origin){return async request=>{
  if(url.pathname==='/api/ranks/permissions'){
   if(!validKey(body.rank)||!Array.isArray(body.nodes)||body.nodes.length>Object.keys(WEBSITE_NODES).length||!Number.isInteger(body.version))return json({message:'Invalid permission matrix.'},400);
   const rank=await rankFor(db,body.rank),nodes=[...new Set(body.nodes)];
-  if(rank.kind!=='access'||rank.key==='owners'||rank.level===0||access.rank!=='owners'&&rank.level>=access.level)return json({message:'This rank is protected.'},403);
-  if(nodes.some(n=>!Object.hasOwn(WEBSITE_NODES,n)||access.rank!=='owners'&&!access.nodes.includes(n)||rank.kind!=='access'&&n.startsWith('cp.')))return json({message:'You cannot grant these permissions.'},403);
+  if(rank.kind!=='access'||isOwnerRank(rank.key)||rank.level===0||!isOwnerRank(access.rank)&&rank.level>=access.level)return json({message:'This rank is protected.'},403);
+  if(nodes.some(n=>!Object.hasOwn(WEBSITE_NODES,n)||!isOwnerRank(access.rank)&&!access.nodes.includes(n)||rank.kind!=='access'&&n.startsWith('cp.')))return json({message:'You cannot grant these permissions.'},403);
   const result=await db.batch([db.prepare('UPDATE cp_ranks SET permissions_json=?,version=version+1 WHERE rank_key=? AND version=?').bind(JSON.stringify(nodes),rank.key,body.version),audit('rank-permissions',rank.key+': matrix update attempted'),nativeSyncChange(db)]);
   const nativeSync=result[0].meta.changes?await drainNativeSyncOutbox(db):null;
   return result[0].meta.changes?json({ok:true,nativeSyncPending:nativeSync.pending}):json({message:'This matrix changed in another session. Refresh before saving.'},409);
@@ -44,7 +45,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
   if(typeof body.userId!=='string'||body.userId.length!==36||!Array.isArray(keys)||!keys.length||keys.length>20||keys.some(k=>!validKey(k))||new Set(keys).size!==keys.length)return json({message:'Select 1–20 distinct ranks.'},400);
   const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();if(!target)return json({message:'Account not found.'},404);
   const ranks=await Promise.all(keys.map(key=>rankFor(db,key))),previous=await accessFor(db,target);
-  if(ranks.some(r=>r.kind!=='access'||r.level===0)||previous.ranks.includes('owners')||access.rank!=='owners'&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
+  if(ranks.some(r=>r.kind!=='access'||r.level===0)||previous.ranks.some(isOwnerRank)||!isOwnerRank(access.rank)&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
   const primary=ranks.find(r=>r.key===target.role)||[...ranks].sort((a,b)=>b.level-a.level)[0];
   await db.batch([db.prepare('UPDATE site_accounts SET role=? WHERE id=?').bind(primary.key,target.id),db.prepare('DELETE FROM cp_account_ranks WHERE user_id=?').bind(target.id),...ranks.filter(r=>r.key!==primary.key).map(r=>db.prepare('INSERT INTO cp_account_ranks(user_id,rank_key) VALUES(?,?)').bind(target.id,r.key)),db.prepare('DELETE FROM site_sessions WHERE user_id=?').bind(target.id),audit('account-ranks',target.id+' -> '+keys.join(',')),nativeSyncChange(db)]);
   const nativeSync=await drainNativeSyncOutbox(db);
