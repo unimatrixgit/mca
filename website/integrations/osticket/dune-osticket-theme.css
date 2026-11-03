@@ -22,3 +22,6 @@ body.dune-support :is(.tabs,.nav-tabs){border-radius:9px 9px 0 0!important}body.
 @media(max-width:650px){body.dune-support #landing_page{display:flex!important;flex-direction:column;gap:20px}body.dune-support #landing_page :is(.main-content,.pull-right.flush-right){float:none!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box}}
 
 .dune-alpha-invitation{display:flex;align-items:center;gap:24px;border:1px solid #9f874d;border-radius:14px;padding:22px;margin-bottom:24px;background:linear-gradient(135deg,#203d2f,#10271f);clear:both}.dune-alpha-invitation>img{width:180px;height:120px;object-fit:cover;border-radius:9px}.dune-alpha-invitation h2{margin:4px 0 10px!important}.dune-alpha-invitation p{margin:8px 0!important}.dune-alpha-invitation .eyebrow{font-size:10px;color:#d0b675;letter-spacing:.14em}@media(max-width:650px){.dune-alpha-invitation{flex-direction:column;align-items:flex-start}.dune-alpha-invitation>img{width:100%;height:140px}}
+
+/* Readable structured application answers. */
+body.dune-support table.custom-data th{background:#203e31!important;color:#e7ce91!important;font-weight:600;text-align:left;vertical-align:top;border-color:#3b5c4b!important}body.dune-support table.custom-data td{background:#153328!important;color:#eee6cd!important;vertical-align:top;border-color:#3b5c4b!important}
