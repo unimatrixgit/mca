@@ -1,3 +1,4 @@
+import {startDiscordNewsWorker} from './discord-news.mjs';
 import {createPublicKitMarket} from './kit-catalogue.mjs';
 import {retiredTicketResponse} from './retired-tickets.mjs';
 import {startNativeSyncRetryWorker} from './native-sync-outbox.mjs';
@@ -76,6 +77,7 @@ export function createApplication(db,settings={}) {
 }
 export async function start(settings=process.env) {
   const db=await openDatabase(settings);await initializeGitIdentities(db);await initializeMailIdentities(db);await initializeRanks(db);await initializeBadges(db);await initializeNews(db);const handle=createApplication(db,settings),origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
+  const stopDiscordNews=await startDiscordNewsWorker(db,settings);
   const stopGitSync=startGitIdentitySync(db,settings),stopMailSync=startStaffMailSync(db),stopNativeSync=startNativeSyncRetryWorker(db);
   const forgejo=createForgejoProxy(settings,gitProxyIdentity(db,settings));
   const server=createServer(async(req,res)=>{
@@ -91,7 +93,7 @@ export async function start(settings=process.env) {
   server.requestTimeout=300000;server.headersTimeout=10000;
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(Number(settings.PORT||3000),'127.0.0.1',resolve);});
   console.log('DuneRealms website running on localhost:'+Number(settings.PORT||3000)+'; MySQL connected.');
-  const shutdown=()=>{stopGitSync();stopMailSync();stopNativeSync();server.close(async()=>{await db.close();process.exit(0);});};process.once('SIGTERM',shutdown);process.once('SIGINT',shutdown);
+  const shutdown=()=>{stopDiscordNews();stopGitSync();stopMailSync();stopNativeSync();server.close(async()=>{await db.close();process.exit(0);});};process.once('SIGTERM',shutdown);process.once('SIGINT',shutdown);
   return server;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)await start();
