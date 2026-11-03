@@ -1,3 +1,4 @@
+import {isOwnerRank} from '../node/permissions.mjs';
 import {createBanEvidence,initializeBanEvidence} from './ban-evidence.mjs';
 import {createUpgradeTokens} from './upgrade-tokens.mjs';
 import {createKitCatalogueBridge} from '../node/kit-catalogue.mjs';
@@ -106,7 +107,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path.startsWith('/api/cp/'))return community(request);
   if(path.startsWith('/luckperms-editor/')){
    const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);
-   if((await accessFor(db,user)).rank!=='owners'||!await can(db,user,'web.menu.luckperms')||!await can(db,user,'web.luckperms.edit'))return json({message:'LuckPerms editor access is restricted to Owners with web.luckperms.edit.'},403);
+   if(!isOwnerRank((await accessFor(db,user)).rank)||!await can(db,user,'web.menu.luckperms')||!await can(db,user,'web.luckperms.edit'))return json({message:'LuckPerms editor access is restricted to Owners with web.luckperms.edit.'},403);
    if(!['GET','HEAD'].includes(request.method))return json({message:'Method not allowed'},405);
    let file=path.slice('/luckperms-editor/'.length);
    if(!file||/^editor(?:\/[A-Za-z0-9_-]{3,200})?\/?$/.test(file))file='index.html';

@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
-const kinds=['personal_sale','official_sale','faction_sale','server_sale'],protectedRanks=new Set(['owners','corestaff','web_net_admin','web_network']);
+const kinds=['personal_sale','official_sale','faction_sale','server_sale'],protectedRanks=new Set(['owners','official_account','corestaff','web_net_admin','web_network']);
 const tiers=['common','uncommon','rare','very_rare','legendary'],minimum=[10000,20000,40000,80000,160000];
 const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'private, no-store',Vary:'Cookie'}});
 const exact=(b,keys)=>b&&typeof b==='object'&&!Array.isArray(b)&&Object.keys(b).filter(k=>!['kind','officeKey'].includes(k)).length===keys.length&&keys.every(k=>Object.hasOwn(b,k));

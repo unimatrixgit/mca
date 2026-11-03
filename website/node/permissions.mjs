@@ -34,7 +34,8 @@ const core=[...staff,'web.bank.staff.manage','web.quests.manage','web.menu.items
 const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.support'];
 const appeals=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.appeals','web.menu.bans','web.bans.view','web.bans.manage','web.bans.evidence'];
 export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',legacy:'Existing legacy/custom ranks'};
-export const rankSection=key=>['user','vip'].includes(key)?'players':key.startsWith('web_')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
+export const isOwnerRank=key=>['owners','official_account','web_net_admin'].includes(key);
+export const rankSection=key=>['user','vip'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
 export const DEFAULT_RANKS=[
  {key:'user',label:'User',level:10,kind:'access',nodes:basic},
  {key:'vip',label:'VIP',level:20,kind:'access',nodes:basic},
@@ -43,7 +44,8 @@ export const DEFAULT_RANKS=[
  {key:'web_news',label:'News Team',level:40,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.posts','web.posts.view','web.posts.edit','web.posts.publish']},
  {key:'web_forum',label:'Forum Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.forum','web.forum.view','web.forum.moderate']},
  {key:'web_support',label:'Support Team',level:45,kind:'access',nodes:support},
- {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
+ {key:'official_account',label:'Official Account',level:100,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
+ {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
  {key:'web_network',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
  {key:'web_sales',label:'Sales Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.sales']},
  {key:'web_legal',label:'Legal Team',level:55,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.legal']},
@@ -73,7 +75,7 @@ export async function accessFor(db,user){
  const ranks=await Promise.all(keys.map(key=>rankFor(db,key)));
  const valid=ranks.filter(r=>r.kind==='access'&&r.level>0).sort((a,b)=>b.level-a.level);
  const rank=valid[0]||{key:'unknown',label:'Unknown rank',level:0};
- const nodes=valid.some(r=>r.key==='owners')?Object.keys(WEBSITE_NODES):[...new Set(valid.flatMap(r=>r.nodes.filter(n=>Object.hasOwn(WEBSITE_NODES,n))))];
+ const nodes=valid.some(r=>isOwnerRank(r.key))?Object.keys(WEBSITE_NODES):[...new Set(valid.flatMap(r=>r.nodes.filter(n=>Object.hasOwn(WEBSITE_NODES,n))))];
  return{rank:rank.key,label:valid.map(r=>r.label).join(' · '),level:rank.level,ranks:valid.map(r=>r.key),nodes};
 }
 export async function can(db,user,node){return !!user&&(await accessFor(db,user)).nodes.includes(node);}

@@ -30,6 +30,7 @@ export async function publicStaffRoster(db){
  const roster=[],closureStats=await staffClosureStats(db);
  for(const user of results){
   const access=await accessFor(db,user);
+  if(access.ranks.includes('official_account'))continue;
   if(!access.ranks.some(r=>!['user','vip'].includes(r))||!access.nodes.some(n=>['web.tickets.staff','web.forum.moderate','web.posts.edit','web.ranks.manage'].includes(n)))continue;
   const currentRanks=await Promise.all(access.ranks.filter(k=>!['user','vip'].includes(k)).map(key=>rankFor(db,key)));
   currentRanks.sort((a,b)=>b.level-a.level||a.label.localeCompare(b.label));
