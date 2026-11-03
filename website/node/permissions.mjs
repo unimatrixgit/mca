@@ -45,7 +45,7 @@ export const DEFAULT_RANKS=[
  {key:'web_forum',label:'Forum Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.forum','web.forum.view','web.forum.moderate']},
  {key:'web_support',label:'Support Team',level:45,kind:'access',nodes:support},
  {key:'official_account',label:'Official Account',level:100,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
- {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
+ {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
  {key:'web_network',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
  {key:'web_sales',label:'Sales Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.sales']},
  {key:'web_legal',label:'Legal Team',level:55,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.legal']},
