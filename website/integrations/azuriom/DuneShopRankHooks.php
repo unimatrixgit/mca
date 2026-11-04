@@ -21,11 +21,11 @@ class DuneShopRankHooks
             if (request()->routeIs('shop.admin.packages.store','shop.admin.packages.update')) {
                 $package->dune_website_rank = request()->input('dune_website_rank','user');
                 $required=request()->input('dune_required_ranks',[]);
-                if(!is_array($required)||count($required)>2||array_filter($required,fn($r)=>!is_string($r)||!DuneShopRanks::allowedRank($r))) throw ValidationException::withMessages(['dune_required_ranks'=>'Only Member and VIP website requirements are supported.']);
+                if(!is_array($required)||count($required)>count(DuneShopRanks::PUBLIC_RANKS)||array_filter($required,fn($r)=>!is_string($r)||!DuneShopRanks::allowedRank($r))) throw ValidationException::withMessages(['dune_required_ranks'=>'Only public cosmetic website ranks are supported.']);
                 if(request()->input('required_roles',[]))throw ValidationException::withMessages(['dune_required_ranks'=>'Select website ranks, not native roles.']);
                 $package->dune_required_ranks=json_encode(array_values(array_unique($required)),JSON_THROW_ON_ERROR);
             }
-            if (!DuneShopRanks::allowedRank($package->dune_website_rank??'user')) throw ValidationException::withMessages(['dune_website_rank'=>'Only Member and VIP can be sold.']);
+            if (!DuneShopRanks::allowedRank($package->dune_website_rank??'user')) throw ValidationException::withMessages(['dune_website_rank'=>'Only public cosmetic ranks can be sold.']);
             if (request()->routeIs('shop.admin.packages.store','shop.admin.packages.update') && (request()->filled('role_id')||request()->filled('expired_role_id'))) throw ValidationException::withMessages(['dune_website_rank'=>'Native and staff roles cannot be sold. Select a website rank.']);
             $package->role_id=null;$package->expired_role_id=null;
             $package->required_roles=null;
@@ -55,7 +55,7 @@ class DuneShopRankHooks
         if(!is_array($required)||array_filter($required,fn($r)=>!is_string($r)||!DuneShopRanks::allowedRank($r)))return false;
         $identity=request()->attributes->get('dune_identity');
         if(!is_array($identity))return false;
-        return in_array('user',$required,true)||in_array('vip',$required,true)&&in_array('vip',$identity['ranks']??[],true);
+        return in_array('user',$required,true)||count(array_intersect($required,$identity['ranks']??[]))>0;
     }
     public static function enqueue(PaymentItem $item,string $operation): void
     {

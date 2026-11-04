@@ -34,17 +34,21 @@ const core=[...staff,'web.bank.staff.manage','web.quests.manage','web.menu.items
 const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.support'];
 const appeals=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.appeals','web.menu.bans','web.bans.view','web.bans.manage','web.bans.evidence'];
 export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',legacy:'Existing legacy/custom ranks'};
-export const isOwnerRank=key=>['owners','official_account','web_net_admin'].includes(key);
-export const rankSection=key=>['user','vip'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
+export const isOwnerRank=key=>['owners','official_account','web_net_admin','web_net_owner'].includes(key);
+export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
 export const DEFAULT_RANKS=[
  {key:'user',label:'User',level:10,kind:'access',nodes:basic},
  {key:'vip',label:'VIP',level:20,kind:'access',nodes:basic},
+ {key:'patron_caravan',label:'Caravan Supporter',level:12,kind:'access',nodes:[...basic]},
+ {key:'patron_guild',label:'Guild Patron',level:15,kind:'access',nodes:[...basic]},
+ {key:'patron_grand',label:'Grand Benefactor',level:25,kind:'access',nodes:[...basic]},
  {key:'staff',label:'Staff',level:50,kind:'access',nodes:staff},
  {key:'web_streamer',label:'Streamer · News Team',level:40,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.posts','web.posts.view','web.posts.edit','web.posts.publish']},
  {key:'web_news',label:'News Team',level:40,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.posts','web.posts.view','web.posts.edit','web.posts.publish']},
  {key:'web_forum',label:'Forum Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.forum','web.forum.view','web.forum.moderate']},
  {key:'web_support',label:'Support Team',level:45,kind:'access',nodes:support},
  {key:'official_account',label:'Official Account',level:100,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
+ {key:'web_net_owner',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
  {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
  {key:'web_network',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
  {key:'web_sales',label:'Sales Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.sales']},
@@ -61,6 +65,7 @@ DEFAULT_RANKS.push(...[['game_quests','Quest Team',45,['web.quests.manage']],['g
 for(const rank of DEFAULT_RANKS)if(rank.nodes.includes('web.menu.staffmanual'))rank.nodes=[...new Set([...rank.nodes,'web.bank.staff.view','web.bank.staff.deposit'])];
 for(const rank of DEFAULT_RANKS)if(rank.key.startsWith('web_'))rank.nodes=[...new Set([...rank.nodes,'web.menu.bans','web.bans.view','web.shop.support'])];
 DEFAULT_RANKS.push({key:'web_dev',label:'Dev Team',level:55,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.dev']});
+DEFAULT_RANKS.push({key:'memorial',label:'Memorial',level:1,kind:'access',nodes:[]});
 for(const rank of DEFAULT_RANKS)if(['owners','corestaff','web_network','web_net_admin'].includes(rank.key))rank.nodes=[...new Set([...rank.nodes,'web.tickets.dev'])];
 export const rankKey=role=>role==='player'?'user':role;
 export async function rankFor(db,key){

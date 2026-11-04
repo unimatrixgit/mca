@@ -17,7 +17,7 @@
     },
     {
       "href": "https://cp.dunerealms.com/",
-      "updatedIn": "1.0.0.2",
+      "updatedIn": "1.0.0.3",
       "badge": "UPDATE"
     },
     {
@@ -27,12 +27,22 @@
     },
     {
       "href": "https://support.dunerealms.com/",
-      "updatedIn": "1.0.0.2",
+      "updatedIn": "1.0.0.3",
       "badge": "UPDATE"
     },
     {
       "href": "https://www.dunerealms.com/staff.html",
-      "updatedIn": "1.0.0.2",
+      "updatedIn": "1.0.0.3",
+      "badge": "UPDATE"
+    },
+    {
+      "href": "https://www.dunerealms.com/",
+      "updatedIn": "1.0.0.3",
+      "badge": "UPDATE"
+    },
+    {
+      "href": "https://www.dunerealms.com/shop.html",
+      "updatedIn": "1.0.0.3",
       "badge": "UPDATE"
     }
   ]

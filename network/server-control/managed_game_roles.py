@@ -13,6 +13,14 @@ BANK_NODES = frozenset(CATALOG['bankLinkedNodes'])
 ADMIN_ROLES = frozenset(CATALOG['networkAdministratorRoles'])
 WILDCARDS = frozenset({'worldedit.*', 'worldguard.*'})
 ROLE_PREFIX = 'wrole_'
+# Fixed cosmetic metadata only. No caller-controlled formatting or gameplay nodes.
+# Priorities stay below existing staff prefixes (50/80/100).
+PATRON_PREFIXES = {
+    'patron_caravan': 'prefix.12.&8[&6Caravan&8] &r',
+    'patron_guild': 'prefix.15.&8[&7Guild Patron&8] &r',
+    'vip': 'prefix.21.&8[&eVIP&8] &r',
+    'patron_grand': 'prefix.25.&8[&bBenefactor&8] &r',
+}
 BANK_PREFIX = 'wbn_'
 LOCK_NAME = 'dune:website:roles:v1'
 GLOBAL = "BINARY server='global' AND BINARY world='global' AND expiry=0 AND BINARY contexts='{}'"
@@ -197,6 +205,9 @@ def apply(connector, data, teams, notify=broadcast):
                         for rank, permissions in payload['ranks'].items():
                             name = mapping(cursor, rank)
                             write_group(cursor, name, permissions)
+                            prefix = PATRON_PREFIXES.get(rank) or {'web_net_owner': 'prefix.90.&8[&4Network Staff&8] &r', 'crysknife': 'prefix.20.&8[&eHoly Order&8] &r'}.get(rank)
+                            if prefix:
+                                write_group(cursor, name, {prefix: True})
                         for identity, ranks in payload['users'].items():
                             for rank in ranks:
                                 write_member(cursor, identity, group_name(rank))

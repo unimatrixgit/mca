@@ -1,0 +1,26 @@
+--- a/plugins/shop/resources/views/admin/packages/_form.blade.php
++++ b/plugins/shop/resources/views/admin/packages/_form.blade.php
+@@ -129,8 +129,9 @@
+     <div class="mb-3 col-md-6">
+         <label class="form-label" for="requiredWebsiteRankSelect">Required website rank</label>
+         <select class="form-select" id="requiredWebsiteRankSelect" name="dune_required_ranks[]" multiple>
+-<option value="user" @selected(in_array('user', old('dune_required_ranks', json_decode($package->dune_required_ranks ?? '[]', true)), true))>Member</option>
+-<option value="vip" @selected(in_array('vip', old('dune_required_ranks', json_decode($package->dune_required_ranks ?? '[]', true)), true))>VIP</option>
++@foreach(\Azuriom\Support\DuneShopRanks::PUBLIC_RANKS as $key => $label)
++<option value="{{ $key }}" @selected(in_array($key, old('dune_required_ranks', json_decode($package->dune_required_ranks ?? '[]', true)), true))>{{ $label }}</option>
++@endforeach
+ </select><div class="form-text">Member allows every verified DuneRealms account. Only public website ranks appear here.</div>
+ @error('dune_required_ranks')<div class="text-danger">{{ $message }}</div>@enderror
+ 
+@@ -267,8 +268,9 @@
+     <div class="mb-3 @if(scheduler_running()) col-md-6 @else col-12 @endif">
+         <label class="form-label" for="websiteRankSelect">Website rank after purchase</label>
+         <select class="form-select" id="websiteRankSelect" name="dune_website_rank">
+-<option value="user" @selected(old('dune_website_rank', $package->dune_website_rank ?? 'user') === 'user')>Member</option>
+-<option value="vip" @selected(old('dune_website_rank', $package->dune_website_rank ?? 'user') === 'vip')>VIP</option>
++@foreach(\Azuriom\Support\DuneShopRanks::PUBLIC_RANKS as $key => $label)
++<option value="{{ $key }}" @selected(old('dune_website_rank', $package->dune_website_rank ?? 'user') === $key)>{{ $label }}</option>
++@endforeach
+ </select><div class="form-text">Website rank after a confirmed purchase. Staff and protected ranks cannot be sold. Existing higher ranks are preserved.</div>
+ @error('dune_website_rank')<div class="text-danger">{{ $message }}</div>@enderror
+ 

@@ -94,6 +94,12 @@ export async function syncGitPermissions(db,account,settings={}){
  const access=await accessFor(db,account),admin=access.nodes.includes('web.git.admin');
  if(details.isAdmin!==admin)await api(settings,'/admin/users/'+encodeURIComponent(details.login),'PATCH',{admin});
 }
+export async function setGitArchived(db,userId,archived,settings={}){
+ const mapping=await db.prepare('SELECT * FROM site_git_identities WHERE user_id=?').bind(userId).first();
+ if(!mapping)return;
+ await api(settings,'/admin/users/'+encodeURIComponent(mapping.forgejo_login),'PATCH',{prohibit_login:archived,active:!archived,...(archived?{admin:false}:{})});
+ await db.prepare('UPDATE site_git_identities SET verified_at=?,updated_at=? WHERE user_id=?').bind(archived?0:Date.now(),Date.now(),userId).run();
+}
 export async function provisionGitIdentity(db,account,settings={}){
  if(inflight.has(account.id))return inflight.get(account.id);
  const work=(async()=>{
@@ -136,7 +142,7 @@ export function createGitIdentityRoute(db,settings={},origin='https://www.dunere
 }
 export function startGitIdentitySync(db,settings={}){
  let busy=false;
- const sync=async()=>{if(busy)return;busy=true;try{await initializeGitIdentities(db);const {results}=await db.prepare('SELECT id,username,display_name,role FROM site_accounts').all();for(const account of results){try{await provisionGitIdentity(db,account,settings);}catch{console.error('DuneGit account reconciliation pending for central account',account.id);}}}catch{console.error('DuneGit reconciliation temporarily unavailable');}finally{busy=false;}};
+ const sync=async()=>{if(busy)return;busy=true;try{await initializeGitIdentities(db);const {results}=await db.prepare("SELECT id,username,display_name,role FROM site_accounts WHERE password_hash NOT LIKE '!%' AND role<>'memorial'").all();for(const account of results){try{await provisionGitIdentity(db,account,settings);}catch{console.error('DuneGit account reconciliation pending for central account',account.id);}}}catch{console.error('DuneGit reconciliation temporarily unavailable');}finally{busy=false;}};
  void sync();const timer=setInterval(sync,300000);timer.unref();return ()=>clearInterval(timer);
 }
 export function gitProxyIdentity(db,settings={}){

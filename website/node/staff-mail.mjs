@@ -1,7 +1,7 @@
 import {accessFor,DEFAULT_RANKS} from './permissions.mjs';
 import {callMailBroker} from './mail-broker.mjs';
 
-const staffRanks=new Set(DEFAULT_RANKS.filter(rank=>!['user','vip'].includes(rank.key)).map(rank=>rank.key));
+const staffRanks=new Set(DEFAULT_RANKS.filter(rank=>!['user','vip','patron_caravan','patron_guild','patron_grand'].includes(rank.key)).map(rank=>rank.key));
 export async function provisionStaffMailbox(db,account){
  const access=await accessFor(db,account);
  if(!access.ranks.some(rank=>staffRanks.has(rank)))return null;
@@ -14,6 +14,6 @@ export async function provisionStaffMailbox(db,account){
 }
 export function startStaffMailSync(db){
  let busy=false;
- const sync=async()=>{if(busy)return;busy=true;try{const{results}=await db.prepare('SELECT id,username,display_name,role FROM site_accounts').all();for(const account of results){try{await provisionStaffMailbox(db,account);}catch{console.error('Staff mailbox provisioning pending for central identity',account.id);}}}catch{console.error('Staff mailbox reconciliation temporarily unavailable');}finally{busy=false;}};
+ const sync=async()=>{if(busy)return;busy=true;try{const{results}=await db.prepare("SELECT id,username,display_name,role FROM site_accounts WHERE password_hash NOT LIKE '!%' AND role<>'memorial'").all();for(const account of results){try{await provisionStaffMailbox(db,account);}catch{console.error('Staff mailbox provisioning pending for central identity',account.id);}}}catch{console.error('Staff mailbox reconciliation temporarily unavailable');}finally{busy=false;}};
  void sync();const timer=setInterval(sync,300000);timer.unref();return()=>clearInterval(timer);
 }

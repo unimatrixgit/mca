@@ -2,6 +2,9 @@ import {isOwnerRank} from './permissions.mjs';
 import {nativeSyncChange,drainNativeSyncOutbox} from './native-sync-outbox.mjs';
 import {randomUUID} from 'node:crypto';
 import {identity} from './auth.mjs';
+import {honourAction} from './honours.mjs';
+import {memorialRoleStatements} from './memorials.mjs';
+import {setGitArchived} from './git-identity.mjs';
 import {json,gameAuthorized} from './game-link.mjs';
 import {WEBSITE_NODES,DEFAULT_RANKS,RANK_SECTIONS,rankSection,accessFor,rankFor,rankKey,can} from './permissions.mjs';
 const validKey=value=>typeof value==='string'&&/^[a-z][a-z0-9_]{2,39}$/.test(value);
@@ -13,6 +16,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
  }
  const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);
  const access=await accessFor(db,user);
+ if(url.pathname==='/api/ranks/honour')return honourAction(db,user,request,origin);
  if(!access.nodes.includes('web.ranks.manage'))return json({message:'Rank-management permission required.'},403);
  if(request.method==='GET'&&url.pathname==='/api/ranks'&&!url.search){
   const {results}=await db.prepare('SELECT rank_key,label,rank_level,kind,permissions_json,version FROM cp_ranks ORDER BY rank_level,rank_key').all();
@@ -46,10 +50,12 @@ export function createRankAdmin(db,settings,origin){return async request=>{
   const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();if(!target)return json({message:'Account not found.'},404);
   const ranks=await Promise.all(keys.map(key=>rankFor(db,key))),previous=await accessFor(db,target);
   if(ranks.some(r=>r.kind!=='access'||r.level===0)||previous.ranks.some(isOwnerRank)||!isOwnerRank(access.rank)&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
-  const primary=ranks.find(r=>r.key===target.role)||[...ranks].sort((a,b)=>b.level-a.level)[0];
-  await db.batch([db.prepare('UPDATE site_accounts SET role=? WHERE id=?').bind(primary.key,target.id),db.prepare('DELETE FROM cp_account_ranks WHERE user_id=?').bind(target.id),...ranks.filter(r=>r.key!==primary.key).map(r=>db.prepare('INSERT INTO cp_account_ranks(user_id,rank_key) VALUES(?,?)').bind(target.id,r.key)),db.prepare('DELETE FROM site_sessions WHERE user_id=?').bind(target.id),audit('account-ranks',target.id+' -> '+keys.join(',')),nativeSyncChange(db)]);
+  if(keys.includes('memorial')&&(!isOwnerRank(access.rank)||target.id===user.id||keys.some(k=>!['memorial','user','crysknife'].includes(k))))return json({message:'Only Owners can create memorial accounts. Memorials cannot hold staff, supporter or gameplay ranks.'},403);
+  const primary=keys.includes('memorial')?ranks.find(r=>r.key==='memorial'):ranks.find(r=>r.key===target.role)||[...ranks].sort((a,b)=>b.level-a.level)[0];
+  await db.batch([db.prepare('UPDATE site_accounts SET role=? WHERE id=?').bind(primary.key,target.id),db.prepare('DELETE FROM cp_account_ranks WHERE user_id=?').bind(target.id),...ranks.filter(r=>r.key!==primary.key).map(r=>db.prepare('INSERT INTO cp_account_ranks(user_id,rank_key) VALUES(?,?)').bind(target.id,r.key)),...await memorialRoleStatements(db,target,keys),db.prepare('DELETE FROM site_sessions WHERE user_id=?').bind(target.id),audit('account-ranks',target.id+' -> '+keys.join(',')),nativeSyncChange(db)]);
+  let memorialSyncPending=false;if(keys.includes('memorial'))try{await setGitArchived(db,target.id,true,settings);}catch{memorialSyncPending=true;}
   const nativeSync=await drainNativeSyncOutbox(db);
-  return json({ok:true,nativeSyncPending:nativeSync.pending});
+  return json({ok:true,nativeSyncPending:nativeSync.pending||memorialSyncPending});
  }
  return json({message:'Not found.'},404);
 };}
