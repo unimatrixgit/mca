@@ -11,6 +11,12 @@ const fallbackSkin=fallback.replace('viewBox="0 0 8 8"','width="64" height="64" 
 const fallbackResponse=skin=>new Response(skin?fallbackSkin:fallback,{headers:{'Content-Type':'image/svg+xml','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
 export function createAvatars(db,settings,{fetcher=fetch}={}){const handle=async request=>{
  const path=new URL(request.url).pathname;if(request.method!=='GET')return new Response('Method not allowed',{status:405});
+ const member=path.match(/^\/api\/avatars\/member\/([a-z0-9_]{3,32})$/);
+ if(member){
+  const account=await db.prepare("SELECT id FROM site_accounts WHERE username=? AND password_hash NOT LIKE '!%'").bind(member[1]).first();if(!account)return new Response('Not found',{status:404});
+  const avatar=await avatarForAccount(db,account.id),response=await handle(new Request(new URL(avatar.url,request.url)));
+  return response.ok?response:fallbackResponse(avatar.mode==='skin');
+ }
  const roster=path.match(/^\/api\/avatars\/roster\/([a-z0-9_]{3,32})$/);
  if(roster){
   const account=await db.prepare('SELECT l.minecraft_uuid FROM site_accounts a LEFT JOIN site_game_links l ON l.user_id=a.id WHERE a.username=?').bind(roster[1]).first();

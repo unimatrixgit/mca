@@ -1,5 +1,6 @@
 import {startDiscordNewsWorker} from './discord-news.mjs';
 import {createMemorials,memorialPortalBlock} from './memorials.mjs';
+import {earnedMemberSeal} from './member-profiles.mjs';
 import {createPublicKitMarket} from './kit-catalogue.mjs';
 import {retiredTicketResponse} from './retired-tickets.mjs';
 import {startNativeSyncRetryWorker} from './native-sync-outbox.mjs';
@@ -38,6 +39,7 @@ export function createApplication(db,settings={}) {
   const news=createPublicNews(db);const search=createSearchVisibility(db);const staffRoster=createStaffRoster(db);
   return async function handle(request) {
     const url=new URL(request.url);const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
+    const earnedSeal=earnedMemberSeal(request);if(earnedSeal)return earnedSeal;
     if(url.pathname.startsWith('/memorial/')||url.pathname.startsWith('/people/')||url.pathname.startsWith('/api/memorials/')||['/memorial.css','/memorial.js'].includes(url.pathname))return memorials(request);
     if(['/staff.html','/staff-roster.css'].includes(url.pathname))return staffRoster(request);
     const searchRoute=await search.route(request);if(searchRoute)return searchRoute;

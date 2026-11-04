@@ -19,6 +19,7 @@ import {createGitIdentityRoute,initializeGitIdentities,startGitIdentitySync,gitP
 import {createMailIdentityRoute,initializeMailIdentities} from '../node/mail-identity.mjs';
 import {createProfile} from '../node/profile.mjs';
 import {createMemorials} from '../node/memorials.mjs';
+import {createMemberProfiles} from '../node/member-profiles.mjs';
 import {createAvatars} from '../node/avatar.mjs';
 import {createBadgeAdmin} from '../node/badge-admin.mjs';
 import {initializeBadges} from '../node/community-badges.mjs';
@@ -54,6 +55,7 @@ export function createPanel(db,settings={},dependencies={}){
  const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
  const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
+ const memberProfiles=createMemberProfiles(db,settings);
  const ranks=createRankAdmin(db,settings,origin);const badges=createBadgeAdmin(db,origin);
  const manual=createStaffManual(db);
  const luckperms=createLuckPerms(db,settings,dependencies.luckperms);
@@ -81,6 +83,11 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
   const path=new URL(request.url).pathname;
+  if(path.startsWith('/api/people/'))return memberProfiles(request);
+  if(path==='/profile-login'&&request.method==='GET'){
+   const username=new URL(request.url).searchParams.get('username');if(!/^[a-z0-9_]{3,32}$/.test(username||'')||!await db.prepare("SELECT id FROM site_accounts WHERE username=? AND password_hash NOT LIKE '!%'").bind(username).first())return new Response('Profile not found',{status:404});
+   return Response.redirect(await identity(request,db)?'https://www.dunerealms.com/people/'+username:origin+'/?return_to='+encodeURIComponent('/profile-login?username='+username),302);
+  }
   if(path==='/memorial-login'&&request.method==='GET'){
    const slug=new URL(request.url).searchParams.get('slug');if(!/^[a-z0-9-]{3,64}$/.test(slug||'')||!await db.prepare('SELECT slug FROM site_memorials WHERE slug=?').bind(slug).first())return new Response('Memorial not found',{status:404});
    return Response.redirect(await identity(request,db)?'https://www.dunerealms.com/memorial/'+slug:origin+'/?return_to='+encodeURIComponent('/memorial-login?slug='+slug),302);
