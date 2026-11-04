@@ -48,7 +48,7 @@ import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {createAccountAdmin} from '../node/account-admin.mjs';
 import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
-const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
+const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);

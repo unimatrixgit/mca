@@ -56,7 +56,7 @@ export function mountQuestRewardForm(document,window,fetcher=fetch){
  const host=document.getElementById('shop-quest-dock')||document.getElementById('game');if(!host)return null;
  const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
  const card=el('article');card.className='quest-reward-card';card.hidden=true;card.setAttribute('aria-labelledby','quest-reward-title');
- const header=el('div');header.className='quest-reward-heading';const art=el('img');art.src='/assets/menu-0.webp';art.alt='';art.width=64;art.height=64;art.loading='lazy';
+ const header=el('div');header.className='quest-reward-heading';const art=el('img');art.src='/assets/reward-gold-ingot-transparent-v1.png';art.alt='';art.width=64;art.height=64;art.loading='lazy';
  const heading=el('div');heading.append(el('p','YOUR EARNED DISCOVERIES'));heading.firstElementChild.className='quest-reward-eyebrow';const title=el('h3','Redeem a discovery code');title.id='quest-reward-title';heading.append(title);header.append(art,heading);
  const intro=el('p','Keep your in-game discovery code private. Rewards belong to your verified Minecraft identity and can be redeemed once.');intro.className='quest-reward-intro';
  const status=el('p');status.className='quest-reward-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.setAttribute('aria-atomic','true');
