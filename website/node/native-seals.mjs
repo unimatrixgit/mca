@@ -1,8 +1,8 @@
 import{spawn}from 'node:child_process';
 import{existsSync,readFileSync}from 'node:fs';
 import{accessFor}from './permissions.mjs';
-import{badgesFor,BADGES}from './community-badges.mjs';
-export function visibleCommunityBadges(keys,ranks){return keys.filter(key=>BADGES.includes(key)&&(ranks.length>0&&ranks.every(rank=>(ranks.includes('web_streamer')?['user','web_streamer','web_news']:['user','vip','patron_caravan','patron_guild','patron_grand']).includes(rank))));}
+import{badgesFor,BADGES,communityBadgeVisible}from './community-badges.mjs';
+export function visibleCommunityBadges(keys,ranks){return keys.filter(key=>BADGES.includes(key)&&ranks.length>0&&communityBadgeVisible(key,ranks));}
 export function staffSealFor(account,manifest){
  const ranks=Array.isArray(account.ranks)?account.ranks:[account.role];
  const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':(ranks.includes('web_network')||ranks.includes('web_net_owner'))?'NETWORKSTAFF':'';

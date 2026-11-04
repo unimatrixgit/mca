@@ -1,4 +1,4 @@
-import {communitySealEligible} from './community-badges.mjs';
+import {communityBadgeVisible} from './community-badges.mjs';
 import {badgesFor} from './community-badges.mjs';
 import {can,rankFor,accessFor} from './permissions.mjs';
 import {randomUUID} from 'node:crypto';
@@ -10,7 +10,7 @@ export function createAccountAdmin(db,origin){return async request=>{
  const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);if(!await can(db,user,request.method==='GET'?'web.accounts.view':'web.accounts.revoke'))return json({message:'Account administration permission required.'},403);
  const path=new URL(request.url).pathname;
  if(request.method==='GET'&&path==='/api/admin/accounts'){
-  const {results}=await db.prepare("SELECT a.id,a.username,a.role,a.created_at,CASE WHEN a.password_hash='!deleted' THEN 1 ELSE 0 END AS archived,l.minecraft_uuid,l.minecraft_name FROM site_accounts a LEFT JOIN site_game_links l ON l.user_id=a.id ORDER BY a.created_at DESC LIMIT 200").all();const accounts=[];for(const row of results){const access=await accessFor(db,row);accounts.push({...row,ranks:access.ranks,communityBadges:(await badgesFor(db,row.id)).filter(k=>communitySealEligible(access.ranks)),rankLevel:access.level});}return json({accounts});
+  const {results}=await db.prepare("SELECT a.id,a.username,a.role,a.created_at,CASE WHEN a.password_hash='!deleted' THEN 1 ELSE 0 END AS archived,l.minecraft_uuid,l.minecraft_name FROM site_accounts a LEFT JOIN site_game_links l ON l.user_id=a.id ORDER BY a.created_at DESC LIMIT 200").all();const accounts=[];for(const row of results){const access=await accessFor(db,row);accounts.push({...row,ranks:access.ranks,communityBadges:(await badgesFor(db,row.id)).filter(k=>communityBadgeVisible(k,access.ranks)),rankLevel:access.level});}return json({accounts});
  }
  if(request.method!=='POST'||!['/api/admin/revoke-sessions','/api/admin/archive-account','/api/admin/restore-account'].includes(path))return json({message:'Not found'},404);
  if(request.headers.get('origin')!==origin)return json({message:'Origin rejected'},403);

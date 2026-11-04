@@ -1,3 +1,5 @@
+// Explicit Alpha grants apply to staff too; other tester eligibility is unchanged.
+export const communityBadgeVisible=(key,ranks)=>key==='alpha-tester'?ranks.length>0&&!ranks.includes('memorial'):communitySealEligible(ranks);
 export const communitySealEligible=ranks=>ranks.includes('web_streamer')?ranks.every(r=>['user','web_streamer','web_news'].includes(r)):ranks.every(r=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r));
 export const BADGES=['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner'];
 export async function badgesFor(db,id){

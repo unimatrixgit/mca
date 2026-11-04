@@ -1,4 +1,4 @@
-import {communitySealEligible} from './community-badges.mjs';
+import {communityBadgeVisible} from './community-badges.mjs';
 import {badgesFor} from './community-badges.mjs';
 export const NODES={
  'web.tickets.dev':'Access private development tasks and Dev team department',
@@ -84,7 +84,7 @@ export async function accessFor(db,user){
  return{rank:rank.key,label:valid.map(r=>r.label).join(' · '),level:rank.level,ranks:valid.map(r=>r.key),nodes};
 }
 export async function can(db,user,node){return !!user&&(await accessFor(db,user)).nodes.includes(node);}
-export async function publicUser(db,user){if(!user)return null;const access=await accessFor(db,user);return{username:user.username,staff:access.nodes.includes('web.menu.administration'),rank:access.rank,ranks:access.ranks,rankLabel:access.label,rankLevel:access.level,communityBadges:(await badgesFor(db,user.id)).filter(k=>communitySealEligible(access.ranks)),permissions:access.nodes};}
+export async function publicUser(db,user){if(!user)return null;const access=await accessFor(db,user);return{username:user.username,staff:access.nodes.includes('web.menu.administration'),rank:access.rank,ranks:access.ranks,rankLabel:access.label,rankLevel:access.level,communityBadges:(await badgesFor(db,user.id)).filter(k=>communityBadgeVisible(k,access.ranks)),permissions:access.nodes};}
 export async function initializeRanks(db){
  for(const rank of DEFAULT_RANKS.filter(r=>r.kind==='access'))await db.prepare('INSERT INTO cp_ranks(rank_key,label,rank_level,kind,permissions_json,version) VALUES(?,?,?,?,?,1) ON CONFLICT(rank_key) DO UPDATE SET rank_key=excluded.rank_key').bind(rank.key,rank.label,rank.level,rank.kind,JSON.stringify(rank.nodes)).run();
  const {results:stored}=await db.prepare('SELECT rank_key,permissions_json,version FROM cp_ranks').all();
