@@ -10,7 +10,7 @@ export function sessionToken(request){const value=(request.headers.get('cookie')
 export function safeReturn(value){return typeof value==='string'&&value.startsWith('/')&&!value.startsWith('//')&&!/[\\\r\n]/.test(value)?value:'/portal.html';}
 export async function identity(request,db){
   const token=sessionToken(request);if(!token)return null;
-  return db.prepare('SELECT a.id,a.username,a.display_name,a.role FROM site_sessions s JOIN site_accounts a ON a.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?').bind(digest(token),Date.now()).first();
+  return db.prepare("SELECT a.id,a.username,a.display_name,a.role FROM site_sessions s JOIN site_accounts a ON a.id=s.user_id WHERE s.token_hash=? AND s.expires_at>? AND a.password_hash NOT LIKE '!%' AND a.role<>'memorial' AND NOT EXISTS(SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key='memorial')").bind(digest(token),Date.now()).first();
 }
 export function createAuth(db,origin,settings={}){
   const attempts=new Map();
@@ -55,7 +55,7 @@ export function createAuth(db,origin,settings={}){
     }
     const user=await db.prepare('SELECT * FROM site_accounts WHERE username=?').bind(username).first();
     const actual=await scrypt(password,user?.password_salt||'00000000000000000000000000000000',64);
-    if(!user||!timingSafeEqual(actual,Buffer.from(user.password_hash,'hex')))return json({message:'Incorrect username or password.'},401);
+    if(!user||user.role==='memorial'||(user&&(await db.prepare("SELECT 1 FROM cp_account_ranks WHERE user_id=? AND rank_key='memorial'").bind(user.id).first()))||user.password_hash.startsWith('!')||!/^[a-f0-9]{128}$/i.test(user.password_hash)||!timingSafeEqual(actual,Buffer.from(user.password_hash,'hex')))return json({message:'Incorrect username or password.'},401);
     return issue(user);
   };
 }

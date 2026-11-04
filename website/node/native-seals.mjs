@@ -2,10 +2,10 @@ import{spawn}from 'node:child_process';
 import{existsSync,readFileSync}from 'node:fs';
 import{accessFor}from './permissions.mjs';
 import{badgesFor,BADGES}from './community-badges.mjs';
-export function visibleCommunityBadges(keys,ranks){return keys.filter(key=>BADGES.includes(key)&&(ranks.length>0&&ranks.every(rank=>(ranks.includes('web_streamer')?['user','web_streamer','web_news']:['user','vip']).includes(rank))));}
+export function visibleCommunityBadges(keys,ranks){return keys.filter(key=>BADGES.includes(key)&&(ranks.length>0&&ranks.every(rank=>(ranks.includes('web_streamer')?['user','web_streamer','web_news']:['user','vip','patron_caravan','patron_guild','patron_grand']).includes(rank))));}
 export function staffSealFor(account,manifest){
  const ranks=Array.isArray(account.ranks)?account.ranks:[account.role];
- const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':ranks.includes('web_network')?'NETWORKSTAFF':'';
+ const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':(ranks.includes('web_network')||ranks.includes('web_net_owner'))?'NETWORKSTAFF':'';
  if(!role)return null;
  if(role==='NETWORKSTAFF')return manifest['rank-network-staff']?.footer150||null;
  return Object.values(manifest).find(asset=>asset.role===role&&asset.label.toLowerCase()===account.username.toLowerCase())?.footer150||null;
@@ -23,6 +23,6 @@ export async function syncNativeSeals(db){
  const script='/home/dunerealms/apps/integrations/sync-staff-seals.php',manifestFile='/home/dunerealms/apps/integrations/seal-manifest.json';
  if(!existsSync(script)||!existsSync(manifestFile))return;
  const manifest=JSON.parse(readFileSync(manifestFile,'utf8')),{results}=await db.prepare('SELECT id,username,role FROM site_accounts').all(),accounts=[];
- for(const user of results){const access=await accessFor(db,user),ranks=access.ranks||[user.role],departments=departmentsFor(access.nodes,ranks,user.username),communityBadges=visibleCommunityBadges(await badgesFor(db,user.id),ranks),forumGroup=access.nodes.includes('web.forum.admin')?4:access.nodes.includes('web.forum.moderate')?6:2,roleSeals=ranks.includes('web_streamer')?['rank-streamer']:[];accounts.push({id:user.id,username:user.username,rankLabel:access.label,personal:staffSealFor({...user,ranks},manifest),departments,teams:departments,communityBadges,forumGroup,roleSeals});}
+ for(const user of results){const access=await accessFor(db,user),ranks=access.ranks||[user.role],departments=departmentsFor(access.nodes,ranks,user.username),communityBadges=visibleCommunityBadges(await badgesFor(db,user.id),ranks),forumGroup=access.nodes.includes('web.forum.admin')?4:access.nodes.includes('web.forum.moderate')?6:2,roleSeals=[...(ranks.includes('web_streamer')?['rank-streamer']:[]),...(ranks.includes('crysknife')?['rank-crysknife']:[])];accounts.push({id:user.id,username:user.username,rankLabel:access.label,personal:staffSealFor({...user,ranks},manifest),departments,teams:departments,communityBadges,forumGroup,roleSeals});}
  await new Promise((resolve,reject)=>{const p=spawn('/usr/bin/php',[script],{stdio:['pipe','ignore','ignore']});const timer=setTimeout(()=>{p.kill();reject(Error('Native seal synchronization timed out'));},20000);p.once('error',error=>{clearTimeout(timer);reject(error);});p.once('exit',code=>{clearTimeout(timer);code===0?resolve():reject(Error('Native seal synchronization failed'));});p.stdin.on('error',()=>{});p.stdin.end(JSON.stringify(accounts));});
 }

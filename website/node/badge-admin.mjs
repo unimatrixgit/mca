@@ -22,7 +22,7 @@ export function createBadgeAdmin(db,origin){return async request=>{
  }
  if(typeof body.userId!=='string'||!Array.isArray(body.badges)||body.badges.some(k=>!BADGES.includes(k)||['dedicated-tester','dunegit-owner'].includes(k)))return json({message:'Invalid badge selection'},400);
  const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();if(!target)return json({message:'Account not found'},404);
- const access=await accessFor(db,target);if(!access.ranks.every(k=>['user','vip'].includes(k))&&body.badges.some(k=>k!=='season-tavren-ii'))return json({message:'Tester seals are only for regular users.'},400);
+ const access=await accessFor(db,target);if(!access.ranks.every(k=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(k))&&body.badges.some(k=>k!=='season-tavren-ii'))return json({message:'Tester seals are only for regular users.'},400);
  const keys=[...new Set(body.badges)];
  await db.batch([db.prepare("DELETE FROM website_badges WHERE user_id=? AND badge_key<>'dunegit-owner'").bind(target.id),...keys.map(k=>db.prepare('INSERT INTO website_badges(user_id,badge_key,earned_at) VALUES(?,?,?)').bind(target.id,k,Date.now())),audit('account-badges',target.id+' -> '+keys.join(',')),nativeSyncChange(db)]);
  await awardDedicated(db,target.id,{statements:[nativeSyncChange(db)]});const nativeSync=await drainNativeSyncOutbox(db);

@@ -36,8 +36,9 @@ function dune_signature_staff_badges($account,$verifiedStats=null){
  return[$personal,$teams];
 }
 function dune_signature_extra_roles($id){
- try{$q=dune_signature_db()->prepare('SELECT seal_key FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$id]);$badges=[];foreach($q->fetchAll(PDO::FETCH_COLUMN)as$key)if($key==='rank-streamer'&&is_file(__DIR__.'/osticket/assets/seals/rank-streamer-150.png'))$badges[]=['https://support.dunerealms.com/assets/seals/rank-streamer-150.png','Streamer · News Team'];return$badges;}catch(Throwable$e){return[];}
+ try{$q=dune_signature_db()->prepare('SELECT seal_key FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$id]);$badges=[];$known=['rank-streamer'=>['rank-streamer-150.png','Streamer · News Team'],'rank-crysknife'=>['order-crysknife-v1.png','Holy Order of The Crysknife']];foreach($q->fetchAll(PDO::FETCH_COLUMN)as$key)if(isset($known[$key])&&is_file(__DIR__.'/osticket/assets/seals/'.$known[$key][0]))$badges[]=['https://support.dunerealms.com/assets/seals/'.$known[$key][0],$known[$key][1]];return $badges;}catch(Throwable$e){return [];}
 }
+
 function dune_signature_offices($id){
  try{$q=dune_signature_db()->prepare('SELECT roles_json,expires_at FROM drforum_dune_political_roles WHERE website_id=?');$q->execute([$id]);$row=$q->fetch(PDO::FETCH_ASSOC);if(!$row||(int)$row['expires_at']<=time())return[];$labels=['emperor'=>'Emperor','house_leader'=>'Faction leader','specerhuis'=>'Specerhuis','welvaart'=>'House of Water','guild_staff'=>'Vaerkring','landsraad'=>'Landsraad'];$out=[];foreach(json_decode($row['roles_json'],true)?:[]as$key)if(isset($labels[$key]))$out[]=['https://forums.dunerealms.com/assets/seals/office-'.$key.'.png',$labels[$key]];return$out;}catch(Throwable$e){return[];}
 }

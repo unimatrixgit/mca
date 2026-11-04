@@ -43,6 +43,8 @@ final class DuneSupporterLedger
             $lock = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql' ? ' FOR UPDATE' : '';
             if (!$this->query('SELECT id FROM site_accounts WHERE id=?'.$lock, [$account])->fetchColumn())
                 throw new RuntimeException('Verified website account missing');
+            if ($this->query('SELECT 1 FROM site_account_policies WHERE user_id=? AND game_link_exempt=1', [$account])->fetchColumn())
+                throw new RuntimeException('Service accounts cannot receive paid cosmetics');
             $old = $this->query('SELECT account_id,package_key,state FROM supporter_receipts WHERE receipt_key=?', [$receipt])->fetch(PDO::FETCH_ASSOC);
             if ($old) {
                 if ($old['state'] === 'revoked' && $old['account_id'] === null) return 'already-revoked';

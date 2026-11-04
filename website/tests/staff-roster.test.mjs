@@ -35,7 +35,7 @@ test('team tables keep leadership first, members in effective-rank order and ful
  const db=setup();try{
   for(const[id,username,role]of[['o','owner','owners'],['a','admin','web_net_admin'],['s','support','web_support']])await db.prepare('INSERT INTO site_accounts(id,username,role) VALUES(?,?,?)').bind(id,username,role).run();
   const route=createStaffRoster(db),html=await(await route(new Request('https://www.dunerealms.com/staff.html'))).text();
-  assert(html.indexOf('Network staff<small>')<html.indexOf('Legal team<small>'));assert(html.indexOf('<h3>owner</h3>')<html.indexOf('<h3>admin</h3>'));assert(!html.includes('roster-empty-cell"></td>'));
+  assert(html.indexOf('Network staff<small>')<html.indexOf('Legal team<small>'));assert(html.indexOf('<h3><a href="/people/owner">owner</a></h3>')<html.indexOf('<h3><a href="/people/admin">admin</a></h3>'));assert(!html.includes('roster-empty-cell"></td>'));
   const css=await route(new Request('https://www.dunerealms.com/staff-roster.css?v=team-cards-4'));assert.equal(css.headers.get('cache-control'),'no-cache');assert((await css.text()).includes('.roster-teams{display:block!important;width:100%!important'));
  }finally{db.close();}
 });

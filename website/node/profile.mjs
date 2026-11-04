@@ -7,6 +7,7 @@ import {avatarForAccount} from './avatar.mjs';
 import {json} from './game-link.mjs';
 import {evidenceMime} from '../control-panel/evidence.mjs';
 import {syncNativeProfile} from './native-profiles.mjs';
+import {honoursFor} from './honours.mjs';
 export const SOCIAL_DOMAINS={website:[],discord:['discord.com','discord.gg'],youtube:['youtube.com','youtu.be'],twitch:['twitch.tv'],twitter:['twitter.com','x.com'],facebook:['facebook.com','fb.com'],github:['github.com'],dunehub:[],instagram:['instagram.com'],tiktok:['tiktok.com']};
 export function normalizeSocials(input={}){
  const socials={};for(const [key,domains]of Object.entries(SOCIAL_DOMAINS)){
@@ -20,11 +21,12 @@ export async function publicProfileFor(db,userId,origin='https://cp.dunerealms.c
  let socials={};try{socials=normalizeSocials(JSON.parse(row?.socials_json||'{}'));}catch{}
  const avatar=await avatarForAccount(db,userId);
  const git=await publicGitFor(db,userId);delete socials.dunehub;if(git)socials.dunehub=git.profileUrl;
- return{bio:row?.bio||'',publicInfo:row?.public_info||'',socials,git,avatar:{...avatar,url:new URL(avatar.url,origin).href}};
+ const account=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(userId).first();
+ return{honours:account?await honoursFor(db,account):[],bio:row?.bio||'',publicInfo:row?.public_info||'',socials,git,avatar:{...avatar,url:new URL(avatar.url,origin).href}};
 }
 export function createProfile(db,settings,origin){return async request=>{
  const user=await identity(request,db);if(!user)return json({message:'Sign in first'},401);const path=new URL(request.url).pathname;
- if(request.method==='GET'){const profile=await db.prepare('SELECT * FROM site_profiles WHERE user_id=?').bind(user.id).first();const account=await db.prepare('SELECT username,display_name FROM site_accounts WHERE id=?').bind(user.id).first();return json({profile:{...account,bio:profile?.bio||'',birthday:profile?.birthday||'',publicBirthday:!!profile?.public_birthday,publicInfo:profile?.public_info||'',socials:JSON.parse(profile?.socials_json||'{}'),git:await publicGitFor(db,user.id),avatar:await avatarForAccount(db,user.id)}});}
+ if(request.method==='GET'){const profile=await db.prepare('SELECT * FROM site_profiles WHERE user_id=?').bind(user.id).first();const account=await db.prepare('SELECT username,display_name FROM site_accounts WHERE id=?').bind(user.id).first();return json({profile:{...account,honours:await honoursFor(db,user),bio:profile?.bio||'',birthday:profile?.birthday||'',publicBirthday:!!profile?.public_birthday,publicInfo:profile?.public_info||'',socials:JSON.parse(profile?.socials_json||'{}'),git:await publicGitFor(db,user.id),avatar:await avatarForAccount(db,user.id)}});}
  if(request.method!=='POST'||request.headers.get('origin')!==origin)return json({message:'Origin rejected'},403);
  if(path==='/api/account/avatar'){
   if(!settings.AVATAR_DIR)return json({message:'Avatar uploads are not configured'},503);let form;try{form=await request.formData();}catch{return json({message:'Invalid upload'},400);}const file=form.get('file');if(!file||typeof file.arrayBuffer!=='function'||file.size<1||file.size>2*1024*1024)return json({message:'Upload a PNG, JPEG or WebP avatar up to 2 MB'},400);const bytes=Buffer.from(await file.arrayBuffer()),mime=evidenceMime(bytes,file.name);if(!mime?.startsWith('image/'))return json({message:'Use PNG, JPEG or WebP'},400);const id=randomUUID();await mkdir(resolve(settings.AVATAR_DIR),{recursive:true,mode:0o700});await writeFile(join(resolve(settings.AVATAR_DIR),id+'.bin'),bytes,{flag:'wx',mode:0o600});await db.prepare('INSERT INTO site_profiles(user_id,socials_json,avatar_key,avatar_mime,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET avatar_key=excluded.avatar_key,avatar_mime=excluded.avatar_mime,updated_at=excluded.updated_at').bind(user.id,'{}',id,mime,Date.now()).run();return json({ok:true,avatar:await avatarForAccount(db,user.id)});

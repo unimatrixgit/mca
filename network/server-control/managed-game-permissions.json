@@ -256,7 +256,9 @@
   ],
   "networkAdministratorRoles": [
     "owners",
-    "web_net_admin"
+    "web_net_admin",
+    "official_account",
+    "web_net_owner"
   ],
   "suggestedRoles": [
     {

@@ -1,3 +1,4 @@
+import {isOwnerRank} from '../node/permissions.mjs';
 import {randomUUID} from 'node:crypto';
 import {identity} from '../node/auth.mjs';
 import {can,accessFor} from '../node/permissions.mjs';
@@ -12,7 +13,7 @@ export function createLuckPerms(db,settings,{fetcher=fetch}={}){return async req
   if(!await can(db,user,'web.luckperms.view'))return json({message:'Permission required: web.luckperms.view'},403);
   target='/luckperms/groups';
  }else if(request.method==='POST'&&['/api/luckperms/editor','/api/luckperms/apply'].includes(url.pathname)&&!url.search){
-  if((await accessFor(db,user)).rank!=='owners'||!await can(db,user,'web.luckperms.edit'))return json({message:'Only Owners may use the full LuckPerms editor.'},403);
+  if(!isOwnerRank((await accessFor(db,user)).rank)||!await can(db,user,'web.luckperms.edit'))return json({message:'Only Owners may use the full LuckPerms editor.'},403);
   if(request.headers.get('origin')!==origin)return json({message:'Origin rejected.'},403);
   let data;try{data=await request.json();}catch{return json({message:'Invalid request.'},400);}
   const editor=url.pathname.endsWith('/editor');

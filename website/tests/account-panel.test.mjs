@@ -6,7 +6,8 @@ import {createPanel} from '../control-panel/server.mjs';
 const origin='https://cp.dunerealms.com',secret='test-bridge-secret-with-more-than-32-characters';
 const schema=`CREATE TABLE site_accounts(id TEXT PRIMARY KEY,username TEXT UNIQUE,display_name TEXT,password_salt TEXT,password_hash TEXT,role TEXT,created_at INTEGER);
 CREATE TABLE site_sessions(token_hash TEXT PRIMARY KEY,user_id TEXT,expires_at INTEGER);
-CREATE TABLE player_profiles(user_id TEXT PRIMARY KEY,display_name TEXT,minecraft_name TEXT,discord_name TEXT,created_at INTEGER,updated_at INTEGER);`+readFileSync(new URL('../node/schema.sql',import.meta.url),'utf8').split('CREATE TABLE IF NOT EXISTS site_game_links')[1].replace(/^/,'CREATE TABLE IF NOT EXISTS site_game_links').replace(/ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4/g,'');
+CREATE TABLE player_profiles(user_id TEXT PRIMARY KEY,display_name TEXT,minecraft_name TEXT,discord_name TEXT,created_at INTEGER,updated_at INTEGER);
+CREATE TABLE site_clan_members(user_id TEXT,minecraft_uuid TEXT);`+readFileSync(new URL('../node/schema.sql',import.meta.url),'utf8').split('CREATE TABLE IF NOT EXISTS site_game_links')[1].replace(/^/,'CREATE TABLE IF NOT EXISTS site_game_links').replace(/ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4/g,'');
 function setup(){const db=new LocalD1(schema),app=createPanel(db,{GAME_LINK_SECRET:secret});const req=async(path,body,headers={})=>app(new Request(origin+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{Origin:origin,'Content-Type':'application/json',...headers},...(body===undefined?{}:{body:JSON.stringify(body)})}));return {db,req};}
 async function register(req,name){const response=await req('auth/register',{username:name,password:'long testing password 123',ageBand:'15plus'});assert.equal(response.status,200);return {Cookie:response.headers.get('set-cookie').split(';')[0]};}
 const uuid='12345678-1234-4234-9234-123456789012',otherUuid='22345678-1234-4234-9234-123456789012';
@@ -76,5 +77,18 @@ test('Staff goals are fixed, audited, month-bound and unreached codes remain pri
  const active=(await (await req('community/campaigns')).json()).campaigns[0];assert.ok(active.reached_at);assert.ok(active.public_code);
  assert.equal((await req('community/verify-total',{month,receivedCents:400,reference:'lower total attempt'},staff)).status,409);
  const audit=await db.prepare('SELECT COUNT(*) AS n FROM account_audit').first();assert.ok(audit.n>=2);
+ }finally{db.close();}
+});
+test('Memorial uses the central CP session with restricted credentialed CORS and safe login return',async()=>{
+ const{db,req}=setup();try{
+ const cookie=await register(req,'condolence_user');const app=createPanel(db,{GAME_LINK_SECRET:secret});
+ await db.prepare("INSERT INTO site_memorials VALUES('tribute','fixture','Community tribute','Test fixture')").run();
+ const base=origin+'/api/memorials/tribute/session';
+ const response=await app(new Request(base,{headers:{...cookie,Origin:'https://www.dunerealms.com'}}));assert.equal(response.status,200);assert.equal((await response.json()).username,'condolence_user');assert.equal(response.headers.get('access-control-allow-origin'),'https://www.dunerealms.com');assert.equal(response.headers.get('access-control-allow-credentials'),'true');
+ assert.equal((await app(new Request(base,{headers:{...cookie,Origin:'https://evil.test'}}))).status,403);
+ assert.equal((await app(new Request(base,{method:'OPTIONS',headers:{Origin:'https://www.dunerealms.com'}}))).status,204);
+ assert.equal((await app(new Request(base,{headers:{Origin:'https://www.dunerealms.com'}}))).status,401);
+ const back=await app(new Request(origin+'/memorial-login?slug=tribute',{headers:cookie}));assert.equal(back.status,302);assert.equal(back.headers.get('location'),'https://www.dunerealms.com/memorial/tribute');
+ assert.equal((await app(new Request(origin+'/memorial-login?slug=https://evil.test'))).status,404);
  }finally{db.close();}
 });

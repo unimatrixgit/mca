@@ -6,6 +6,7 @@ function check($condition) { global $n; if (!$condition) throw new RuntimeExcept
 function rejects(callable $call) { try {$call();} catch (Throwable $e) {check(true);return;} throw new RuntimeException('Expected rejection'); }
 $db = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
 $db->exec('PRAGMA foreign_keys=ON; CREATE TABLE site_accounts(id TEXT PRIMARY KEY,role TEXT); CREATE TABLE supporter_receipts(receipt_key TEXT PRIMARY KEY,account_id TEXT,package_key TEXT,rewards_json TEXT,state TEXT); CREATE TABLE supporter_cosmetics(receipt_key TEXT,reward_key TEXT,PRIMARY KEY(receipt_key,reward_key),FOREIGN KEY(receipt_key) REFERENCES supporter_receipts(receipt_key));');
+$db->exec('CREATE TABLE site_account_policies(user_id TEXT PRIMARY KEY,game_link_exempt INTEGER)');
 $a='11111111-1111-4111-8111-111111111111';$b='22222222-2222-4222-8222-222222222222';
 $db->prepare('INSERT INTO site_accounts VALUES(?,?)')->execute([$a,'owners']);
 $db->prepare('INSERT INTO site_accounts VALUES(?,?)')->execute([$b,'user']);
@@ -46,4 +47,6 @@ check(count($ledger->rewards($b))===3);
 check($ledger->revoke('azuriom:item:999')==='revoked');
 check($ledger->grant('azuriom:item:999',$b,'guild-patron','completed')==='already-revoked');
 check(count($ledger->rewards($b))===3);
+$db->prepare('INSERT INTO site_account_policies VALUES(?,1)')->execute([$b]);
+rejects(fn()=>$ledger->grant('azuriom:item:4',$b,'guild-patron','completed'));
 echo json_encode(['assertions'=>$n,'database'=>'isolated SQLite memory','productionChanged'=>false]).PHP_EOL;

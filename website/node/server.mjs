@@ -1,4 +1,5 @@
 import {startDiscordNewsWorker} from './discord-news.mjs';
+import {createMemorials,memorialPortalBlock} from './memorials.mjs';
 import {createPublicKitMarket} from './kit-catalogue.mjs';
 import {retiredTicketResponse} from './retired-tickets.mjs';
 import {startNativeSyncRetryWorker} from './native-sync-outbox.mjs';
@@ -31,11 +32,13 @@ export function createApplication(db,settings={}) {
   const auth=createAuth(db,origin,settings);const gitIdentity=createGitIdentityRoute(db,settings,origin);
   const worldStatus=createWorldStatus(settings),publicKitMarket=createPublicKitMarket(settings);
   const contact=createContact(settings);
+  const memorials=createMemorials(db,settings);
   const gameLink=createGameLink(db,settings,origin);
   const rewards=createCommunityRewards(db,settings,origin);
   const news=createPublicNews(db);const search=createSearchVisibility(db);const staffRoster=createStaffRoster(db);
   return async function handle(request) {
     const url=new URL(request.url);const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
+    if(url.pathname.startsWith('/memorial/')||url.pathname.startsWith('/people/')||url.pathname.startsWith('/api/memorials/')||['/memorial.css','/memorial.js'].includes(url.pathname))return memorials(request);
     if(['/staff.html','/staff-roster.css'].includes(url.pathname))return staffRoster(request);
     const searchRoute=await search.route(request);if(searchRoute)return searchRoute;
     const sharedError=await sharedErrorResponse(request);if(sharedError)return sharedError;
@@ -68,7 +71,7 @@ export function createApplication(db,settings={}) {
     const response=await worker.fetch(forwarded,{...settings,DB:db,FORUM_ADMIN_EMAILS:'verified-staff@dunerealms.internal',SUPPORT_STAFF_EMAILS:'verified-staff@dunerealms.internal'});
     const type=response.headers.get('Content-Type')||'';
     if(request.method!=='HEAD'&&(type.includes('text/html')||type.includes('javascript'))){
-      let body=(await response.text()).replaceAll('Sign in with ChatGPT','Sign in to DuneRealms');if(type.includes('text/html')&&response.status===200)body=await search.html(request,body);
+      let body=(await response.text()).replaceAll('Sign in with ChatGPT','Sign in to DuneRealms');if(type.includes('text/html')&&response.status===200)body=await search.html(request,body);if(response.status===200&&type.includes('text/html')&&['/','/index.html','/portal.html'].includes(url.pathname)){const memorials=await memorialPortalBlock(db);if(memorials)body=body.replace('</head>','<link rel="stylesheet" href="/memorial.css"></head>').replace('</main>',memorials+'</main>');}
       const out=new Headers(response.headers);out.delete('Content-Length');out.set('Content-Security-Policy',security['Content-Security-Policy']);
       return new Response(body,{status:response.status,headers:out});
     }

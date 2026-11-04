@@ -1,4 +1,4 @@
-export const communitySealEligible=ranks=>ranks.includes('web_streamer')?ranks.every(r=>['user','web_streamer','web_news'].includes(r)):ranks.every(r=>['user','vip'].includes(r));
+export const communitySealEligible=ranks=>ranks.includes('web_streamer')?ranks.every(r=>['user','web_streamer','web_news'].includes(r)):ranks.every(r=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r));
 export const BADGES=['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner'];
 export async function badgesFor(db,id){
  if(!id)return[];
@@ -10,16 +10,16 @@ export function alphaGrant(db,id,now=Date.now()){
 }
 export async function initializeBadges(db){
  await db.prepare("INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES('alpha-badge-active','1',?) ON CONFLICT(setting_key) DO UPDATE SET setting_key=excluded.setting_key").bind(Date.now()).run();
- await db.prepare("INSERT INTO website_badges(user_id,badge_key,earned_at) SELECT a.id,'alpha-tester',? FROM site_accounts a JOIN website_settings s ON s.setting_key='alpha-badge-active' AND s.setting_value='1' WHERE a.role IN ('user','vip','player') AND NOT EXISTS (SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key NOT IN ('user','vip')) AND NOT EXISTS (SELECT 1 FROM website_badges b WHERE b.user_id=a.id AND b.badge_key='alpha-tester')").bind(Date.now()).run();
+ await db.prepare("INSERT INTO website_badges(user_id,badge_key,earned_at) SELECT a.id,'alpha-tester',? FROM site_accounts a JOIN website_settings s ON s.setting_key='alpha-badge-active' AND s.setting_value='1' WHERE a.role IN ('user','vip','player','patron_caravan','patron_guild','patron_grand') AND NOT EXISTS (SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key NOT IN ('user','vip','patron_caravan','patron_guild','patron_grand')) AND NOT EXISTS (SELECT 1 FROM website_badges b WHERE b.user_id=a.id AND b.badge_key='alpha-tester')").bind(Date.now()).run();
  await db.prepare("INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES('season-tavren-ii-active','1',?) ON CONFLICT(setting_key) DO UPDATE SET setting_key=excluded.setting_key").bind(Date.now()).run();
  await db.prepare("INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES('season-game-redemption-ready','0',?) ON CONFLICT(setting_key) DO UPDATE SET setting_key=excluded.setting_key").bind(Date.now()).run();
  await db.prepare("INSERT INTO website_badges(user_id,badge_key,earned_at) SELECT a.id,'season-tavren-ii',? FROM site_accounts a JOIN website_settings s ON s.setting_key='season-tavren-ii-active' AND s.setting_value='1' WHERE NOT EXISTS (SELECT 1 FROM website_badges b WHERE b.user_id=a.id AND b.badge_key='season-tavren-ii')").bind(Date.now()).run();
 }
 export async function awardDedicated(db,userId,{statements=[]}={}){
  const user=await db.prepare('SELECT role FROM site_accounts WHERE id=?').bind(userId).first();
- if(!user||!['user','vip','player'].includes(user.role))return false;
+ if(!user||!['user','vip','player','patron_caravan','patron_guild','patron_grand'].includes(user.role))return false;
  const {results:ranks}=await db.prepare('SELECT rank_key FROM cp_account_ranks WHERE user_id=?').bind(userId).all();
- if(ranks.some(r=>!['user','vip'].includes(r.rank_key)))return false;
+ if(ranks.some(r=>!['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r.rank_key)))return false;
  const badges=await badgesFor(db,userId);
  if(!['alpha-tester','beta-tester','launch-contributor'].every(k=>badges.includes(k)))return false;
  await db.batch([

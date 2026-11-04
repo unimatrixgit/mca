@@ -18,6 +18,7 @@ import {retiredTicketResponse} from '../node/retired-tickets.mjs';
 import {createGitIdentityRoute,initializeGitIdentities,startGitIdentitySync,gitProxyIdentity} from '../node/git-identity.mjs';
 import {createMailIdentityRoute,initializeMailIdentities} from '../node/mail-identity.mjs';
 import {createProfile} from '../node/profile.mjs';
+import {createMemorials} from '../node/memorials.mjs';
 import {createAvatars} from '../node/avatar.mjs';
 import {createBadgeAdmin} from '../node/badge-admin.mjs';
 import {initializeBadges} from '../node/community-badges.mjs';
@@ -52,6 +53,7 @@ export function createPanel(db,settings={},dependencies={}){
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
+ const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
  const ranks=createRankAdmin(db,settings,origin);const badges=createBadgeAdmin(db,origin);
  const manual=createStaffManual(db);
  const luckperms=createLuckPerms(db,settings,dependencies.luckperms);
@@ -79,6 +81,16 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
   const path=new URL(request.url).pathname;
+  if(path==='/memorial-login'&&request.method==='GET'){
+   const slug=new URL(request.url).searchParams.get('slug');if(!/^[a-z0-9-]{3,64}$/.test(slug||'')||!await db.prepare('SELECT slug FROM site_memorials WHERE slug=?').bind(slug).first())return new Response('Memorial not found',{status:404});
+   return Response.redirect(await identity(request,db)?'https://www.dunerealms.com/memorial/'+slug:origin+'/?return_to='+encodeURIComponent('/memorial-login?slug='+slug),302);
+  }
+  if(path.startsWith('/api/memorials/')){
+   const from=request.headers.get('origin'),allowed='https://www.dunerealms.com';if(from&&from!==allowed)return new Response(null,{status:403});
+   const headers={'Access-Control-Allow-Origin':allowed,'Access-Control-Allow-Credentials':'true','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Vary':'Origin','Cache-Control':'no-store'};
+   if(request.method==='OPTIONS')return new Response(null,{status:204,headers});
+   const result=await memorials(request),out=new Headers(result.headers);for(const[k,v]of Object.entries(headers))out.set(k,v);return new Response(result.body,{status:result.status,headers:out});
+  }
   if(path==='/api/game/tickets')return gameTickets(request);
   if(['/api/game/quest/discover','/api/quest/rewards','/api/quest/rewards/claim'].includes(path))return questRewards(request);
   if(path==='/api/imperial-atelier')return imperialAtelier(request);

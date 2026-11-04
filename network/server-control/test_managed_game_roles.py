@@ -140,4 +140,18 @@ class ManagedRoleTests(unittest.TestCase):
         self.assertEqual(self.apply(self.bank())[0],409);self.assertEqual(self.db.rows('luckperms_user_permissions'),[])
     def test_sql_scope_is_fixed_and_no_direct_manual_player_node_writes(self):
         self.seed_manual();self.apply(self.teams(),True);self.assertFalse(any('LIKE' in q for q in self.db.queries));self.assertTrue(all(r['permission'].startswith('group.') or r['permission']=='manual.node' for r in self.db.rows('luckperms_user_permissions')))
+    def test_supporter_prefixes_are_fixed_cosmetics_and_cannot_inject_permissions(self):
+        body=self.teams()
+        body['ranks']=[{'id':r,'permissions':{}} for r in roles.PATRON_PREFIXES]
+        body['users']=[{'uuid':A,'ranks':list(roles.PATRON_PREFIXES)}]
+        status,_=self.apply(body,True)
+        self.assertEqual(status,200)
+        nodes={r['permission'] for r in self.db.rows('luckperms_group_permissions')}
+        self.assertEqual(nodes,set(roles.PATRON_PREFIXES.values()))
+        self.assertTrue(all(n.startswith('prefix.') for n in nodes))
+        self.assertTrue(all(int(n.split('.')[1])<50 for n in nodes))
+        attack=self.teams(NEXT)
+        attack['ranks']=[{'id':'patron_grand','permissions':{'prefix.999.admin':True}}]
+        self.assertEqual(self.apply(attack,True)[0],400)
+
 if __name__=='__main__':unittest.main()
