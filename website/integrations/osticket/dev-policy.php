@@ -9,7 +9,8 @@ function dune_dev_team($identity) {
 }
 function dune_dev_submitter($identity) {
  if (!is_array($identity)) return false;
- return dune_dev_team($identity) || in_array('vip',$identity['ranks']??[],true) || (bool)array_intersect($identity['permissions']??[], ['web.menu.staffmanual','web.tickets.staff','web.forum.moderate','web.posts.edit']);
+ $staffRanks=['owners','official_account','corestaff','staff','web_network','web_net_owner','web_net_admin','web_dev','web_streamer','web_news','web_forum','web_support','web_sales','web_legal','web_appeal','game_mod','game_admin','game_support','game_appeal','game_quests','game_restoration'];
+ return (bool)array_intersect($identity['ranks']??[],array_merge($staffRanks,['vip'])) || (bool)array_intersect($identity['permissions']??[], ['web.menu.staffmanual','web.tickets.staff','web.forum.moderate','web.posts.edit']);
 }
 function dune_dev_owner($identity) {
  if(!is_array($identity))return false;
