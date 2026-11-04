@@ -1,4 +1,15 @@
 const ownerRank=key=>['owners','official_account','web_net_admin','web_net_owner'].includes(key);
+// Account head renderer: project the face and transparent hat layer, not the skin sheet.
+function paintAccountHead(image,canvas,skin){
+ const ctx=canvas.getContext('2d');if(!ctx)return false;
+ canvas.width=canvas.height=40;ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,40,40);
+ const w=image.naturalWidth,h=image.naturalHeight;
+ if(skin&&w>=64&&w%64===0&&(h===w||h===w/2)){
+  const s=w/64;ctx.drawImage(image,8*s,8*s,8*s,8*s,0,0,40,40);ctx.drawImage(image,40*s,8*s,8*s,8*s,0,0,40,40);
+ }else ctx.drawImage(image,0,0,w,h,0,0,40,40);
+ return true;
+}
+// End account head renderer.
 let mode='login',session=null;const $=id=>document.getElementById(id),notice=message=>{$('notice').textContent=message;};
 if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('embedded');
 async function api(path,body){const response=await fetch('/api/'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)}),cache:'no-store'});const data=await response.json();if(!response.ok)throw Error(data.message||'Please try again later.');return data;}
@@ -42,7 +53,7 @@ async function accounts(){
   if(!rows.length){const tr=el('tr'),td=el('td','No accounts match your search.');td.colSpan=4;td.className='account-admin-empty';tr.append(td);body.append(tr);return;}
   for(const row of rows){
    const tr=el('tr'),name=el('td'),game=el('td'),ranks=el('td'),actions=el('td');
-   const identity=el('div');identity.className='account-admin-identity';const avatar=el('span');avatar.className='account-admin-avatar'+(row.minecraft_uuid?' account-admin-avatar--skin':'');const image=el('img');image.src='/api/avatars/roster/'+encodeURIComponent(row.username);image.alt='';image.loading='lazy';image.decoding='async';avatar.append(image);const text=el('div');text.append(el('strong',row.username));if(row.archived)text.append(el('small','Removed account')); if(row.username===session?.username){const own=el('small','Your account');own.className='account-admin-muted';text.append(own);}identity.append(avatar,text);name.append(identity);
+   const identity=el('div');identity.className='account-admin-identity';const avatar=el('span');avatar.className='account-admin-avatar';const image=el('img');image.src='/api/avatars/'+(row.archived?'roster/':'member/')+encodeURIComponent(row.username);image.alt='';image.loading='lazy';image.decoding='async';const paint=()=>{const canvas=el('canvas');canvas.style.cssText='display:block;width:40px;height:40px;image-rendering:pixelated';canvas.setAttribute('aria-hidden','true');if(paintAccountHead(image,canvas,row.avatar?.mode==='skin'))avatar.replaceChildren(canvas);};image.addEventListener('load',paint,{once:true});image.addEventListener('error',()=>{image.src='/api/avatars/fallback';},{once:true});avatar.append(image);if(image.complete&&image.naturalWidth)paint();const text=el('div');text.append(el('strong',row.username));if(row.archived)text.append(el('small','Removed account')); if(row.username===session?.username){const own=el('small','Your account');own.className='account-admin-muted';text.append(own);}identity.append(avatar,text);name.append(identity);
    const player=el('strong',row.minecraft_name||'Not linked');game.append(player);if(row.minecraft_uuid){const details=el('details');details.className='account-admin-uuid';details.append(el('summary','UUID details'),el('code',row.minecraft_uuid));const copy=el('button','Copy UUID');copy.type='button';copy.onclick=()=>copyText(copy,row.minecraft_uuid);details.append(copy);game.append(details);}else game.append(el('small','Awaiting account link'));
    const chips=el('div');chips.className='account-admin-rank-chips';for(const key of keysFor(row)){const chip=el('span',labelFor(key));chip.className='account-admin-rank-chip'+(key==='owners'?' account-admin-rank-chip--owner':'');chip.title=key;chips.append(chip);}ranks.append(chips);
    const actionRow=el('div');actionRow.className='account-admin-actions';if(!row.archived){const profileLink=el('a','View profile');profileLink.href='https://www.dunerealms.com/people/'+encodeURIComponent(row.username);profileLink.target='_blank';profileLink.rel='noopener';actionRow.append(profileLink);}const protectedRank=keysFor(row).some(ownerRank)||!ownerRank(session?.rank)&&Number(row.rankLevel)>=Number(session?.rankLevel);
