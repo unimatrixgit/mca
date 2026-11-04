@@ -1,3 +1,4 @@
+import{CANONICAL_MENU_SCRIPT}from'./main-menu.mjs';
 import {RELEASE_SCRIPT,RELEASE_CSS} from './release-branding.mjs';
 import {BUTTON_CSS,BUTTON_SCRIPT} from './dune-buttons.mjs';
 // Apply only the menu to an already-built release, leaving all other assets and APIs intact.
@@ -12,7 +13,7 @@ const assets=JSON.parse(text.slice(prefix.length,end));let changed=0;
 for(const entry of Object.values(assets)){if(!entry[0].startsWith('text/html'))continue;const html=Buffer.from(entry[1],'base64').toString(),updated=updatePortalNavigation(html);if(html!==updated){entry[1]=Buffer.from(updated).toString('base64');changed++;}}
 if(!Object.values(assets).some(a=>a[0].startsWith('text/html')&&Buffer.from(a[1],'base64').toString().includes('Main navigation')))throw Error('No menus found');
 assets['/portal-navigation.css']=['text/css; charset=utf-8',Buffer.from(PORTAL_CSS+'header.dune-site-header[hidden]{display:none!important}'+(withContext?CONTEXT_CSS:'')+BUTTON_CSS+RELEASE_CSS).toString('base64')];
-assets['/portal-navigation.js']=['text/javascript; charset=utf-8',Buffer.from(PORTAL_SCRIPT+(withContext?CONTEXT_SCRIPT:'')+BUTTON_SCRIPT+RELEASE_SCRIPT).toString('base64')];
+assets['/portal-navigation.js']=['text/javascript; charset=utf-8',Buffer.from(PORTAL_SCRIPT+(withContext?CONTEXT_SCRIPT:'')+BUTTON_SCRIPT+RELEASE_SCRIPT+CANONICAL_MENU_SCRIPT).toString('base64')];
 for(const [name,,icon]of (await import('./portal-navigation.mjs')).PORTAL_LINKS)for(const asset of [icon,icon.replace('-v2.webp','-full-v2.webp')]){const file=release+'/web/assets/'+asset;if(!existsSync(file))throw Error('Missing navigation artwork: '+name);assets['/assets/'+asset]=['image/webp',readFileSync(file).toString('base64')];}
 assets['/assets/vaerkring-network-title-v1.webp']=['image/webp',readFileSync(release+'/web/assets/vaerkring-network-title-v1.webp').toString('base64')];
 for(const asset of ['dunerealms-season-logo-v2.png','dunerealms-season-logo-v2.webp','seals/master-imperial-300.png']){const path=release+'/web/assets/'+asset;if(existsSync(path))assets['/assets/'+asset]=[asset.endsWith('.webp')?'image/webp':'image/png',readFileSync(path).toString('base64')];}
