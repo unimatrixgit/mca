@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{readFileSync}from'node:fs';
+import{canSubmitDevRequest,DEV_REQUEST_STAFF_RANKS}from'../control-panel/public/dev-request-access.mjs';
+test('all recognised staff roles can submit without incidental permission nodes',()=>{for(const rank of DEV_REQUEST_STAFF_RANKS)assert(canSubmitDevRequest({ranks:[rank],permissions:[]}),rank);});
+test('members, memorials and honorary ranks cannot submit; VIP and explicit staff permissions remain supported',()=>{for(const ranks of [[],['user'],['memorial'],['crysknife'],['patron_grand']])assert(!canSubmitDevRequest({ranks,permissions:[]}));assert(!canSubmitDevRequest(null));assert(canSubmitDevRequest({ranks:['vip']}));assert(canSubmitDevRequest({ranks:['custom'],permissions:['web.tickets.staff']}));});
+test('CP and native PHP use identical explicit staff rank keys',()=>{const php=readFileSync(new URL('../integrations/osticket/dev-policy.php',import.meta.url),'utf8');const keys=[...php.match(/\$staffRanks=\[([^\]]+)\]/)[1].matchAll(/'([^']+)'/g)].map(m=>m[1]);assert.deepEqual(keys,DEV_REQUEST_STAFF_RANKS);});
