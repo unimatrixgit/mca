@@ -14,8 +14,8 @@ export const supporterDrafts = Object.freeze([
   { key: 'grand-benefactor', name: 'Grand Benefactor', proposedPriceCents: 9000,
     rewards: ['sapphire-seal', 'profile-theme', 'profile-frame', 'profile-banner', 'supporter-acknowledgement'] },
 ].map(draft => Object.freeze({ ...draft, rewards: Object.freeze(draft.rewards),
-  currency: 'EUR', enabled: false, priceConfirmed: false, rewardsConfirmed: false,
-  state: 'design-only', websiteRank: null, commands: Object.freeze([]),
+  currency: 'EUR', enabled: false, priceConfirmed: true, rewardsConfirmed: true,
+  state: 'approved-design', websiteRank: null, commands: Object.freeze([]),
 })));
 
 /** Strict draft contract, not a checkout gate or a promise of delivered rewards. */
@@ -34,8 +34,8 @@ export function validateSupporterDrafts(drafts) {
       throw new Error('Draft name required');
     if (!Number.isSafeInteger(draft.proposedPriceCents) || draft.proposedPriceCents <= 0
       || draft.proposedPriceCents > 100000 || draft.currency !== 'EUR') throw new Error('Invalid proposed price');
-    if (draft.enabled !== false || draft.priceConfirmed !== false || draft.rewardsConfirmed !== false
-      || draft.state !== 'design-only') throw new Error('Draft must remain unconfirmed and disabled');
+    if (draft.enabled !== false || draft.priceConfirmed !== true || draft.rewardsConfirmed !== true
+      || draft.state !== 'approved-design') throw new Error('Approved design must remain disabled');
     if (draft.websiteRank !== null || !Array.isArray(draft.commands) || draft.commands.length)
       throw new Error('Draft cannot grant ranks or commands');
     if (!Array.isArray(draft.rewards) || !draft.rewards.length

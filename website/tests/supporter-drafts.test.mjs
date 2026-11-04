@@ -9,7 +9,7 @@ test('four disabled fixed-cosmetic proposals; VIP price stays EUR50', () => {
   assert.ok(Object.isFrozen(supporterDrafts[0].rewards));
 });
 for (const [field, value] of [
-  ['enabled', true], ['enabled', 'false'], ['priceConfirmed', true], ['rewardsConfirmed', true],
+  ['enabled', true], ['enabled', 'false'], ['priceConfirmed', false], ['rewardsConfirmed', false],
   ['state', 'active'], ['websiteRank', 'owners'], ['websiteRank', 'vip'],
   ['commands', ['lp user {uuid} parent add owners']], ['currency', 'USD'],
   ['proposedPriceCents', -1], ['proposedPriceCents', 0], ['proposedPriceCents', 10.5],

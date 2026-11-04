@@ -13,3 +13,5 @@ Official policy checked 4 November 2026: https://www.minecraft.net/en-us/usage-g
 Validation: node --test website/tests/supporter-drafts.test.mjs — 26 tests passed, including missing fields, unsafe roles/commands, paid power/random rewards, draft activation and price bounds. No financial transaction or production write.
 
 Remaining acceptance: original artwork and preview review; confirmed pricing/rewards; additive receipt/identity/revocation integration; disabled native package drafts; bounded Java/Bedrock delivery; real client acceptance and backed-up rollout. Do not close329 from this slice. New packages stay disabled pending confirmation; do not silently replace purchased benefits.
+
+Update4November2026: Owner approved displayed prices/design/rewards in the local preview. See SUPPORTER-ART-APPROVAL.md. Original unconfirmed snapshot above is historical; catalogue now approved-design but disabled. No native package/receipt/entitlement change.
