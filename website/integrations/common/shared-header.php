@@ -34,6 +34,10 @@ function dune_shared_header($html) {
   $html=preg_replace_callback('/<body\b([^>]*)>/i',function($m){$attrs=$m[1];if(preg_match('/\bclass=["\']([^"\']*)["\']/i',$attrs))$attrs=preg_replace('/\bclass=(["\'])([^"\']*)\1/i','class="$2 dune-forum"',$attrs,1);else $attrs.=' class="dune-forum"';return '<body'.$attrs.'>';},$html,1);
  }
  if(!str_contains($html,'class="dune-shared-footer"'))$html=str_ireplace('</body>',file_get_contents($base.'shared-footer.html').'</body>',$html);
+ if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com' && is_file($base.'osticket/support-workspace.php')){
+  require_once $base.'osticket/support-workspace.php';
+  $html=dune_support_workspace($html,parse_url($_SERVER['SCRIPT_NAME']??'/',PHP_URL_PATH)?:'/');
+ }
  require_once __DIR__.'/native-seo.php';
  return dune_native_seo($html);
 }
