@@ -1,0 +1,11 @@
+# Ticket329 — cosmetic entitlement ledger candidate
+
+Internal PDO service, NOT installed or connected to checkout. No production database/schema/payment/role changes. Native payment verification is still the caller's responsibility; a caller-supplied string is not payment proof. Do not expose this class as a public endpoint.
+
+Each native receipt has one immutable account/package/reward snapshot. Replays are idempotent, identity/package rebinding fails, and an absent website account or non-completed payment status cannot receive a grant. Rewards are fixed decoration identifiers only. No primary rank, staff permission, earned unlock or player inventory is modified. Revocation preserves the receipt and historical reward rows; only that receipt becomes inactive. Other receipts' overlapping decorations remain active. Refunding before completion writes a terminal tombstone, preventing late completion from restoring the grant.
+
+The supplied InnoDB schema is candidate source only. MySQL grants serialize on the account row; unique receipt/reward constraints provide duplicate protection. Any storage failure rolls back the receipt and partial reward rows. Unknown/refunded receipts remain terminal even after repeated completion callbacks. Caller must reconcile actual native order/item/account ownership and final payment state before use.
+
+Executed PHP lint and40 behavioural assertions using real isolated in-memory SQLite transactions: grant, replay, identity/package mismatch, pending/failed/refunded payment denial, package/receipt/account validation, overlapping receipts, partial revoke, terminal replay, preserved role, immutable snapshot, SQL-triggered mid-insert rollback, retry and revoke-before-grant. No production test account/payment. SQLite is NOT proof of MySQL concurrency or native checkout integration.
+
+Remaining gates: MySQL concurrency/rollback validation, actual native receipt/ownership hook, package snapshot/version mapping, service-account exclusion, Java/Bedrock identity/application, protected/manual entitlements, disabled native drafts and real client delivery. The internal allowlist currently duplicates the approved design catalogue; parity must be checked before integration and versioned rather than mutating historical snapshots. No live enablement or ticket closure from these candidate tests.
