@@ -3,7 +3,7 @@ import{createHash}from'node:crypto';
 import{identity}from'./auth.mjs';
 import{accessFor,rankFor}from'./permissions.mjs';
 import{publicProfileFor}from'./profile.mjs';
-import{badgesFor,BADGES,communitySealEligible}from'./community-badges.mjs';
+import{badgesFor,BADGES,communityBadgeVisible}from'./community-badges.mjs';
 import{staffSealFor,departmentsFor}from'./native-seals.mjs';
 import{staffClosureStats,statsForAccount}from'./staff-closure-stats.mjs';
 const origin='https://www.dunerealms.com',base=origin+'/assets/seals/';
@@ -37,7 +37,7 @@ export async function memberProfileData(db,target,settings={}){
   add('department-'+key,label,url,'Departments');
  }
  if(access.ranks.includes('web_streamer'))add('rank-streamer','Streamer · News Team',base+'rank-streamer-150.png','Roles');
- for(const key of await badgesFor(db,target.id))if(BADGES.includes(key)&&(!testerBadges.has(key)||communitySealEligible(access.ranks)))add(key,badgeLabels[key],base+key+'-150.png','Community');
+ for(const key of await badgesFor(db,target.id))if(BADGES.includes(key)&&(!testerBadges.has(key)||communityBadgeVisible(key,access.ranks)))add(key,badgeLabels[key],base+key+'-150.png','Community');
  const office=await optional(()=>db.prepare('SELECT roles_json,expires_at FROM drforum_dune_political_roles WHERE website_id=?').bind(target.id).first(),null);
  if(office&&Number(office.expires_at)>Date.now()/1000){const known={emperor:'Emperor',house_leader:'Faction leader',specerhuis:'Specerhuis',welvaart:'House of Water',guild_staff:'Vaerkring',landsraad:'Landsraad'};for(const key of JSON.parse(office.roles_json||'[]'))if(known[key])add('office-'+key,known[key],'https://forums.dunerealms.com/assets/seals/office-'+key+'.png','Political offices');}
  const clan=await optional(()=>db.prepare('SELECT c.name,c.tag,c.description,m.clan_role,m.joined_at,(SELECT COUNT(*) FROM site_clan_members n WHERE n.clan_id=c.id) AS member_count FROM site_clan_members m JOIN site_clans c ON c.id=m.clan_id WHERE m.user_id=? AND c.active=1').bind(target.id).first(),undefined);

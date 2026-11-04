@@ -1,4 +1,4 @@
-import {communitySealEligible} from './community-badges.mjs';
+import {communityBadgeVisible} from './community-badges.mjs';
 import {publicProfileFor} from './profile.mjs';
 import {badgesFor} from './community-badges.mjs';
 import {randomBytes,createHash,timingSafeEqual} from 'node:crypto';
@@ -43,7 +43,7 @@ export function createIntegrationSSO(db,settings={}){
   const access=await accessFor(db,user),link=await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(user.id).first();
   const age=await db.prepare('SELECT age_band FROM site_age_declarations WHERE user_id=?').bind(user.id).first();
   const policy=await db.prepare('SELECT service_uuid,game_link_exempt FROM site_account_policies WHERE user_id=?').bind(user.id).first();
-  return json({id:user.id,username:user.username,displayName:user.display_name,publicProfile:await publicProfileFor(db,user.id,settings.CP_ORIGIN||'https://cp.dunerealms.com'),role:access.rank,ranks:access.ranks,rankLabel:access.label,rankLevel:access.level,communityBadges:(await badgesFor(db,user.id)).filter(k=>communitySealEligible(access.ranks)),linked:!!link?.minecraft_uuid,gameLinkExempt:!!policy?.service_uuid&&Number(policy.game_link_exempt)===1,forumAllowed:age?.age_band!=='under15',permissions:access.nodes,sessionRef});
+  return json({id:user.id,username:user.username,displayName:user.display_name,publicProfile:await publicProfileFor(db,user.id,settings.CP_ORIGIN||'https://cp.dunerealms.com'),role:access.rank,ranks:access.ranks,rankLabel:access.label,rankLevel:access.level,communityBadges:(await badgesFor(db,user.id)).filter(k=>communityBadgeVisible(k,access.ranks)),linked:!!link?.minecraft_uuid,gameLinkExempt:!!policy?.service_uuid&&Number(policy.game_link_exempt)===1,forumAllowed:age?.age_band!=='under15',permissions:access.nodes,sessionRef});
   }
  };
 }
