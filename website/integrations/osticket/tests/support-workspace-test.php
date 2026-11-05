@@ -6,9 +6,11 @@ $form='<form method="post" action="tickets.php?id=7"><input name="__CSRFToken__"
 $source='<html><head><title>Native</title></head><body class="native"><div id="container"><ul id="nav"><li><a href="tickets.php">Tickets</a></li></ul><div id="content">'.$form.'</div></div></body></html>';
 foreach(['/index.php','/open.php','/tickets.php','/view.php','/login.php','/alpha-signup.php','/appeal.php','/scp/tickets.php','/scp/settings.php','/scp/login.php'] as $path){
  $out=dune_support_workspace($source,$path);
+ check(substr_count($out,'<nav class="dune-support-submenu"')===1,'One integrated navigation');
+ check(str_contains($out,'https://cp.dunerealms.com/'),'Account return link missing');
  check(str_contains($out,$form),'Native form changed: '.$path);
  check(substr_count($out,'<section class="dune-support-workspace-hero"')===1,'Exactly one hero: '.$path);
- check(str_contains($out,'/dune-support-workspace.css?v=364-1'),'Style missing');
+ check(str_contains($out,'/dune-support-workspace.css?v=364-4'),'Style missing');
  check(str_contains($out,'native dune-support-workspace'),'Native class lost');
  check(str_contains($out,str_starts_with($path,'/scp/')?'dune-support-staff':'dune-support-client'),'Workspace mismatch');
  check(dune_support_workspace($out,$path)===$out,'Not idempotent');
@@ -20,3 +22,6 @@ check(str_contains(dune_support_workspace($source,'/appeal.php'),'department-ban
 check(str_contains(dune_support_workspace($source,'/alpha-signup.php'),'news-community.webp'),'Alpha artwork missing');
 check(str_contains(dune_support_workspace(str_replace(' class="native"','',$source),'/index.php'),'class="dune-support-workspace dune-support-client"'),'Unclassed body failed');
 echo "$checks presentation checks passed; forms, CSRF, attachments, native classes, PJAX and JSON preserved.\n";
+
+
+
