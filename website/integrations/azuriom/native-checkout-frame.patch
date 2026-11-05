@@ -1,0 +1,33 @@
+--- a/plugins/shop/resources/views/cart/index.blade.php
++++ b/plugins/shop/resources/views/cart/index.blade.php
+@@ -200,7 +200,7 @@
+                 @endif
+             </div>
+ 
+-            <form @if(! use_site_money()) action="{{ route('shop.payments.payment') }}" @endif>
++            <form target="_top" @if(! use_site_money()) action="{{ route('shop.payments.payment') }}" @endif>
+                 @if(! use_site_money())
+                     @if($emailRequired)
+                         <div class="mb-3 ms-md-auto col-md-4">
+--- a/plugins/shop/resources/views/payments/pay.blade.php
++++ b/plugins/shop/resources/views/payments/pay.blade.php
+@@ -39,7 +39,7 @@
+         @endforelse
+     </div>
+ 
+-    <form method="POST" id="submitForm">
++    <form method="POST" id="submitForm" target="_top">
+         @csrf
+     </form>
+ @endsection
+--- a/plugins/shop/resources/views/packages/show.blade.php
++++ b/plugins/shop/resources/views/packages/show.blade.php
+@@ -25,7 +25,7 @@
+                         {{ trans('shop::messages.actions.manage') }}
+                     </a>
+                 @elseif($package->isSubscription() && $purchaseStatus->isAvailable())
+-                    <form action="{{ route('shop.subscriptions.select', $package) }}" method="POST" class="form-inline">
++                    <form target="_top" action="{{ route('shop.subscriptions.select', $package) }}" method="POST" class="form-inline">
+                         @csrf
+ 
+                         <button type="submit" class="btn btn-primary">

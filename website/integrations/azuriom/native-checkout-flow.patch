@@ -1,0 +1,96 @@
+--- a/plugins/shop/resources/views/cart/index.blade.php
++++ b/plugins/shop/resources/views/cart/index.blade.php
+@@ -200,7 +200,7 @@
+                 @endif
+             </div>
+ 
+-            <form target="_top" @if(! use_site_money()) action="{{ route('shop.payments.payment') }}" @endif>
++            <form target="_self" @if(! use_site_money()) action="{{ route('shop.payments.payment') }}" @endif>
+                 @if(! use_site_money())
+                     @if($emailRequired)
+                         <div class="mb-3 ms-md-auto col-md-4">
+@@ -229,7 +229,7 @@
+                         </button>
+                     @else
+                         @if(! $emailRequired && empty($terms))
+-                            <a href="{{ route('shop.payments.payment') }}" target="_top" class="btn btn-primary ms-auto">
++                            <a href="{{ route('shop.payments.payment') }}" target="_self" class="btn btn-primary ms-auto">
+                                 <i class="bi bi-cart-check"></i> {{ trans('shop::messages.cart.checkout') }}
+                             </a>
+                         @else
+--- a/plugins/shop/resources/views/packages/show.blade.php
++++ b/plugins/shop/resources/views/packages/show.blade.php
+@@ -25,7 +25,7 @@
+                         {{ trans('shop::messages.actions.manage') }}
+                     </a>
+                 @elseif($package->isSubscription() && $purchaseStatus->isAvailable())
+-                    <form target="_top" action="{{ route('shop.subscriptions.select', $package) }}" method="POST" class="form-inline">
++                    <form target="_self" action="{{ route('shop.subscriptions.select', $package) }}" method="POST" class="form-inline">
+                         @csrf
+ 
+                         <button type="submit" class="btn btn-primary">
+--- a/plugins/shop/src/Controllers/PaymentController.php
++++ b/plugins/shop/src/Controllers/PaymentController.php
+@@ -39,13 +39,7 @@
+             ->filter(fn (Gateway $gateway) => $gateway->isSupported())
+             ->reject(fn (Gateway $gateway) => $gateway->paymentMethod()->hasFixedAmount());
+ 
+-        // If there is only one payment gateway, redirect to it directly
+-        if ($gateways->count() === 1) {
+-            $gateway = $gateways->first();
+-
+-            return $gateway->paymentMethod()->startPayment($cart, $cart->payableTotal(), currency());
+-        }
+-
++        // Keep method selection inside the storefront; provider POST alone exits the frame.
+         return view('shop::payments.pay', ['gateways' => $gateways]);
+     }
+ 
+--- a/plugins/shop/resources/views/payments/pay.blade.php
++++ b/plugins/shop/resources/views/payments/pay.blade.php
+@@ -2,19 +2,7 @@
+ 
+ @section('title', trans('shop::messages.payment.title'))
+ 
+-@push('footer-scripts')
+-    <script>
+-        document.querySelectorAll('.payment-method').forEach(function (el) {
+-            el.addEventListener('click', function (ev) {
+-                ev.preventDefault();
+ 
+-                const form = document.getElementById('submitForm');
+-                form.action = el.href;
+-                form.submit();
+-            });
+-        });
+-    </script>
+-@endpush
+ 
+ @section('content')
+     <h1>{{ trans('shop::messages.payment.title') }}</h1>
+@@ -23,11 +11,14 @@
+         @forelse($gateways as $gateway)
+             <div class="col-md-3">
+                 <div class="card">
+-                    <a href="{{ isset($route) ? $route($gateway->type) : route('shop.payments.pay', $gateway->type) }}" class="payment-method">
++                    <form action="{{ isset($route) ? $route($gateway->type) : route('shop.payments.pay', $gateway->type) }}" method="POST" target="_top">
++                        @csrf
++                        <button type="submit" class="payment-method btn w-100" aria-label="{{ $gateway->name }}">
+                         <div class="card-body text-center">
+                             <img src="{{ $gateway->paymentMethod()->image() }}" style="max-height: 45px" class="img-fluid" alt="{{ $gateway->name }}">
+                         </div>
+-                    </a>
++                        </button>
++                    </form>
+                 </div>
+             </div>
+         @empty
+@@ -39,7 +30,5 @@
+         @endforelse
+     </div>
+ 
+-    <form method="POST" id="submitForm" target="_top">
+-        @csrf
+-    </form>
++
+ @endsection

@@ -65,7 +65,7 @@ class DuneShopRankHooks
         $account=$item->payment->user->dune_account_id;
         if(!is_string($account)||!preg_match('/^[a-f0-9-]{36}$/i',$account))throw new \RuntimeException('Verified central identity required');
         $key='azuriom:item:'.$item->id;
-        $payload=['receipt'=>$key,'account'=>$account,'rank'=>$rank,'status'=>$item->payment->status,'expires'=>$item->expires_at?->getTimestampMs()];
+        $payload=['receipt'=>$key,'account'=>$account,'rank'=>$rank,'status'=>$item->payment->status,'expires'=>self::receiptExpiry($item)];
         $row=['receipt_key'=>$key,'item_id'=>$item->id,'operation'=>$operation,'payload'=>json_encode($payload,JSON_THROW_ON_ERROR),'state'=>'pending','updated_at'=>now()];
         if($operation==='grant')DB::table('dune_rank_delivery_jobs')->insertOrIgnore($row);
         else DB::table('dune_rank_delivery_jobs')->upsert([$row],['receipt_key'],['operation','state','updated_at']);
@@ -74,8 +74,30 @@ class DuneShopRankHooks
     {
         self::enqueue($item,'revoke');self::drain();
     }
+    public static function receiptExpiry(PaymentItem $item): ?int
+    {
+        if ($item->buyable instanceof Package && $item->buyable->isSubscription()) {
+            $end=$item->payment->subscription?->ends_at;
+            if (!$end) throw new \RuntimeException('Verified paid subscription period required');
+            return $end->getTimestampMs();
+        }
+        return $item->expires_at?->getTimestampMs();
+    }
+    private static function queueExpiredSubscriptions(): void
+    {
+        // Native Subscription::expire() bypasses PaymentItem::revoke(). Reconcile
+        // every receipt, not merely the first period, with the durable job queue.
+        $ids=DB::table('dune_rank_delivery_jobs as j')
+            ->join('shop_payment_items as i','i.id','=','j.item_id')
+            ->join('shop_payments as p','p.id','=','i.payment_id')
+            ->join('shop_subscriptions as s','s.id','=','p.subscription_id')
+            ->where('s.status','expired')->where('j.operation','grant')
+            ->orderBy('j.item_id')->limit(50)->pluck('j.item_id');
+        foreach (PaymentItem::whereIn('id',$ids)->get() as $item) self::enqueue($item,'revoke');
+    }
     public static function drain(): void
     {
+        self::queueExpiredSubscriptions();
         $keys=DB::table('dune_rank_delivery_jobs')->where('state','pending')->orderBy('updated_at')->limit(50)->pluck('receipt_key');
         foreach($keys as $key) {
             try { DB::transaction(function()use($key){

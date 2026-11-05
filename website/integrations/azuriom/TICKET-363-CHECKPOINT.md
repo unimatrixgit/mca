@@ -1,0 +1,18 @@
+# Shop scheduler, Stripe and Council — ticket 363
+
+Implemented 5 November 2026; no real financial transaction performed.
+
+- Native scheduler runs each minute as app owner with flock. Actual cron heartbeat observed. Duplicate unguarded rank job removed; existing guarded job retained.
+- Owner configured live Stripe and selected Managed Payments. Live account and enabled six-event webhook verified with read-only API. Chrome/Firefox checkout success confirmed by Owner after central identity binding repair; prior Firefox failure was a stale service-account identity, not a demonstrated Firefox defect.
+- Native inline products carry reviewed digital-service tax classification, Managed Payments remains enabled, advertised prices include tax, unsupported invoice_creation removed. Council is automated digital community access, not guaranteed professional/human services. No hosting classification/provisioning.
+- Checkout and method selection stay embedded. Only provider POST navigates top-level, with native CSRF forms and no popup/JavaScript dependency. Validation errors are escaped and visible.
+- Shop sessions bind to the current central cookie. Account changes reset the old basket and reauthenticate; purchase POSTs are not replayed. Owner/staff/service-account purchase protections remain.
+- Paid subscription receipts snapshot the paid-through date. A bounded durable reconciliation revokes every expired period receipt, including native Subscription::expire(), which bypasses PaymentItem::revoke(). Independent renewals and manual grants remain protected.
+
+Verification: 55 temporary-MySQL paid-rank assertions; 15 actual native ORM/in-memory SQLite subscription assertions (including native expiry and separate renewal snapshot); 21 actual Stripe payload checks; 24 middleware identity checks plus existing role/route checks; 9 actual Blade cart checks, native payment form/CSRF checks and escaped validation error checks. Fresh Dev central login retaining an old shop cookie recovered live to HTTP200/Dev. Live signed ignored-event probe HTTP200, invalid signature HTTP400, hashes of payments/items/subscriptions unchanged. This locally signed probe proves the deployed signature path, not a Stripe-originated paid webhook or a completed financial lifecycle.
+
+Limitations: no live charge/refund/renewal and no completed Stripe test subscription. Live webhook signing-secret equality to Stripe's stored secret cannot be independently proven through read-only endpoint retrieval. First real purchase remains a monitored user action, never an agent-created transaction. Broader rank-permissions suite has two unchanged out-of-scope stale assertions; not claimed passing.
+
+Runtime backups: /root/ticket363-before-20261105, ticket363-managed-before-20261105, ticket363-frame-before-20261105, ticket363-firefox-before-20261105, ticket363-checkout-flow-before-20261105, ticket363-payment-errors-before-20261105, ticket363-session-before-20261105, ticket363-lifecycle-before-20261105. Restore only affected files, never whole commerce tables. Touch restored PHP or explicitly invalidate its opcode cache.
+
+Native patch order against the existing Dune-patched Shop installation: native-stripe-managed.patch, native-checkout-frame.patch, native-checkout-firefox.patch, native-checkout-flow.patch, native-payment-errors.patch, native-stripe-council.patch. Final checkout-flow supersedes earlier navigation targets. DuneShopAccount.php and DuneShopRankHooks.php deploy to their established app middleware/support locations. Compare baselines before applying; do not apply blindly after upstream updates.

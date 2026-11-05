@@ -1,0 +1,21 @@
+--- a/plugins/shop/resources/views/cart/index.blade.php
++++ b/plugins/shop/resources/views/cart/index.blade.php
+@@ -228,9 +228,15 @@
+                             {{ trans('shop::messages.buy') }}
+                         </button>
+                     @else
+-                        <button type="submit" class="btn btn-primary ms-auto">
+-                            <i class="bi bi-cart-check"></i> {{ trans('shop::messages.cart.checkout') }}
+-                        </button>
++                        @if(! $emailRequired && empty($terms))
++                            <a href="{{ route('shop.payments.payment') }}" target="_top" class="btn btn-primary ms-auto">
++                                <i class="bi bi-cart-check"></i> {{ trans('shop::messages.cart.checkout') }}
++                            </a>
++                        @else
++                            <button type="submit" class="btn btn-primary ms-auto">
++                                <i class="bi bi-cart-check"></i> {{ trans('shop::messages.cart.checkout') }}
++                            </button>
++                        @endif
+                     @endif
+                 </div>
+             </form>
