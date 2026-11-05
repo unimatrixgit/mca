@@ -17,7 +17,7 @@ class DuneClientAuthentication extends ExternalUserAuthenticationBackend {
   if(!$user->getAccount()){$account=ClientAccount::createForUser($user,['username'=>str_replace('-','',$identity['id']),'backend'=>static::$id]);if(!$account->confirm())return null;}
   return new ClientSession(new EndUser($user));
  }
- protected function validate($userid){$identity=dune_ticket_identity();if(!$identity)return false;$user=User::lookup($userid);if(!$user||!$user->getEmail()||strtolower($user->getEmail())!==strtolower($identity['id'].'@accounts.dunerealms.invalid'))return false;return parent::validate($userid);}
+ protected function validate($userid){$identity=dune_ticket_identity();if(!$identity)return false;$user=User::lookup($userid);if(!$user||!($mapped=User::lookupByEmail($identity['id'].'@accounts.dunerealms.invalid'))||$mapped->getId()!==$user->getId())return false;return parent::validate($userid);}
  function supportsInteractiveAuthentication(){return false;}
 }
 class DuneStaffAuthentication extends StaffAuthenticationBackend {

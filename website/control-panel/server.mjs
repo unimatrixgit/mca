@@ -1,3 +1,4 @@
+import {createContactEmail,initializeContactEmails} from '../node/contact-email.mjs';
 import {isOwnerRank} from '../node/permissions.mjs';
 import {createBanEvidence,initializeBanEvidence} from './ban-evidence.mjs';
 import {createUpgradeTokens} from './upgrade-tokens.mjs';
@@ -51,6 +52,7 @@ const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=
 const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
+ const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
@@ -83,6 +85,7 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
   const path=new URL(request.url).pathname;
+  if(path==='/api/account/email')return contactEmail(request);
   if(path.startsWith('/api/people/'))return memberProfiles(request);
   if(path==='/profile-login'&&request.method==='GET'){
    const username=new URL(request.url).searchParams.get('username');if(!/^[a-z0-9_]{3,32}$/.test(username||'')||!await db.prepare("SELECT id FROM site_accounts WHERE username=? AND password_hash NOT LIKE '!%'").bind(username).first())return new Response('Profile not found',{status:404});
@@ -164,7 +167,7 @@ export async function startPanel(settings=process.env){
   else{const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});}
   inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));
  }
- const db=await openDatabase(settings);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
+ const db=await openDatabase(settings);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
  const stopBanSync=startModerationSync(db,settings);
  const security={'X-Robots-Tag':'noindex, nofollow, noarchive','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' https://www.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://support.dunerealms.com; frame-src 'self' https://luckperms.net https://www.dunerealms.com https://support.dunerealms.com https://forums.dunerealms.com https://clans.dunerealms.com https://wiki.dunerealms.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com https://clans.dunerealms.com"};
  const server=createServer(async(req,res)=>{try{
