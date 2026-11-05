@@ -1,0 +1,5684 @@
+{
+  "version": 1,
+  "scope": "Installed template candidates only; not rendered forms or passed validation.",
+  "excluded": [
+    "cache",
+    "compiled",
+    "emails",
+    "fixtures",
+    "mail",
+    "node_modules",
+    "symlinks",
+    "tests",
+    "vendor"
+  ],
+  "missingRootAliases": [],
+  "remainingDiscovery": [
+    "MyBB database templates",
+    "staff Support templates",
+    "dynamic forms",
+    "actual served-route reconciliation"
+  ],
+  "templates": [
+    {
+      "source": "azuriom/core/admin/images/create.blade.php",
+      "sha256": "760930435c958f631d126918642cdb76102b1d29bb7719324f3665319679c3b0",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/images/edit.blade.php",
+      "sha256": "81041064afd4251a175ff2d5ca950e72ad08c7e5c117b5a690e01b25052bfbd7",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/layouts/admin.blade.php",
+      "sha256": "fd24733dea5d0a71f3648e27e297e5a9786d8643f9d6ff4786c33f8d7ecfccf4",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/admin/logs/index.blade.php",
+      "sha256": "4f2b80fafda39baa1f496999871297dd712b7e9f0c4f60ef5431cd83f6d44258",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/admin/navbar-elements/create.blade.php",
+      "sha256": "f72545564913419e3df8c044ff18b3f5ddd40c757a36a7ceb57467577dce5286",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/navbar-elements/edit.blade.php",
+      "sha256": "a11a326f4d999e392d7374c2b605b1224a719544643d538348e3da5b7da56f3d",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/pages/create.blade.php",
+      "sha256": "57c030d4f72a004516fefa12e0ca63133dda38920dc1b48182bfa60027e347fd",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/pages/edit.blade.php",
+      "sha256": "8565f0e22d20f2a640277959614e759381d17d05fa236b0c594e74eba140f985",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/plugins/index.blade.php",
+      "sha256": "4294ea8b64b6eaeade2e9211a1c964a6a5fcc6db9f28e9c5bbede041123113d1",
+      "candidates": 4
+    },
+    {
+      "source": "azuriom/core/admin/posts/create.blade.php",
+      "sha256": "91e0a31124892d6ae8c19ba535de0336e1cb0023f26ad8403c2696e7e09dd0b3",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/posts/edit.blade.php",
+      "sha256": "46f35b4fbef5ad7e4c7e251203a812379adf0a811b846cb0d24f6ecbc041e9a9",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/redirects/create.blade.php",
+      "sha256": "1faf938c3cf9f8d71758a5ea0aa2eebafabb114cea4f43f07b82c7eabdc7c747",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/redirects/edit.blade.php",
+      "sha256": "207cfc378737a14803421a9f1e9623fc9f6f1c3dae216aeafbe1118462124261",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/roles/create.blade.php",
+      "sha256": "6102ec6eca02966597111a077bfd05e76af5af6ab5aaa2d35026b55db35e1d5c",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/roles/edit.blade.php",
+      "sha256": "a8c99445193218f734a2ca0e2db65d86f91b11995e349ad6b79a6c18d2d4f24d",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/roles/index.blade.php",
+      "sha256": "6302131f018a354660cbb6225213ed6b1b8cc5fbcaf111214b93649f1d20c17e",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/admin/servers/create.blade.php",
+      "sha256": "0ee66f82569cbc99bf6308771991ae011727e06dda16c6af5f8529a16d9f34e6",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/servers/edit.blade.php",
+      "sha256": "ab153a5f71c994a44846cbaa5251b87baac40f0c7f78e58303ba4f232877d154",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/servers/index.blade.php",
+      "sha256": "1edc80eef837db521fbea79bd3655cf47b01c096fd42515c2893e0f10a2ad3d4",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/settings/authentification.blade.php",
+      "sha256": "e148c812ffa549fcee7bcae089c22b7a9d09fc7c1da247fa53d609aa1d6b4297",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/admin/settings/home.blade.php",
+      "sha256": "bc702ad8af74343b59d8271532a49a1ef28a13b1e62ac8c42a6d3d94908acc1b",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/settings/index.blade.php",
+      "sha256": "9e13469fa82f9f2ae6160f12504be214863c09bb41c5350dd2e506e9a18087f0",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/settings/mail.blade.php",
+      "sha256": "7eddcb3758b64835c6d3d1be1f037ddb4ac61c1ceac5b69df1e692fc25108140",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/settings/maintenance.blade.php",
+      "sha256": "22922acb9e1cdf5a46da0e45facb01e73d249ec3fae64990ef894f35e04ae89a",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/settings/performance.blade.php",
+      "sha256": "86161027bc4c36e8f58d7992bc2a6df09fcde5e563fb739a6f5edd3d074f36b5",
+      "candidates": 3
+    },
+    {
+      "source": "azuriom/core/admin/social-links/create.blade.php",
+      "sha256": "fbbed41cdb318b1d914b1b8c1fa89ccdd3faa77c71bf32abae7c9429c457c0f5",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/social-links/edit.blade.php",
+      "sha256": "0e4636622847a5059bb291704d2ecbdbd7609a920b7bc56b4d6ccf082b2ea245",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "sha256": "31d5cf89d515ad6051a0bd64b2bbbb81cb2d374f0b96c7c1ff3670a8fde29d9a",
+      "candidates": 6
+    },
+    {
+      "source": "azuriom/core/admin/update/index.blade.php",
+      "sha256": "26e65389ed75316446bebdd56c4ae5934b01be8d299d8a15f59170d7fcf0341e",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/users/_notify.blade.php",
+      "sha256": "05d68f41be0da8f58a0f66a559bba3df4aaeaab45f18df1b5035acfe35fc59d5",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/users/create.blade.php",
+      "sha256": "16215fe41ff4106b5c10539b1da263f7294b68522285e7f80932e39e3533ec90",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "sha256": "6e62fbe753739fda77dbe682233595eaebfbc3de0037da2ba68c25081d750ddf",
+      "candidates": 7
+    },
+    {
+      "source": "azuriom/core/admin/users/index.blade.php",
+      "sha256": "91dda2270d850253810bad0bda92933da5f6408f5580faa0890cd16e9a455dbc",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/2fa.blade.php",
+      "sha256": "12d4f478448bd706cd5706c0ca3d42f96f3790fa858c14f5e44a2882df7361a0",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/login.blade.php",
+      "sha256": "9e83c4380036f0b9137f81da210be0818f8cdc922b8a2a8a5e00845d809ae5ae",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/passwords/confirm.blade.php",
+      "sha256": "a7f324c430b41d39a7888631bbe5a6ac3e29b803c263754f77c361ead06f8e8a",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/passwords/email.blade.php",
+      "sha256": "933d1742752917f3c9411cbac054a27f801ca1c40dc42ea15114e7850597ac80",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/passwords/reset.blade.php",
+      "sha256": "8c7cc8b624e08404bc0329dd08bde36744651742b13c65284a848fc90426e80c",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/register.blade.php",
+      "sha256": "f4195c728daf9e6bf13c4872e3c8cd0e3d232f657595fc87eaeb7c9b7ba47c9d",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/auth/verify.blade.php",
+      "sha256": "5f4bc7d540c458c3ef3e914209ac4791658ef367877b25b3a2dc6bdbc6daf90f",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/elements/navbar.blade.php",
+      "sha256": "af1c7fddfa657622390c4efa7b56f044454f723ebd0fbc04d3e1a27bf0e53e1a",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/install/_footer.blade.php",
+      "sha256": "f99c87244862d6e27cb471bdde2cb075cb6423a967591d9751e5b70fbd69c458",
+      "candidates": 19
+    },
+    {
+      "source": "azuriom/core/install/database.blade.php",
+      "sha256": "9c2a74120c0cda37ed549e998246133bfc943d5300c3b5a1a90e6aaebb98dce2",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/install/games/layout.blade.php",
+      "sha256": "5f039aa8172533b610678e6f50e8a3e39de1d43f39c95f8f5929a3d0eb758e40",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/posts/index.blade.php",
+      "sha256": "cbbce4c0f3d7d49b0a74c8f0108c3f8b9bc5728c86e8ebc20155a744384d87f7",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/posts/show.blade.php",
+      "sha256": "28be8a0341c401453bb6c05f067a0b3fd3d2693b067d9df064ac3cbc280157f3",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/profile/2fa/enable.blade.php",
+      "sha256": "f32ea0011fa9001bf86d2be58d0b7b076535f4d1d66505bf67031372bd14a4e3",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/profile/2fa/index.blade.php",
+      "sha256": "b10dc555a64bbfa7e4bc2b5440b15d8e72997c16036b16ec6aa9f098326f172d",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/core/profile/delete.blade.php",
+      "sha256": "2735fd318d1e31aa7914c01fe74857edb2ee4b4f89cdaf123b4d6ad22867985b",
+      "candidates": 2
+    },
+    {
+      "source": "azuriom/core/profile/index.blade.php",
+      "sha256": "b242951193392c05bf0f29cc133af3ad358d64e1fa0f6049729092b4f93e7531",
+      "candidates": 8
+    },
+    {
+      "source": "azuriom/shop/admin/categories/create.blade.php",
+      "sha256": "eb5927755e7951ede159b6231e50bce1012641f74150149fb06f69395a9b9376",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/categories/edit.blade.php",
+      "sha256": "51561ce052fe0b5544032c465b13fb8bb19da8056b70bd48b2cb3c1107223d7a",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/coupons/create.blade.php",
+      "sha256": "100936c9c229de7a3a7bf96e80e92bc6dcdab4a0ff813c6b3abfc43d66f1ab9f",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/coupons/edit.blade.php",
+      "sha256": "74e47659050f800e7d961340f234845d4a1be15370cb255bb5dd248088d54247",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/discounts/create.blade.php",
+      "sha256": "cb338a6ea426464084d8b1444e0790de1dae50fcb9b870cc935c962d418509e6",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/discounts/edit.blade.php",
+      "sha256": "6594629ca7e1d9607404e80e66c9e7c9073b983ece8bbb80a8ad2e90ec2e8e5e",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/gateways/create.blade.php",
+      "sha256": "2169f3612397a8a89b444690b76e3e3f04040092d7b5512b9158e0db54fd1e17",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/gateways/edit.blade.php",
+      "sha256": "59edc4cbae2429bb5b6a6238d6eac3d8b9a1d7e90c5fde699ee9002c6931d546",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/giftcards/create.blade.php",
+      "sha256": "9a14b3dd1e2b1385a43785db858895ec6aeae30173f43a2166e4c06ada228c73",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/giftcards/edit.blade.php",
+      "sha256": "641a1c00abec23706926796f7caec553a102ea8a54c54a0c64cdb7aabb51da15",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/goals/create.blade.php",
+      "sha256": "820316d8acf50b82fffdf3ad6b5baa04f0e027dfe77c0eacc15f7db4ec270037",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/goals/edit.blade.php",
+      "sha256": "1afb9a99e5f1d5fc6dabff29f850905254144d449ae5589240829ae15820c476",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/offers/create.blade.php",
+      "sha256": "e803131088016e8d56424797a6f7e9a92572e14855488f37dbd78e49ba0c39fe",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/offers/edit.blade.php",
+      "sha256": "9d9a26450f803a4c0548d6795df33080f81512845fe7f37f62b8eb56e05c2119",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/packages/_category.blade.php",
+      "sha256": "450ed42f71bb61145f49cde6ceaa0953f878f31a02b9e0fbe135cbd80adf7189",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/packages/create.blade.php",
+      "sha256": "1d2937a85a4195f7e6ebf55c725b0c76f5b1132fda9c228f3de47a8fffed0cfa",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/packages/edit.blade.php",
+      "sha256": "d410e4d9eda7d4464165ef11c2e128bfe263ff66f5ebba56b84a2e76dd0c4e20",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/payments/create.blade.php",
+      "sha256": "c575a873eb71bd696b29eca4daa0d832fefb3996b481dad72a746d82a22fbdba",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/payments/index.blade.php",
+      "sha256": "21b820487899f3bc97058f4ef8969dd0b033ec9a01d2614da5033a016dd2ab55",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/purchases/index.blade.php",
+      "sha256": "01c04aa2eca6b7410bd63847707900bcb166de2780d08c33de57aa4e3169fdf5",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/settings.blade.php",
+      "sha256": "f8eb0baec53a671fd19bc7063d41a3dd5bb505cf8f3412a07c299dc198a16220",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/subscriptions/index.blade.php",
+      "sha256": "f89dea7fcb9a40e158567a583737e1ab407cddf500b6a4e64f1f649f5b2a0de0",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/variables/create.blade.php",
+      "sha256": "a4e460a48e398d6a11f6b0678a7fcf4796e1948ee5a5f3b23075e8b3e425a114",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/admin/variables/edit.blade.php",
+      "sha256": "1be26876f74b2a9b978088ff54e41c35e035f94e60eb6fe099f8a5ef13942147",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/cart/index.blade.php",
+      "sha256": "9e30f2fdae8094bcd22450579845690081d46b82f518caa6d47c5d0a9eb27d16",
+      "candidates": 8
+    },
+    {
+      "source": "azuriom/shop/categories/_sidebar.blade.php",
+      "sha256": "6a27a9d516aa00b798b7f7d7b7c93ab5ac85ca9f19475c412248cabab8477642",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/offers/select.blade.php",
+      "sha256": "ecbab44e5dff7b0c508971c277d83bbbe0b747d3977670c6bbb9d74b44ddb43c",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/packages/show.blade.php",
+      "sha256": "7c1c8fe25ac67006df8cf66c267c6e88d814c444f01c58b96fa6838696594a42",
+      "candidates": 3
+    },
+    {
+      "source": "azuriom/shop/packages/variables.blade.php",
+      "sha256": "2fb83b38412699711372a65d3e8d45af50b3fd1e6e2530e31639cee3399929ee",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/payments/pay.blade.php",
+      "sha256": "943feb86ad78edf8f3f99189102eac7b52d3b9a9193d06d946f6d327ddfb42fb",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/profile/index.blade.php",
+      "sha256": "dd07a205396154cb12d0989d8aab5297636ddd5a5b7d46e7105182c77e904417",
+      "candidates": 1
+    },
+    {
+      "source": "azuriom/shop/user/login.blade.php",
+      "sha256": "0346f2a6ccfe085539b8e3647f39a02e2659fafa1c89ef9ae3a82726b03c9ff7",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/accesslink.inc.php",
+      "sha256": "512d6676452f46f3ddfa6589748ddcf6ed7925b4e150e95a58c785c073585456",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/edit.inc.php",
+      "sha256": "f4ac64af0c37931bc0513f2cfb30209c4e95435fe7f0d4c445b51d2b70e6bc92",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/faq-category.inc.php",
+      "sha256": "f1d113116f0ed5f072b959234b08ec8d0b5fd69c4897ffa616b98a3749ff4943",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/faq.inc.php",
+      "sha256": "cc79d9a083d33af7ee56680164606dea9f9db1107d25cd10380cf8907c6fa638",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/kb-categories.inc.php",
+      "sha256": "5b069cf16b370940018dc0947eb7f752d80db7e45b226802e6a0a32c7055817c",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/kb-search.inc.php",
+      "sha256": "1d7e9e493eb21b08fb54c6eab6784d48871313946052b1b7f5b3852b9de08956",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/login.inc.php",
+      "sha256": "b7bfb8189d05e9f33867af85b77dbfe5beda1b1c8013324531bf6dc04ff03845",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/open.inc.php",
+      "sha256": "5898b57d7dfaaccdcf5ab9307edaeb2cce6d545db0ca6b71487d4029c4c1a9e7",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/profile.inc.php",
+      "sha256": "5b984da59e4a9ba26e39df51a669b739488981b7a4a5659d2a74f1065350f44e",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/pwreset.login.php",
+      "sha256": "626fd7f84530940efc093f823910c512e67bb6a9185b6857438a11139a444008",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/pwreset.request.php",
+      "sha256": "e3e42c17f603f31d5851c5793847e16af0dd0d64cacdc39d4c31b5571cf144d2",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/pwreset.sent.php",
+      "sha256": "98d4dcb180aa73b8d553df0a026727904c8bb0f5a896d2a0ad54adc3ae225ef7",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/register.inc.php",
+      "sha256": "33e15360d27ae3beb4dbe66c83160d8d41c6bd365bfb93fae5b8bf53837cb0f6",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/tickets.inc.php",
+      "sha256": "c0a44f4896eeda4cff66225bfef5246449e51c9b99466ce4e7ddae4783e5a1ed",
+      "candidates": 1
+    },
+    {
+      "source": "support/client/view.inc.php",
+      "sha256": "ec1134a7fcf11cf59be29a14b83d11a00a256cd67bafcfcffc298cca1a029fe5",
+      "candidates": 1
+    }
+  ],
+  "records": [
+    {
+      "key": "95ce50655902365e",
+      "source": "azuriom/core/admin/images/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.images.store"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a39b964cac8035f2",
+      "source": "azuriom/core/admin/images/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.images.update"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a289813f8f3dbe90",
+      "source": "azuriom/core/admin/layouts/admin.blade.php",
+      "line": 436,
+      "occurrence": 1,
+      "identifier": "confirmDeleteForm",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c3fce87f73950c6b",
+      "source": "azuriom/core/admin/layouts/admin.blade.php",
+      "line": 464,
+      "occurrence": 2,
+      "identifier": "logoutForm",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "logout"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "dc1963582bc40034",
+      "source": "azuriom/core/admin/logs/index.blade.php",
+      "line": 46,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.logs.clear"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "f584a17809b15925",
+      "source": "azuriom/core/admin/logs/index.blade.php",
+      "line": 61,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.logs.settings"
+      },
+      "fields": [
+        {
+          "name": "webhook_url",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "5b2db42bacd20ef9",
+      "source": "azuriom/core/admin/navbar-elements/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.navbar-elements.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c91f446da24d7887",
+      "source": "azuriom/core/admin/navbar-elements/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.navbar-elements.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "2c93f28473e7e58b",
+      "source": "azuriom/core/admin/pages/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.pages.store"
+      },
+      "fields": [
+        {
+          "name": "pending_id",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "da27368c6dac3451",
+      "source": "azuriom/core/admin/pages/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.pages.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "7f1e87df414a91a1",
+      "source": "azuriom/core/admin/plugins/index.blade.php",
+      "line": 43,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.plugins."
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e5a6f939b0badcf5",
+      "source": "azuriom/core/admin/plugins/index.blade.php",
+      "line": 56,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.plugins.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c23721ecfd092143",
+      "source": "azuriom/core/admin/plugins/index.blade.php",
+      "line": 122,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.plugins.download"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "861ee2f0d46a4539",
+      "source": "azuriom/core/admin/plugins/index.blade.php",
+      "line": 139,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.plugins.reload"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "96fbad5de22ec0d0",
+      "source": "azuriom/core/admin/posts/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.posts.store"
+      },
+      "fields": [
+        {
+          "name": "pending_id",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "316450c634c5caef",
+      "source": "azuriom/core/admin/posts/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.posts.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "9f6aad81064e6485",
+      "source": "azuriom/core/admin/redirects/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.redirects.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "5f0f9ee50e698b14",
+      "source": "azuriom/core/admin/redirects/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.redirects.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "ea99eac9b9a1f673",
+      "source": "azuriom/core/admin/roles/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.roles.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "f8f06d5bd8c7d86d",
+      "source": "azuriom/core/admin/roles/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.roles.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a6767555abd6480f",
+      "source": "azuriom/core/admin/roles/index.blade.php",
+      "line": 73,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.roles.duplicate"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "ee68e966151559e6",
+      "source": "azuriom/core/admin/roles/index.blade.php",
+      "line": 108,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.roles.settings"
+      },
+      "fields": [
+        {
+          "name": "client_id",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "client_secret",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "token",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "link_roles",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d09fb59087dc120c",
+      "source": "azuriom/core/admin/servers/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.servers.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "39e694eb5710fff8",
+      "source": "azuriom/core/admin/servers/edit.blade.php",
+      "line": 16,
+      "occurrence": 1,
+      "identifier": "serverForm",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.servers.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "02abe8528e908981",
+      "source": "azuriom/core/admin/servers/index.blade.php",
+      "line": 11,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.servers.change-default"
+      },
+      "fields": [
+        {
+          "name": "server",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e74dac5c67713251",
+      "source": "azuriom/core/admin/settings/authentification.blade.php",
+      "line": 11,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.auth.update"
+      },
+      "fields": [
+        {
+          "name": "conditions",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "register",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "auth_api",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "user_change_name",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "user_upload_avatar",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "user_delete",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "881f6fbb678ce45e",
+      "source": "azuriom/core/admin/settings/authentification.blade.php",
+      "line": 78,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.security.update"
+      },
+      "fields": [
+        {
+          "name": "captcha",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "site_key",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "secret_key",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "login_captcha",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "hash",
+          "type": "select",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "force_2fa",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "94602034a399d494",
+      "source": "azuriom/core/admin/settings/home.blade.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.home.update"
+      },
+      "fields": [
+        {
+          "name": "home_message",
+          "type": "textarea",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "enable_welcome_alert",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "welcome_alert",
+          "type": "textarea",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "268d263cad1e7f57",
+      "source": "azuriom/core/admin/settings/index.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.update"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "url",
+          "type": "url",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "keywords",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "icon",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "logo",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "background",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "timezone",
+          "type": "select",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "locale",
+          "type": "select",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "copyright",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "money",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "site-key",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "posts_webhook",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "user_money_transfer",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "2458b8afc75d8b2e",
+      "source": "azuriom/core/admin/settings/mail.blade.php",
+      "line": 40,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.mail.update"
+      },
+      "fields": [
+        {
+          "name": "mailer",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "from-address",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "smtp-host",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "smtp-port",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "smtp-scheme",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "smtp-username",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "smtp-password",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "users_email_verification",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "41877cbc7d0241fc",
+      "source": "azuriom/core/admin/settings/maintenance.blade.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.maintenance.update"
+      },
+      "fields": [
+        {
+          "name": "maintenance_message",
+          "type": "textarea",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "maintenance_status",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "is_global",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "dc0720d0ff4709a9",
+      "source": "azuriom/core/admin/settings/performance.blade.php",
+      "line": 13,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.cache.clear"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "48f1c990e40b2bc5",
+      "source": "azuriom/core/admin/settings/performance.blade.php",
+      "line": 37,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.cache.advanced.enable"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "6914aef5e5e34571",
+      "source": "azuriom/core/admin/settings/performance.blade.php",
+      "line": 52,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.settings.cache.advanced.clear"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "41e32f8d2806c291",
+      "source": "azuriom/core/admin/social-links/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.social-links.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "46d4f7992836f098",
+      "source": "azuriom/core/admin/social-links/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.social-links.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d1b306c5593644e7",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 25,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.change"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "64517c71a31b864d",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 39,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "efa965b51ff4c5cc",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 84,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.change"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e1137930ea0a3af1",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 95,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a3eab68ac44fcbfa",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 158,
+      "occurrence": 5,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.download"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "338a6d7c74bc52eb",
+      "source": "azuriom/core/admin/themes/index.blade.php",
+      "line": 175,
+      "occurrence": 6,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.themes.reload"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "7a9b729e711c091f",
+      "source": "azuriom/core/admin/update/index.blade.php",
+      "line": 74,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.update.fetch"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "49b2560373600936",
+      "source": "azuriom/core/admin/users/_notify.blade.php",
+      "line": 13,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "content",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": 100
+        },
+        {
+          "name": "level",
+          "type": "select",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "759850b754aaee4d",
+      "source": "azuriom/core/admin/users/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.store"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a1cf08d00b11204e",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 19,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.bans.destroy"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "99de94b1d8013ee1",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 37,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.update"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "money",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a90cf9c0b997231c",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 155,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.verify"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "70d0d32a955f26ba",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 180,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.2fa"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "8f2068cee3be8df4",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 200,
+      "occurrence": 5,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.force-password"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "63c856a6ae2c1d6c",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 236,
+      "occurrence": 6,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.discord.unlink"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "faf5868119b61e95",
+      "source": "azuriom/core/admin/users/edit.blade.php",
+      "line": 268,
+      "occurrence": 7,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.bans.store"
+      },
+      "fields": [
+        {
+          "name": "reason",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "bed0969d1a58a111",
+      "source": "azuriom/core/admin/users/index.blade.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "admin.users.index"
+      },
+      "fields": [
+        {
+          "name": "search",
+          "type": "search",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 340,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c65b60c068afbd08",
+      "source": "azuriom/core/auth/2fa.blade.php",
+      "line": 12,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "login.2fa"
+      },
+      "fields": [
+        {
+          "name": "code",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "948c4b7ab73730d7",
+      "source": "azuriom/core/auth/login.blade.php",
+      "line": 12,
+      "occurrence": 1,
+      "identifier": "captcha-form",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "login"
+      },
+      "fields": [
+        {
+          "name": "email",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "remember",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "44909aa127d35867",
+      "source": "azuriom/core/auth/passwords/confirm.blade.php",
+      "line": 14,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "password.confirm"
+      },
+      "fields": [
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b8af5f45d7770da8",
+      "source": "azuriom/core/auth/passwords/email.blade.php",
+      "line": 18,
+      "occurrence": 1,
+      "identifier": "captcha-form",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "password.email"
+      },
+      "fields": [
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "8cdc37795b7326d0",
+      "source": "azuriom/core/auth/passwords/reset.blade.php",
+      "line": 12,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "password.update"
+      },
+      "fields": [
+        {
+          "name": "token",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password_confirmation",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "cbc2de1a1b0afec3",
+      "source": "azuriom/core/auth/register.blade.php",
+      "line": 12,
+      "occurrence": 1,
+      "identifier": "captcha-form",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "register"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password_confirmation",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "conditions",
+          "type": "checkbox",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "61c0d02d0bc50136",
+      "source": "azuriom/core/auth/verify.blade.php",
+      "line": 21,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "verification.resend"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b8d006c41eda47cb",
+      "source": "azuriom/core/elements/navbar.blade.php",
+      "line": 85,
+      "occurrence": 1,
+      "identifier": "logout-form",
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "logout"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "ff9f6fd3883df787",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 1,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b2946d4a6ff8edcb",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 13,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "516e24a1e268cac7",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 24,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "cff452726dde8e67",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 35,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "274b1057f8ca60c4",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 46,
+      "occurrence": 5,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "5cadc61a425718fe",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 63,
+      "occurrence": 6,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "516b9186e3cdfe41",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 75,
+      "occurrence": 7,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "759c0dfd9c5b243d",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 85,
+      "occurrence": 8,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "cf0208d8206fb69f",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 96,
+      "occurrence": 9,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e88ce0a1b1944bdc",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 106,
+      "occurrence": 10,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "1cda14c011cf2b3f",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 117,
+      "occurrence": 11,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "5b59cb4361d5bb3d",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 127,
+      "occurrence": 12,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "38195ca167898699",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 139,
+      "occurrence": 13,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "29992169608f9160",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 150,
+      "occurrence": 14,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "88995c6a05781bb2",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 164,
+      "occurrence": 15,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "6e5411ea947362d2",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 174,
+      "occurrence": 16,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b9240b9805744ada",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 184,
+      "occurrence": 17,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "9b67de0037d4f619",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 195,
+      "occurrence": 18,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d09071244962b54d",
+      "source": "azuriom/core/install/_footer.blade.php",
+      "line": 210,
+      "occurrence": 19,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a8b2f9f3ef5365e3",
+      "source": "azuriom/core/install/database.blade.php",
+      "line": 4,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "install.database"
+      },
+      "fields": [
+        {
+          "name": "type",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "host",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "port",
+          "type": "number",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "database",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "user",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e775bf271877fd5f",
+      "source": "azuriom/core/install/games/layout.blade.php",
+      "line": 4,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "locale",
+          "type": "select",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c204fa2d3242f54f",
+      "source": "azuriom/core/posts/index.blade.php",
+      "line": 9,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "posts.index"
+      },
+      "fields": [
+        {
+          "name": "q",
+          "type": "search",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "8f2ea3a50b463a12",
+      "source": "azuriom/core/posts/show.blade.php",
+      "line": 85,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "posts.comments.store"
+      },
+      "fields": [
+        {
+          "name": "content",
+          "type": "textarea",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "6ec5b9b84a9088ef",
+      "source": "azuriom/core/posts/show.blade.php",
+      "line": 124,
+      "occurrence": 2,
+      "identifier": "confirmDeleteForm",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "eb180d3cfe483435",
+      "source": "azuriom/core/profile/2fa/enable.blade.php",
+      "line": 24,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.2fa.enable"
+      },
+      "fields": [
+        {
+          "name": "code",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "backup",
+          "type": "checkbox",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "f27777afd53abee6",
+      "source": "azuriom/core/profile/2fa/index.blade.php",
+      "line": 38,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.2fa.disable"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c40c9ccd4a6095ce",
+      "source": "azuriom/core/profile/delete.blade.php",
+      "line": 13,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e4b726c66f7f6a8d",
+      "source": "azuriom/core/profile/delete.blade.php",
+      "line": 27,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.delete.send"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "bb40d619e62f1f1f",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 59,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.discord.unlink"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "2717fe31924edbad",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 90,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "verification.resend"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "10552e32857e3890",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 107,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.email"
+      },
+      "fields": [
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "email_confirm_pass",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "de1d1fdbce8a5e9f",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 146,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.password"
+      },
+      "fields": [
+        {
+          "name": "password_confirm_pass",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "password_confirmation",
+          "type": "password",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "4e494a19c30848be",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 188,
+      "occurrence": 5,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.name"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "75ec50350e113841",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 218,
+      "occurrence": 6,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.avatar"
+      },
+      "fields": [
+        {
+          "name": "image",
+          "type": "file",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "ac90dad443f90857",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 240,
+      "occurrence": 7,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.avatar"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "368d4107ca4f4a40",
+      "source": "azuriom/core/profile/index.blade.php",
+      "line": 262,
+      "occurrence": 8,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "profile.transfer-money"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "money",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "4abf090a74a4b26c",
+      "source": "azuriom/shop/admin/categories/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.categories.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "37cf1db92c3c040b",
+      "source": "azuriom/shop/admin/categories/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.categories.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "6889c13c0136664d",
+      "source": "azuriom/shop/admin/coupons/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.coupons.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "feaca7c3a677fdde",
+      "source": "azuriom/shop/admin/coupons/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.coupons.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "635f2ec54317953d",
+      "source": "azuriom/shop/admin/discounts/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.discounts.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e3bf40983dd033cd",
+      "source": "azuriom/shop/admin/discounts/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.discounts.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a4868029a952ae4e",
+      "source": "azuriom/shop/admin/gateways/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.gateways.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "713a8665d40a9c7d",
+      "source": "azuriom/shop/admin/gateways/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.gateways.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a2df0fdb7ac1684d",
+      "source": "azuriom/shop/admin/giftcards/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.giftcards.store"
+      },
+      "fields": [
+        {
+          "name": "code",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "balance",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "31d623b80e815e17",
+      "source": "azuriom/shop/admin/giftcards/edit.blade.php",
+      "line": 16,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.giftcards.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 343,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "cd3737e9feccbf45",
+      "source": "azuriom/shop/admin/goals/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.goals.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "019998107ff634a3",
+      "source": "azuriom/shop/admin/goals/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.goals.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a005a099f92366bb",
+      "source": "azuriom/shop/admin/offers/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.offers.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a0c72f34bc48e87e",
+      "source": "azuriom/shop/admin/offers/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.offers.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "66f158072071cc2c",
+      "source": "azuriom/shop/admin/packages/_category.blade.php",
+      "line": 33,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.packages.duplicate"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d26bbba660823ab6",
+      "source": "azuriom/shop/admin/packages/create.blade.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.packages.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "c9b80b418824ab44",
+      "source": "azuriom/shop/admin/packages/edit.blade.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.packages.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "2a98719976fa2bae",
+      "source": "azuriom/shop/admin/payments/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.payments.store"
+      },
+      "fields": [
+        {
+          "name": "user_id",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "transaction_id",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b4b936376a332daa",
+      "source": "azuriom/shop/admin/payments/index.blade.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.payments.index"
+      },
+      "fields": [
+        {
+          "name": "search",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "9f4bf8216d9c58e2",
+      "source": "azuriom/shop/admin/purchases/index.blade.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.purchases.index"
+      },
+      "fields": [
+        {
+          "name": "search",
+          "type": "search",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "4e5bf88afba16604",
+      "source": "azuriom/shop/admin/settings.blade.php",
+      "line": 11,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.settings"
+      },
+      "fields": [
+        {
+          "name": "currency",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "use_site_money",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "guest_purchases",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "enable_home",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "home_message",
+          "type": "textarea",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "recent_payments",
+          "type": "number",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "top_customer",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "display_amount",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "goal_display_amount",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "webhook",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "terms_required",
+          "type": "checkbox",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "terms",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "46bda141cfbb808a",
+      "source": "azuriom/shop/admin/subscriptions/index.blade.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.subscriptions.index"
+      },
+      "fields": [
+        {
+          "name": "search",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "bf07fae3965acd86",
+      "source": "azuriom/shop/admin/variables/create.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.variables.store"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "589bd36fddf47cd4",
+      "source": "azuriom/shop/admin/variables/edit.blade.php",
+      "line": 8,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.admin.variables.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 341,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "31d01dd12b76362c",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 23,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.update"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "86290f3ee461f6d3",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 66,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.clear"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d3faf022e7e3d10d",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 83,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.coupons.add"
+      },
+      "fields": [
+        {
+          "name": "coupon",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "920ad1e5aab5dd4f",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 120,
+      "occurrence": 4,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.coupons.remove"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "355a220dba4669b4",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 145,
+      "occurrence": 5,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.giftcards.add"
+      },
+      "fields": [
+        {
+          "name": "giftcard",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a61f5fce2c7606f9",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 182,
+      "occurrence": 6,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.giftcards.remove"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "0a7bb02fc455481a",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 203,
+      "occurrence": 7,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.payments.payment"
+      },
+      "fields": [
+        {
+          "name": "email",
+          "type": "email",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "4d3407a6af2f37fd",
+      "source": "azuriom/shop/cart/index.blade.php",
+      "line": 261,
+      "occurrence": 8,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.payment"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "1359d7c4ad64914b",
+      "source": "azuriom/shop/categories/_sidebar.blade.php",
+      "line": 60,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.logout"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "cf614c332c4cba35",
+      "source": "azuriom/shop/offers/select.blade.php",
+      "line": 46,
+      "occurrence": 1,
+      "identifier": "submitForm",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "8fde688aa27314ee",
+      "source": "azuriom/shop/packages/show.blade.php",
+      "line": 28,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.subscriptions.select"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "739c01b66e0c26eb",
+      "source": "azuriom/shop/packages/show.blade.php",
+      "line": 36,
+      "occurrence": 2,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.cart.remove"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "949414210d6d14d9",
+      "source": "azuriom/shop/packages/show.blade.php",
+      "line": 46,
+      "occurrence": 3,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.packages.buy"
+      },
+      "fields": [
+        {
+          "name": "price",
+          "type": "number",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "quantity",
+          "type": "number",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "9f7c6a59ee68c555",
+      "source": "azuriom/shop/packages/variables.blade.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.packages.variables"
+      },
+      "fields": [
+        {
+          "name": "price",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "quantity",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 339,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "191bdb1f0527b3a3",
+      "source": "azuriom/shop/payments/pay.blade.php",
+      "line": 26,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.payments.pay"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 342,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d368da6ad0283154",
+      "source": "azuriom/shop/profile/index.blade.php",
+      "line": 155,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.subscriptions.destroy"
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "f0edd6e844a1e672",
+      "source": "azuriom/shop/user/login.blade.php",
+      "line": 16,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "named-route",
+        "name": "shop.login"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "requiredAttributeCandidate": true,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": true,
+      "qaTicket": 338,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e4d11f1f9af0393d",
+      "source": "support/client/accesslink.inc.php",
+      "line": 20,
+      "occurrence": 1,
+      "identifier": "clientLogin",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "lemail",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "lticket",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "fdc198077fd3253f",
+      "source": "support/client/edit.inc.php",
+      "line": 11,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "id",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "d2c577613b00fdc6",
+      "source": "support/client/faq-category.inc.php",
+      "line": 57,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "q",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e11178d60139170b",
+      "source": "support/client/faq.inc.php",
+      "line": 33,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "q",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a8f709eb1dba46ca",
+      "source": "support/client/kb-categories.inc.php",
+      "line": 85,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "topicId",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "32260d7b356a7b54",
+      "source": "support/client/kb-search.inc.php",
+      "line": 25,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "q",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "15a97af79f2f7b6d",
+      "source": "support/client/login.inc.php",
+      "line": 20,
+      "occurrence": 1,
+      "identifier": "clientLogin",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "luser",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "lpasswd",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "e75f975ab1e2c35c",
+      "source": "support/client/open.inc.php",
+      "line": 36,
+      "occurrence": 1,
+      "identifier": "ticketForm",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "topicId",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "captcha",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "reset",
+          "type": "reset",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "cancel",
+          "type": "button",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "7398156a05cc7080",
+      "source": "support/client/profile.inc.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "lang",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "cpasswd",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        },
+        {
+          "name": "passwd1",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        },
+        {
+          "name": "passwd2",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "a385bb67b14ba7ae",
+      "source": "support/client/pwreset.login.php",
+      "line": 10,
+      "occurrence": 1,
+      "identifier": "clientLogin",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "do",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "token",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "userid",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "7395ee2be44619c7",
+      "source": "support/client/pwreset.request.php",
+      "line": 11,
+      "occurrence": 1,
+      "identifier": "clientLogin",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "do",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "userid",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "9bb5689b149cbd8c",
+      "source": "support/client/pwreset.sent.php",
+      "line": 6,
+      "occurrence": 1,
+      "identifier": "clientLogin",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "adc8864c38d2e585",
+      "source": "support/client/register.inc.php",
+      "line": 22,
+      "occurrence": 1,
+      "identifier": null,
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "do",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "backend",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "username",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "passwd1",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        },
+        {
+          "name": "passwd2",
+          "type": "password",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": 128
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "0a2416ae047ca5cf",
+      "source": "support/client/tickets.inc.php",
+      "line": 142,
+      "occurrence": 1,
+      "identifier": "ticketSearchForm",
+      "method": "GET",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "keywords",
+          "type": "text",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "topic_id",
+          "type": "select",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    },
+    {
+      "key": "b8d0f8fe533a602a",
+      "source": "support/client/view.inc.php",
+      "line": 165,
+      "occurrence": 1,
+      "identifier": "reply",
+      "method": "POST",
+      "handler": {
+        "kind": "dynamic-or-current",
+        "name": null
+      },
+      "fields": [
+        {
+          "name": "id",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        },
+        {
+          "name": "a",
+          "type": "hidden",
+          "requiredAttributeCandidate": false,
+          "maxLengthLiteral": null
+        }
+      ],
+      "csrfDirectiveCandidate": false,
+      "qaTicket": 337,
+      "runtimeStatus": "unverified",
+      "validation": {
+        "required-empty": "not-run",
+        "types-and-enums": "not-run",
+        "unicode-boundaries": "not-run",
+        "authorisation-identity": "not-run",
+        "csrf-origin": "not-run",
+        "uploads": "not-run",
+        "replay-concurrency": "not-run",
+        "keyboard-responsive": "not-run"
+      }
+    }
+  ]
+}

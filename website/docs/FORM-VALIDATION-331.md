@@ -19,3 +19,25 @@ Static scanning is deliberately a lower bound. Concatenated template fragments, 
 Reconcile the authored candidates against read-only served routes and installed native templates, especially public Support forms, MyBB forms and Azuriom product/admin/checkout forms. Capture only form identity, field schema and handler routes, never credentials or user submissions. Separate distinct form/actions, link current domain tickets, attach real required/type/Unicode/authorization/CSRF/upload/replay/accessibility evidence, and keep pending dimensions explicit. Test actual handlers in isolated fixtures; never submit a live payment or destructive request. Confirmed new bugs need their own human-approved Bug decision before repair. Close331only when every reconciled form has a current outcome and evidence.
 
 No production files, database records, permissions or financial state were changed by this slice. Source-only review/merge has no deployment step.
+
+## 5 November native-template discovery checkpoint
+
+The read-only collector `website/scripts/native-form-inventory.py --output FILE` was executed against installed Support client templates and Azuriom core/shop Blade templates. Its allowlisted roots are fixed in code. It exports logical paths, template hashes, stable candidate keys, literal field schema and normalized path/route identifiers; it never exports input values, raw template bodies, URL queries, credentials or submissions. Symlinks, fixtures, cache, vendor, email and compiled templates are excluded. Required/CSRF markers are source candidates, not verified enforcement. Quoted PHP `->` in Blade action attributes is handled without truncating tags.
+
+`website/docs/native-form-audit-register.json` contains **153 candidates in 97 installed templates**: 15 Support client candidates and 138 Azuriom candidates. No root was missing. Each remains runtime-unverified and every validation dimension remains not-run. These counts must not be added to the 33 authored candidates as distinct live forms: overlap, inactive native features and dynamic branches are not reconciled yet.
+
+| Existing QA ticket | Native candidates |
+| --- | ---: |
+| #337 | 15 |
+| #338 | 21 |
+| #339 | 31 |
+| #340 | 53 |
+| #341 | 13 |
+| #342 | 14 |
+| #343 | 6 |
+
+Snapshot SHA256: `d97ec022dd7005fd131ccee17cce42b363db9d08a9ec90ea562a1a2e012f4d14`.
+
+Three Python behavioural tests passed on the host: privacy/value and unsafe URL exclusion, Blade route/comment/stable-ID behavior, allowlist/symlink exclusions/missing roots/deterministic traversal. Two actual captures were byte-identical. The three existing Node discovery tests also passed. Initial authored `--check` after Windows checkout reported drift; regenerating retained the same33 records and produced no Git content diff, then `--check` passed (checkout line endings, not a claimed validation defect). No production file, form, account, permission or payment was modified.
+
+Still required: MyBB database template discovery, Support staff templates, runtime dynamic-form reconciliation, verifying which routes are actually served, and actual per-form handler/browser evidence in the existing QA child tickets. This checkpoint does not complete331 and does not reopen archived source137 or duplicate the child tasks. The installed-template JSON is a dated source snapshot; rerun and review differences when native software changes.
