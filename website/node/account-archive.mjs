@@ -27,6 +27,7 @@ export async function archiveAccount(db,actor,{userId,confirmation}, {native=asy
 }
 export async function restoreAccount(db,actor,{userId,confirmation},{native=async()=>{}}={}){
  if(!(await accessFor(db,actor)).ranks.some(isOwnerRank))return {status:403,message:'Only protected Owners may restore accounts.'};
+ const permanent=await db.prepare("SELECT 1 FROM site_accounts WHERE id=? AND password_hash='!banned'").bind(userId).first();if(permanent)return {status:409,message:'This account is permanently banned and cannot be restored through account recovery.'};
  const target=await db.prepare('SELECT a.id,a.username,h.role,h.ranks_json,h.password_salt,h.password_hash FROM site_account_archive h JOIN site_accounts a ON a.id=h.user_id WHERE h.user_id=?').bind(userId).first();
  if(!target)return {status:404,message:'Archived account not found.'};
  if(confirmation!==target.username)return {status:400,message:'Type the exact username to restore.'};

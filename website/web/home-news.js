@@ -29,10 +29,10 @@ if(fullPost&&postId){
   const back=newsEl('a','← News archive');back.href='news-archive.html';back.className='article-back';
   const head=newsEl('div');head.className='article-heading';const copy=newsEl('div');
   const category=newsEl('span',post.label);category.className='article-category';const date=newsEl('time',newsDate(post.published_at));date.dateTime=new Date(Number(post.published_at)).toISOString();
-  const meta=newsEl('div');meta.className='article-meta';meta.append(category,date);copy.append(meta,newsEl('h1',post.title));
+  const meta=newsEl('div');meta.className='article-meta';meta.append(category,date);meta.append(newsEl('span','Written by '+(post.author_name||'DuneRealms')));copy.append(meta,newsEl('h1',post.title));
   const image=newsEl('img');const artKeys=['world','news','maintenance','changelogs','events','community'];image.src='assets/news-'+(artKeys.includes(post.category_key||post.category)?(post.category_key||post.category):'news')+'.webp';image.alt='Imperial dispatch artwork';image.width=360;image.height=240;head.append(copy,image);
   const body=newsEl('div');body.className='dispatch-full-body';formatNewsBody(body,post.body);
-  const foot=newsEl('div');foot.className='article-actions';const all=newsEl('a','Browse all news →');all.href='news-archive.html';all.className='dispatch-read-more';foot.append(all);
+  const foot=newsEl('div');foot.className='article-actions';const all=newsEl('a','Browse all news →');all.href='news-archive.html';all.className='dispatch-read-more';foot.append(all);if(post.forum_url){const forum=newsEl('a','Go to forum post →');forum.href=post.forum_url;forum.className='dispatch-read-more';foot.append(forum);}
   fullPost.append(back,head,body,foot);
  }).catch(error=>fullPost.replaceChildren(newsEl('p',error.message)));
 }
