@@ -1,0 +1,9 @@
+People profiles — Owner-authorised 5 November 2026
+
+Shared Dev layout, own named personal seal in banner (blank if none), separate Personal / Community / Official / Awards panels. Awards holds team seals and earned personalised department seals. Existing rank and badge data is read-only. All assigned community badges are displayed irrespective of staff eligibility; this does not change eligibility for future grants. Shop catalogue provides five cosmetic seals, selected by current rank; subscription cancellation therefore follows existing rank lifecycle.
+
+Dunerealms is labelled Official account / Example account. It displays its own named seal only, all BADGES and catalogue Community entries automatically. No Crysknife, no other person's named seal, no example role grants. Existing entitled staff seals remain real. Memorial tribute pages retain separate presentation.
+
+Validation: 15 focused profile and native seal tests; syntax checks. Live authenticated profiles dunerealms, unimatrix999, mr_blueray verified; 29 distinct image URLs return PNG200. Owner Guild Patron/Caravan and recipient Crysknife verified, showcase Crysknife absence verified. Runtime backup /root/people-seals-before-20261105T190326Z. Restore backed-up node files/manifests/dist index and restart web/account-panel for rollback. Added files can remain unused. No payment/game restart or account-rank mutation.
+
+Art provenance: built-in imagegen, transparent PNG originals copied into web/assets/seals. Prompt family: circular imperial DuneRealms medallion, engraved metal, emerald enamel, laurel rim; exact top DUNEREALMS.COM and lower rank name. Caravan bronze camel/desert sun; Guild silver/gold compass; Imperial gold crown/sun; Grand sapphire jewel; Council emerald/gold council table. All generated output visually inspected. Mr_BlueRay branding and personal seal was PR29; this change completes the catalogue/profile showcase.
