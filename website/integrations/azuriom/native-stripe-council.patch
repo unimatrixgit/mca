@@ -1,0 +1,11 @@
+--- a/plugins/shop/src/Payment/Method/StripeMethod.php
++++ b/plugins/shop/src/Payment/Method/StripeMethod.php
+@@ -53,7 +53,7 @@
+     public static function managedTaxCode($package): string
+     {
+         if (! $package instanceof Package || ! in_array($package->dune_website_rank, [
+-            'vip', 'patron_caravan', 'patron_guild', 'patron_grand',
++            'vip', 'patron_caravan', 'patron_guild', 'patron_grand', 'council_member',
+         ], true)) {
+             throw \Illuminate\Validation\ValidationException::withMessages([
+                 'gateway' => 'This product is not yet configured for Managed Payments. Please contact Sales.',
