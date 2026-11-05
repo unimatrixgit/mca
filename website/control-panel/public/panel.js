@@ -10,6 +10,19 @@ function paintAccountHead(image,canvas,skin){
  return true;
 }
 // End account head renderer.
+function contactEmailFeedback(host,message,error=false){
+ if(!host._feedback){host._feedback=el('p');host._feedback.id='contact-email-feedback';host._feedback.tabIndex=-1;host._feedback.setAttribute('aria-live','polite');host._feedback.setAttribute('aria-atomic','true');}
+ const feedback=host._feedback;feedback.textContent=message;feedback.hidden=!message;feedback.setAttribute('role',error?'alert':'status');host.append(feedback);return feedback;
+}
+async function contactEmailAction(button,host,payload,pending,clearSecret=()=>{}){
+ const caption=button.textContent;button.disabled=true;button.textContent=pending;host.setAttribute('aria-busy','true');contactEmailFeedback(host,pending);
+ try{
+  const result=await api('account/email',payload);clearSecret();contactEmailFeedback(host,result.message,!!result.syncPending);
+  try{await contactEmailSettings();}catch{contactEmailFeedback(host,result.message+' The settings could not refresh. Reopen Account security to check the latest state.',true);}
+  host._feedback.focus();
+ }catch(error){clearSecret();contactEmailFeedback(host,error.message||'The request failed. Please try again.',true).focus();}
+ finally{button.disabled=false;button.textContent=caption;host.setAttribute('aria-busy','false');}
+}
 async function contactEmailSettings(){
  let host=document.getElementById('contact-email-settings');
  if(!host){host=el('section');host.id='contact-email-settings';document.getElementById('password-form').after(host);}
@@ -19,9 +32,10 @@ async function contactEmailSettings(){
  const passwordLabel=el('label','Current website password'),password=el('input');password.name='currentPassword';password.type='password';password.autocomplete='current-password';password.maxLength=256;password.required=true;passwordLabel.append(password);
  const send=el('button','Send verification email'),remove=el('button','Remove contact email');send.type=remove.type='submit';remove.formNoValidate=true;remove.hidden=!data.email&&!data.pendingEmail;
  form.append(label,passwordLabel,send,remove);host.append(form);
- form.onsubmit=event=>{event.preventDefault();const button=event.submitter||send;action(button,async()=>{const result=await api('account/email',{action:button===remove?'remove':'request',email:email.value,currentPassword:password.value});password.value='';await contactEmailSettings();notice(result.message);if(button!==remove)document.getElementById('contact-verification-code')?.focus();});};
- if(data.pendingEmail){const verify=el('form'),codeLabel=el('label','Verification code sent to '+data.pendingEmail),code=el('input');code.id='contact-verification-code';code.name='code';code.autocomplete='one-time-code';code.spellcheck=false;code.required=true;code.minLength=code.maxLength=36;codeLabel.append(code);const confirm=el('button','Confirm email');confirm.type='submit';verify.append(codeLabel,confirm);host.append(verify);verify.onsubmit=event=>{event.preventDefault();action(confirm,async()=>{const result=await api('account/email',{action:'confirm',code:code.value.trim()});await contactEmailSettings();notice(result.message);});};}
- if(data.syncPending){const warning=el('p','Support notification sync is pending. Keep checking your tickets online until it succeeds.'),retry=el('button','Retry Support sync');retry.type='button';retry.onclick=()=>action(retry,async()=>{const result=await api('account/email',{action:'sync'});await contactEmailSettings();notice(result.message);});host.append(warning,retry);}
+ form.onsubmit=event=>{event.preventDefault();const button=event.submitter||send;return contactEmailAction(button,host,{action:button===remove?'remove':'request',email:email.value,currentPassword:password.value},button===remove?'Removing contact email…':'Sending verification email…',()=>{password.value='';});};
+ contactEmailFeedback(host,host._feedback?.textContent||'',host._feedback?.getAttribute('role')==='alert');
+ if(data.pendingEmail){const verify=el('form'),codeLabel=el('label','Verification code sent to '+data.pendingEmail),code=el('input');code.id='contact-verification-code';code.name='code';code.autocomplete='one-time-code';code.spellcheck=false;code.required=true;code.minLength=code.maxLength=36;codeLabel.append(code);const confirm=el('button','Confirm email');confirm.type='submit';verify.append(codeLabel,confirm);host.append(verify);verify.onsubmit=event=>{event.preventDefault();return contactEmailAction(confirm,host,{action:'confirm',code:code.value.trim()},'Confirming email…');};}
+ if(data.syncPending){const warning=el('p','Support notification sync is pending. Keep checking your tickets online until it succeeds.'),retry=el('button','Retry Support sync');retry.type='button';retry.onclick=()=>contactEmailAction(retry,host,{action:'sync'},'Updating Support…');host.append(warning,retry);}
 }
 let mode='login',session=null;const $=id=>document.getElementById(id),notice=message=>{$('notice').textContent=message;};
 if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('embedded');
