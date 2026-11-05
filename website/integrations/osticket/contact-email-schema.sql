@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS dune_contact_projection (
+ website_id CHAR(36) PRIMARY KEY,
+ address VARCHAR(254),
+ version BIGINT NOT NULL DEFAULT -1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
