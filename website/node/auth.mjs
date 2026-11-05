@@ -68,6 +68,7 @@ export function createAuth(db,origin,settings={}){
     }
     const user=await db.prepare('SELECT * FROM site_accounts WHERE username=?').bind(username).first();
     const actual=await scrypt(password,user?.password_salt||'00000000000000000000000000000000',64);
+    if(user?.password_hash==='!banned'){const archived=await db.prepare('SELECT password_hash FROM site_account_archive WHERE user_id=?').bind(user.id).first();if(/^[a-f0-9]{128}$/i.test(archived?.password_hash||'')&&timingSafeEqual(actual,Buffer.from(archived.password_hash,'hex')))return json({code:'ACCOUNT_PERMANENTLY_BANNED',message:'Your passage through DuneRealms has been revoked. This account is permanently banned and can no longer access DuneRealms services.'},403);}
     if(!user||user.role==='memorial'||(user&&(await db.prepare("SELECT 1 FROM cp_account_ranks WHERE user_id=? AND rank_key='memorial'").bind(user.id).first()))||user.password_hash.startsWith('!')||!/^[a-f0-9]{128}$/i.test(user.password_hash)||!timingSafeEqual(actual,Buffer.from(user.password_hash,'hex')))return json({message:'Incorrect username or password.'},401);
     return issue(user);
   };

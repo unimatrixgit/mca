@@ -2,11 +2,11 @@ import {readFile} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {newsPath} from './search-visibility.mjs';
 const ORIGIN='https://www.dunerealms.com';
-const categories=new Set(['world','news','maintenance','changelogs','events','community']);
+const categories=new Set(['world','news','maintenance','changelogs','events','community','unis_blog']);
 export function newsWebhookPayload(post,{test=false}={}){
  const category=categories.has(post.category)?post.category:'news';
  const summary=String(post.body||'').replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\(https?:[^)]+\)/g,'$1').replace(/[#*_`]/g,'').replace(/\s+/g,' ').trim().slice(0,500);
- return {username:'DuneRealms Dispatches',avatar_url:'https://cdn.discordapp.com/avatars/1567239700610285618/dc3ff7eb9f86481f52b4293affa3bbfd.png',allowed_mentions:{parse:[]},embeds:[{title:(test?'[TEST] ':'')+String(post.title).slice(0,240),description:summary,url:ORIGIN+newsPath(post),color:0xc6a551,image:{url:ORIGIN+'/assets/news-'+category+'.webp'},footer:{text:test?'Integration test — not a new published article':'DuneRealms • The Quest for Tavren II Aedrecht'},timestamp:new Date(Number(post.published_at)).toISOString()}]};
+ return {username:'DuneRealms Dispatches',avatar_url:'https://cdn.discordapp.com/avatars/1567239700610285618/dc3ff7eb9f86481f52b4293affa3bbfd.png',allowed_mentions:{parse:[]},embeds:[{title:(test?'[TEST] ':'')+'['+({news:'NEWS',world:'World',maintenance:'Maintenance',changelogs:'Changelogs',events:'Events',community:'Community',unis_blog:'Uni’s Blog'}[post.category]||'NEWS')+'] '+String(post.title).slice(0,220),description:summary,url:ORIGIN+newsPath(post),color:0xc6a551,image:{url:ORIGIN+'/assets/news-'+(category==='unis_blog'?'news':category)+'.webp'},footer:{text:test?'Integration test — not a new published article':'Written by '+(post.author_name||'DuneRealms')+' • DuneRealms'},timestamp:new Date(Number(post.published_at)).toISOString()}]};
 }
 export function validateNewsWebhook(config){
  const url=new URL(config.url);if(url.protocol!=='https:'||url.hostname!=='discord.com'||!/^\/api(?:\/v10)?\/webhooks\/\d+\/[A-Za-z0-9_.-]+$/.test(url.pathname)||url.search||url.hash||url.username||url.password||config.channelId!=='1567237542040834250'||config.guildId!=='1567229433033531462')throw Error('Invalid news webhook configuration');
@@ -29,7 +29,7 @@ export async function drainDiscordNews(db,config,{fetcher=fetch,now=Date.now}={}
  const states=[];
  for(const job of results){
   const token=randomUUID();const claimed=await db.prepare("UPDATE discord_news_delivery SET state='sending',claim_token=?,claimed_at=?,attempts=attempts+1 WHERE post_id=? AND state IN ('queued','retry') AND next_at<=?").bind(token,time,job.post_id,time).run();if(!claimed.meta.changes)continue;
-  const post=await db.prepare("SELECT id,title,body,category,published_at FROM website_posts WHERE id=? AND status='published' AND published_at<=?").bind(job.post_id,time).first();
+  const post=await db.prepare("SELECT p.id,p.title,p.body,p.category,p.published_at,COALESCE(a.display_name,a.username,'DuneRealms') author_name FROM website_posts p LEFT JOIN site_accounts a ON a.id=p.author_id WHERE p.id=? AND p.status='published' AND p.published_at<=?").bind(job.post_id,time).first();
   const finish=async(state,message='',next=0,error='')=>{await db.prepare('UPDATE discord_news_delivery SET state=?,message_id=?,next_at=?,last_error=? WHERE post_id=? AND claim_token=?').bind(state,message,next,error,job.post_id,token).run();states.push(state);};
   if(!post){await finish('withdrawn');continue;}
   try{
