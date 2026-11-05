@@ -150,5 +150,45 @@
     "footer150": "/assets/seals/network-staff-mr_blueray-v2-150.png",
     "footer300": "/assets/seals/network-staff-mr_blueray-v2-150.png",
     "alpha": true
+  },
+  "supporter-patron_caravan": {
+    "label": "Caravan Supporter",
+    "rank": "patron_caravan",
+    "category": "Community",
+    "footer150": "/assets/seals/supporter-patron-caravan-v1.png",
+    "src": "/assets/seals/supporter-patron-caravan-v1.png",
+    "alpha": true
+  },
+  "supporter-patron_guild": {
+    "label": "Guild Patron",
+    "rank": "patron_guild",
+    "category": "Community",
+    "footer150": "/assets/seals/supporter-patron-guild-v1.png",
+    "src": "/assets/seals/supporter-patron-guild-v1.png",
+    "alpha": true
+  },
+  "supporter-vip": {
+    "label": "Imperial Patron",
+    "rank": "vip",
+    "category": "Community",
+    "footer150": "/assets/seals/supporter-vip-v1.png",
+    "src": "/assets/seals/supporter-vip-v1.png",
+    "alpha": true
+  },
+  "supporter-patron_grand": {
+    "label": "Grand Benefactor",
+    "rank": "patron_grand",
+    "category": "Community",
+    "footer150": "/assets/seals/supporter-patron-grand-v1.png",
+    "src": "/assets/seals/supporter-patron-grand-v1.png",
+    "alpha": true
+  },
+  "supporter-council_member": {
+    "label": "Council Member",
+    "rank": "council_member",
+    "category": "Community",
+    "footer150": "/assets/seals/supporter-council-member-v1.png",
+    "src": "/assets/seals/supporter-council-member-v1.png",
+    "alpha": true
   }
 }

@@ -19,7 +19,7 @@ function dune_signature_group($badges,$label,$fluid=false){
 }
 function dune_signature_staff_badges($account,$verifiedStats=null){
  $personal=[];$teams=[];$names=['support'=>'Support','ban-appeals'=>'Ban appeals','forum-support'=>'Forum support','legal'=>'Legal','sales'=>'Sales','network-staff'=>'Network staff','dev'=>'Development'];
- if(!empty($account['personal_path'])&&preg_match('~^/assets/seals/(?:(owner|corestaff|main-network-admin)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$account['personal_path'],$m)){$kind=!empty($m[1])?$m[1]:'rank';$host=in_array($kind,['main-network-admin','rank'],true)?'https://support.dunerealms.com':'https://www.dunerealms.com';$personal[]=[$host.$account['personal_path'],['owner'=>'Owner','corestaff'=>'Corestaff','main-network-admin'=>'Main network administrator','rank'=>'Network Staff'][$kind]];}
+ if(!empty($account['personal_path'])&&preg_match('~^/assets/seals/(?:(owner|corestaff|main-network-admin|network-staff)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$account['personal_path'],$m)){$kind=!empty($m[1])?$m[1]:'rank';$host=in_array($kind,['main-network-admin','rank'],true)?'https://support.dunerealms.com':'https://www.dunerealms.com';$personal[]=[$host.$account['personal_path'],['owner'=>'Owner','corestaff'=>'Corestaff','main-network-admin'=>'Main network administrator','rank'=>'Network Staff','network-staff'=>'Network Staff'][$kind]];}
  $stats=func_num_args()>1?$verifiedStats:dune_staff_closures_for($account['website_id']);
  foreach(array_unique(json_decode($account['departments_json']??'[]',true)?:[])as$key)if(isset($names[$key])){
   if($key==='network-staff'&&!is_file(__DIR__.'/osticket/assets/seals/department-network-staff-150.png'))continue;
