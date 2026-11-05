@@ -2,6 +2,7 @@
 // Private shared presentation helper; contains no authentication or permission logic.
 function dune_shared_header($html) {
  if(stripos($html,'<html')===false)return $html;
+ if(!str_contains($html,'/dune-embed-size.js'))$html=str_ireplace('</head>','<script src="/dune-embed-size.js?v=cp370" defer></script></head>',$html);
  if(!str_contains($html,'/dune-actions.css'))$html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-actions.css?v=1"><script src="/dune-actions.js?v=1" defer></script></head>',$html);
  $base='/home/dunerealms/apps/integrations/';
  if(strpos($html,'class="dune-site-header"')===false){

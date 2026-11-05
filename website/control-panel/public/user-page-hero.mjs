@@ -1,5 +1,7 @@
 const pages={
- 'user-home':['YOUR ACCOUNT AT A GLANCE','Dashboard','Your identity, support and next steps in one place.','nav-account-full-v2.webp'],
+ 'bans':['THE IMPERIAL MODERATION BUREAU','Bans & appeals','Review moderation records, linked appeals and evidence through your authorised tools.','seals/department-ban-appeals-150.png'],
+ 'discord-link':['YOUR COMMUNITY CONNECTION','Discord linking','Secure Discord account linking is planned. No account is linked from this placeholder.','nav-discord-full-v2.webp'],
+ 'user-home':['YOUR ACCOUNT AT A GLANCE','User Panel','Your identity, support and next steps in one place.','nav-account-full-v2.webp'],
  'game':['YOUR VERIFIED GAME IDENTITY','Linked Account','Connect your Minecraft identity and manage your verified link.','uuid-link-imperial-v1.png'],
  'planetary-inventory':['YOUR PLANETARY EQUIPMENT','Inventory','Review your saved equipment and inventories across the worlds.','nav-exchange-full-v2.webp'],
  'kit-checkout':['YOUR KIT ORDER','Kit Checkout','Review your selected kits and confirm payment with Dunemarks.','nav-shop-v1.webp'],
@@ -15,7 +17,7 @@ const pages={
  'clan-quests-guild':['CONTRACTS BEYOND THE HORIZON','Spacing Guild Quests','Explore Guild contracts for your character and your clan.','nav-manual-full-v2.webp'],
  'personal-bank':['YOUR DUNEMARKS VAULT','Personal bank','Your personal savings, separate from your spending wallet.','dunemark-icon-64.png'],
  'tickets':['YOUR PRIVATE SUPPORT DESK','Support Tickets','Open a case, follow your tickets and stay in touch with the support team.','nav-support-full-v2.webp'],
- 'site-profile':['YOUR COMMUNITY IDENTITY','Profile','Introduce yourself and manage the details you share with the community.','nav-account-full-v2.webp'],
+ 'site-profile':['YOUR COMMUNITY IDENTITY','Personal information','Introduce yourself and manage the details you share with the community.','nav-account-full-v2.webp'],
  'security':['PROTECT YOUR ACCOUNT','Security','Manage your password and keep access to your account secure.','nav-account-full-v2.webp'],
  'imperial-atelier':['REGALIA OF THE REALM','The Imperial Atelier','Ceremonial stillsuits for the Emperor and current officeholders.','imperial-seal-128.png']
 };
