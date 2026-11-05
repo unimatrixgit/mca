@@ -1,89 +1,76 @@
 import './pages.mjs';
-import {canSubmitDevRequest} from './dev-request-access.mjs';
-import {pageArea,staffAreasFor} from './page-groups.mjs';
-
+import './embed-size.mjs';
+import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS} from './panel-layout.mjs';
 const dashboard=document.getElementById('dashboard');
 const embedded=new URLSearchParams(location.search).get('embedded')==='1';
-const accountPortals={
- marketplace:{label:'Marketplace Portal',home:'marketplace-home',pages:['marketplace-home','shop-settings','exchange-settings','planetary-inventory','kits-exchange','transactions','rewards-codes','kit-checkout'],description:'Trade, design and explore the imperial marketplace.'},
- adventure:{label:'Adventure Portal',home:'adventure-home',pages:['adventure-home','quests','discovery-rewards','clan-quests','clans','clan-portal','clan-shops','clan-kits','clan-bank','clan-settings','clan-quests-player','clan-quests-clan','clan-quests-guild','imperial-atelier'],description:'Your quests, discoveries and place in the realms.'},
- account:{label:'Your Account Portal',home:'account-home',pages:['account-home','user-home','personal-bank','tickets','game','site-profile','security','git-control'],description:'Your profile, linked identity, personal bank and support.'}
-};
-const staffPortals=[['website-staff','Website','website-staff-home'],['community-staff','Community','staff-home'],['game-staff','Minecraft','game-staff-home'],['network-staff','Network','network-staff-home'],['webmail','Webmail','webmail']];
-const portalFor=page=>Object.keys(accountPortals).find(key=>accountPortals[key].pages.includes(page))||'account';
-let user=null,lastAccount='marketplace-home',lastStaff=null,queued=false;
-const iconFor=page=>page==='bans'||page==='ban-evidence'?'seals/department-ban-appeals-150.png':page.includes('ticket')?'seals/department-support-150.png':page.includes('forum')?'seals/department-forum-support-150.png':page.includes('shop')?'nav-shop-v1.webp':page.includes('exchange')||page.includes('transaction')?'nav-exchange-v2.webp':page.includes('kit')||page.includes('atelier')?'clan-atelier-v1.webp':page.includes('server')||page.includes('network')?'seals/department-network-staff-150.png':page.includes('mail')?'nav-support-v2.webp':page.includes('git')?'nav-manual-v2.webp':page.includes('quest')||page.includes('clan')?'nav-clan-v2.webp':page.includes('rewards')?'seals/season-tavren-ii-150.png':page.includes('staff')||page.includes('permission')||page==='luckperms'||page==='items'?'nav-staff-v2.webp':page.includes('posts')?'nav-discord-v2.webp':'nav-account-v2.webp';
-function decorate(target,file){let img=target.querySelector(':scope>img.cp-section-art');if(img)return;img=document.createElement('img');img.className='cp-section-art';img.src='https://www.dunerealms.com/assets/'+file;img.alt='';img.width=34;img.height=34;img.loading='lazy';target.prepend(img);}
-
+const asset=file=>'https://www.dunerealms.com/assets/'+file;
+const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 if(dashboard&&!embedded){
- document.body.classList.add('cp-centers-ready');
- const centers=document.createElement('nav');centers.className='cp-center-nav';centers.setAttribute('aria-label','Account and staff centers');
- const portalNav=document.createElement('nav');portalNav.className='cp-portal-nav';portalNav.setAttribute('aria-label','Portal menu');
- const breadcrumb=document.createElement('p');breadcrumb.className='cp-center-breadcrumb';
- dashboard.before(centers,portalNav,breadcrumb);
- const makeButton=(text,action)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.onclick=action;return b;};
- const accountButton=makeButton('Account Center',()=>navigate(lastAccount,'account'));
- const staffButton=makeButton('Staff Center',()=>{const available=staffAreasFor(user);if(available.length)navigate(lastStaff||staffPortals.find(([area])=>available.includes(area))[2],'staff');});
- centers.append(accountButton,staffButton);
- const devLink=document.createElement('a');devLink.href='https://support.dunerealms.com/dev-tasks.php';devLink.textContent='Dev Center';devLink.hidden=true;devLink.className='cp-dev-link';centers.append(devLink);
- for(const [key,definition]of Object.entries(accountPortals)){
-  const section=document.createElement('section');section.id=definition.home;section.className='cp-portal-overview';
-  const eyebrow=document.createElement('p');eyebrow.className='eyebrow';eyebrow.textContent='ACCOUNT CENTER';
-  const h=document.createElement('h2');h.textContent=definition.label;
-  const p=document.createElement('p');p.textContent=definition.description;
-  const grid=document.createElement('div');grid.className='cp-portal-overview-grid';
-  section.append(eyebrow,h,p,grid);dashboard.append(section);
+ document.body.classList.add('cp-centers-ready','cp-panels-ready');
+ let user=null,signature='',queued=false,sessionGeneration=0;
+ const centers=el('nav');centers.className='cp-center-nav';centers.setAttribute('aria-label','Control panel portals');
+ const frame=el('div');frame.className='cp-panel-frame';const sidebar=el('nav');sidebar.className='cp-panel-sidebar';sidebar.setAttribute('aria-label','Left panel tools');const rightSidebar=el('nav');rightSidebar.className='cp-panel-sidebar cp-panel-sidebar-right';rightSidebar.setAttribute('aria-label','Right panel tools');
+ const breadcrumb=el('p');breadcrumb.className='cp-center-breadcrumb';dashboard.before(centers,breadcrumb,frame);frame.append(sidebar,dashboard,rightSidebar);frame.hidden=centers.hidden=breadcrumb.hidden=true;
+ const art=(parent,file,size=34)=>{const image=el('img');image.src=asset(file);image.alt='';image.width=image.height=size;image.className='cp-section-art';parent.prepend(image);return image;};
+ function navigate(page){const url=new URL(location.href);url.hash=page;url.searchParams.delete('staff-area');url.searchParams.delete('center');history.pushState(null,'',url);window.dispatchEvent(new PopStateEvent('popstate'));}
+ const panelButton=(label,page,image)=>{const b=el('button',label);b.type='button';b.onclick=()=>navigate(page);art(b,image);centers.append(b);return b;};
+ const userButton=panelButton('User Panel','user-home','nav-account-v2.webp');
+ const staffButton=panelButton('Staff Panel','staff-panel','nav-staff-v2.webp');
+ const devLink=panelButton('Dev Panel','dev-panel','seals/team-dev-150.png');devLink.className='cp-dev-link';
+ const framePages=[];
+ function framePage(id,title,node,url){const section=el('section');section.id=id;section.hidden=true;section.className='cp-native-management';section.append(el('h2',title));const frame=el('iframe');frame.title=title;frame.loading='lazy';frame.referrerPolicy='same-origin';section.append(frame);dashboard.append(section);framePages.push({section,frame,node,url});}
+ framePage('support-management','osTicket management','web.tickets.admin','https://support.dunerealms.com/dune-sso.php?staff=1&admin=1');
+ for(const item of DEV_ITEMS)framePage(item.page,item.label,null,'https://support.dunerealms.com/dev-tasks.php?view='+item.view);
+ function placeholder(id,title,copy){if(document.getElementById(id))return;const section=el('section');section.id=id;section.hidden=true;section.className='cp-layout-placeholder';section.append(el('p','COMING TO THE REALMS'),el('h2',title),el('p',copy),el('p','Placeholder · no actions are available yet.'));dashboard.append(section);}
+ placeholder('discord-link','Discord linking','Secure Discord account linking will be available here. This placeholder does not connect an account or change Discord roles.');
+ placeholder('landsraad','Landsraad','The future home of clan, faction and imperial elections.');
+ placeholder('hosting-control','Hosting control','Your future hosting workspace. No servers are provisioned from this page.');
+ // Move original nodes, never clone forms or their listeners/CSRF fields.
+ const oldStaff=document.getElementById('staff');
+ if(oldStaff&&!document.getElementById('user-management')){
+  const heading=[...oldStaff.querySelectorAll('h2')].find(h=>h.textContent==='Website accounts');
+  if(heading){const section=el('section');section.id='user-management';section.hidden=true;section.className='cp-layout-tool';heading.textContent='User management';for(let n=heading;n;){const next=n.nextSibling;section.append(n);n=next;}dashboard.append(section);}
  }
- const contextHome=document.createElement('a');contextHome.className='cp-portal-context-home';contextHome.textContent='Portal overview';contextHome.href='#marketplace-home';
- const accountMenu=dashboard.querySelector('nav[data-cp-section-menu="user"]');accountMenu?.append(contextHome);
-
- function navigate(page,center,area){
-  const url=new URL(location.href);url.hash=page;url.searchParams.set('center',center);
-  if(area?.endsWith('-staff'))url.searchParams.set('staff-area',area);else url.searchParams.delete('staff-area');
-  history.pushState(null,'',url);window.dispatchEvent(new PopStateEvent('popstate'));
+ if(oldStaff&&!document.getElementById('community-goals')){
+  const stop=[...oldStaff.querySelectorAll('h2')].find(h=>h.textContent==='Server operations');
+  if(stop&&oldStaff.querySelector('#campaign-form')){const section=el('section');section.id='community-goals';section.hidden=true;section.className='cp-layout-tool';while(oldStaff.firstChild&&oldStaff.firstChild!==stop)section.append(oldStaff.firstChild);const title=section.querySelector('h2');if(title)title.textContent='Community goals';dashboard.append(section);}
  }
+ const staffHome=el('section');staffHome.id='staff-panel';staffHome.hidden=true;staffHome.className='cp-layout-home';const staffHero=el('header');staffHero.className='cp-panel-hero';const staffText=el('div');staffText.append(el('p','THE IMPERIAL STAFF BUREAU'),el('h2','Staff Panel'),el('p','Your authorised website, network and community tools in one place.'));art(staffHero,'seals/department-network-staff-150.png',112);staffHero.append(staffText);const staffSummary=el('div');staffSummary.className='cp-panel-summary';staffHome.append(staffHero,staffSummary);dashboard.append(staffHome);
+ const userHome=document.getElementById('user-home');const userSummary=el('div');userSummary.className='cp-panel-summary';userHome?.append(userSummary);
+ const preserved=el('div');preserved.className='cp-context-links';userHome?.append(preserved);
+ const reference=el('div');reference.className='cp-context-links';staffHome.append(reference);
+ function linkFor(item){const a=el('a');a.href=item.url||'#'+item.page;const label=el('span',item.label);a.append(label);art(a,item.art);if(item.placeholder){const note=el('small','Placeholder');a.append(note);}return a;}
+ function groupCards(host,groups){host.replaceChildren();for(const[label,items]of groups){const card=el('section');card.className='cp-panel-card';card.append(el('h3',label));for(const item of items)card.append(linkFor(item));host.append(card);}}
+ function related(id,items){const section=document.getElementById(id);if(!section)return;const allowed=items.filter(([, ,node])=>user.permissions.includes(node));const key=JSON.stringify(allowed);const old=section.querySelector(':scope>.cp-context-links');const hero=section.querySelector(':scope>.cp-user-page-hero');if(old?.dataset.signature===key){if(hero&&old.previousElementSibling!==hero)hero.after(old);return;}old?.remove();const nav=el('nav');nav.dataset.signature=key;nav.className='cp-context-links';nav.setAttribute('aria-label','Related account tools');for(const[label,page]of allowed){const a=el('a',label);a.href='#'+page;art(a,page==='discord-link'?'nav-discord-v2.webp':page==='luckperms'||page==='game-permissions'?'nav-clan-v2.webp':'nav-account-v2.webp');if(page===id)a.setAttribute('aria-current','page');nav.append(a);}if(hero)hero.after(nav);else section.prepend(nav);}
  function paint(){
-  centers.hidden=portalNav.hidden=breadcrumb.hidden=!user;if(!user){document.body.removeAttribute('data-cp-center');return;}
-  const active=dashboard.querySelector(':scope>section.cp-page-active')?.id||location.hash.slice(1)||'user-home';
-  devLink.hidden=!canSubmitDevRequest(user);decorate(devLink,'seals/team-dev-150.png');
-  const staffAreas=staffAreasFor(user),baseArea=pageArea(active),isStaff=baseArea.endsWith('-staff')||baseArea==='webmail';
-  const center=isStaff?'staff':'account';document.body.dataset.cpCenter=center;staffButton.hidden=!staffAreas.length;
-  accountButton.setAttribute('aria-pressed',String(center==='account'));staffButton.setAttribute('aria-pressed',String(center==='staff'));
-  let label;
-  if(center==='account'){
-   lastAccount=active;const key=portalFor(active),definition=accountPortals[key];label=definition.label;
-   const signature='account:'+key;
-   if(portalNav.dataset.signature!==signature){portalNav.dataset.signature=signature;portalNav.replaceChildren();for(const [id,p]of Object.entries(accountPortals)){const b=makeButton(p.label,()=>navigate(p.home,'account'));if(id===key)b.setAttribute('aria-current','page');portalNav.append(b);}}
-   if(accountMenu){
-    accountMenu.dataset.currentPortal=key;
-    for(const a of accountMenu.querySelectorAll(':scope>a[href^="#"]')){
-     if(a===contextHome)continue;const group=portalFor(a.hash.slice(1));if(a.dataset.portalGroup!==group)a.dataset.portalGroup=group;
-    }
-    const href='#'+definition.home;if(contextHome.getAttribute('href')!==href)contextHome.setAttribute('href',href);
-    if(contextHome.dataset.portalGroup!==key)contextHome.dataset.portalGroup=key;
-    if(active===definition.home)contextHome.setAttribute('aria-current','page');else contextHome.removeAttribute('aria-current');
-   }
-  }else{
-   lastStaff=active;const requested=new URLSearchParams(location.search).get('staff-area');const area=requested&&staffAreas.includes(requested)?requested:baseArea;
-   const choices=staffPortals.filter(([id])=>id==='webmail'?staffAreas.length&&user.permissions.includes('web.menu.security'):staffAreas.includes(id));
-   label=choices.find(([id])=>id===area)?.[1]||'Staff';const signature='staff:'+area+':'+choices.map(c=>c[0]).join(',');
-   if(portalNav.dataset.signature!==signature){portalNav.dataset.signature=signature;portalNav.replaceChildren();for(const [id,name,home]of choices){const b=makeButton(name,()=>navigate(home,'staff',id));if(id===area)b.setAttribute('aria-current','page');portalNav.append(b);}}
+  frame.hidden=centers.hidden=breadcrumb.hidden=!user;if(!user){signature='';sidebar.replaceChildren();rightSidebar.replaceChildren();for(const p of framePages){p.section.hidden=true;p.frame.removeAttribute('src');}return;}
+  for(const id of ['staff-panel','discord-link','landsraad','hosting-control','user-management','community-goals']){const section=document.getElementById(id);if(section)section.hidden=false;}
+  staffButton.hidden=!hasStaffPanel(user);devLink.hidden=!hasDevPanel(user);
+  const active=dashboard.querySelector(':scope>section.cp-page-active')?.id||'user-home';
+  for(const p of framePages){const allowed=p.node?user.permissions.includes(p.node):hasDevPanel(user);p.section.hidden=!allowed;if(!allowed)p.frame.removeAttribute('src');else if(active===p.section.id&&!p.frame.getAttribute('src'))p.frame.src=p.url;}
+  const userGroups=menuGroupsFor(user,'user'),staffGroups=menuGroupsFor(user,'staff');
+  const staffPages=new Set(staffGroups.flatMap(([,items])=>items.flatMap(i=>[i.page,...(i.aliases||[])])));
+  const panel=DEV_ITEMS.some(i=>i.page===active)?'dev':active==='staff-panel'||staffPages.has(active)||['staff','website-staff-home','staff-home','game-staff-home','network-staff-home','staff-manual'].includes(active)?'staff':'user';
+  userButton.setAttribute('aria-pressed',String(panel==='user'));staffButton.setAttribute('aria-pressed',String(panel==='staff'));devLink.setAttribute('aria-pressed',String(panel==='dev'));
+  const groups=panel==='dev'?[['Dev Center',DEV_ITEMS]]:panel==='staff'?staffGroups:userGroups;
+  const officeLink=dashboard.querySelector('nav a[href="#imperial-atelier"]');const officeEligible=!!officeLink&&user.permissions.includes('web.menu.game');
+  const next=JSON.stringify([user.username,panel,officeEligible,groups.map(([label,items])=>[label,items.map(i=>i.page||i.url)]),user.permissions]);
+  if(next!==signature){
+   signature=next;frame.dataset.panel=panel;sidebar.replaceChildren();rightSidebar.replaceChildren();const home=el('a',panel==='dev'?'Dev Panel overview':panel==='staff'?'Staff Panel overview':'User Panel overview');home.className='cp-panel-overview-link';home.href=panel==='dev'?'#dev-panel':panel==='staff'?'#staff-panel':'#user-home';sidebar.append(home);
+   const halves=panel==='dev'?[groups,[]]:splitMenuGroups(groups);rightSidebar.hidden=!halves[1].length;for(const[side,sections]of [[sidebar,halves[0]],[rightSidebar,halves[1]]])for(const[label,items]of sections){const h=el('h3',label);h.className='cp-panel-category';side.append(h);for(const item of items){const a=linkFor(item);a.dataset.panelPage=item.page||'';side.append(a);}}
+   groupCards(userSummary,userGroups);groupCards(staffSummary,staffGroups);
+   preserved.replaceChildren();if(user.permissions.includes('web.menu.game')){const a=el('a','Clan Center');a.href='https://clans.dunerealms.com/';preserved.append(a);}if(officeEligible){const a=el('a','Imperial Atelier · current office');a.href='#imperial-atelier';preserved.append(a);}
+   reference.replaceChildren();if(user.permissions.includes('web.menu.staffmanual')){const a=el('a','Staff guide');a.href='#staff-manual';reference.append(a);}if(user.permissions.includes('web.ranks.manage')){const a=el('a','Linked in-game ranks');a.href='#game-permissions';reference.append(a);}
   }
-  const pageName=dashboard.querySelector(':scope>section.cp-page-active>h2')?.textContent||'Overview';
-  const trail=(center==='staff'?'Staff Center':'Account Center')+' / '+label+' / '+pageName;if(breadcrumb.textContent!==trail)breadcrumb.textContent=trail;
-  decorate(accountButton,'nav-account-v2.webp');decorate(staffButton,'nav-staff-v2.webp');
-  for(const b of portalNav.querySelectorAll('button')){const text=b.textContent;decorate(b,text.includes('Marketplace')?'nav-shop-v1.webp':text.includes('Adventure')?'nav-clan-v2.webp':text==='Community'?'seals/department-ban-appeals-150.png':text==='Network'?'seals/department-network-staff-150.png':text==='Website'?'nav-staff-v2.webp':text==='Minecraft'?'nav-clan-v2.webp':text==='Webmail'?'nav-support-v2.webp':'nav-account-v2.webp');}
-  for(const a of dashboard.querySelectorAll('nav[data-cp-section-menu]>a[href^="#"],.staff-shortcut-buttons>a[href^="#"]'))decorate(a,iconFor(a.hash.slice(1)));
-  for(const [key,p]of Object.entries(accountPortals)){
-   const grid=document.querySelector('#'+p.home+' .cp-portal-overview-grid');
-   const links=[...accountMenu?.querySelectorAll(':scope>a[href^="#"]')||[]].filter(a=>a!==contextHome&&!a.hidden&&p.pages.includes(a.hash.slice(1))&&!['user-home',p.home].includes(a.hash.slice(1)));
-   const signature=links.map(a=>a.hash+':'+a.textContent).join('|');if(grid.dataset.signature===signature)continue;grid.dataset.signature=signature;grid.replaceChildren();
-   for(const a of links){const card=document.createElement('a');card.className='cp-portal-tile';card.href=a.hash;const image=document.createElement('img');const page=a.hash.slice(1);image.src='https://www.dunerealms.com/assets/'+(page.includes('kit')||page.includes('atelier')?'clan-atelier-v1.webp':page.includes('shop')||page.includes('rewards')?'nav-shop-v1.webp':key==='adventure'?'nav-clan-v2.webp':key==='account'?'nav-account-v2.webp':'nav-exchange-v2.webp');image.alt='';image.width=52;image.height=52;const title=document.createElement('strong');title.textContent=a.textContent.trim();const open=document.createElement('span');open.textContent='Open →';card.append(image,title,open);grid.append(card);}
-  }
+  for(const a of frame.querySelectorAll('.cp-panel-sidebar a')){const selected=a.hash==='#'+active||menuItemFor(active)?.page===a.dataset.panelPage;if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
+  const current=DEV_ITEMS.find(i=>i.page===active)||menuItemFor(active);breadcrumb.textContent=(panel==='dev'?'Dev Panel':panel==='staff'?'Staff Panel':'User Panel')+' / '+(current?.label||(active==='staff-panel'||active==='user-home'?'Overview':dashboard.querySelector(':scope>section.cp-page-active h2')?.textContent||'Overview'));
+  related('site-profile',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);related('security',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
+  related('discord-link',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
+  related('luckperms',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);related('game-permissions',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);
  }
  function schedule(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;paint();});}
- window.addEventListener('dune:page',schedule);window.addEventListener('hashchange',schedule);window.addEventListener('popstate',schedule);
- window.addEventListener('dune:session',event=>{user=event.detail;portalNav.removeAttribute('data-signature');schedule();});
+ for(const side of [sidebar,rightSidebar])side.addEventListener('click',event=>{const a=event.target.closest('a[href^="#"]');if(!a)return;event.preventDefault();navigate(a.hash.slice(1));});
+ window.addEventListener('dune:session',event=>{sessionGeneration++;user=event.detail;signature='';schedule();});for(const name of ['dune:page','hashchange','popstate'])window.addEventListener(name,schedule);
  new MutationObserver(schedule).observe(dashboard,{childList:true,subtree:true});
- const response=await fetch('/api/auth/session',{cache:'no-store'});if(response.ok){user=(await response.json()).user;const url=new URL(location.href);if(!url.hash){const areas=staffAreasFor(user);if(url.searchParams.get('center')==='staff'&&areas.length)navigate(staffPortals.find(([id])=>areas.includes(id))[2],'staff',areas[0]);else if(user)navigate('marketplace-home','account');}paint();}
+ const initialGeneration=sessionGeneration;try{const response=await fetch('/api/auth/session',{cache:'no-store'});if(response.ok){const data=await response.json();if(initialGeneration===sessionGeneration){user=data.user;if(user&&!location.hash)navigate('user-home');paint();}}}catch{if(initialGeneration===sessionGeneration)paint();}
 }

@@ -1,5 +1,5 @@
-const websitePages=new Set(['website-staff-home','staff','permissions','git-admin','website-posts','shop-admin']);
-const communityPages=new Set(['staff-home','staff-manual','staff-tickets','forum-admin','bans','ban-evidence']);
+const websitePages=new Set(['user-management','community-goals','website-staff-home','staff','permissions','git-admin','website-posts','shop-admin']);
+const communityPages=new Set(['support-management','dev-panel','staff-panel','staff-home','staff-manual','staff-tickets','forum-admin','bans','ban-evidence']);
 const gamePages=new Set(['game-staff-home','game-permissions','staff-bank','quests-admin','server-operations','items','luckperms','exchange-admin','exchange-settings-admin']);
 export const pageArea=page=>['network-staff-home','server-kits'].includes(page)?'network-staff':page==='webmail'?'webmail':websitePages.has(page)?'website-staff':communityPages.has(page)?'community-staff':gamePages.has(page)?'game-staff':'user';
 export const NETWORK_STAFF_RANKS=new Set(['owners','official_account','corestaff','web_net_admin','web_network']);
