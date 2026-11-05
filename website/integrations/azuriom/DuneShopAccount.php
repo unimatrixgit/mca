@@ -81,6 +81,23 @@ class DuneShopAccount
         return redirect('https://cp.dunerealms.com'.$destination)->header('Cache-Control', 'no-store')->header('Referrer-Policy', 'no-referrer');
     }
 
+    /** Compare the raw central cookie: Laravel must not decrypt this other app's cookie. */
+    public static function centralSessionRef(string $cookies): ?string
+    {
+        preg_match_all('/(?:^|;\s*)__Host-dune_session=([^;]*)/', $cookies, $matches);
+        if (count($matches[1]) !== 1 || ! preg_match('/^[A-Za-z0-9_-]{43}$/D', $matches[1][0])) return null;
+        return hash('sha256', $matches[1][0]);
+    }
+
+    private static function restartSignIn($request)
+    {
+        Auth::logout();
+        // Discard the previous identity's basket; never replay a purchase POST after switching.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('https://cp.dunerealms.com/store/dune-login', 303)->header('Cache-Control', 'no-store');
+    }
+
     public function handle($request, \Closure $next)
     {
         $path = $request->path();
@@ -96,13 +113,20 @@ class DuneShopAccount
         }
         if (Auth::check()) {
             $ref = $request->session()->get('dune_session_ref');
-            if (! is_string($ref) || ! preg_match('/^[a-f0-9]{64}$/', $ref)) {
-                Auth::logout();
-                $request->session()->invalidate();
-                return redirect('https://cp.dunerealms.com/store/dune-login');
+            $currentRef = self::centralSessionRef($request->server('HTTP_COOKIE', ''));
+            if (! is_string($ref) || ! preg_match('/^[a-f0-9]{64}$/D', $ref)
+                || $currentRef === null || ! hash_equals($ref, $currentRef)) {
+                return self::restartSignIn($request);
             }
-            $identity = self::bridge('identity', ['sessionRef' => $ref]);
-            abort_unless(($identity['id'] ?? null) === $request->session()->get('dune_account_id'), 401);
+            try {
+                $identity = self::bridge('identity', ['sessionRef' => $ref]);
+            } catch (\Symfony\Component\HttpKernel\Exception\HttpException $error) {
+                if ($error->getStatusCode() !== 401) throw $error;
+                return self::restartSignIn($request);
+            }
+            if (($identity['id'] ?? null) !== $request->session()->get('dune_account_id')) {
+                return self::restartSignIn($request);
+            }
             $request->attributes->set('dune_identity', $identity);
             Auth::setUser(self::synchronize($identity));
         }
