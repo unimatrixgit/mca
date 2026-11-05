@@ -1,0 +1,17 @@
+--- a/plugins/shop/src/Controllers/SubscriptionController.php
++++ b/plugins/shop/src/Controllers/SubscriptionController.php
+@@ -37,13 +37,7 @@
+             ->filter(fn (Gateway $gateway) => $gateway->isSupported())
+             ->filter(fn (Gateway $gateway) => $gateway->paymentMethod()->supportsSubscriptions());
+ 
+-        // If there is only one payment gateway, redirect to it directly
+-        if ($gateways->count() === 1) {
+-            $gateway = $gateways->first();
+-
+-            return $gateway->paymentMethod()->startSubscription($user, $package);
+-        }
+-
++        // Subscription provider selection must stay inside the storefront too.
+         return view('shop::payments.pay', [
+             'gateways' => $gateways,
+             'route' => fn (string $gateway) => route('shop.subscriptions.subscribe', [
