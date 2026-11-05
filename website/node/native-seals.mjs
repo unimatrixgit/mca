@@ -1,3 +1,4 @@
+import{staffClosureStats,statsForAccount,departmentAwardEarned}from './staff-closure-stats.mjs';
 import{spawn}from 'node:child_process';
 import{existsSync,readFileSync}from 'node:fs';
 import{accessFor}from './permissions.mjs';
@@ -22,7 +23,8 @@ export function departmentsFor(nodes,ranks=[],username=''){
 export async function syncNativeSeals(db){
  const script='/home/dunerealms/apps/integrations/sync-staff-seals.php',manifestFile='/home/dunerealms/apps/integrations/seal-manifest.json';
  if(!existsSync(script)||!existsSync(manifestFile))return;
+ const closureStats=await staffClosureStats(db);
  const manifest=JSON.parse(readFileSync(manifestFile,'utf8')),{results}=await db.prepare('SELECT id,username,role FROM site_accounts').all(),accounts=[];
- for(const user of results){const access=await accessFor(db,user),ranks=access.ranks||[user.role],departments=departmentsFor(access.nodes,ranks,user.username),communityBadges=visibleCommunityBadges(await badgesFor(db,user.id),ranks),forumGroup=access.nodes.includes('web.forum.admin')?4:access.nodes.includes('web.forum.moderate')?6:2,roleSeals=[...(ranks.includes('web_streamer')?['rank-streamer']:[]),...(ranks.includes('crysknife')?['rank-crysknife']:[])];accounts.push({id:user.id,username:user.username,rankLabel:access.label,personal:staffSealFor({...user,ranks},manifest),departments,teams:departments,communityBadges,forumGroup,roleSeals});}
+ for(const user of results){const access=await accessFor(db,user),ranks=access.ranks||[user.role],departments=departmentsFor(access.nodes,ranks,user.username),communityBadges=visibleCommunityBadges(await badgesFor(db,user.id),ranks),forumGroup=access.nodes.includes('web.forum.admin')?4:access.nodes.includes('web.forum.moderate')?6:2,roleSeals=[...(ranks.includes('web_streamer')?['rank-streamer']:[]),...(ranks.includes('crysknife')?['rank-crysknife']:[])];accounts.push({id:user.id,username:user.username,rankLabel:access.label,personal:staffSealFor({...user,ranks},manifest),departments,teams:departments.filter(key=>departmentAwardEarned(statsForAccount(closureStats,user.id),key)),communityBadges,forumGroup,roleSeals});}
  await new Promise((resolve,reject)=>{const p=spawn('/usr/bin/php',[script],{stdio:['pipe','ignore','ignore']});const timer=setTimeout(()=>{p.kill();reject(Error('Native seal synchronization timed out'));},20000);p.once('error',error=>{clearTimeout(timer);reject(error);});p.once('exit',code=>{clearTimeout(timer);code===0?resolve():reject(Error('Native seal synchronization failed'));});p.stdin.on('error',()=>{});p.stdin.end(JSON.stringify(accounts));});
 }

@@ -11,3 +11,5 @@ export async function staffClosureStats(db){
  }catch{return null;}
 }
 export function statsForAccount(stats,id){return stats===null?null:stats.get(id)||{totalClosed:0,departments:{}};}
+
+export const departmentAwardEarned=(stats,key)=>Number.isSafeInteger(stats?.departments?.[key])&&stats.departments[key]>=PERSONAL_DEPARTMENT_THRESHOLD;
