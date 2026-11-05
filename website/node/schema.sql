@@ -154,3 +154,7 @@ CREATE TABLE IF NOT EXISTS site_account_archive(user_id CHAR(36) PRIMARY KEY,rol
 CREATE TABLE IF NOT EXISTS site_honours(user_id CHAR(36) NOT NULL,rank_key VARCHAR(40) NOT NULL,citation TEXT NOT NULL,awarded_by CHAR(36) NOT NULL,updated_at BIGINT NOT NULL,version INTEGER NOT NULL,PRIMARY KEY(user_id,rank_key));
 CREATE TABLE IF NOT EXISTS site_memorials(slug VARCHAR(64) PRIMARY KEY,user_id CHAR(36) NOT NULL UNIQUE,title VARCHAR(120) NOT NULL,summary TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS site_condolences(id CHAR(36) PRIMARY KEY,memorial_slug VARCHAR(64) NOT NULL,user_id CHAR(36) NOT NULL,body TEXT NOT NULL,body_hash CHAR(64) NOT NULL,status VARCHAR(16) NOT NULL,created_at BIGINT NOT NULL,reviewed_by CHAR(36) NULL,reviewed_at BIGINT NULL,version INTEGER NOT NULL,UNIQUE(memorial_slug,user_id,body_hash));
+
+CREATE TABLE IF NOT EXISTS site_first_login(user_id CHAR(36) PRIMARY KEY,password_changed INTEGER NOT NULL DEFAULT 0,created_at BIGINT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS site_terms_acceptances(user_id CHAR(36) NOT NULL,version VARCHAR(40) NOT NULL,accepted_at BIGINT NOT NULL,PRIMARY KEY(user_id,version)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

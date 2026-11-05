@@ -1,3 +1,4 @@
+import{firstLoginGate}from './first-login.mjs';
 import {startDiscordNewsWorker} from './discord-news.mjs';
 import {createMemorials,memorialPortalBlock} from './memorials.mjs';
 import {earnedMemberSeal} from './member-profiles.mjs';
@@ -38,6 +39,7 @@ export function createApplication(db,settings={}) {
   const rewards=createCommunityRewards(db,settings,origin);
   const news=createPublicNews(db);const search=createSearchVisibility(db);const staffRoster=createStaffRoster(db);
   return async function handle(request) {
+    const onboarding=await firstLoginGate(request,db);if(onboarding)return onboarding;
     const url=new URL(request.url);const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
     const earnedSeal=earnedMemberSeal(request);if(earnedSeal)return earnedSeal;
     if(url.pathname.startsWith('/memorial/')||url.pathname.startsWith('/people/')||url.pathname.startsWith('/api/memorials/')||['/memorial.css','/memorial.js'].includes(url.pathname))return memorials(request);
