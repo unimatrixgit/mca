@@ -1,0 +1,11 @@
+# Shop scheduler and Council membership —363 (OPEN checkpoint)
+
+Owner added approved346Council Rank to363 on5November.346was administratively consolidated/closed, not marked complete; original prompt/history and parent link retained.
+
+Scheduler live: native `schedule:run` everyminute as application owner under `flock`, actual cron heartbeat/log observed. Prior duplicate unguarded rank-delivery job removed from cron directory to private backup; original guarded rank-delivery job retained. Preflight0subscriptions/0expiredcompleteditems/0enabledrecurringpackages. Native scheduler_running() nowtrue; prior payment,item,subscription hashes unchanged.30pendingnativepayments existed; no completed/expired purchase claimed or executed. Backup/root/ticket363-before-20261105.
+
+Council Member: member-equivalent rank, public paid-rank allowlist, Dev request submission (not team/reviewer/priority privileges). Disabled native package51EUR25permonth/1months. No in-game/political/staff benefits or forced grant. Existing paid bridge used, custom recurring lifecycle acceptance still pending. Native currently-enabled gateway typepaypal reports supportsSubscriptions=false; PayPalCheckout implementation supports it and requires separate Owner config. Owner explicitly agreed to configure via admin; no secrets requested here. Do not enable package until provider configuration and receipt/expiry/cancel acceptance pass. No real charge/renewal executed.
+
+Tests:5focusedNode Council/intake tests,130PHP policy assertions and44connection-localtemporaryMySQL paid-rank checks pass. Broader rank-permissions suite also run:2unrelated stale assertions fail (missing obsolete dune.ban.local manual entry; web-node regex excluding current multisegment node names); not claimed passing or changed as part of this ticket. Fivecurrentstartup modules remainisolated; no game/world changes.
+
+4Council runtime modules deployed with exact pre-edit baseline check; web/CP restarted. Source checkpoint and tests must be preserved;363notcompleted. Next: verify PayPalCheckout configured, sandbox subscription/provider/receipt lifecycle acceptance, enableCouncil only when safe, final merge/evidence/close.331remains separate unfinishedaudit.

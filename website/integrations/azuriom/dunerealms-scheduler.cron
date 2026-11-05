@@ -1,0 +1,2 @@
+# Native Azuriom scheduler; application owner, no overlapping scheduler runs.
+* * * * * dunerealms cd /home/dunerealms/apps/azuriom && /usr/bin/flock -n storage/framework/dune-scheduler.lock /usr/bin/php artisan schedule:run --no-interaction >> storage/logs/dune-scheduler.log 2>&1

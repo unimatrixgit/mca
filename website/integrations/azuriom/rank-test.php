@@ -35,7 +35,7 @@ $service->grant($receipt(6,$staff));verify($has($staff)===1);$service->revoke('a
 $service->grant($receipt(7,$staff,'user'));verify($db->query("SELECT role FROM site_accounts WHERE id='$staff'")->fetchColumn()==='owners');
 $service->grant($receipt(8,$d));$q=$db->prepare('INSERT INTO account_audit VALUES(?,?,?,?,?)');$q->execute([(string)Illuminate\Support\Str::uuid(),$d,'account-ranks',$d.' -> user,vip',(int)(microtime(true)*1000)+1]);$service->revoke('azuriom:item:8');verify($has($d)===1);
 $db->exec("UPDATE cp_ranks SET rank_level=90 WHERE rank_key='vip'");verify(rejected(fn()=>$service->grant($receipt(9,$fail))));verify($has($fail)===0);$db->exec("UPDATE cp_ranks SET rank_level=20 WHERE rank_key='vip'");
-foreach(['patron_caravan'=>12,'patron_guild'=>15,'patron_grand'=>25] as $rank=>$level){
+foreach(['patron_caravan'=>12,'patron_guild'=>15,'patron_grand'=>25,'council_member'=>20] as $rank=>$level){
  $db->prepare('INSERT INTO cp_ranks(rank_key,kind,rank_level) VALUES(?,?,?)')->execute([$rank,'access',$level]);
  $id=100+$level;$service->grant($receipt($id,$a,$rank));
  verify((int)$db->query("SELECT count(*) FROM cp_account_ranks WHERE user_id='$a' AND rank_key='$rank'")->fetchColumn()===1);

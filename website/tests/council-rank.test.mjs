@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{DEFAULT_RANKS,rankSection}from'../node/permissions.mjs';
+test('Council rank is member-equivalent and classified as a player rank',()=>{let rank=DEFAULT_RANKS.find(r=>r.key==='council_member'),member=DEFAULT_RANKS.find(r=>r.key==='user');assert(rank);assert.deepEqual(rank.nodes,member.nodes);assert.equal(rankSection(rank.key),'players');assert(rank.level<=25);});

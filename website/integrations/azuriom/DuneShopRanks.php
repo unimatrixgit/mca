@@ -14,7 +14,7 @@ class DuneShopRanks
         $c = json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'), true, 8, JSON_THROW_ON_ERROR);
         $this->db = new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4', $c['username'], $c['password'], [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>false]);
     }
-    public const PUBLIC_RANKS=['user'=>'Member','patron_caravan'=>'Caravan Supporter','patron_guild'=>'Guild Patron','vip'=>'VIP','patron_grand'=>'Grand Benefactor'];
+    public const PUBLIC_RANKS=['user'=>'Member','patron_caravan'=>'Caravan Supporter','patron_guild'=>'Guild Patron','vip'=>'VIP','patron_grand'=>'Grand Benefactor','council_member'=>'Council Member'];
     public static function allowedRank(string $rank): bool { return isset(self::PUBLIC_RANKS[$rank]); }
     private function query(string $sql, array $values = [])
     {

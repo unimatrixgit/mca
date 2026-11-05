@@ -28,4 +28,5 @@ foreach(dune_dev_fields()as$key=>[$label,$required,$max,$type,$hint]){
 $input=$base;$input['privacy']='0';[, $err]=dune_dev_validate($input);check((bool)$err);
 foreach(['owners','official_account','corestaff','staff','web_network','web_net_owner','web_net_admin','web_dev','web_streamer','web_news','web_forum','web_support','web_sales','web_legal','web_appeal','game_mod','game_admin','game_support','game_appeal','game_quests','game_restoration'] as $rank) check(dune_dev_submitter(['ranks'=>[$rank],'permissions'=>[]]));
 check(!dune_dev_submitter(['ranks'=>['crysknife'],'permissions'=>[]]));check(!dune_dev_submitter(['ranks'=>['memorial'],'permissions'=>[]]));
+check(dune_dev_submitter(['ranks'=>['council_member'],'permissions'=>[]]));check(!dune_dev_team(['ranks'=>['council_member'],'permissions'=>[]]));check(!dune_dev_owner(['username'=>'council','ranks'=>['council_member']]));
 echo "$n policy assertions passed\n";

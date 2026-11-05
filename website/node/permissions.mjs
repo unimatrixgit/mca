@@ -35,10 +35,11 @@ const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.
 const appeals=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.appeals','web.menu.bans','web.bans.view','web.bans.manage','web.bans.evidence'];
 export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',legacy:'Existing legacy/custom ranks'};
 export const isOwnerRank=key=>['owners','official_account','web_net_admin','web_net_owner'].includes(key);
-export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
+export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand','council_member'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
 export const DEFAULT_RANKS=[
  {key:'user',label:'User',level:10,kind:'access',nodes:basic},
  {key:'vip',label:'VIP',level:20,kind:'access',nodes:basic},
+ {key:'council_member',label:'Council Member',level:20,kind:'access',nodes:[...basic]},
  {key:'patron_caravan',label:'Caravan Supporter',level:12,kind:'access',nodes:[...basic]},
  {key:'patron_guild',label:'Guild Patron',level:15,kind:'access',nodes:[...basic]},
  {key:'patron_grand',label:'Grand Benefactor',level:25,kind:'access',nodes:[...basic]},
