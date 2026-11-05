@@ -12,8 +12,10 @@ Changing an address preserves the verified former contact until confirmation.
 It never appears in public profiles, public SSO profile data or account rank
 information. Native Support uses its configured outgoing email transport.
 Verification messages contain only the code, expiry and account centre link.
-System sender addresses, internal `.invalid` identities and email addresses
-belonging to a different native user are rejected rather than merging users.
+Internal `.invalid` identities and email addresses belonging to a different
+native user are rejected rather than merging users. Legitimate operator mailboxes
+may also be registered as Support system mailboxes; that does not prevent proving
+ownership. Verification messages are marked automatically generated.
 
 The Node table is initialized at CP startup. Install
 `integrations/osticket/contact-email-schema.sql` in the integrations database
@@ -58,3 +60,19 @@ If users have subsequently verified addresses, restore their native defaults to
 the retained UUID aliases through the current revisioned sync before removing
 the feature. Retain contact/projection tables privately for reconciliation;
 do not drop them or delete user/ticket/history records as a rollback shortcut.
+
+## Owner-reported correction
+
+The initial result went to a global notice above the viewport, and an overly
+broad system-mailbox guard rejected the Owner's operator mailbox. The correction
+shows sending progress, success, failure and sync warnings beside the form with
+live announcement/focus; an accepted result survives a failed refresh. Four
+behavioral UI regressions cover those states. Existing backend and ownership gates
+remain intact; personal email addresses are not silently trusted.
+
+The Owner explicitly requested immediate activation of their own notification
+address. Its exact match in the existing active verified staff-mail identity was
+independently checked, reused and audited, with private before-state backups.
+Central contact and native default recipient were updated; no new verification
+email was sent or inbox delivery claimed. This is a scoped operator action based
+on existing ownership proof, not an ordinary-user verification bypass.
