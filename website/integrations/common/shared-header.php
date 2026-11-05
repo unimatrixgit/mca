@@ -13,7 +13,8 @@ function dune_shared_header($html) {
   $html=str_ireplace('</head>',$head.'</head>',$html);
  }
  if(!str_contains($html,'class="dune-memorial"')&&is_file($base.'shared-memorial.html'))$html=preg_replace_callback('/<header class="dune-site-header"[\s\S]*?<\/header>/',fn($m)=>str_replace('</header>',file_get_contents($base.'shared-memorial.html').'</header>',$m[0]),$html,1);
- $html=preg_replace('~https://www\.dunerealms\.com/portal-navigation\.(js|css)(?:\?[^\"\s>]*)?~','/dune-navigation.$1?v=shared-20261102',$html);
+ if(is_file($base.'shared-main-menu.html'))$html=preg_replace('~<nav\b(?=[^>]*aria-label=["\']Main navigation["\'])[^>]*>[\s\S]*?</nav>~',file_get_contents($base.'shared-main-menu.html'),$html);
+ $html=preg_replace('~https://www\.dunerealms\.com/portal-navigation\.(js|css)(?:\?[^\"\s>]*)?~','/dune-navigation.$1?v=canonical-362',$html);
  if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$html=str_ireplace('</head>','<script src="/dune-appeal-routing.js" defer></script></head>',$html);
  if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'){
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-osticket-theme.css?v=20261103-alpha"></head>',$html);
@@ -29,7 +30,7 @@ function dune_shared_header($html) {
  }
  // DuneRealms native MyBB surface polish
  if(($_SERVER['HTTP_HOST']??'')==='forums.dunerealms.com'){
-  $html=str_replace('/dune-navigation.js?v=shared-20261102','/dune-navigation.js?v=shared-20261102',$html);
+  $html=str_replace('/dune-navigation.js?v=canonical-362','/dune-navigation.js?v=canonical-362',$html);
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-forum-polish.css?v=1"></head>',$html);
   $html=preg_replace_callback('/<body\b([^>]*)>/i',function($m){$attrs=$m[1];if(preg_match('/\bclass=["\']([^"\']*)["\']/i',$attrs))$attrs=preg_replace('/\bclass=(["\'])([^"\']*)\1/i','class="$2 dune-forum"',$attrs,1);else $attrs.=' class="dune-forum"';return '<body'.$attrs.'>';},$html,1);
  }
