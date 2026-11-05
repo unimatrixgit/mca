@@ -1,3 +1,5 @@
+import{createAdminRegistration}from '../node/admin-registration.mjs';
+import{firstLoginGate}from '../node/first-login.mjs';
 import {createContactEmail,initializeContactEmails} from '../node/contact-email.mjs';
 import {isOwnerRank} from '../node/permissions.mjs';
 import {createBanEvidence,initializeBanEvidence} from './ban-evidence.mjs';
@@ -55,7 +57,7 @@ export function createPanel(db,settings={},dependencies={}){
  const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
- const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
+ const adminRegistration=createAdminRegistration(db,origin);const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
  const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
  const memberProfiles=createMemberProfiles(db,settings);
  const ranks=createRankAdmin(db,settings,origin);const badges=createBadgeAdmin(db,origin);
@@ -85,6 +87,8 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
   const path=new URL(request.url).pathname;
+  const onboarding=await firstLoginGate(request,db);if(onboarding)return onboarding;
+  if(path==='/api/admin/register-user')return adminRegistration(request);
   if(path==='/api/account/email')return contactEmail(request);
   if(path.startsWith('/api/people/'))return memberProfiles(request);
   if(path==='/profile-login'&&request.method==='GET'){
@@ -156,7 +160,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
   const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
-  if(!['mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  if(!['terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }
