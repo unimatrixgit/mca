@@ -1,0 +1,73 @@
+--- a/plugins/shop/src/Payment/Method/StripeMethod.php
++++ b/plugins/shop/src/Payment/Method/StripeMethod.php
+@@ -49,6 +49,21 @@
+      */
+     protected $name = 'Stripe';
+ 
++    /** Only reviewed, fully automated digital supporter access is classified here. */
++    public static function managedTaxCode($package): string
++    {
++        if (! $package instanceof Package || ! in_array($package->dune_website_rank, [
++            'vip', 'patron_caravan', 'patron_guild', 'patron_grand',
++        ], true)) {
++            throw \Illuminate\Validation\ValidationException::withMessages([
++                'gateway' => 'This product is not yet configured for Managed Payments. Please contact Sales.',
++            ]);
++        }
++
++        // General electronically supplied services; not a sale of Minecraft itself.
++        return 'txcd_10000000';
++    }
++
+     public function startPayment(Cart $cart, float $amount, string $currency)
+     {
+         $this->setup();
+@@ -56,10 +71,12 @@
+         $items = $cart->itemsPrice()->map(fn (array $data) => [
+             'price_data' => [
+                 'currency' => $currency,
++                'tax_behavior' => 'inclusive',
+                 'unit_amount' => $this->convertAmount($data['unit_price'], $currency),
+                 'product_data' => [
+                     'name' => $data['item']->name(),
+                     'description' => $data['item']->buyable()->getDescription(),
++                    'tax_code' => self::managedTaxCode($data['item']->buyable()),
+                 ],
+             ],
+             'quantity' => $data['item']->quantity,
+@@ -71,15 +88,13 @@
+ 
+         $session = Session::create(Arr::whereNotNull([
+             'mode' => 'payment',
++            'managed_payments' => ['enabled' => true],
+             'customer_email' => $this->getUserEmail($payment->user),
+             'line_items' => $items->all(),
+             'success_url' => str_replace('%id%', '{CHECKOUT_SESSION_ID}', $successUrl),
+             'cancel_url' => route('shop.cart.index'),
+             'client_reference_id' => $payment->id,
+             'discounts' => $coupon ? [['coupon' => $coupon->id]] : [],
+-            'invoice_creation' => [
+-                'enabled' => (bool) ($this->gateway->data['invoice'] ?? false),
+-            ],
+         ]));
+ 
+         return redirect()->away($session->url);
+@@ -93,15 +108,18 @@
+ 
+         $session = Session::create(Arr::whereNotNull([
+             'mode' => 'subscription',
++            'managed_payments' => ['enabled' => true],
+             'customer_email' => $this->getUserEmail($user),
+             'line_items' => [
+                 [
+                     'price_data' => [
+                         'currency' => currency(),
++                        'tax_behavior' => 'inclusive',
+                         'unit_amount' => $this->convertAmount($package->price, currency()),
+                         'product_data' => [
+                             'name' => $package->name,
+                             'description' => $package->short_description,
++                            'tax_code' => self::managedTaxCode($package),
+                         ],
+                         'recurring' => [
+                             // Convert durations to singular: e.g. months -> month
