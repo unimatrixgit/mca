@@ -2,9 +2,7 @@ diff --git a/resources/views/admin/layouts/admin.blade.php b/resources/views/adm
 index 6ea32a1..425c630 100644
 --- a/resources/views/admin/layouts/admin.blade.php
 +++ b/resources/views/admin/layouts/admin.blade.php
-@@ -27,6 +27,7 @@
-     @stack('styles')
- 
+@@ -29,4 +29,5 @@
  <link rel="stylesheet" href="{{ asset('css/dunerealms.css') }}">
 +<script src="{{ asset('assets/js/dune-shop-embed-size.js') }}?v=cp370" defer></script>
  </head>

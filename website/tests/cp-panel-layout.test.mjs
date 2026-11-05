@@ -27,4 +27,3 @@ test('revoked permissions remove menus; aliases retain parent selection and plac
 });
 
 test('left and right menus balance items without changing order or losing category context',()=>{for(const groups of [USER_GROUPS,STAFF_GROUPS,menuGroupsFor(user('member',['user'],basic),'user')]){const halves=splitMenuGroups(groups);assert(Math.abs(flat(halves[0]).length-flat(halves[1]).length)<=1);assert.deepEqual([...flat(halves[0]),...flat(halves[1])],flat(groups));}assert.equal(splitMenuGroups(USER_GROUPS)[1][0][0],'DuneRealms · continued');});
-
