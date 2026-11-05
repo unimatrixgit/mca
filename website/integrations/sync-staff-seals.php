@@ -39,7 +39,7 @@ $p->beginTransaction();try{
    $q=$p->prepare('DELETE FROM dune_community_badges WHERE website_id=?');$q->execute([$a['id']]);
    $q=$p->prepare('INSERT INTO dune_community_badges(website_id,badge_key,username) VALUES(?,?,?)');foreach(array_unique($a['communityBadges'])as$key)$q->execute([$a['id'],$key,$a['username']??'']);
   }
-  $personal=$a['personal']??null;if($personal&&!preg_match('~^/assets/seals/(?:(?:owner|corestaff|main-network-admin)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$personal))throw new Exception('Invalid personal seal');
+  $personal=$a['personal']??null;if($personal&&!preg_match('~^/assets/seals/(?:(?:owner|corestaff|main-network-admin|network-staff)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$personal))throw new Exception('Invalid personal seal');
   $departments=$a['departments']??array_filter([$a['department']??null]);if(!is_array($departments)||count($departments)>7)throw new Exception('Invalid departments');
   foreach($departments as$department)if(!in_array($department,['support','ban-appeals','forum-support','legal','sales','network-staff','dev'],true))throw new Exception('Invalid department');
   $paths=array_filter(array_merge([$personal],array_map(fn($department)=>dune_department_seal_path($department),array_unique($departments))));

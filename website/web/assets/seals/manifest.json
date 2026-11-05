@@ -142,5 +142,13 @@
     "footer300": "/assets/seals/rank-streamer-300.png",
     "original": "website\\artwork\\streamer-seal\\rank-streamer-master.png",
     "alpha": true
+  },
+  "network-staff-mr_blueray": {
+    "label": "mr_blueray",
+    "role": "NETWORKSTAFF",
+    "src": "/assets/seals/network-staff-mr_blueray-v2-150.png",
+    "footer150": "/assets/seals/network-staff-mr_blueray-v2-150.png",
+    "footer300": "/assets/seals/network-staff-mr_blueray-v2-150.png",
+    "alpha": true
   }
 }

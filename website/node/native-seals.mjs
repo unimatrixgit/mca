@@ -7,7 +7,7 @@ export function staffSealFor(account,manifest){
  const ranks=Array.isArray(account.ranks)?account.ranks:[account.role];
  const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':(ranks.includes('web_network')||ranks.includes('web_net_owner'))?'NETWORKSTAFF':'';
  if(!role)return null;
- if(role==='NETWORKSTAFF')return manifest['rank-network-staff']?.footer150||null;
+ if(role==='NETWORKSTAFF')return Object.values(manifest).find(asset=>asset.role===role&&asset.label?.toLowerCase()===account.username.toLowerCase())?.footer150||manifest['rank-network-staff']?.footer150||null;
  return Object.values(manifest).find(asset=>asset.role===role&&asset.label.toLowerCase()===account.username.toLowerCase())?.footer150||null;
 }
 export function departmentFor(nodes){
