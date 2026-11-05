@@ -1,0 +1,72 @@
+{
+  "personal-staff-dev": {
+    "label": "dev",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-dev.png",
+    "footer150": "/assets/seals/personal-staff-dev-150.png"
+  },
+  "personal-staff-halobeau143": {
+    "label": "halobeau143",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-halobeau143.png",
+    "footer150": "/assets/seals/personal-staff-halobeau143-150.png"
+  },
+  "personal-staff-itsmrsui": {
+    "label": "itsmrsui",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-itsmrsui.png",
+    "footer150": "/assets/seals/personal-staff-itsmrsui-150.png"
+  },
+  "personal-staff-racoonvibz": {
+    "label": "racoonvibz",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-racoonvibz.png",
+    "footer150": "/assets/seals/personal-staff-racoonvibz-150.png"
+  },
+  "personal-staff-yooshi": {
+    "label": "yooshi",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-yooshi.png",
+    "footer150": "/assets/seals/personal-staff-yooshi-150.png"
+  },
+  "personal-staff-kefoness": {
+    "label": "kefoness",
+    "role": "STAFF",
+    "category": "Personal",
+    "staffOnly": true,
+    "authority": false,
+    "src": "/assets/seals/personal-staff-kefoness.png",
+    "footer150": "/assets/seals/personal-staff-kefoness-150.png"
+  },
+  "rank-game-mod": {
+    "label": "Ingame Moderator",
+    "rank": "game_mod",
+    "category": "Official",
+    "authority": false,
+    "src": "/assets/seals/rank-game-mod.png",
+    "footer150": "/assets/seals/rank-game-mod-150.png"
+  },
+  "rank-game-admin": {
+    "label": "Ingame Administrator",
+    "rank": "game_admin",
+    "category": "Official",
+    "authority": false,
+    "src": "/assets/seals/rank-game-admin.png",
+    "footer150": "/assets/seals/rank-game-admin-150.png"
+  }
+}

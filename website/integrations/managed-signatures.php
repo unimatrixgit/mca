@@ -19,7 +19,7 @@ function dune_signature_group($badges,$label,$fluid=false){
 }
 function dune_signature_staff_badges($account,$verifiedStats=null){
  $personal=[];$teams=[];$names=['support'=>'Support','ban-appeals'=>'Ban appeals','forum-support'=>'Forum support','legal'=>'Legal','sales'=>'Sales','network-staff'=>'Network staff','dev'=>'Development'];
- if(!empty($account['personal_path'])&&preg_match('~^/assets/seals/(?:(owner|corestaff|main-network-admin|network-staff)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$account['personal_path'],$m)){$kind=!empty($m[1])?$m[1]:'rank';$host=in_array($kind,['main-network-admin','rank'],true)?'https://support.dunerealms.com':'https://www.dunerealms.com';$personal[]=[$host.$account['personal_path'],['owner'=>'Owner','corestaff'=>'Corestaff','main-network-admin'=>'Main network administrator','rank'=>'Network Staff','network-staff'=>'Network Staff'][$kind]];}
+ if(!empty($account['personal_path'])&&preg_match('~^/assets/seals/(?:(owner|corestaff|main-network-admin|network-staff|personal-staff)-[a-z0-9_-]+|rank-network-staff)-150\.png$~',$account['personal_path'],$m)){$kind=!empty($m[1])?$m[1]:'rank';$host=in_array($kind,['main-network-admin','rank'],true)?'https://support.dunerealms.com':'https://www.dunerealms.com';$personal[]=[$host.$account['personal_path'],['personal-staff'=>'Staff','owner'=>'Owner','corestaff'=>'Corestaff','main-network-admin'=>'Main network administrator','rank'=>'Network Staff','network-staff'=>'Network Staff'][$kind]];}
  $stats=func_num_args()>1?$verifiedStats:dune_staff_closures_for($account['website_id']);
  foreach(array_unique(json_decode($account['departments_json']??'[]',true)?:[])as$key)if(isset($names[$key])){
   if($key==='network-staff'&&!is_file(__DIR__.'/osticket/assets/seals/department-network-staff-150.png'))continue;
@@ -36,7 +36,7 @@ function dune_signature_staff_badges($account,$verifiedStats=null){
  return[$personal,$teams];
 }
 function dune_signature_extra_roles($id){
- try{$q=dune_signature_db()->prepare('SELECT seal_key FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$id]);$badges=[];$known=['rank-streamer'=>['rank-streamer-150.png','Streamer · News Team'],'rank-crysknife'=>['order-crysknife-v1.png','Holy Order of The Crysknife']];foreach($q->fetchAll(PDO::FETCH_COLUMN)as$key)if(isset($known[$key])&&is_file(__DIR__.'/osticket/assets/seals/'.$known[$key][0]))$badges[]=['https://support.dunerealms.com/assets/seals/'.$known[$key][0],$known[$key][1]];return $badges;}catch(Throwable$e){return [];}
+ try{$q=dune_signature_db()->prepare('SELECT seal_key FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$id]);$badges=[];$known=['rank-game-mod'=>['rank-game-mod-150.png','Ingame Moderator'],'rank-game-admin'=>['rank-game-admin-150.png','Ingame Administrator'],'rank-dev'=>['rank-dev-150.png','Development'],'rank-streamer'=>['rank-streamer-150.png','Streamer · News Team'],'rank-crysknife'=>['order-crysknife-v1.png','Holy Order of The Crysknife']];foreach($q->fetchAll(PDO::FETCH_COLUMN)as$key)if(isset($known[$key])&&is_file(__DIR__.'/osticket/assets/seals/'.$known[$key][0]))$badges[]=['https://support.dunerealms.com/assets/seals/'.$known[$key][0],$known[$key][1]];return $badges;}catch(Throwable$e){return [];}
 }
 
 function dune_signature_offices($id){
