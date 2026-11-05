@@ -1,0 +1,21 @@
+--- a/plugins/shop/resources/views/payments/pay.blade.php
++++ b/plugins/shop/resources/views/payments/pay.blade.php
+@@ -6,6 +6,18 @@
+ 
+ @section('content')
+     <h1>{{ trans('shop::messages.payment.title') }}</h1>
++
++    @if($errors->any())
++        <div class="alert alert-danger" role="alert">
++            <strong>Payment could not be started</strong>
++            <ul class="mb-0">
++                @foreach($errors->all() as $message)
++                    <li>{{ $message }}</li>
++                @endforeach
++            </ul>
++        </div>
++    @endif
++
+ 
+     <div class="row gy-3">
+         @forelse($gateways as $gateway)
