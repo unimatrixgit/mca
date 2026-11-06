@@ -50,6 +50,16 @@ body.dune-support-client :is(#header,#nav){display:none!important}
 .dune-support-submenu img{object-fit:contain;flex:none;filter:drop-shadow(0 2px 2px #0004)}
 body.dune-support.dune-support-workspace #dune-support-home.dune-support-home{padding:0!important}
 body.dune-support-workspace #content{font-family:Manrope,system-ui,sans-serif!important}
+body.dune-support-workspace .dune-button.dune-button.dune-button:not(.redactor-toolbar *):not(.tox *){font:600 14px/1.4 Manrope,system-ui,sans-serif!important;min-height:40px;white-space:normal}
+body.dune-support-workspace .dune-button.dune-button.dune-button[aria-busy=true]{cursor:progress;opacity:.7}
+@media(max-width:760px){
+ body.dune-support-workspace .dune-managed-signature-panel>table,body.dune-support-workspace .dune-managed-signature-panel>table>tbody{display:block;width:100%!important;white-space:normal!important}
+ body.dune-support-workspace .dune-managed-signature-panel>table>tbody>tr{display:flex;flex-wrap:wrap;gap:14px;white-space:normal!important}
+ body.dune-support-workspace .dune-managed-signature-panel>table>tbody>tr>td{display:block;max-width:100%;padding:0!important;border:0!important}
+ body.dune-support-workspace .dune-managed-signature-panel td :is(table,tbody){display:block;max-width:100%;white-space:normal!important}
+ body.dune-support-workspace .dune-managed-signature-panel td tr{display:flex;flex-wrap:wrap;gap:4px;white-space:normal!important}
+ body.dune-support-workspace .dune-managed-signature-panel td td{display:block;padding:0!important}
+}
 body.dune-support-client #content>h1{display:none}
 body.dune-support-workspace .dune-service-terms{padding:26px;border:1px solid #74814e;border-radius:12px;background:linear-gradient(130deg,#203f32,#102b21);line-height:1.7}
 body.dune-support-workspace .dune-support-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
@@ -59,16 +69,12 @@ body.dune-support-workspace .dune-support-card>div{display:flex;flex-direction:c
 body.dune-support-workspace .dune-support-card .eyebrow{margin:0 0 7px;color:#d9bb70}
 body.dune-support-workspace .dune-support-card h2{font:700 24px/1.3 Manrope,system-ui,sans-serif!important;margin:3px 0 14px!important;color:#f1d58f!important}
 body.dune-support-workspace .dune-support-card p{font-size:14px;line-height:1.7;color:#c1d0bc;max-width:65ch}
-body.dune-support-workspace .dune-support-card a.button{margin-top:auto;background:#c6a551!important;color:#10261c!important;border-color:#d4b464!important;box-shadow:none;font:650 14px/1.4 Manrope,system-ui,sans-serif!important}
+body.dune-support-workspace .dune-support-card a.button{margin-top:auto}
 body.dune-support-workspace .dune-support-card .dune-secondary-request{margin:14px 0 0;font-size:12px;color:#e7c575}
-body.dune-support-workspace .dune-support-card:last-child{grid-column:1/-1;display:grid;grid-template-columns:140px minmax(0,1fr);align-items:center;gap:26px}
-body.dune-support-workspace .dune-support-card:last-child>img{width:140px;height:120px}
-body.dune-support-workspace .dune-support-card:last-child a.button{margin-top:7px}
 body.dune-support-workspace .dune-support-track{padding:18px 0;text-align:center;font-size:12px;color:#adc3ac}
 body.dune-support-workspace #content>form,body.dune-support-client #ticketInfo{box-sizing:border-box;border:1px solid #74814e!important;border-radius:12px!important;background:linear-gradient(130deg,#203f32,#102b21)!important;padding:24px!important;margin:20px 0!important;box-shadow:inset 0 0 0 4px #c2a15108}
 body.dune-support-workspace #content>form :is(th,td){line-height:1.7}
 body.dune-support-workspace #content>form h2{color:#f1d58f!important;border-bottom:1px solid #526b4b;padding-bottom:14px}
-body.dune-support-client #content :is(input[type=submit],button[type=submit],a.button){border-radius:7px!important;padding:11px 17px!important;font:650 14px/1.4 Manrope,system-ui,sans-serif!important}
 body.dune-support-workspace #footer{max-width:1120px;margin:20px auto!important;background:none!important;border:0!important;color:#9cb39b;font-size:11px}
 @media(max-width:760px){
  body.dune-support-workspace #container{width:calc(100% - 24px)!important;max-width:calc(100% - 24px)!important;margin:16px auto!important}
@@ -83,8 +89,6 @@ body.dune-support-workspace #footer{max-width:1120px;margin:20px auto!important;
  .dune-support-submenu img{width:28px;height:28px}
  body.dune-support-workspace .dune-support-options{grid-template-columns:1fr}
  body.dune-support-workspace .dune-support-card{padding:20px}
- body.dune-support-workspace .dune-support-card:last-child{display:flex;gap:14px}
- body.dune-support-workspace .dune-support-card:last-child>img{width:100px;height:90px}
  body.dune-support-workspace #content>form{padding:18px!important}
 }
 /* Client register: retain the native table, sort links, search and pagination. */
