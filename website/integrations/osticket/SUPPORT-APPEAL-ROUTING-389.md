@@ -10,7 +10,11 @@ Keep the existing helper private inside a function scope and mark its topic elem
 after binding. Repeated loads then create one existing appeal link and one change
 listener per element. A newly rendered topic select can bind normally. Topic `2`
 still routes to `/appeal.php`; other topics and existing appeal links are unchanged.
-No authentication, permission, help-topic configuration or backend intake logic changes.
+The shared presentation header also skips injection when the authentication footer
+has already included this script. This removes the duplicate in actual page output,
+including for browsers still holding a cached older helper. The authentication plugin
+itself is unchanged. No authentication, permission, help-topic configuration or backend
+intake logic changes.
 
 `appeal-routing-check.cjs` uses real jsdom elements/events and a shared VM scope with
 an isolated navigation sink. Supply an existing QA-only jsdom prefix through
@@ -20,7 +24,12 @@ The suite covers normal/other topics, repeated loads, existing lexical globals,
 missing nodes, preserving a link and re-rendering a select. It never submits a form,
 creates a ticket or contacts a provider.
 
-Rollout affects only the inspected public helper. Verify its baseline, take a code
+`shared-header-routing-check.php` includes the candidate's function definitions without
+running the native application. Fifteen cases cover relative/absolute/versioned script
+tags, quote/spacing variations and rejected lookalikes, escaped text and `data-src`.
+
+Rollout affects the inspected public helper and the one shared presentation condition.
+Verify their baselines, take code
 backup, preserve owner/mode, merge through the Dev fork and verify served bytes plus
 a fresh browser page. No service restart or database mutation is required. Rollback
 restores the one file. Do not change SSO/plugin bootstrap or appeal policy as part of
