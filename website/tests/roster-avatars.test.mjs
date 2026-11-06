@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createAvatars} from '../node/avatar.mjs';
+import {png,textureId,javaProfile} from './skin-fixtures.mjs';
 const origin='https://cp.dunerealms.com';
 function database(accounts){return{prepare(sql){assert(!sql.includes('site_profiles'),'roster must ignore uploaded avatar overrides');return{bind(name){this.name=name;return this},async first(){return Object.hasOwn(accounts,this.name)?{minecraft_uuid:accounts[this.name]}:null;}}}};}
 test('roster username resolves Minecraft skin without exposing IDs or using overrides',async()=>{
- const uuid='99d2fe76-7977-4d49-bd39-e48fc8c648b8',png=Buffer.from([137,80,78,71,13,10,26,10,1]);const calls=[];
- const fetcher=async value=>{const url=String(value);calls.push(url);if(url.startsWith('https://sessionserver.mojang.com/'))return Response.json({properties:[{name:'textures',value:Buffer.from(JSON.stringify({textures:{SKIN:{url:'http://textures.minecraft.net/texture/abcdef'}}})).toString('base64')}]});assert.equal(url,'https://textures.minecraft.net/texture/abcdef');return new Response(png);};
+ const uuid='99d2fe76-7977-4d49-bd39-e48fc8c648b8';const calls=[];
+ const fetcher=async value=>{const url=String(value);calls.push(url);if(url.startsWith('https://sessionserver.mojang.com/'))return Response.json(javaProfile(uuid));assert.equal(url,'https://textures.minecraft.net/texture/'+textureId);return new Response(png,{headers:{'Content-Type':'image/png'}});};
  const avatar=createAvatars(database({staffmember:uuid}),{}, {fetcher});const response=await avatar(new Request(origin+'/api/avatars/roster/staffmember'));
  assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/png');assert.deepEqual(Buffer.from(await response.arrayBuffer()),png);assert.equal(calls.length,2);assert(!response.headers.has('location'));
 });
