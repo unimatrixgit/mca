@@ -4,11 +4,12 @@ require_once '/home/dunerealms/apps/integrations/shared-header.php';
 require_once INCLUDE_DIR.'class.auth.php';
 require_once '/home/dunerealms/apps/integrations/bridge.php';
 require_once '/home/dunerealms/apps/integrations/osticket/staff-scope.php';
+require_once '/home/dunerealms/apps/integrations/osticket/intake-navigation.php';
 function dune_ticket_identity(){return dune_bridge('identity',['sessionRef'=>$_SESSION['dune_session_ref']??'']);}
 class DuneClientAuthentication extends ExternalUserAuthenticationBackend {
  static $id='dunerealms-client';static $name='DuneRealms';static $service_name='DuneRealms';
  function authenticate($username,$password){return false;}
- function triggerAuth(){header('Location: /dune-sso.php');exit;}
+ function triggerAuth(){$next=dune_requested_intake_path(basename($_SERVER['SCRIPT_NAME']??''),$_GET,$_SERVER['REQUEST_METHOD']??'GET');header('Location: /dune-sso.php'.($next!==null?'?intake='.rawurlencode($next):''));exit;}
  function signOn(){
   $identity=dune_ticket_identity();if(!$identity)return null;
   $email=$identity['id'].'@accounts.dunerealms.invalid';
@@ -43,7 +44,7 @@ class DuneAccountsPlugin extends Plugin {
   if(in_array($file,['dune-sso.php','cron.php','api.php'],true))return;
   if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')!=='xmlhttprequest')ob_start('dune_shared_header');
   $identity=dune_ticket_identity();
-  if(!is_array($identity)||!is_array($identity['permissions']??null)){if(in_array($file,['index.php','service-targets.php'],true)&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))return;if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')==='xmlhttprequest'){http_response_code(401);exit('Sign in again to continue.');}$target='/dune-sso.php';if($file==='dev-tasks.php')$target.='?dev=1';if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$target.='?staff=1';elseif($file==='appeal.php')$target.='?appeal='.rawurlencode($_GET['banId']??'');header('Location: '.$target);exit;}
+  if(!is_array($identity)||!is_array($identity['permissions']??null)){if(in_array($file,['index.php','service-targets.php'],true)&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))return;if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']??'')==='xmlhttprequest'){http_response_code(401);exit('Sign in again to continue.');}$target='/dune-sso.php';if($file==='dev-tasks.php')$target.='?dev=1';if(str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$target.='?staff=1';elseif($file==='appeal.php')$target.='?appeal='.rawurlencode($_GET['banId']??'');elseif($next=dune_requested_intake_path($file,$_GET,$_SERVER['REQUEST_METHOD']??'GET'))$target.='?intake='.rawurlencode($next);header('Location: '.$target);exit;}
   if($file==='login.php'&&str_contains($_SERVER['SCRIPT_NAME']??'','/scp/')&&($_SERVER['REQUEST_METHOD']??'')==='GET'){
    if(!in_array('web.tickets.staff',$identity['permissions'],true)){http_response_code(403);exit('Staff ticket permission required.');}
    $now=time();if($now-(int)($_SESSION['dune_staff_renew_attempt']??0)<5){http_response_code(503);exit('Support sign-in could not be renewed. Return to the Account centre and retry the staff ticket desk.');}
