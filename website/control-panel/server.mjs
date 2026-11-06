@@ -24,6 +24,7 @@ import {createProfile} from '../node/profile.mjs';
 import {createMemorials} from '../node/memorials.mjs';
 import {createMemberProfiles} from '../node/member-profiles.mjs';
 import {createAvatars} from '../node/avatar.mjs';
+import {createTailorAppearance} from '../node/tailor-appearance.mjs';
 import {createBadgeAdmin} from '../node/badge-admin.mjs';
 import {initializeBadges} from '../node/community-badges.mjs';
 import {createBanRegister} from './ban-register.mjs';
@@ -58,6 +59,7 @@ export function createPanel(db,settings={},dependencies={}){
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const adminRegistration=createAdminRegistration(db,origin);const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
+ const tailorAppearance=createTailorAppearance(db,dependencies.tailorAppearance);
  const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
  const memberProfiles=createMemberProfiles(db,settings);
  const ranks=createRankAdmin(db,settings,origin);const badges=createBadgeAdmin(db,origin);
@@ -121,6 +123,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(['/api/mail/me','/api/mail/password','/api/mail/signature','/api/mail/template'].includes(path))return mailIdentity(request);
   if(['/api/account/profile','/api/account/avatar','/api/account/avatar/remove'].includes(path))return profile(request);
   if(path.startsWith('/api/avatars/'))return avatars(request);
+  if(path==='/api/tailor/appearance'||path==='/api/tailor/skin')return tailorAppearance(request);
   if(path==='/api/badges')return badges(request);
   if(path==='/api/ban-register')return banRegister(request);
   if(path==='/api/ban-evidence'||path==='/api/ban-evidence/file')return banEvidence(request);
