@@ -287,20 +287,18 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             boolean exposed = player.getWorld().getName().equalsIgnoreCase("arrakis")
                 && player.getGameMode() != GameMode.CREATIVE
                 && player.getGameMode() != GameMode.SPECTATOR
+                && !player.isInWater()
                 && !player.isDead()
-                && !wearingStillsuit(player)
                 && player.getWorld().isClearWeather()
                 && player.getWorld().getTime() < 12300
                 && player.getWorld().getHighestBlockYAt(player.getLocation()) <= player.getLocation().getBlockY();
-            if (!exposed) {
+            if (exposed) wearSunExposedStillsuit(player);
+            if (!exposed || wearingStillsuit(player)) {
                 // Taking shelter, reaching night, or putting on a stillsuit resets exposure.
-                if (sunExposureSeconds.remove(id) != null) player.setFireTicks(0);
+                sunExposureSeconds.remove(id);
                 continue;
             }
             int seconds = sunExposureSeconds.merge(id, 1, Integer::sum);
-            // The visible burning effect is cosmetic until the exposure timer expires.
-            player.setFireTicks(Math.max(player.getFireTicks(), 40));
-            // Cancel fire damage from this cosmetic effect in the dedicated damage listener.
             if (seconds == 1 || seconds % warningInterval == 0) {
                 player.sendMessage(ChatColor.RED + "Arrakis sun exposure: " +
                     Math.max(0, lethalSeconds - seconds) + " seconds until fatal heatstroke! Find shade or wear a stillsuit.");
@@ -311,10 +309,26 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             }
         }
     }
-    @EventHandler public void onSunDamage(org.bukkit.event.entity.EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (event.getCause() != org.bukkit.event.entity.EntityDamageEvent.DamageCause.FIRE_TICK) return;
-        if (sunExposureSeconds.containsKey(player.getUniqueId())) event.setCancelled(true);
+    private void wearSunExposedStillsuit(Player player) {
+        var elapsedKey = new NamespacedKey("dunerealms", "sun_wear_seconds");
+        var qualityKey = new NamespacedKey("dunerealms", "quality");
+        for (var slot : java.util.List.of(org.bukkit.inventory.EquipmentSlot.HEAD,
+                org.bukkit.inventory.EquipmentSlot.CHEST, org.bukkit.inventory.EquipmentSlot.LEGS,
+                org.bukkit.inventory.EquipmentSlot.FEET)) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (!is(item, "stillsuit")) continue;
+            var meta = item.getItemMeta();
+            if (!(meta instanceof org.bukkit.inventory.meta.Damageable) || meta.isUnbreakable()) continue;
+            var data = meta.getPersistentDataContainer();
+            String quality = data.get(qualityKey, PersistentDataType.STRING);
+            int interval = SunWearPolicy.interval(quality, rarity -> getConfig().getInt(
+                    "arrakis-sun.stillsuit-wear-seconds." + rarity, SunWearPolicy.interval(rarity)));
+            int elapsed = data.getOrDefault(elapsedKey, PersistentDataType.INTEGER, 0);
+            boolean damage = elapsed >= interval - 1;
+            data.set(elapsedKey, PersistentDataType.INTEGER, damage ? 0 : Math.max(0, elapsed) + 1);
+            item.setItemMeta(meta);
+            if (damage) player.damageItemStack(slot, 1);
+        }
     }
     private void applyNetheriteStats(ItemMeta meta, String piece) {
         // Match vanilla netherite armor points, toughness and knockback resistance.

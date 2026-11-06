@@ -32,6 +32,14 @@ arrakis-sun:
   enabled: true
   lethal-seconds: 300
   warning-interval-seconds: 30
+  # Exposed seconds per normal durability damage attempt, per equipped piece.
+  # Invalid values are bounded to 1..86400 and made strictly increasing by rarity.
+  stillsuit-wear-seconds:
+    common: 15
+    uncommon: 30
+    rare: 45
+    epic: 60
+    legendary: 90
 
 # One Paper backend per planet, connected through Velocity's BungeeCord plugin messaging support.
 network:
