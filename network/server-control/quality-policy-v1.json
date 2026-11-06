@@ -1,0 +1,41 @@
+{
+  "policyKey": "quality-journey",
+  "version": 1,
+  "recordedOn": "2026-11-06",
+  "timeZone": "UTC",
+  "weekStartsOn": "Monday",
+  "personal": {"dailyEligibleMinutesCap": 120, "activeDayMinimumMinutes": 30},
+  "group": {
+    "dailyEligibleMinutesCap": 120,
+    "activeDayMinimumMinutes": 30,
+    "minimumMembershipHours": 168,
+    "clansPerActorPerDay": 1,
+    "factionsPerActorPerDay": 1,
+    "questCompletionsPerDay": 1,
+    "weeklyContractsPerWeek": 1
+  },
+  "objectiveFamilies": ["exploration", "delivery-logistics", "crafting", "ecology-water", "spice-recovery", "community-aid"],
+  "tiers": [
+    {"quality": "common", "eligibleMinutes": 0, "activeDays": 0, "quests": 0, "weeklyContracts": 0, "storyChapters": 0},
+    {"quality": "uncommon", "eligibleMinutes": 1680, "activeDays": 14, "quests": 10, "weeklyContracts": 2, "storyChapters": 1},
+    {"quality": "rare", "eligibleMinutes": 5400, "activeDays": 45, "quests": 35, "weeklyContracts": 6, "storyChapters": 3},
+    {"quality": "very_rare", "eligibleMinutes": 10800, "activeDays": 90, "quests": 75, "weeklyContracts": 12, "storyChapters": 5},
+    {"quality": "legendary", "eligibleMinutes": 21600, "activeDays": 180, "quests": 150, "weeklyContracts": 24, "storyChapters": 8}
+  ],
+  "migration": {
+    "unlockStrategy": "union-only",
+    "retainLegacySalesArc": true,
+    "retainExplicitOverrides": true,
+    "retainUnlinkedAccountGrantsInPlace": true,
+    "inferHistoricalActivity": false,
+    "requireSeparateActivationRecord": true
+  },
+  "scope": {
+    "factionBenefits": "cosmetic-only-vanilla",
+    "paidSupporterBenefits": "cosmetic-only",
+    "legendaryPlusQuestTier": false,
+    "missedDaysResetProgress": false,
+    "requireSpending": false,
+    "requirePvpWins": false
+  }
+}
