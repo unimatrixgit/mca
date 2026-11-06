@@ -1,0 +1,181 @@
+diff --git a/plugins/shop/src/Controllers/CartController.php b/plugins/shop/src/Controllers/CartController.php
+index 14fc41d..c2aa506 100644
+--- a/plugins/shop/src/Controllers/CartController.php
++++ b/plugins/shop/src/Controllers/CartController.php
+@@ -10,6 +10,7 @@ use Exception;
+ use Illuminate\Http\Request;
+ use Illuminate\Support\HtmlString;
+ use Illuminate\Support\Str;
++use Illuminate\Validation\ValidationException;
+ 
+ class CartController extends Controller
+ {
+@@ -50,12 +51,38 @@ class CartController extends Controller
+      */
+     public function update(Request $request)
+     {
++        $validated = $this->validate($request, [
++            'quantities' => ['required', 'array'],
++            'quantities.*' => ['bail', 'required', 'integer', 'min:0', function ($attribute, $value, $fail) {
++                if (! is_int($value) && ! is_string($value)) {
++                    $fail('The quantity must be a whole number.');
++                }
++            }],
++        ]);
++
+         $cart = Cart::fromSession($request->session());
++        $errors = [];
+ 
+-        foreach ($request->input('quantities', []) as $id => $quantity) {
+-            $item = $cart->getById($id);
++        // Validate every row first: a later invalid item must not leave earlier changes saved.
++        foreach ($validated['quantities'] as $id => $quantity) {
++            $item = $cart->getById((string) $id);
++
++            if ($item === null) {
++                $errors['quantities.'.$id] = 'This item is no longer in your cart. Refresh the page and try again.';
++            } elseif ((int) $quantity > $item->maxQuantity() || (! $item->hasQuantity() && (int) $quantity > 1)) {
++                $errors['quantities.'.$id] = 'This quantity exceeds the current limit for this item.';
++            }
++        }
++
++        if ($errors !== []) {
++            throw ValidationException::withMessages($errors);
++        }
+ 
+-            if ($item !== null && (int) $quantity > 0) {
++        foreach ($validated['quantities'] as $id => $quantity) {
++            $item = $cart->getById((string) $id);
++            if ((int) $quantity === 0) {
++                $cart->remove($item->buyable());
++            } else {
+                 $item->setQuantity((int) $quantity);
+             }
+         }
+diff --git a/plugins/shop/resources/views/cart/index.blade.php b/plugins/shop/resources/views/cart/index.blade.php
+index 4f1608f..05f6c8d 100644
+--- a/plugins/shop/resources/views/cart/index.blade.php
++++ b/plugins/shop/resources/views/cart/index.blade.php
+@@ -23,6 +23,10 @@
+                 <form action="{{ route('shop.cart.update') }}" method="POST">
+                     @csrf
+ 
++                    @if($errors->has('quantities') || $errors->has('quantities.*'))
++                    <div class="alert alert-danger" role="alert">Your cart was not updated. Check the quantities, or refresh the page if an item has changed.</div>
++                    @endif
++
+                     <table class="table cart-items">
+                         <thead class="table-dark">
+                         <tr>
+@@ -41,9 +45,13 @@
+                                 <td>{{ shop_format_amount($cartItem->price()) }}</td>
+                                 <td>{{ shop_format_amount($cartItem->total()) }}</td>
+                                 <td>
+-                                    <input type="number" min="0" max="{{ $cartItem->maxQuantity() }}" size="5" class="form-control form-control-sm d-inline-block"
++                                    <input type="number" min="0" max="{{ $cartItem->maxQuantity() }}" size="5" class="form-control form-control-sm d-inline-block @error('quantities.'.$cartItem->itemId) is-invalid @enderror"
+                                            name="quantities[{{ $cartItem->itemId }}]" value="{{ $cartItem->quantity }}" aria-label="{{ trans('shop::messages.fields.quantity') }}"
+-                                           required @if(!$cartItem->hasQuantity()) readonly @endif>
++                                           required @if(!$cartItem->hasQuantity()) readonly @endif
++                                           @error('quantities.'.$cartItem->itemId) aria-invalid="true" aria-describedby="quantity-error-{{ $cartItem->itemId }}" @enderror>
++                                    @error('quantities.'.$cartItem->itemId)
++                                    <div id="quantity-error-{{ $cartItem->itemId }}" class="invalid-feedback" role="alert">{{ $message }}</div>
++                                    @enderror
+                                 </td>
+                                 <td>
+                                     <a href="{{ route('shop.cart.remove', $cartItem->id) }}" class="btn btn-sm btn-danger" title="{{ trans('messages.actions.delete') }}">
+diff --git a/plugins/shop/src/Requests/PaymentRequest.php b/plugins/shop/src/Requests/PaymentRequest.php
+index f393f04..8014ed4 100644
+--- a/plugins/shop/src/Requests/PaymentRequest.php
++++ b/plugins/shop/src/Requests/PaymentRequest.php
+@@ -13,11 +13,21 @@ class PaymentRequest extends FormRequest
+      */
+     public function rules(): array
+     {
++        $integerScalar = static function ($attribute, $value, $fail) {
++            if (! is_int($value) && ! is_string($value)) {
++                $fail('This field must be a whole number.');
++            }
++        };
++
+         return [
+-            'user_id' => ['required', 'exists:users,id'],
++            'user_id' => ['bail', 'required', 'integer', 'min:1', $integerScalar, 'exists:users,id'],
+             'transaction_id' => ['required', 'string', 'max:100'],
+-            'price' => ['required', 'numeric', 'min:0'],
++            'price' => ['bail', 'required', 'numeric', 'min:0', 'max:999999', 'decimal:0,2'],
+             'packages' => ['required', 'array'],
++            'packages.*' => ['required', 'array:id,quantity'],
++            'packages.*.id' => ['bail', 'required', 'integer', 'min:1', $integerScalar, 'distinct', 'exists:shop_packages,id'],
++            // Fixed-quantity inputs are disabled in the form; omission/null keeps the native default of one.
++            'packages.*.quantity' => ['bail', 'nullable', 'integer', 'min:1', 'max:4294967295', $integerScalar],
+         ];
+     }
+ }
+diff --git a/plugins/shop/resources/views/admin/payments/create.blade.php b/plugins/shop/resources/views/admin/payments/create.blade.php
+index e06fdb1..d0cd943 100644
+--- a/plugins/shop/resources/views/admin/payments/create.blade.php
++++ b/plugins/shop/resources/views/admin/payments/create.blade.php
+@@ -3,6 +3,16 @@
+ @section('title', trans('shop::admin.payments.title'))
+ 
+ @section('content')
++    @if($errors->any())
++        <div class="alert alert-danger" role="alert">
++            <strong>The payment was not recorded. Check the fields below.</strong>
++            <ul class="mb-0">
++                @foreach($errors->all() as $message)
++                    <li>{{ $message }}</li>
++                @endforeach
++            </ul>
++        </div>
++    @endif
+     <div class="card shadow mb-4">
+         <div class="card-body">
+             <form action="{{ route('shop.admin.payments.store') }}" method="POST">
+@@ -13,7 +23,7 @@
+                 <div class="row gx-3">
+                     <div class="mb-3 col-md-4">
+                         <label class="form-label" for="userInput">{{ trans('shop::messages.fields.user_id') }}</label>
+-                        <input type="number" class="form-control @error('user_id') is-invalid @enderror" id="userInput" name="user_id" value="{{ old('user_id') }}" required>
++                        <input type="number" class="form-control @error('user_id') is-invalid @enderror" id="userInput" name="user_id" value="{{ is_scalar(old('user_id')) ? old('user_id') : '' }}" required>
+ 
+                         @error('user_id')
+                         <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+@@ -24,7 +34,7 @@
+                         <label class="form-label" for="transactionInput">{{ trans('shop::messages.fields.payment_id') }}</label>
+ 
+                         <div class="input-group @error('transaction_id') has-validation @enderror">
+-                            <input type="text" class="form-control @error('transaction_id') is-invalid @enderror" id="transactionInput" name="transaction_id" value="{{ old('transaction_id') }}" required>
++                            <input type="text" class="form-control @error('transaction_id') is-invalid @enderror" id="transactionInput" name="transaction_id" value="{{ is_scalar(old('transaction_id')) ? old('transaction_id') : '' }}" required>
+                             <button type="button" class="btn btn-outline-secondary" onclick="generateRandomPaymentId()">
+                                 <i class="bi bi-arrow-clockwise"></i>
+                             </button>
+@@ -39,7 +49,7 @@
+                         <label class="form-label" for="priceInput">{{ trans('shop::messages.fields.price') }}</label>
+ 
+                         <div class="input-group @error('price') has-validation @enderror">
+-                            <input type="number" min="0" step="0.01" max="999999" class="form-control @error('price') is-invalid @enderror" id="priceInput" name="price" value="{{ old('price', 0) }}" required>
++                            <input type="number" min="0" step="0.01" max="999999" class="form-control @error('price') is-invalid @enderror" id="priceInput" name="price" value="{{ is_scalar(old('price', 0)) ? old('price', 0) : 0 }}" required>
+                             <span class="input-group-text">{{ shop_active_currency() }}</span>
+ 
+                             @error('price')
+@@ -89,7 +99,18 @@
+ 
+ @push('footer-scripts')
+     <script>
+-        const shopPaymentPackages = @json(old('packages', [['id' => 0, 'quantity' => 1]]));
++        @php
++            $oldPackages = old('packages', []);
++            $safeInteger = static function ($value, $default) {
++                return (is_int($value) || is_string($value)) && filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 4294967295]]) !== false ? (int) $value : $default;
++            };
++            $safePackages = [];
++            foreach (is_array($oldPackages) ? $oldPackages : [] as $row) {
++                $safePackages[] = ['id' => $safeInteger(is_array($row) ? ($row['id'] ?? null) : null, 0), 'quantity' => $safeInteger(is_array($row) ? ($row['quantity'] ?? null) : null, 1)];
++            }
++            $safePackages = $safePackages ?: [['id' => 0, 'quantity' => 1]];
++        @endphp
++        const shopPaymentPackages = @json($safePackages);
+         const packagesWithQuantities = @json($quantifiablePackages);
+ 
+         function generateRandomPaymentId() {
