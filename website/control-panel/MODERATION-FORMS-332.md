@@ -5,7 +5,7 @@ This checklist follows the served replacement for each original inventory entry.
 No real ban, console action, evidence upload, deletion, payment or game-state change
 is part of the test workflow.
 
-| Original form | Actual served route and endpoint | Automated and live read-only result | Remaining acceptance |
+| Original form | Actual served route and endpoint | Automated and live read-only result | Browser checks (completed below) |
 | --- | --- | --- | --- |
 | 138: `web/bans.html`, `ban-search` | `https://www.dunerealms.com/bans.html`; GET `/api/public/ban-list` through `web/public-bans.js` | Both served form and script verified. Search is public/read-only; no CSRF token or privileged role is required. Parameter binding, whitespace, 80-character cap, Unicode, literal markup/injection-like text, invalid/extreme pages, 50-row bound and private-field exclusion pass. Actual GET responses for invalid pages and Unicode/markup stay bounded and expose public fields only. No public source change is needed. | Browser keyboard, pagination, mobile and network/error presentation |
 | 146: `servers.html`, `command-form` | `https://cp.dunerealms.com/servers.html`; POST `/api/servers/action` through `servers.js` | Served source verified; anonymous endpoint 401. Empty/whitespace, ASCII 1–240, slash/control/Unicode rejection, actor derivation, exact origin, fixed targets, operator permissions and provider errors checked. Cancel, HTTP/non-JSON/network/revoked/missing-ack failures retain input. Accepted simulated response clears it; busy form freezes command/server and blocks duplicates. | Browser keyboard/mobile and visible errors after merge/rollout |
@@ -27,9 +27,9 @@ is part of the test workflow.
   response. Reproduced against the original module using a synthetic HTTP 502 response.
   A shared response reader now provides a safe service message and preserves the form.
 
-The native Bug records retain their normal protected Owner approval state. The fixes
-are implemented under the already-approved parent 332 scope; no approval flags or
-reviewer identity are rewritten. Track their eventual review and closure separately.
+The native Bug records were approved through normal Owner review and are now completed
+with individual reports. The fixes are within parent 332's approved scope; no approval
+flags or reviewer identity were rewritten outside that workflow.
 
 * **Bug 380:** Caladan and Sigma Draconis IV were supported by the backend but absent
   from the served console selector and frontend player-count mapping. Both existing
@@ -57,14 +57,27 @@ filename/type/hash and private download size/headers. It changes zero production
 accounts or evidence rows. Temporary tables do not exercise foreign-key installation;
 this change introduces no schema migration.
 
-Browser acceptance is still pending: the browser tool became stuck on the original
-local preview's native confirmation dialog. Automated DOM acceptance is not a substitute
-for the remaining visible desktop/mobile/keyboard check. Do not close parent 332 or
-claim deployment solely from these tests.
+Browser acceptance is complete as of 6 November 2026. The isolated actual-script console
+preview passed desktop/mobile input retention, rejected responses, invalid input,
+pending freezes, acknowledged-only clearing and proxy restriction checks without a game
+connection. Actual CP unban/evidence views passed visible validation and Enter/Tab checks
+at 375px without horizontal overflow; invalid submissions retained their drafts and
+saved no evidence or ban changes. Public search passed keyboard submission, empty-result
+recovery, page 1/2 navigation and mobile layout. A fresh public test tab showed the safe
+error message when only its ban-list request was temporarily blocked; the block was
+removed and search recovered. Positive privileged mutations and failure/replay/upload
+cases stay in the isolated fixtures described above. Parent 332 and Bugs 377–381 are
+completed with detailed native reports.
 
 ## Scoped rollout and rollback
 
-After merge and browser acceptance, baseline-check and back up the changed CP public
+PR46 was merged as `77c431024a02d5f9b123839f5bbf857dfd255fe0` and the seven
+runtime files were deployed on 6 November. Pinned source, live baselines and backups
+were checked; all six public assets return 200 and match their candidate bytes.
+Protected server/register/evidence APIs still reject anonymous requests with 401.
+Only the account panel restarted; the website bundle and game services stayed unchanged.
+
+For a later rollout or recovery, baseline-check and back up the changed CP public
 files and `control-panel/server.mjs`. Its only change is allowlisting the new public
 `moderation-form-response.mjs` module. Restart the account panel for that allowlist;
 verify the new module and served changed files, anonymous denials and online service.
