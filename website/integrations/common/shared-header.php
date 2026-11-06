@@ -1,5 +1,8 @@
 <?php
 // Private shared presentation helper; contains no authentication or permission logic.
+function dune_has_appeal_routing_script($html) {
+ return preg_match('~<script\b[^>]*\s+src\s*=\s*(["\'])(?:https://support\.dunerealms\.com)?/dune-appeal-routing\.js(?:[?#][^"\']*)?\1~i',$html)===1;
+}
 function dune_shared_header($html) {
  if(stripos($html,'<html')===false)return $html;
  if(!str_contains($html,'/dune-embed-size.js'))$html=str_ireplace('</head>','<script src="/dune-embed-size.js?v=cp370" defer></script></head>',$html);
@@ -16,7 +19,7 @@ function dune_shared_header($html) {
  if(!str_contains($html,'class="dune-memorial"')&&is_file($base.'shared-memorial.html'))$html=preg_replace_callback('/<header class="dune-site-header"[\s\S]*?<\/header>/',fn($m)=>str_replace('</header>',file_get_contents($base.'shared-memorial.html').'</header>',$m[0]),$html,1);
  if(is_file($base.'shared-main-menu.html'))$html=preg_replace('~<nav\b(?=[^>]*aria-label=["\']Main navigation["\'])[^>]*>[\s\S]*?</nav>~',file_get_contents($base.'shared-main-menu.html'),$html);
  $html=preg_replace('~https://www\.dunerealms\.com/portal-navigation\.(js|css)(?:\?[^\"\s>]*)?~','/dune-navigation.$1?v=canonical-362',$html);
- if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/'))$html=str_ireplace('</head>','<script src="/dune-appeal-routing.js" defer></script></head>',$html);
+ if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'&&!str_contains($_SERVER['SCRIPT_NAME']??'','/scp/')&&!dune_has_appeal_routing_script($html))$html=str_ireplace('</head>','<script src="/dune-appeal-routing.js" defer></script></head>',$html);
  if(($_SERVER['HTTP_HOST']??'')==='support.dunerealms.com'){
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-osticket-theme.css?v=20261103-alpha"></head>',$html);
   $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-ticket-compose.css?v=4"><script src="/dune-ticket-compose.js?v=4" defer></script></head>',$html);
