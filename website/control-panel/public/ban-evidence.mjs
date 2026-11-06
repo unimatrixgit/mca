@@ -1,4 +1,5 @@
-async function evidenceResponse(response){const text=await response.text();try{return JSON.parse(text);}catch{throw Error(response.status===413?'The upload was rejected as too large. Choose a file up to 5 MB.':response.status>=500?'The evidence service is temporarily unavailable. Please retry; your form has been kept.':'The server returned an unexpected response. Please retry; your form has been kept.');}}
+import {readModerationResponse,evidenceDraftErrors} from './moderation-form-response.mjs';
+const evidenceResponse=response=>readModerationResponse(response,{upload:true});
 const dashboard=document.getElementById('dashboard');
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 function mediaUrl(row){return row.file_url?.startsWith('/api/ban-evidence/file?')?row.file_url:'/api/ban-evidence/file?id='+encodeURIComponent(row.id);}
@@ -29,10 +30,10 @@ if(dashboard){
  form.append(el('small','PNG, JPEG, WebP, GIF, PDF, MP4 or WebM. Attachments require staff access to download. Do not include passwords or unrelated personal information.'));
  const submit=el('button','Save evidence');submit.type='submit';const result=el('p');result.setAttribute('role','status');form.append(submit,result);compose.append(form);
  const archive=el('article');archive.className='evidence-panel';archive.append(el('h3','Evidence history'));const list=el('div');list.className='evidence-history';const pages=el('div');pages.className='evidence-pages';archive.append(list,pages);grid.append(compose,archive);section.append(back,hero,notice,facts,grid);dashboard.append(section);
- let allowed=false,serial=0,requestId=crypto.randomUUID(),canAdd=false,page=0;
+ let allowed=false,serial=0,requestId=crypto.randomUUID(),canAdd=false,page=0,saveAttempt=null;
  const banId=()=>new URL(location.href).searchParams.get('banId');
  const active=()=>location.hash==='#ban-evidence';
- function reset(){title.value='';notes.value='';source.value='';file.value='';requestId=crypto.randomUUID();}
+ function reset(){for(const field of [title,notes,source,file]){field.value='';field.setCustomValidity('');}requestId=crypto.randomUUID();}
  async function load(){
   if(!active()||!allowed)return;const current=++serial;notice.textContent='Loading the private evidence record…';facts.replaceChildren();list.replaceChildren();compose.hidden=true;
   try{const r=await fetch('/api/ban-evidence?banId='+encodeURIComponent(banId()||'')+'&page='+page,{cache:'no-store'}),data=await evidenceResponse(r);if(current!==serial)return;if(!r.ok)throw Error(data.message||'Evidence could not be loaded.');
@@ -43,17 +44,19 @@ if(dashboard){
    for(const row of data.evidence){const entry=el('article');entry.className='evidence-entry';appendEvidenceMedia(entry,row);entry.append(el('h4',row.title),el('small',(row.actor_name||'Staff member')+' · '+new Date(Number(row.created_at)).toLocaleString()));if(row.notes){const text=el('p',row.notes);text.className='evidence-notes';entry.append(text);}if(row.source_url){const a=el('a','Open source ↗');a.href=row.source_url;a.target='_blank';a.rel='noopener noreferrer';entry.append(a);}if(row.file_name){const a=el('a','Download '+row.file_name+' · '+Math.ceil(Number(row.file_size)/1024)+' KB');a.href=mediaUrl(row);entry.append(a,el('small','SHA-256: '+row.file_sha256));}list.append(entry);}
   }catch(e){if(current===serial)notice.textContent=e.message;}
  }
+ const fields={title,notes,source,file};
+ function validateDraft(){for(const field of Object.values(fields))field.setCustomValidity('');const errors=evidenceDraftErrors({title:title.value,notes:notes.value,sourceUrl:source.value,file:file.files[0]});for(const[key,message]of Object.entries(errors))fields[key].setCustomValidity(message);return form.reportValidity();}
  form.onsubmit=async event=>{
-  event.preventDefault();if(!canAdd||!allowed)return;
-  const current=serial,id=banId();for(const field of [title,notes,source,file,submit])field.disabled=true;result.textContent='Saving evidence…';
-  try{const attachment=file.files[0];if(attachment&&attachment.size>5*1024*1024)throw Error('Choose an attachment smaller than 5 MB.');let upload=null;
-   if(attachment){const encoded=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('Attachment could not be read.'));reader.readAsDataURL(attachment);});upload={name:attachment.name,base64:encoded};}
+  event.preventDefault();if(!canAdd||!allowed||saveAttempt||!validateDraft())return;
+  const current=serial,id=banId(),attempt={current},snapshot={id:requestId,banId:id,title:title.value,notes:notes.value,sourceUrl:source.value},attachment=file.files[0];saveAttempt=attempt;for(const field of [...Object.values(fields),submit])field.disabled=true;result.textContent='Saving evidence…';
+  try{let upload=null;
+   if(attachment){const encoded=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('Attachment could not be read. Your form has been kept.'));reader.readAsDataURL(attachment);});upload={name:attachment.name,base64:encoded};}
    if(current!==serial||!active()||!allowed)return;
-   const r=await fetch('/api/ban-evidence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:requestId,banId:id,title:title.value,notes:notes.value,sourceUrl:source.value,file:upload}),cache:'no-store'}),data=await evidenceResponse(r);if(current!==serial)return;if(!r.ok)throw Error(data.message||'Evidence was not saved.');reset();page=0;result.textContent='Evidence saved and added to the audit history.';await load();
-  }catch(e){if(current===serial)result.textContent=e.message;}finally{for(const field of [title,notes,source,file,submit])field.disabled=false;}
+   const r=await fetch('/api/ban-evidence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...snapshot,file:upload}),cache:'no-store'}),data=await evidenceResponse(r);if(current!==serial)return;if(!r.ok||data.ok!==true||data.id!==snapshot.id)throw Error(data.message||'Evidence was not confirmed. Your form has been kept; refresh the history before retrying.');reset();page=0;result.textContent='Evidence saved and added to the audit history.';await load();
+  }catch(e){if(current===serial)result.textContent=e.message||'Evidence could not be saved. Your form has been kept.';}finally{if(saveAttempt===attempt){saveAttempt=null;for(const field of [...Object.values(fields),submit])field.disabled=false;}}
  };
- for(const input of [title,notes,source,file])input.addEventListener('input',()=>{requestId=crypto.randomUUID();});
- function session(user){serial++;page=0;allowed=!!user?.permissions?.includes('web.menu.bans')&&user.permissions.includes('web.bans.view');canAdd=false;reset();facts.replaceChildren();list.replaceChildren();compose.hidden=true;section.hidden=!allowed||!active();if(allowed&&active())load();}
+ for(const input of Object.values(fields))input.addEventListener('input',()=>{requestId=crypto.randomUUID();for(const field of Object.values(fields))field.setCustomValidity('');});
+ function session(user){serial++;saveAttempt=null;for(const field of [...Object.values(fields),submit])field.disabled=false;page=0;allowed=!!user?.permissions?.includes('web.menu.bans')&&user.permissions.includes('web.bans.view');canAdd=false;reset();result.textContent='';notice.textContent='';pages.replaceChildren();facts.replaceChildren();list.replaceChildren();compose.hidden=true;section.hidden=!allowed||!active();if(allowed&&active())load();}
  window.addEventListener('dune:session',e=>session(e.detail));window.addEventListener('hashchange',()=>{serial++;section.hidden=!allowed||!active();if(active())load();});window.addEventListener('dune:page',()=>{section.hidden=!allowed||!active();if(active())load();});
- fetch('/api/auth/session',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>session(d?.user)).catch(()=>session(null));
+ const bootstrapSerial=serial;fetch('/api/auth/session',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(bootstrapSerial===serial)session(d?.user);}).catch(()=>{if(bootstrapSerial===serial)session(null);});
 }
