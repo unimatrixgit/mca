@@ -6,10 +6,15 @@ export async function decideNativeAppeal(db,settings,{user,access,ban,body,fetch
  const appeal=await db.prepare('SELECT * FROM native_ban_appeals WHERE ban_id=? AND ticket_id=?').bind(ban.id,Number(body.ticketId)).first();
  if(!appeal)return json({message:'The ticket is not linked to this ban.'},404);
  const now=Date.now(),reason=body.reason.trim(),demo=ban.source_key.startsWith('demo:');
+ const conflict=()=>Object.assign(new Error('Appeal changed during decision'),{appealConflict:true});
+ const checked=statement=>({async run(connection){const result=await statement.run(connection);if(Number(result.meta.changes)!==1)throw conflict();return result;}});
+ const commit=async statements=>{try{await db.batch(statements);return true;}catch(error){if(error.appealConflict)return false;throw error;}};
+ const changed=()=>json({message:'The appeal changed during this decision. Refresh to review its status.'},409);
  const audit=(action)=>db.prepare('INSERT INTO moderation_events(id,ban_id,actor_id,action,reason,snapshot,created_at) VALUES(?,?,?,?,?,?,?)').bind(randomUUID(),ban.id,user.id,action,reason,JSON.stringify({ticketId:Number(body.ticketId),demo}),now);
  if(body.action==='reopen'){
   if(appeal.status==='approving')return json({message:'Approval is in progress; retry that decision first.'},409);
-  await db.batch([db.prepare("UPDATE native_ban_appeals SET status='pending',decision_reason=NULL,decided_by=NULL,decided_at=NULL WHERE id=? AND status<>'approving'").bind(appeal.id),audit('appeal-reopened')]);return json({ok:true,status:'pending'});
+  if(appeal.status==='pending')return json({ok:true,status:'pending',replayed:true});
+  if(!await commit([checked(db.prepare("UPDATE native_ban_appeals SET status='pending',decision_reason=NULL,decided_by=NULL,decided_at=NULL WHERE id=? AND status=?").bind(appeal.id,appeal.status)),audit('appeal-reopened')]))return changed();return json({ok:true,status:'pending'});
  }
  const target=body.action==='approve'?'approved':'denied';
  if(appeal.status===target)return json({ok:true,status:target,replayed:true});
@@ -29,7 +34,7 @@ export async function decideNativeAppeal(db,settings,{user,access,ban,body,fetch
   }
  }
  const expected=body.action==='approve'?'approving':appeal.status;
- const result=await db.batch([db.prepare('UPDATE native_ban_appeals SET status=?,decision_reason=?,decided_by=?,decided_at=? WHERE id=? AND status=?').bind(target,reason,user.username,now,appeal.id,expected),...(body.action==='approve'&&!demo?[db.prepare('UPDATE moderation_bans SET active=0,updated_at=? WHERE id=?').bind(now,ban.id)]:[]),audit('appeal-'+target+(demo?'-demo':''))]);
- if(!result[0].meta.changes)return json({message:'The appeal changed during this decision. Refresh to review its status.'},409);
+ const committed=await commit([checked(db.prepare('UPDATE native_ban_appeals SET status=?,decision_reason=?,decided_by=?,decided_at=? WHERE id=? AND status=?').bind(target,reason,user.username,now,appeal.id,expected)),...(body.action==='approve'&&!demo?[db.prepare('UPDATE moderation_bans SET active=0,updated_at=? WHERE id=?').bind(now,ban.id)]:[]),audit('appeal-'+target+(demo?'-demo':''))]);
+ if(!committed)return changed();
  return json({ok:true,status:target,demo,banRemoved:body.action==='approve'&&!demo});
 }
