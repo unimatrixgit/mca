@@ -3,9 +3,9 @@ import {accessFor} from '../node/permissions.mjs';
 const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie','X-Content-Type-Options':'nosniff'}});
 export function projectBank(data,{playerUuid,staff=false}={}){
- if(data?.currency!=='dunemarks'||!money.test(data.balanceDunemarks)||!Array.isArray(data.ledger)||data.ledger.length>200)return null;
- if(staff?data.account!=='server':data.playerUuid?.toLowerCase()!==playerUuid?.toLowerCase()||!signed.test(data.walletDunemarks))return null;
- if(data.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||!signed.test(r.amountDunemarks)||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
+ if(data?.currency!=='dunemarks'||typeof data.balanceDunemarks!=='string'||!money.test(data.balanceDunemarks)||!Array.isArray(data.ledger)||data.ledger.length>200)return null;
+ if(staff?data.account!=='server':data.playerUuid?.toLowerCase()!==playerUuid?.toLowerCase()||typeof data.walletDunemarks!=='string'||!signed.test(data.walletDunemarks))return null;
+ if(data.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||typeof r.amountDunemarks!=='string'||!signed.test(r.amountDunemarks)||typeof r.balanceDunemarks!=='string'||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
  return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
 }
 export function createBanking(db,settings={},dependencies={}){
@@ -23,7 +23,10 @@ export function createBanking(db,settings={},dependencies={}){
    if((settings.SERVER_CONTROL_TOKEN||'').length<64)throw Error();
    const r=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433'+(staff?'/bank/staff':'/bank/player?uuid='+encodeURIComponent(player)),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(8000)});
    if(!r.ok)throw Error();const bank=projectBank(await r.json(),{playerUuid:player,staff});if(!bank)throw Error();
-   return reply({linked:staff?undefined:true,bank,canManage:staff?rights.nodes.includes('web.bank.staff.manage'):true});
+   const currentUser=await authenticate(request);if(!currentUser||currentUser.id!==user.id)return reply({message:'Sign in again before viewing this bank.'},401);
+   const currentRights=await access(currentUser);if(!currentRights?.nodes?.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is no longer available for this account.'},403);
+   const currentPlayer=await linked(currentUser);if(typeof currentPlayer!=='string'||!uuid.test(currentPlayer)||currentPlayer.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked Minecraft account changed. Refresh before viewing this bank.'},409);
+   return reply({linked:staff?undefined:true,bank,canManage:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
  };
 }

@@ -6,8 +6,8 @@ import {gameAuthorized,validUuid} from '../node/game-link.mjs';
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie'}});
 export function projectClanWallet(bank,clanId){
  const money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
- if(bank?.clanId!==clanId||bank.currency!=='dunemarks'||!money.test(bank.balanceDunemarks)||!Array.isArray(bank.ledger)||bank.ledger.length>200)return null;
- if(bank.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||!signed.test(r.amountDunemarks)||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
+ if(bank?.clanId!==clanId||bank.currency!=='dunemarks'||typeof bank.balanceDunemarks!=='string'||!money.test(bank.balanceDunemarks)||!Array.isArray(bank.ledger)||bank.ledger.length>200)return null;
+ if(bank.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||typeof r.amountDunemarks!=='string'||!signed.test(r.amountDunemarks)||typeof r.balanceDunemarks!=='string'||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
  return{currency:'dunemarks',balanceDunemarks:bank.balanceDunemarks,ledger:bank.ledger.slice(0,50).map(r=>({id:r.id,kind:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt}))};
 }
 export const CLAN_KIT_SCHEMA=`CREATE TABLE IF NOT EXISTS site_clan_kits (id CHAR(36) PRIMARY KEY,clan_id CHAR(36) NOT NULL UNIQUE,name VARCHAR(60) NOT NULL,color CHAR(7) NOT NULL,lore_json TEXT NOT NULL,version INTEGER NOT NULL,updated_at BIGINT NOT NULL,updated_by CHAR(36) NOT NULL,shop_price_cents BIGINT NOT NULL DEFAULT 20000,FOREIGN KEY(clan_id) REFERENCES site_clans(id))`;
@@ -42,8 +42,13 @@ export function createClanShop(db,settings={},dependencies={}){
   if(!clan)return reply({member:false,canSetPrice:nodes.includes('web.items.manage'),priceDunemarks:await price(),message:'Join a clan with your verified Minecraft identity to use its shop.'},request.method==='GET'?200:403);
   if(request.method==='GET'){
    let bank=null;try{if((settings.SERVER_CONTROL_TOKEN||'').length>=64){const r=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433/clans/bank?clanId='+encodeURIComponent(clan.id),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(7000)});if(r.ok){bank=projectClanWallet(await r.json(),clan.id);}}}catch{}
-   const legacy=await blueprint(clan),state=await houseTailorState(db,user,clan,legacy);
-   return reply({member:true,clan:{id:clan.id,name:clan.name,tag:clan.tag,role:clan.clan_role},canDesign:['owner','officer'].includes(clan.clan_role),blueprint:legacy,qualities:state.tiers,priceDunemarks:await price(),canSetPrice:nodes.includes('web.items.manage'),bank,bankAvailable:!!bank});
+   const currentUser=await auth(request);if(!currentUser||currentUser.id!==user.id)return reply({message:'Sign in again to view your clan.'},401);
+   const currentNodes=(await access(currentUser))?.nodes;if(!currentNodes?.includes('web.menu.game'))return reply({message:'Game account access is no longer available.'},403);
+   const currentLink=await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(currentUser.id).first();
+   const currentClan=currentLink?await membership(currentLink.minecraft_uuid):null;
+   if(!currentLink||currentLink.minecraft_uuid!==link.minecraft_uuid||!currentClan||currentClan.id!==clan.id||currentClan.user_id!==currentUser.id)return reply({message:'Your linked account or clan membership changed. Refresh before continuing.'},409);
+   const legacy=await blueprint(currentClan),state=await houseTailorState(db,currentUser,currentClan,legacy);
+   return reply({member:true,clan:{id:currentClan.id,name:currentClan.name,tag:currentClan.tag,role:currentClan.clan_role},canDesign:['owner','officer'].includes(currentClan.clan_role),blueprint:legacy,qualities:state.tiers,priceDunemarks:await price(),canSetPrice:currentNodes.includes('web.items.manage'),bank,bankAvailable:!!bank});
   }
   if(request.method!=='POST')return reply({message:'Method not allowed'},405);
   if(request.headers.get('origin')!==origin)return reply({message:'Origin rejected.'},403);
