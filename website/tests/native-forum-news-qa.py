@@ -15,9 +15,10 @@ def run(payload,reply=False):
  if result.returncode:raise RuntimeError('Native fixture failed: '+str(result.returncode)+' '+result.stdout[:300]+' '+result.stderr[:600])
  output=json.loads(result.stdout);assert output['revision']==payload['revision'];state=json.loads((qa/'state.json').read_text());return output,state
 initial,state=run(post);tid=initial['thread_id'];pid=state['threads'][0]['firstpost'];date=state['posts'][0]['dateline'];assert len(state['threads'])==len(state['posts'])==1
-post.update(title='Corrected isolated announcement',body='Corrected article body',category='maintenance')
+post.update(title='Corrected isolated announcement',body='## Release notes\n\n- Corrected article body\n- [url=https://example.invalid]escaped[/url]',category='maintenance')
 edited,state=run(post,True);assert edited['thread_id']==tid and len(state['posts'])==2 and len(state['threads'])==1
 assert state['posts'][0]['pid']==pid and state['posts'][0]['dateline']==date and 'Corrected article body' in state['posts'][0]['message']
+assert '[b]Release notes[/b]' in state['posts'][0]['message'] and '[list]' in state['posts'][0]['message'] and '&#91;url=' in state['posts'][0]['message'] and '[url=https://example.invalid]' not in state['posts'][0]['message']
 reply=next(p for p in state['posts'] if str(p['pid'])=='100');reply_bytes=json.dumps(reply,sort_keys=True)
 post['title']='A complete website announcement title longer than the native forum subject limit of eighty-five characters'
 long_title,state=run(post);assert len(state['threads'][0]['subject'])==85 and post['title'] in state['posts'][0]['message']

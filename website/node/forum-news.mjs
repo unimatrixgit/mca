@@ -9,7 +9,7 @@ const nativeSend=post=>new Promise((resolve,reject)=>{const child=execFile('/usr
 export function forumNewsRevision(row,time){
  // Withdrawal payloads deliberately contain no current draft/private/future content.
  const post=row.status==='published'&&row.published_at!=null&&Number.isFinite(Number(row.published_at))&&Number(row.published_at)<=time
-  ?{id:row.id,status:'published',title:row.title,body:row.body,category:row.category,published_at:Number(row.published_at),author_name:row.author_name||'DuneRealms'}
+  ?{id:row.id,status:'published',title:row.title,body:row.body,category:row.category,published_at:Number(row.published_at),author_name:row.author_name||'DuneRealms',format_version:2}
   :{id:row.id,status:'archived'};
  return {...post,revision:createHash('sha256').update(JSON.stringify(post)).digest('hex')};
 }
