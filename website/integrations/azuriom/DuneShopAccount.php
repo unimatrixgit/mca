@@ -101,13 +101,14 @@ class DuneShopAccount
     public function handle($request, \Closure $next)
     {
         $path = $request->path();
+        $profileRead = $path === 'profile' && ($request->isMethod('GET') || $request->isMethod('HEAD'));
         if ($path === 'user/login') {
             abort_unless($request->isMethod('GET'), 404);
             return redirect('https://cp.dunerealms.com/store/dune-login');
         }
         // Account credentials, game linkage and native role administration stay central.
         if (preg_match('#^(?:user/(?:register|password|verify|email)|profile/(?:password|email|delete)|api/)#', $path)) abort(403, 'Manage your account in the Account Center.');
-        if (str_starts_with($path, 'profile') && ! $request->isMethod('GET') && $path !== 'profile/theme') abort(403, 'Manage your account in the Account Center.');
+        if (str_starts_with($path, 'profile') && ! $request->isMethod('GET') && ! $profileRead && $path !== 'profile/theme') abort(403, 'Manage your account in the Account Center.');
         if (! Auth::check() && $path === 'shop' && preg_match('/(?:^|;\s*)__Host-dune_session=/', $request->server('HTTP_COOKIE', ''))) {
             return redirect('https://cp.dunerealms.com/store/dune-login');
         }
@@ -129,6 +130,11 @@ class DuneShopAccount
             }
             $request->attributes->set('dune_identity', $identity);
             Auth::setUser(self::synchronize($identity));
+        }
+        if ($profileRead) {
+            // Keep embedded Shop usable: explicit top-level links, never a CP nested inside its iframe.
+            return response()->view('dune-account')
+                ->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
         }
         if ($path === 'admin') return redirect('https://cp.dunerealms.com/store/admin/shop/'.(Auth::user()?->role->name === 'DuneRealms Shop Support' ? 'payments' : 'packages'));
         if (str_starts_with($path, 'admin/') && ! str_starts_with($path, 'admin/shop/')) abort(403);
