@@ -1,5 +1,18 @@
 # Casework regression — native task 324 / public 803432
 
+## Final status, 6 November 2026
+
+PR47/source `f6b4f36532e0a2a71c3908446e73d80f4eeaf110` was merged as
+`9ee3728ca37c09e222ab1ff8687ea2ebb52591a7`. The three scoped backend files
+are deployed with exact source/baseline/hash verification and a private code backup.
+Only the account panel restarted. Anonymous bank/staff/clan APIs remain 401;
+the authenticated personal bank confirms its balance on desktop and mobile, with
+no mobile page overflow. The native staff ticket desk and its existing status/assignment
+controls load inside CP on desktop and mobile. Moderation/evidence views load without
+module errors. No production decision, assignment, transfer, unban or evidence save
+was performed. The final 71 Node checks and isolated SQL/native-handler checks below
+pass. Parent 324 and Bugs 382–384 are completed with native completion reports.
+
 ## Confirmed defects and scoped changes
 
 Concurrent appeal decisions could lose their status compare-and-set, commit dependent ban/audit updates, and only then return a conflict. Reopen could acknowledge a pending state which another reviewer had already claimed for approval. Check the status mutation inside the same transaction; a lost comparison rolls back all dependent writes and returns 409. An already-pending reopen is idempotent. A positive matching game acknowledgement is still required before approving a real ban; deny/reopen never call the game host. A failed local audit after an external acknowledgement rolls back local finalisation and leaves the retryable `approving` claim; it does not reapply a game ban.
@@ -8,7 +21,7 @@ Personal, staff and clan bank projections accepted numeric or array values throu
 
 A bank response arriving after logout, permission removal, relinking or clan membership removal could expose the prior authority's data. Recheck the current session/account, view grant and linked identity after the upstream wait. Clan responses additionally require the same active clan membership, and derive role/design/price flags from current authority. A valid role downgrade retains the member's own read access but removes design authority. No new banking writes or transfers are added.
 
-Findings are recorded as native Bugs 382, 383 and 384 in their normal protected review workflow. These fixes are within approved parent 324; the Bug records have not been approved or closed by bypass.
+Findings are recorded as native Bugs 382, 383 and 384, approved through normal Owner review and completed with individual reports. These fixes are within approved parent 324; the workflow was not bypassed.
 
 ## Validation on 6 November 2026
 
@@ -24,6 +37,6 @@ The two `*-mysql.integration.mjs` harnesses are explicitly opt-in. They require 
 
 ## Deployment boundary and remaining work
 
-This change is staged for review, not deployed. Only three existing CP backend modules change. No migration, route activation, new public helper, website build or game restart is needed for these fixes. Preserve the deployed House Tailor five-quality/legacy compatibility behaviour. Guard all three installed source baselines, back up the files, install the reviewed revision and restart only the account panel. Verify anonymous denials, private no-store responses, exact installed hashes and service health. Roll back the three code files if needed; no data rollback.
+Only three existing CP backend modules change. No migration, route activation, new public helper, website build or game restart is needed for these fixes. Preserve the deployed House Tailor five-quality/legacy compatibility behaviour. For any later rollout, guard all three installed source baselines, back up the files, install the reviewed revision and restart only the account panel. Verify anonymous denials, private no-store responses, exact installed hashes and service health. Roll back the three code files if needed; no data rollback.
 
-The game case-context procedure, trigger and route are absent from production. Passing isolated tests is not a claim that this feature is deployed; do not apply its migration or grant as part of this regression fix. Parent 324 remains open for visible acceptance, reviewed merge and scoped rollout. Browser native input is currently blocked by an earlier local-preview confirmation; no browser acceptance or production moderation action is claimed.
+The game case-context procedure, trigger and route are absent from production. Passing isolated tests is not a claim that this feature is deployed; do not apply its migration or grant as part of this regression fix. The requested authority/revocation QA is complete in isolation. Native handler QA is direct method/database coverage, not a claim that destructive browser/HTTP actions were exercised.
