@@ -1,5 +1,5 @@
 <?php
-class Topic {static $public=[1=>'General support',11=>'Report a Problem / Access Issue',14=>'Parental consent request [Preview]',21=>'Customer sales enquiries'];static function getPublicHelpTopics(){return self::$public;}}
+class Topic {static $ready=true;static $public=[1=>'General support',11=>'Report a Problem / Access Issue',14=>'Parental consent request [Preview]',21=>'Customer sales enquiries'];static function getPublicHelpTopics(){if(!self::$ready)throw new RuntimeException('Native configuration is not initialised');return self::$public;}}
 require dirname(__DIR__).'/intake-navigation.php';
 $checks=0;
 function intake_check($value,$label){global $checks;$checks++;if(!$value)throw new RuntimeException($label);}
@@ -8,8 +8,10 @@ foreach([null,[],false,'https://example.test/open.php','//example.test/open.php'
 intake_check(dune_requested_intake_path('open.php',['topicId'=>'21'],'GET')==='/open.php?topicId=21','Selected public topic lost');
 intake_check(dune_requested_intake_path('open.php',[],'HEAD')==='/open.php','Generic intake lost');
 intake_check(dune_requested_intake_path('alpha-signup.php',[],'GET')==='/alpha-signup.php','Alpha route lost');
-foreach([['open.php',['topicId'=>['21']],'GET'],['open.php',['topicId'=>'17'],'GET'],['open.php',['topicId'=>'21'],'POST'],['tickets.php',[],'GET']]as$args)intake_check(dune_requested_intake_path(...$args)===null,'Invalid request remembered');
+foreach([['open.php',['topicId'=>['21']],'GET'],['open.php',['topicId'=>'21'],'POST'],['tickets.php',[],'GET']]as$args)intake_check(dune_requested_intake_path(...$args)===null,'Invalid request remembered');
+Topic::$ready=false;intake_check(dune_requested_intake_path('open.php',['topicId'=>'21'],'GET')==='/open.php?topicId=21','Bootstrap consulted an unavailable native configuration');Topic::$ready=true;
 $session=['dune_sso_state'=>'existing-nonce','dune_session_ref'=>'existing-reference'];
+$untrusted=dune_requested_intake_path('open.php',['topicId'=>'17'],'GET');dune_remember_intake_path($session,['intake'=>$untrusted],100);intake_check(dune_take_intake_path($session,101)===null,'Private bootstrap candidate persisted');
 dune_remember_intake_path($session,['intake'=>'/open.php?topicId=21'],100);
 intake_check(dune_take_intake_path($session,101)==='/open.php?topicId=21','Successful sign-in route lost');
 intake_check(dune_take_intake_path($session,102)===null,'Return context replayed');

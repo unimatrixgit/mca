@@ -8,6 +8,8 @@ The homepage resolves an explicit list through `Topic::getPublicHelpTopics()`. I
 
 Native parent-prefixed topic labels are matched by their unique leaf name; ambiguous public branches are omitted. A public intake selected before sign-in is remembered for five minutes and consumed once after successful existing SSO/native authentication. Only relative `/open.php`, a currently public positive topic ID, or `/alpha-signup.php` is accepted. Recheck topic visibility after sign-in. Staff/Dev/appeal flows retain precedence; external URLs, private topics and POST payloads are excluded. The common SSO nonce validation and account/native authorisation checks are unchanged.
 
+During early plugin bootstrap, validate only the candidate's syntax: osTicket has not initialised its configuration yet. The fully initialised SSO entrypoint validates public visibility before storing the navigation context, and validates it again before returning. A syntactically valid private-topic candidate is never stored as an authorised return destination.
+
 `configure-public-sales.php` defaults to a read-only plan. Run it with `--apply` only for an authorised rollout. It creates **Customer sales enquiries**, routed through the existing Sales department/team, using only standard Ticket Details form 2. The existing private **Sales enquiries** email/internal topic remains private and unchanged. The installer requires transactional topic tables, serialises creation with a named lock, validates repeat runs and refuses routing/form drift. It does not create a ticket or process a payment/refund.
 
 ## Shared actions
