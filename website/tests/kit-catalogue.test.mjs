@@ -6,10 +6,19 @@ test('public route is read-only and returns unavailable rather than fake listing
 
 import {clanKitCatalogue} from '../node/clan-kit-catalogue.mjs';
 import {DatabaseSync} from 'node:sqlite';
+import {HOUSE_KIT_SCHEMA} from '../control-panel/house-tailor.mjs';
 test('clan catalogue automatically reflects saved edits and excludes closed clans',async()=>{
- const sql=new DatabaseSync(':memory:');sql.exec(`CREATE TABLE site_accounts(id TEXT,username TEXT);CREATE TABLE site_clans(id TEXT,name TEXT,owner_id TEXT,active INT);CREATE TABLE site_clan_kits(id TEXT,clan_id TEXT,name TEXT,color TEXT,lore_json TEXT,version INT,shop_price_cents INT);INSERT INTO site_accounts VALUES('owner','unimatrix999');INSERT INTO site_clans VALUES('clan','House Unimatrix','owner',1);INSERT INTO site_clan_kits VALUES('11111111-1111-1111-1111-111111111111','clan','Desert kit','#56078B','[]',1,20000);`);
+ const sql=new DatabaseSync(':memory:');sql.exec(`CREATE TABLE site_accounts(id TEXT,username TEXT);CREATE TABLE site_clans(id TEXT PRIMARY KEY,name TEXT,owner_id TEXT,active INT);CREATE TABLE site_clan_kits(id TEXT,clan_id TEXT,name TEXT,color TEXT,lore_json TEXT,version INT,shop_price_cents INT);INSERT INTO site_accounts VALUES('owner','unimatrix999');INSERT INTO site_clans VALUES('clan','House Unimatrix','owner',1);INSERT INTO site_clan_kits VALUES('11111111-1111-1111-1111-111111111111','clan','Desert kit','#56078B','[]',1,20000);`);
+ sql.exec(HOUSE_KIT_SCHEMA);
  const db={prepare:q=>({all:async()=>({results:sql.prepare(q).all()})})};
  let rows=await clanKitCatalogue(db);assert.equal(rows[0].ownerName,'unimatrix999');assert.equal(rows[0].priceCents,20000);assert.equal(publicKitCatalogue({currency:'dunemarks',listings:rows}).listings[0].purchaseAvailable,false);
  sql.exec("UPDATE site_clan_kits SET name='Updated clan kit',version=2,shop_price_cents=30000");rows=await clanKitCatalogue(db);assert.equal(rows[0].name,'Updated clan kit');assert.equal(rows[0].listingVersion,2);assert.equal(rows[0].priceCents,30000);
  sql.exec('UPDATE site_clans SET active=0');assert.deepEqual(await clanKitCatalogue(db),[]);sql.close();
+});
+
+test('five clan publications use independent live prices and versions with exactly one legacy Uncommon listing',async()=>{
+ const sql=new DatabaseSync(':memory:');sql.exec(`CREATE TABLE site_accounts(id TEXT,username TEXT);CREATE TABLE site_clans(id TEXT PRIMARY KEY,name TEXT,owner_id TEXT,active INT);CREATE TABLE site_clan_kits(id TEXT,clan_id TEXT,name TEXT,color TEXT,lore_json TEXT,version INT,shop_price_cents INT);INSERT INTO site_accounts VALUES('owner','Owner');INSERT INTO site_clans VALUES('clan','House','owner',1);INSERT INTO site_clan_kits VALUES('22222222-2222-4222-8222-222222222222','clan','Original Uncommon','#385B49','[]',7,25000);`);sql.exec(HOUSE_KIT_SCHEMA);
+ const qualities=['common','uncommon','rare','very_rare','legendary'];for(const[quality,index]of qualities.map((q,i)=>[q,i]))sql.prepare('INSERT INTO site_clan_kit_designs VALUES(?,?,?,?,?,?,?,?,?,?,?)').run((index+3).toString().repeat(8)+'-3333-4333-8333-333333333333','clan',quality,quality+' design','#385B49','[]','{}',index+1,(index+1)*20000,1,'owner');
+ const db={prepare:q=>({all:async()=>({results:sql.prepare(q).all()})})};let rows=await clanKitCatalogue(db);assert.equal(rows.length,5);assert.deepEqual(rows.map(r=>r.quality),qualities);assert.equal(rows[1].name,'Original Uncommon');assert.equal(rows[1].listingVersion,7);assert.equal(rows[1].priceCents,25000);assert.ok(rows.every(row=>row.purchaseAvailable===false));assert.equal(publicKitCatalogue({currency:'dunemarks',listings:rows}).listings.length,5);
+ sql.exec("UPDATE site_clan_kit_designs SET version=9,shop_price_cents=200000,name='Legendary edited' WHERE quality='legendary'");rows=await clanKitCatalogue(db);assert.equal(rows[4].listingVersion,9);assert.equal(rows[4].blueprintVersion,9);assert.equal(rows[4].priceCents,200000);assert.equal(rows[1].listingVersion,7);sql.close();
 });
