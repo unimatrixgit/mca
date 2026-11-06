@@ -1,0 +1,13 @@
+diff --git a/resources/views/admin/layouts/admin.blade.php b/resources/views/admin/layouts/admin.blade.php
+index 425c630..015c3e0 100644
+--- a/resources/views/admin/layouts/admin.blade.php
++++ b/resources/views/admin/layouts/admin.blade.php
+@@ -427,7 +427,7 @@
+                         <div class="modal-content">
+                             <div class="modal-header">
+                                 <h2 class="modal-title" id="confirmDeleteLabel">{{ trans('admin.delete.title') }}</h2>
+-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
++                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                             </div>
+                             <div class="modal-body">{{ trans('admin.delete.description') }}</div>
+                             <div class="modal-footer">
