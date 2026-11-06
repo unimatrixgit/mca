@@ -69,7 +69,7 @@ async function boundedBytes(response,limit){
  try{for(;;){const{done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit){await reader.cancel();throw Error('Skin response too large');}chunks.push(Buffer.from(value));}}finally{reader.releaseLock();}
  return Buffer.concat(chunks,size);
 }
-export function createSkinResolver({fetcher=fetch,now=Date.now,maxEntries=256,maxBytes=8388608,maxPending=8,lookupsPerMinute=60}={}){
+export function createSkinResolver({fetcher=fetch,now=Date.now,maxEntries=256,maxBytes=8388608,maxPending=16,lookupsPerMinute=60}={}){
  const cache=new Map(),pending=new Map();let total=0,windowEnd=0,lookups=0;
  function remember(key,value,ttl){const previous=cache.get(key);total-=previous?.value?.bytes.length||0;cache.delete(key);cache.set(key,{value,until:now()+ttl});total+=value?.bytes.length||0;while(cache.size>maxEntries||total>maxBytes){const key=cache.keys().next().value;total-=cache.get(key).value?.bytes.length||0;cache.delete(key);}}
  async function remote(url,kind){

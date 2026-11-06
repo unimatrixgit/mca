@@ -63,6 +63,11 @@ test('concurrent same-identity lookups share work and bounded pending capacity d
  const resolver=createSkinResolver({maxPending:1,fetcher:async url=>{calls++;if(String(url).includes('sessionserver')){await gate;return Response.json(javaProfile());}return imageResponse(png);}});
  const a=resolver.resolve(javaUuid),b=resolver.resolve(javaUuid);assert.equal(await resolver.resolve(otherUuid),null);release();const results=await Promise.all([a,b]);assert.strictEqual(results[0],results[1]);assert.equal(calls,2);
 });
+test('a normal eleven-member roster can resolve its cold-cache skins together',async()=>{
+ const ids=Array.from({length:11},(_,i)=>'11111111-1111-4111-8111-'+String(i+1).padStart(12,'0')),byCompact=new Map(ids.map(id=>[id.replaceAll('-',''),id]));
+ let release,calls=0;const gate=new Promise(r=>release=r);const resolver=createSkinResolver({fetcher:async url=>{if(String(url).includes('sessionserver')){calls++;await gate;return Response.json(javaProfile(byCompact.get(String(url).split('/').at(-1))));}return imageResponse(png);}});
+ const requests=ids.map(id=>resolver.resolve(id)),started=calls;release();const skins=await Promise.all(requests);assert.equal(started,11);assert(skins.every(Boolean));
+});
 test('negative caching expires; lookup budget and entry/byte bounds remain effective',async()=>{
  let time=0,calls=0;const missing=createSkinResolver({now:()=>time,lookupsPerMinute:2,fetcher:async()=>{calls++;return Response.json({},{status:404});}});
  await missing.resolve(javaUuid);await missing.resolve(javaUuid);assert.equal(calls,1);time=30001;await missing.resolve(javaUuid);assert.equal(calls,2);await missing.resolve(otherUuid);assert.equal(calls,2);time=60001;await missing.resolve(otherUuid);assert.equal(calls,3);
