@@ -1,5 +1,7 @@
 # Java resource pack and native dialog compatibility
 
+Historical audit, 30 October 2026. Its v4/native-dialog findings are preserved below. The current release uses graphical Java inventory cards and pack v7; follow [the 6 November fleet/acceptance record](../docs/menu-acceptance-326/README.md). Do not apply the historical "keep v4" instructions to the current fleet.
+
 Audit date: 2026-10-30. Target: Java client/Paper1.21.8, new DuneMenus dialog renderer. No production changes made by this audit.
 
 ## Result: keep v4

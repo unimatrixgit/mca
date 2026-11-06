@@ -1,0 +1,39 @@
+{
+  "publicUrl": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+  "head": {
+    "status": 200,
+    "length": 20061331,
+    "ranges": "bytes",
+    "mime": "application/zip"
+  },
+  "range": {
+    "status": 206,
+    "contentRange": "bytes 0-31/20061331",
+    "length": 32
+  },
+  "sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e",
+  "sha256": "49821f43d515c6c5151bf22f936aa55706b8eafd66d8be2697bd5c1fd077b33c",
+  "archiveEntries": 104,
+  "strictJsonFiles": 62,
+  "packMetadata": {
+    "pack": {
+      "pack_format": 46,
+      "supported_formats": {
+        "min_inclusive": 46,
+        "max_inclusive": 97
+      },
+      "description": "DuneRealms Imperial Navigator | Java 1.21.4 through 26.3",
+      "min_format": 46,
+      "max_format": [
+        97,
+        1
+      ]
+    }
+  },
+  "imperialFonts": [
+    "assets/dunerealms/font/imperial_menus.json"
+  ],
+  "fullDownloadVerified": true,
+  "actualClientRenderingTested": false,
+  "productionChanges": false
+}

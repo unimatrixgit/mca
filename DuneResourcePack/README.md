@@ -1,5 +1,7 @@
 # Dune Resource Pack
 
+Current fleet note, 6 November 2026: the six Paper backends use the optional **Imperial GUI v7** archive at `https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip`, SHA1 `6222875ddd969bebbeefc5b607051fdf61b1a14e`. Its full HTTP download and ZIP/JSON integrity are verified; actual client rendering remains pending. See [task 326](../docs/menu-acceptance-326/README.md) for exact hashes and acceptance boundaries. The older texture/history sections below describe their original releases and must not be used to downgrade the current server pack.
+
 Client-side resource pack for Minecraft Java 1.21.4 servers. Works with vanilla and Fabric clients running Minecraft 1.21.4; Fabric Loader does not require a special mod wrapper for standard resource packs.
 
 - Gives the visible Sniffer sandworm a desert-tan, segmented hide with ivory toothlike head details.

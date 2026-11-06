@@ -1,0 +1,52 @@
+{
+  "comparison": {
+    "installedSha256": "42464b91ed730758b1ab77a24892322b9e89c1cd7be1fd8dc240e080122a9b9f",
+    "builtSha256": "56eabcd5b8aa3f3a1ebf3d4e06ce0842c65d2175371c9c46ac143a28c54f28e7",
+    "entries": 15,
+    "changedEntries": [
+      "manifest.json",
+      "ui/_ui_defs.json",
+      "ui/dunerealms_gui.json",
+      "ui/server_form.json"
+    ],
+    "installedManifest": {
+      "format_version": 2,
+      "header": {
+        "name": "DuneRealms — Imperial Navigator",
+        "description": "Imperial framed menus. Native form callbacks; text fallback supported.",
+        "uuid": "04cf44d8-edf8-4cd5-ac58-fad90da8635b",
+        "version": [
+          1,
+          1,
+          0
+        ],
+        "min_engine_version": [
+          1,
+          21,
+          100
+        ]
+      },
+      "modules": [
+        {
+          "type": "resources",
+          "uuid": "315ee668-8026-4e58-8fb1-c81b430f17cb",
+          "version": [
+            1,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    "actualClientRenderingTested": false,
+    "semanticChanges": [],
+    "changesBeyondLineEndings": []
+  },
+  "checks": {
+    "installedSkinSha256": "42464b91ed730758b1ab77a24892322b9e89c1cd7be1fd8dc240e080122a9b9f",
+    "installedSkinContractChecks": 8,
+    "failed": 0,
+    "clientRenderingTested": false,
+    "productionChanges": false
+  }
+}

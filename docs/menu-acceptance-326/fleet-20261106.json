@@ -1,0 +1,552 @@
+{
+  "capturedAtUtc": "2026-11-06T13:22:25.331Z",
+  "scope": "Read-only installed JAR inventory; service state and loaded renderer queried separately; no client visual acceptance",
+  "nodes": {
+    "arrakis": {
+      "service": {
+        "unit": "dune-arrakis.service",
+        "state": "active"
+      },
+      "installedPluginCount": 21,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "acf870cd2b87540b72dd20fd8a1f888e6957392c2f758247136a8c1b5f845759",
+        "DuneEss": "8852ddc5b1e1d91aa02010b5e3e73e1dad98e458bd9cdb4c560d9dce79a36486",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "DuneTerrain": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "caladan": {
+      "service": {
+        "unit": "dune-caladan.service",
+        "state": "active"
+      },
+      "installedPluginCount": 23,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d",
+        "DuneEss": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "DuneTerrain": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Typewriter": "107e54881c814b15833a5c2acd7c1ed7d0fa2ba08a14f4b0c6f739fb2227f376",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "packetevents": "060087c58ec268eae7dd0eb1f17ac3bea1eaadda1693414141ff64e506091bd7",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "giedi_prime": {
+      "service": {
+        "unit": "dune-giedi_prime.service",
+        "state": "active"
+      },
+      "installedPluginCount": 21,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d",
+        "DuneEss": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "DuneTerrain": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "kaitain": {
+      "service": {
+        "unit": "dune-kaitain.service",
+        "state": "active"
+      },
+      "installedPluginCount": 23,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d",
+        "DuneEss": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "DuneTerrain": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Typewriter": "107e54881c814b15833a5c2acd7c1ed7d0fa2ba08a14f4b0c6f739fb2227f376",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "packetevents": "060087c58ec268eae7dd0eb1f17ac3bea1eaadda1693414141ff64e506091bd7",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "sigma_draconis_iv": {
+      "service": {
+        "unit": "dune-sigma_draconis_iv.service",
+        "state": "active"
+      },
+      "installedPluginCount": 23,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d",
+        "DuneEss": "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "DuneTerrain": "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Typewriter": "107e54881c814b15833a5c2acd7c1ed7d0fa2ba08a14f4b0c6f739fb2227f376",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "packetevents": "060087c58ec268eae7dd0eb1f17ac3bea1eaadda1693414141ff64e506091bd7",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "lobby": {
+      "service": {
+        "unit": "dune-lobby.service",
+        "state": "active"
+      },
+      "installedPluginCount": 22,
+      "installedEngineFiles": [
+        {
+          "file": "paper.jar",
+          "sha256": "8de7c52c3b02403503d16fac58003f1efef7dd7a0256786843927fa92ee57f1e"
+        }
+      ],
+      "plugins": {
+        "AzLink": "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de",
+        "CoreProtect": "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97",
+        "DiscordSRV": "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef",
+        "DuneAtelier": "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8",
+        "DuneBan": "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd",
+        "DuneBank": "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b",
+        "DuneClans": "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea",
+        "DuneCore": "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d",
+        "DuneEss": "cea63019e519a9b37ef8d812628f20f2d8d9ff936f2ea443a09d0e324c859902",
+        "DuneItems": "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97",
+        "DuneLobby": "0528c7dd014ac96696d466f12f1e120b2598e85450ce65761bebf847b15a1cc9",
+        "DuneMenus": "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810",
+        "DuneNPC": "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b",
+        "DuneProtect": "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35",
+        "DuneQuests": "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe",
+        "ImageFrame": "65b5c14eb6bd847f1cc0f4985efa95ab43d2f3e2f67dbaec2ecf3ea327fde9b1",
+        "LuckPerms": "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be",
+        "Vault": "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9",
+        "ViaVersion": "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2",
+        "floodgate": "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e",
+        "WorldEdit": "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06",
+        "WorldGuard": "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5"
+      },
+      "javaPack": {
+        "require-resource-pack": "false",
+        "resource-pack": "https://www.dunerealms.com/downloads/DuneRealms-Imperial-GUI-1.21.8-v7.zip",
+        "resource-pack-sha1": "6222875ddd969bebbeefc5b607051fdf61b1a14e"
+      },
+      "loadedRendererVersion": "1.2.0-graphical"
+    },
+    "proxy": {
+      "service": {
+        "unit": "dune-proxy.service",
+        "state": "active"
+      },
+      "installedPluginCount": 4,
+      "installedEngineFiles": [
+        {
+          "file": "velocity-3.5.1-backup.jar",
+          "sha256": "b4e3164df5377346854dc6cb9e6a78022b1946ff69e89676313f5f6f1c6f0fb3"
+        },
+        {
+          "file": "velocity.jar",
+          "sha256": "0844bcabdcdb4f5b875906fd4c3365bc1bb76918e42bc595ed88ad195258dd75"
+        }
+      ],
+      "plugins": {
+        "DuneBan Network Guard": "8f25fb0df3c3a8dcfb3e0649e212333803b2f892025c9904dd1e1d87c3ad82ab",
+        "Geyser-Velocity": "33971339325af4b1306cb0206e2470e20a3825004a0890734c46deaa963e7c37",
+        "LuckPerms": "a3ac92ef4e29fd87a4d706dc92445fd946f1caf1d33526ca18422a62554fa18a",
+        "floodgate": "649835022de37ff09255fc626d4bfe7bc2a3b926d07b0dfaf1f51e12bf37001d"
+      },
+      "bedrockPacks": [
+        {
+          "file": "DuneRealms-Imperial-Items-Bedrock-v1.mcpack",
+          "sha256": "a935ab48a16a8144177345d83c669bad948b3ed76272ddba9f529872b5e75fc8"
+        },
+        {
+          "file": "DuneRealms-Imperial-Navigator-Bedrock-v1.mcpack",
+          "sha256": "42464b91ed730758b1ab77a24892322b9e89c1cd7be1fd8dc240e080122a9b9f"
+        }
+      ]
+    }
+  },
+  "artifacts": {
+    "4d51f7fbcfaa0b9e61c2caf8ee2be193cb93c80fb1f4b4a01052b4841f3381de": {
+      "file": "AzLink-1.3.13.jar",
+      "name": "AzLink",
+      "version": "1.3.13",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "a2acef7c06ef201355cef07d591a6055dfed358ad768faaaaaf4e276865ecc97": {
+      "file": "CoreProtect-CE-24.1.jar",
+      "name": "CoreProtect",
+      "version": "24.1",
+      "apiVersion": "1.16",
+      "selectedClassSha256": {}
+    },
+    "ef2fa1f2eb146c7c77412b7190a7dd33f1fc91282683fe45407739554c8aefef": {
+      "file": "DiscordSRV.jar",
+      "name": "DiscordSRV",
+      "version": "1.30.5",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "b0e640901419eb3e544ae0e60b52867f927341246990a2f5cc67bc1a4dc86bf8": {
+      "file": "DuneAtelier-1.0.0.jar",
+      "name": "DuneAtelier",
+      "version": "1.0.0",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/dunerealms/atelier/DeliveryStore.class": "f34b96699645e4f04e5b99c42fc7ef4c4035e5aa61b6c1338ecadb5610ddb090"
+      }
+    },
+    "8ff8eab02f8f4bee8ccd944fba7f921a8207fcfa1e57ac029a09549685797ecd": {
+      "file": "DuneBan-Paper-1.0.2.jar",
+      "name": "DuneBan",
+      "version": "1.0.2",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "84be4403762abc974862a0172624d498bf6751c2aa6f51984d1ad1230bffd03b": {
+      "file": "DuneBank-1.0.2.jar",
+      "name": "DuneBank",
+      "version": "1.0.2",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {}
+    },
+    "ae0f78ae8a0cdc584d280f3d983a68ddda33531e6dad41aaceb07f8612d6e9ea": {
+      "file": "DuneClans-1.0.0.jar",
+      "name": "DuneClans",
+      "version": "1.0.3",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {}
+    },
+    "acf870cd2b87540b72dd20fd8a1f888e6957392c2f758247136a8c1b5f845759": {
+      "file": "DuneCore-1.0.10.jar",
+      "name": "DuneCore",
+      "version": "1.0.27-layout1-jobs1-sun374",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598",
+        "com/example/dunerealms/ConfigurableGui.class": "ce5c3e32d907f48d48a3c1fae0910e119a924a2f7e044608e3c08f34f0680610",
+        "com/example/dunerealms/DuneCore.class": "cc8e1aae702702a82e5c6aa8b093c4c479011ac6c6c4c49f6793b726354631d2",
+        "com/example/dunerealms/JobsScreens.class": "10e0a8de2f62ce85e49fc62aa4ec6d9dce9f56d61bfb4db06f16f236f867dc7a",
+        "com/example/dunerealms/SunWearPolicy.class": "77c27514768cdad83a5c1c5d6b31a3d3d074fb72020cb16ae3e0276baa153942"
+      }
+    },
+    "8852ddc5b1e1d91aa02010b5e3e73e1dad98e458bd9cdb4c560d9dce79a36486": {
+      "file": "DuneEss-1.0.2.jar",
+      "name": "DuneEss",
+      "version": "1.0.11-spicebuyer",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "d4b376876f52034e9b44bd58c014540f19417a65210afc3245e260f3041e3d97": {
+      "file": "DuneItems-1.0.2.jar",
+      "name": "DuneItems",
+      "version": "1.0.5",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "24b926c8e49047bada7f9a64a028a4b5a9a709339c2dcb2c1093da4688359810": {
+      "file": "DuneMenus-1.1.0.jar",
+      "name": "DuneMenus",
+      "version": "1.2.0-graphical",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunemenus/DuneMenus.class": "70c6f00c2c030548e32f5c8cb756aebd0d3cc85bdce7fa0831b5504fca5ee800",
+        "com/example/dunemenus/GraphicalMenu.class": "3476e218640757bbdaa045cfb1f30c846c5e5f00eb6115236e823606784b4f21"
+      }
+    },
+    "456c49ef8833ae1f77641beb60ea87eab04e221905c2341b0405da655864460b": {
+      "file": "DuneNPC-1.0.0.jar",
+      "name": "DuneNPC",
+      "version": "1.0.2",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "1d2051d311af6aa9816c70857a9432af7205c787484bf8eba490d4ba954c1a35": {
+      "file": "DuneProtect.jar",
+      "name": "DuneProtect",
+      "version": "1.0.0",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "33397373d8fd6c8a9e13a50a42256b56820d24e73cf33f4d2a0cc5b2509cd9fe": {
+      "file": "DuneQuests-1.0.1.jar",
+      "name": "DuneQuests",
+      "version": "1.0.1",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "e297759566aa7bcc4986cadef6a9651198b93ab3a557d68ed5aa1c40f962b5fd": {
+      "file": "DuneTerrain-1.0.7.jar",
+      "name": "DuneTerrain",
+      "version": "1.0.12",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "af18d92f0b8d85b73835546e3376630dea62417291ed8571930e6875436a64be": {
+      "file": "LuckPerms-Bukkit.jar",
+      "name": "LuckPerms",
+      "version": "5.5.88",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "3efb1c893d35807c0f3945068858a96af0f131020eee37545bdddb330044b2d9": {
+      "file": "Vault-2.5.0.jar",
+      "name": "Vault",
+      "version": "2.5.0",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "c0b63badcb0f7d38f4443e06820f2b8142dd4f0d3b0511f9330ff1050430e6b2": {
+      "file": "ViaVersion.jar",
+      "name": "ViaVersion",
+      "version": "5.12.2",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "21570aff9ce17d6983928e8552777760e1ede5050026b04c686b0ae112e6fd7e": {
+      "file": "floodgate-spigot.jar",
+      "name": "floodgate",
+      "version": "2.2.5-SNAPSHOT (b141-81b65cc)",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "0ee152b1be5dfb51500505e2bf5a8c9d66f09c7fa484bf9aea384d7e7b459b06": {
+      "file": "worldedit-bukkit-7.3.19.jar",
+      "name": "WorldEdit",
+      "version": "7.4.2+7450-eb8e82c",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {}
+    },
+    "73b43a46aefc76514b90994532ea18bfd6d92e7bc5dcabbef9049a71778b21b5": {
+      "file": "worldguard-bukkit-7.0.13-dist.jar",
+      "name": "WorldGuard",
+      "version": "7.0.13+82fdc65",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "cb2f4c21846c88bf0e11d2cf099c849357d4cbffe9b0ceb4e6b4b6c81236561d": {
+      "file": "DuneCore-1.0.10.jar",
+      "name": "DuneCore",
+      "version": "1.0.27-layout1-jobs1",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598",
+        "com/example/dunerealms/ConfigurableGui.class": "ce5c3e32d907f48d48a3c1fae0910e119a924a2f7e044608e3c08f34f0680610",
+        "com/example/dunerealms/DuneCore.class": "edce91a1d9c10c875be58feb17597e04ebcbbd82dfbf1aaa3a0941a42518af4e",
+        "com/example/dunerealms/JobsScreens.class": "10e0a8de2f62ce85e49fc62aa4ec6d9dce9f56d61bfb4db06f16f236f867dc7a"
+      }
+    },
+    "abeca5c38d6de9dd1fc637040deb1830707c5ae045372f8250e72ae5455f1ad3": {
+      "file": "DuneEss-1.0.2.jar",
+      "name": "DuneEss",
+      "version": "1.0.11",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "107e54881c814b15833a5c2acd7c1ed7d0fa2ba08a14f4b0c6f739fb2227f376": {
+      "file": "Typewriter-0.8.0.jar",
+      "name": "Typewriter",
+      "version": "0.8.0",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {}
+    },
+    "060087c58ec268eae7dd0eb1f17ac3bea1eaadda1693414141ff64e506091bd7": {
+      "file": "packetevents-spigot-2.14.0.jar",
+      "name": "packetevents",
+      "version": "2.14.0",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "cea63019e519a9b37ef8d812628f20f2d8d9ff936f2ea443a09d0e324c859902": {
+      "file": "DuneEss-1.0.2.jar",
+      "name": "DuneEss",
+      "version": "1.0.11-sqltime1",
+      "apiVersion": "1.21.4",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "0528c7dd014ac96696d466f12f1e120b2598e85450ce65761bebf847b15a1cc9": {
+      "file": "DuneLobby.jar",
+      "name": "DuneLobby",
+      "version": "1.0.1-exchange",
+      "apiVersion": "1.21",
+      "selectedClassSha256": {
+        "com/example/dunegui/NativeMenus.class": "3ebb0cd1a76ad82e294f42341f1bc0a74ac5df70358480c2c662f81995b02598"
+      }
+    },
+    "65b5c14eb6bd847f1cc0f4985efa95ab43d2f3e2f67dbaec2ecf3ea327fde9b1": {
+      "file": "ImageFrame.jar",
+      "name": "ImageFrame",
+      "version": "2026.1.5.0",
+      "apiVersion": "1.13",
+      "selectedClassSha256": {}
+    },
+    "8f25fb0df3c3a8dcfb3e0649e212333803b2f892025c9904dd1e1d87c3ad82ab": {
+      "file": "DuneBan-Velocity-1.0.0.jar",
+      "name": "DuneBan Network Guard",
+      "version": "1.0.0",
+      "apiVersion": null,
+      "selectedClassSha256": {}
+    },
+    "33971339325af4b1306cb0206e2470e20a3825004a0890734c46deaa963e7c37": {
+      "file": "Geyser-Velocity.jar",
+      "name": "Geyser-Velocity",
+      "version": "2.12.1-b1276 (git-master-e963aec)",
+      "apiVersion": null,
+      "selectedClassSha256": {}
+    },
+    "a3ac92ef4e29fd87a4d706dc92445fd946f1caf1d33526ca18422a62554fa18a": {
+      "file": "LuckPerms-Velocity.jar",
+      "name": "LuckPerms",
+      "version": "5.5.71",
+      "apiVersion": null,
+      "selectedClassSha256": {}
+    },
+    "649835022de37ff09255fc626d4bfe7bc2a3b926d07b0dfaf1f51e12bf37001d": {
+      "file": "floodgate-velocity.jar",
+      "name": "floodgate",
+      "version": "2.2.5-SNAPSHOT (b141-81b65cc)",
+      "apiVersion": null,
+      "selectedClassSha256": {}
+    }
+  }
+}
