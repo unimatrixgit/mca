@@ -1,0 +1,16 @@
+// Run the repository tests against the actual patched installed artifact.
+// gradle -I ../tools/test-sun-artifact.gradle -PsunArtifact=/path/Core.jar test
+allprojects {
+ afterEvaluate {
+  // Existing test classes leak Bukkit static mocks when their setup fails.
+  // Isolate classes for a meaningful baseline/candidate comparison.
+  if (plugins.hasPlugin('java')) tasks.named('test') { forkEvery = 1 }
+  if (plugins.hasPlugin('java') && project.hasProperty('sunBaseline')) tasks.named('test') { exclude '**/SunWearTest*' }
+  if (plugins.hasPlugin('java') && project.hasProperty('sunArtifact')) {
+   tasks.named('test') {
+    classpath = sourceSets.test.output + files(project.property('sunArtifact')) +
+      (sourceSets.test.runtimeClasspath - sourceSets.main.output)
+   }
+  }
+ }
+}

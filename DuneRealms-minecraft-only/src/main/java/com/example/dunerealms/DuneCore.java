@@ -321,7 +321,8 @@ public final class DuneCore extends JavaPlugin implements Listener, CommandExecu
             if (!(meta instanceof org.bukkit.inventory.meta.Damageable) || meta.isUnbreakable()) continue;
             var data = meta.getPersistentDataContainer();
             String quality = data.get(qualityKey, PersistentDataType.STRING);
-            int interval = SunWearPolicy.interval(quality);
+            int interval = SunWearPolicy.interval(quality, rarity -> getConfig().getInt(
+                    "arrakis-sun.stillsuit-wear-seconds." + rarity, SunWearPolicy.interval(rarity)));
             int elapsed = data.getOrDefault(elapsedKey, PersistentDataType.INTEGER, 0);
             boolean damage = elapsed >= interval - 1;
             data.set(elapsedKey, PersistentDataType.INTEGER, damage ? 0 : Math.max(0, elapsed) + 1);
