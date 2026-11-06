@@ -2,8 +2,10 @@
 // Public catalogue only: no private ticket information is rendered here.
 $publicTopics = Topic::getPublicHelpTopics();
 $topicUrl = static function ($name) use ($publicTopics) {
-    foreach ($publicTopics as $id => $label) if ($label === $name) return '/open.php?topicId='.(int)$id;
-    return null;
+    // osTicket prefixes child topics with their public parent path.
+    $matches=[];
+    foreach ($publicTopics as $id => $label) if ($label === $name || str_ends_with($label, ' / '.$name)) $matches[]=(int)$id;
+    return count($matches)===1 ? '/open.php?topicId='.$matches[0] : null;
 };
 $cards = [
  ['Parental requests','FOR PARENTS & GUARDIANS','Request parental consent or ask about a child’s account. The Legal team reviews requests manually; this form does not automatically grant consent or change an account.','Parental consent request [Preview]','Open parental request','seals/department-legal-v2-150.png'],
