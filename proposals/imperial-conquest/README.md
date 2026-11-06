@@ -6,3 +6,5 @@ The design connects funded invasions, strategic capture, quest objectives, imper
 - [Complete design](DESIGN.md) covers the fifteen requested deliverables, with configurable defaults, state transitions, schema proposals, safeguards, a Kaitain example and implementation gates.
 
 Task 371's announcement was published on 5 November 2026 as planned design work. Sunday 8 November remains an intended testing target conditional on an approved, implemented and verified scope. This proposal does not create another announcement or claim readiness.
+
+The Owner approved starting implementation on 6 November. [Implementation checkpoint](IMPLEMENTATION.md) records the first source increment, tests and remaining integration work separately from the original design.
