@@ -32,5 +32,5 @@ Rollout affects the inspected public helper and the one shared presentation cond
 Verify their baselines, take code
 backup, preserve owner/mode, merge through the Dev fork and verify served bytes plus
 a fresh browser page. No service restart or database mutation is required. Rollback
-restores the one file. Do not change SSO/plugin bootstrap or appeal policy as part of
+restores the affected code files. Do not change SSO/plugin bootstrap or appeal policy as part of
 this fix.
