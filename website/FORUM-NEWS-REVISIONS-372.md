@@ -22,3 +22,6 @@ This checkpoint is staged only. Merge/deployment, backup paths, live existing-to
 
 Native subject compatibility follow-up: MyBB limits subjects to85characters while website titles allow120. Forum subjects are truncated with MyBB's Unicode-aware helper, the full long title is retained at the start of the post, and the Archived prefix also stays within85characters. The native temporary-table test now covers long-title editing, archive and republish without losing the full title.
 
+
+Canonical article follow-up: browser verification found that the server-rendered /news/ route still omitted author attribution and the confirmed forum link. It now shares the public forum-link resolver, escapes the public author name, shows the shared category label and provides Go to forum post only after confirmed delivery.23focused Node checks pass. Native Markdown-style headings and bullet lists are safely translated to a small BBCode subset; user brackets remain escaped. Rendering version2 triggers reconciliation without creating duplicate topics. The actual MyBB temporary-table test also validates formatting, full long-title retention and reply preservation.
+

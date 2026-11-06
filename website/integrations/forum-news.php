@@ -34,12 +34,19 @@ try{
  if($saved&&!$mapping)throw new Exception('Revision mapping requires reconciliation');
  if($saved&&$saved['revision']===$revision&&$saved['state']===$state){$reply($mapping['tid']);exit;}
  $safe=fn($s)=>str_replace(['[',']'],['&#91;','&#93;'],(string)$s);$url='https://www.dunerealms.com/news-archive.html?post='.$input['id'];
+ $formatBody=function($body)use($safe){
+  $out=[];$list=false;foreach(preg_split('/\r\n|\r|\n/',$body)as$line){
+   if(preg_match('/^#{1,3}\s+(.+)$/u',trim($line),$heading)){if($list){$out[]='[/list]';$list=false;}$out[]='[b]'.$safe($heading[1]).'[/b]';}
+   elseif(preg_match('/^[-*]\s+(.+)$/u',trim($line),$bullet)){if(!$list){$out[]='[list]';$list=true;}$out[]='[*]'.$safe($bullet[1]);}
+   else{if($list){$out[]='[/list]';$list=false;}$out[]=$safe($line);}
+  }if($list)$out[]='[/list]';return implode("\n",$out);
+ };
  if($status==='published'){
   $labels=['world'=>'World','news'=>'NEWS','maintenance'=>'Maintenance','changelogs'=>'Changelogs','events'=>'Events','community'=>'Community','unis_blog'=>"Uni’s Blog"];$label=$labels[$input['category']??'news']??'NEWS';$prefix=$db->fetch_array($db->simple_select('threadprefixes','pid',"prefix='".$db->escape_string($label)."' AND forums='14'"));
   if(!$prefix){$prefix=['pid'=>$db->insert_query('threadprefixes',['prefix'=>$label,'displaystyle'=>'<span class="dune-news-tag">'.htmlspecialchars_uni($label).'</span>','forums'=>'14','groups'=>'-1'])];$cache->update_threadprefixes();}
   // MyBB's native validator limits subjects to85 characters; website titles allow120.
   $subject=my_substr($input['title'],0,85);$prefix_id=(int)$prefix['pid'];
-  $message='[b]'.$safe($label).'[/b]'."\n".'Written by '.$safe($input['author_name']??'DuneRealms')."\n".'Originally published '.gmdate('j F Y, H:i',(int)($input['published_at']/1000))." UTC\n\n".$safe($input['body'])."\n\n[url=".$url."]Read the original article[/url]\n\n[size=x-small]".$marker.'[/size]';
+  $message='[b]'.$safe($label).'[/b]'."\n".'Written by '.$safe($input['author_name']??'DuneRealms')."\n".'Originally published '.gmdate('j F Y, H:i',(int)($input['published_at']/1000))." UTC\n\n".$formatBody($input['body'])."\n\n[url=".$url."]Read the original article[/url]\n\n[size=x-small]".$marker.'[/size]';
   if(my_strlen($input['title'])>85)$message='[b]'.$safe($input['title'])."[/b]\n\n".$message;
  }else{
   $subject=my_substr('[Archived] '.preg_replace('/^\[Archived\] /','',$thread['subject']),0,85);$prefix_id=(int)$thread['prefix'];
