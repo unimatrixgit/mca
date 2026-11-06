@@ -37,10 +37,12 @@ try{
  if($status==='published'){
   $labels=['world'=>'World','news'=>'NEWS','maintenance'=>'Maintenance','changelogs'=>'Changelogs','events'=>'Events','community'=>'Community','unis_blog'=>"Uni’s Blog"];$label=$labels[$input['category']??'news']??'NEWS';$prefix=$db->fetch_array($db->simple_select('threadprefixes','pid',"prefix='".$db->escape_string($label)."' AND forums='14'"));
   if(!$prefix){$prefix=['pid'=>$db->insert_query('threadprefixes',['prefix'=>$label,'displaystyle'=>'<span class="dune-news-tag">'.htmlspecialchars_uni($label).'</span>','forums'=>'14','groups'=>'-1'])];$cache->update_threadprefixes();}
-  $subject=$input['title'];$prefix_id=(int)$prefix['pid'];
+  // MyBB's native validator limits subjects to85 characters; website titles allow120.
+  $subject=my_substr($input['title'],0,85);$prefix_id=(int)$prefix['pid'];
   $message='[b]'.$safe($label).'[/b]'."\n".'Written by '.$safe($input['author_name']??'DuneRealms')."\n".'Originally published '.gmdate('j F Y, H:i',(int)($input['published_at']/1000))." UTC\n\n".$safe($input['body'])."\n\n[url=".$url."]Read the original article[/url]\n\n[size=x-small]".$marker.'[/size]';
+  if(my_strlen($input['title'])>85)$message='[b]'.$safe($input['title'])."[/b]\n\n".$message;
  }else{
-  $subject=my_substr('[Archived] '.preg_replace('/^\[Archived\] /','',$thread['subject']),0,120);$prefix_id=(int)$thread['prefix'];
+  $subject=my_substr('[Archived] '.preg_replace('/^\[Archived\] /','',$thread['subject']),0,85);$prefix_id=(int)$thread['prefix'];
   $message="[b]Archived announcement[/b]\n\nThis article has been withdrawn from the DuneRealms website. Earlier replies are retained for context.\n\n[size=x-small]".$marker.'[/size]';
  }
  require_once MYBB_ROOT.'inc/datahandlers/post.php';

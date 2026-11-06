@@ -19,3 +19,6 @@ Reproduce native checks by uploading tests/native-forum-news-shadow.php as /tmp/
 For the actual MySQL worker test, upload node/forum-news.mjs as /tmp/forum-news372-candidate.mjs and tests/native-forum-news-mysql.mjs to /tmp, then execute with the deployed Node22 runtime. It uses the existing private connection file without printing credentials, shadows queue/source tables, and injects a send stub so no public announcement is made.
 
 This checkpoint is staged only. Merge/deployment, backup paths, live existing-topic reconciliation and a genuine fresh Discord delivery must be recorded in native task372 before closure. Do not fabricate a live test news article or enable paid/automatic X posting.
+
+Native subject compatibility follow-up: MyBB limits subjects to85characters while website titles allow120. Forum subjects are truncated with MyBB's Unicode-aware helper, the full long title is retained at the start of the post, and the Archived prefix also stays within85characters. The native temporary-table test now covers long-title editing, archive and republish without losing the full title.
+

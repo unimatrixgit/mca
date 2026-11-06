@@ -19,6 +19,8 @@ post.update(title='Corrected isolated announcement',body='Corrected article body
 edited,state=run(post,True);assert edited['thread_id']==tid and len(state['posts'])==2 and len(state['threads'])==1
 assert state['posts'][0]['pid']==pid and state['posts'][0]['dateline']==date and 'Corrected article body' in state['posts'][0]['message']
 reply=next(p for p in state['posts'] if str(p['pid'])=='100');reply_bytes=json.dumps(reply,sort_keys=True)
+post['title']='A complete website announcement title longer than the native forum subject limit of eighty-five characters'
+long_title,state=run(post);assert len(state['threads'][0]['subject'])==85 and post['title'] in state['posts'][0]['message']
 archived,state=run({'id':id,'status':'archived'});assert archived['state']=='archived' and archived['thread_id']==tid and len(state['posts'])==2
 assert state['threads'][0]['subject'].startswith('[Archived] ') and 'Archived announcement' in state['posts'][0]['message']
 assert json.dumps(next(p for p in state['posts'] if str(p['pid'])=='100'),sort_keys=True)==reply_bytes
@@ -35,4 +37,4 @@ for field,value in [('uid','7'),('fid','99'),('visible','0'),('firstpost','100')
  final=json.loads((qa/'state.json').read_text());assert final['posts']==changed['posts'],field
  denials.append(field)
 (qa/'state.json').write_text(json.dumps(baseline))
-print(json.dumps({'nativePostDataHandler':True,'temporaryTablesOnly':True,'createEditArchiveReplayRepublish':True,'topicIdentityPreserved':True,'replyByteForBytePreserved':True,'originalPostDatePreserved':True,'ownershipForumVisibilityFirstPostDenials':denials}))
+print(json.dumps({'nativePostDataHandler':True,'temporaryTablesOnly':True,'createEditArchiveReplayRepublish':True,'topicIdentityPreserved':True,'replyByteForBytePreserved':True,'originalPostDatePreserved':True,'longTitlePreserved':True,'ownershipForumVisibilityFirstPostDenials':denials}))
