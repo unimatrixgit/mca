@@ -6,6 +6,8 @@ This package implements consolidated sources 119, 133 and 134. It changes presen
 
 The homepage resolves an explicit list through `Topic::getPublicHelpTopics()`. It presents parental requests (with the separate child-removal link), GDPR removal, general help, Sales, forum help, technical problems, access issues, ban appeals and Alpha signup. Missing/non-public topics produce no card. Existing priority relationships and specialised appeal/Alpha handlers remain intact. Cards use two equal desktop columns and one mobile column; the final card has the same treatment as every other card.
 
+Native parent-prefixed topic labels are matched by their unique leaf name; ambiguous public branches are omitted. A public intake selected before sign-in is remembered for five minutes and consumed once after successful existing SSO/native authentication. Only relative `/open.php`, a currently public positive topic ID, or `/alpha-signup.php` is accepted. Recheck topic visibility after sign-in. Staff/Dev/appeal flows retain precedence; external URLs, private topics and POST payloads are excluded. The common SSO nonce validation and account/native authorisation checks are unchanged.
+
 `configure-public-sales.php` defaults to a read-only plan. Run it with `--apply` only for an authorised rollout. It creates **Customer sales enquiries**, routed through the existing Sales department/team, using only standard Ticket Details form 2. The existing private **Sales enquiries** email/internal topic remains private and unchanged. The installer requires transactional topic tables, serialises creation with a named lock, validates repeat runs and refuses routing/form drift. It does not create a ticket or process a payment/refund.
 
 ## Shared actions
