@@ -1,0 +1,11 @@
+# Official and personal staff seals — 6 November 2026
+
+Owner requested official Ingame Moderator and Ingame Administrator designs, retroactive assignment, all official seals for protected staff, and a named personal seal for every current staff member. The final Award clarification is unchanged eligibility: 25 verified closed tickets in the specific department, including for protected staff. The dedicated DuneRealms showcase account retains its earlier, separately requested demonstration behavior.
+
+Rules are shared by profiles and native signature reconciliation. game_mod receives Moderator, game_admin receives Administrator. Protected roles owners, official_account, web_net_admin and web_net_owner receive both game seals and all official department/role seals. A secondary corestaff role no longer restricts a protected account such as richwjr to Support and Dev. These cosmetic projections do not grant ranks or game permissions.
+
+Generated two role masters and six named STAFF masters with 150/300px transparent PNG exports. Newly covered accounts: dev, halobeau143, itsmrsui, kefoness, racoonvibz and yooshi. Existing applicable personal seals were retained for dunerealms, grmacken, mr_blueray, richwjr and unimatrix999. Racoonvibz's old Corestaff art remains preserved; the new neutral STAFF seal reflects current membership. Named seals match the exact account and current staff entitlement; ordinary users cannot inherit them.
+
+Live retroactive reconciliation verified all 11 active staff have a named personal seal. Rich has all 7 official departments, Development and News Team roles, and Moderator/Administrator. His Awards remain empty at 0 verified closures. Reconciliation used sealsOnly, leaving native forum-group management untouched. Public profile images and managed forum/support signature records are updated. No rank or Minecraft permission change was made.
+
+Validation:25 focused profile/role/privacy/closure-stat checks passed; native PHP lint passed; Rich's live Official/Awards boxes and Kefoness's loaded personal seal/Moderator projection were inspected. Backups: /root/staff-seals-before-20261106T002124 and /root/staff-seals-db-before-20261105232157.json (host names are preserved verbatim). The previously deployed DuneRealms showcase line was preserved after drift review.

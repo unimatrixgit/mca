@@ -54,7 +54,7 @@ export function createContactEmail(db,{origin='https://cp.dunerealms.com',broker
   }
   if(body.action==='request'){
    let address;try{address=normalizeContactEmail(body.email);}catch(e){return json({message:e.message},400);}
-   if(address===row.address&&!row.sync_pending)return json({message:'This email is already verified.'});
+   if(address===row.address&&row.verified_at&&!row.sync_pending)return json({message:'This email is already verified.'});
    if(time-row.requested_at<60000||time-row.window_started_at<3600000&&row.send_count>=5)return json({message:'Please wait before requesting another verification email.'},429);
    const code=makeCode(),version=row.version+1,windowStart=time-row.window_started_at>=3600000?time:row.window_started_at,count=windowStart===time?1:row.send_count+1;
    const updated=await db.prepare('UPDATE site_contact_emails SET pending_address=?,code_hash=?,expires_at=?,attempts=0,requested_at=?,window_started_at=?,send_count=?,version=? WHERE user_id=? AND version=?').bind(address,hash(code),time+900000,time,windowStart,count,version,user.id,row.version).run();

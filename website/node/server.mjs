@@ -1,3 +1,5 @@
+import {startForumNewsWorker} from './forum-news.mjs';
+import{firstLoginGate}from './first-login.mjs';
 import {startDiscordNewsWorker} from './discord-news.mjs';
 import {createMemorials,memorialPortalBlock} from './memorials.mjs';
 import {earnedMemberSeal} from './member-profiles.mjs';
@@ -25,7 +27,7 @@ import {createContact} from './contact.mjs';
 import {createGameLink} from './game-link.mjs';
 import {createCommunityRewards} from './community-rewards.mjs';
 import {createPublicNews,initializeNews} from './news.mjs';
-import {publicBanCards,publicBanList,publicAppealCards} from './public-bans.mjs';
+import {publicBanCards,publicBanList,publicAppealCards,publicAccountBans} from './public-bans.mjs';
 const root=new URL('./public/',import.meta.url);
 const security={'X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; frame-src 'self' https://cp.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://cp.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://www.dunerealms.com; connect-src 'self' https://cp.dunerealms.com https://www.dunerealms.com; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"};
 export function createApplication(db,settings={}) {
@@ -38,6 +40,7 @@ export function createApplication(db,settings={}) {
   const rewards=createCommunityRewards(db,settings,origin);
   const news=createPublicNews(db);const search=createSearchVisibility(db);const staffRoster=createStaffRoster(db);
   return async function handle(request) {
+    const onboarding=await firstLoginGate(request,db);if(onboarding)return onboarding;
     const url=new URL(request.url);const retiredTickets=retiredTicketResponse(request);if(retiredTickets)return retiredTickets;
     const earnedSeal=earnedMemberSeal(request);if(earnedSeal)return earnedSeal;
     if(url.pathname.startsWith('/memorial/')||url.pathname.startsWith('/people/')||url.pathname.startsWith('/api/memorials/')||['/memorial.css','/memorial.js'].includes(url.pathname))return memorials(request);
@@ -52,6 +55,7 @@ export function createApplication(db,settings={}) {
     if(url.pathname.startsWith('/api/community/'))return rewards(request);
     if(url.pathname==='/api/game-link'||url.pathname.startsWith('/api/game-link/'))return gameLink(request);
     if(url.pathname.startsWith('/api/contact/'))return contact(request);
+    if(url.pathname==='/api/public/account-bans'&&request.method==='GET')return publicAccountBans(db);
     if(url.pathname==='/api/public/appeals'&&request.method==='GET')return publicAppealCards(db,request);
     if(url.pathname==='/api/public/ban-list'&&request.method==='GET')return publicBanList(db,request);
     if(url.pathname==='/api/public/bans'&&request.method==='GET')return publicBanCards(db);
@@ -83,6 +87,7 @@ export function createApplication(db,settings={}) {
 export async function start(settings=process.env) {
   const db=await openDatabase(settings);await initializeGitIdentities(db);await initializeMailIdentities(db);await initializeRanks(db);await initializeBadges(db);await initializeNews(db);const handle=createApplication(db,settings),origin=new URL(settings.PUBLIC_ORIGIN||'https://dunerealms.com').origin;
   const stopDiscordNews=await startDiscordNewsWorker(db,settings);
+  const stopForumNews=await startForumNewsWorker(db);
   const stopGitSync=startGitIdentitySync(db,settings),stopMailSync=startStaffMailSync(db),stopNativeSync=startNativeSyncRetryWorker(db);
   const forgejo=createForgejoProxy(settings,gitProxyIdentity(db,settings));
   const server=createServer(async(req,res)=>{
@@ -98,7 +103,7 @@ export async function start(settings=process.env) {
   server.requestTimeout=300000;server.headersTimeout=10000;
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(Number(settings.PORT||3000),'127.0.0.1',resolve);});
   console.log('DuneRealms website running on localhost:'+Number(settings.PORT||3000)+'; MySQL connected.');
-  const shutdown=()=>{stopDiscordNews();stopGitSync();stopMailSync();stopNativeSync();server.close(async()=>{await db.close();process.exit(0);});};process.once('SIGTERM',shutdown);process.once('SIGINT',shutdown);
+  const shutdown=()=>{stopForumNews();stopDiscordNews();stopGitSync();stopMailSync();stopNativeSync();server.close(async()=>{await db.close();process.exit(0);});};process.once('SIGTERM',shutdown);process.once('SIGINT',shutdown);
   return server;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)await start();

@@ -24,3 +24,5 @@ export async function publicBanList(db,request){
  const bans=results.map(publicRecord);
  return Response.json({bans,page,pages,total,pageSize:50},{headers:{'Cache-Control':'no-store'}});
 }
+
+export async function publicAccountBans(db){const{results}=await db.prepare('SELECT reference,account_name,reason,issued_by,issued_at FROM account_ban_records ORDER BY issued_at DESC LIMIT 100').all();return Response.json({bans:results.map(r=>({...r,status:'Permanently banned',scope:'DuneRealms account and connected services',expires:'Never'}))},{headers:{'Cache-Control':'no-store'}});}
