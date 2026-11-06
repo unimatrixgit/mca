@@ -54,7 +54,7 @@ function dune_support_workspace(string $html, string $path): string {
         else $attrs .= ' class="'.$classes.'"';
         return '<body'.$attrs.'>';
     }, $html, 1);
-    return str_ireplace('</head>', '<link rel="stylesheet" href="/dune-support-workspace.css?v=364-4"><script src="/dune-support-workspace.js?v=364-4" defer></script></head>', $html);
+    return str_ireplace('</head>', '<link rel="stylesheet" href="/dune-support-workspace.css?v=328-1"><script src="/dune-support-workspace.js?v=364-4" defer></script><script src="/dune-support-actions.js?v=328-1" defer></script></head>', $html);
 }
 
 

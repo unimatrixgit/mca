@@ -32,7 +32,7 @@ function dune_shared_header($html) {
  // DuneRealms native MyBB surface polish
  if(($_SERVER['HTTP_HOST']??'')==='forums.dunerealms.com'){
   $html=str_replace('/dune-navigation.js?v=canonical-362','/dune-navigation.js?v=canonical-362',$html);
-  $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-forum-polish.css?v=1"></head>',$html);
+  $html=str_ireplace('</head>','<link rel="stylesheet" href="/dune-forum-polish.css?v=328-1"></head>',$html);
   $html=preg_replace_callback('/<body\b([^>]*)>/i',function($m){$attrs=$m[1];if(preg_match('/\bclass=["\']([^"\']*)["\']/i',$attrs))$attrs=preg_replace('/\bclass=(["\'])([^"\']*)\1/i','class="$2 dune-forum"',$attrs,1);else $attrs.=' class="dune-forum"';return '<body'.$attrs.'>';},$html,1);
  }
  if(!str_contains($html,'class="dune-shared-footer"'))$html=str_ireplace('</body>',file_get_contents($base.'shared-footer.html').'</body>',$html);

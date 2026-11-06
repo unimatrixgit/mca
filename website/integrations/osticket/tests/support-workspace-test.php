@@ -10,7 +10,7 @@ foreach(['/index.php','/open.php','/tickets.php','/view.php','/login.php','/alph
  check(str_contains($out,'https://cp.dunerealms.com/'),'Account return link missing');
  check(str_contains($out,$form),'Native form changed: '.$path);
  check(substr_count($out,'<section class="dune-support-workspace-hero"')===1,'Exactly one hero: '.$path);
- check(str_contains($out,'/dune-support-workspace.css?v=364-4'),'Style missing');
+ check(str_contains($out,'/dune-support-workspace.css?v=328-1'),'Style missing');
  check(str_contains($out,'native dune-support-workspace'),'Native class lost');
  check(str_contains($out,str_starts_with($path,'/scp/')?'dune-support-staff':'dune-support-client'),'Workspace mismatch');
  check(dune_support_workspace($out,$path)===$out,'Not idempotent');
