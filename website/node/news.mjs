@@ -2,9 +2,9 @@ import {nativeForumFeed} from './native-forum-feed.mjs';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {json} from './game-link.mjs';
-export const NEWS_CATEGORIES={world:'World',news:'News',maintenance:'Maintenance',changelogs:'Changelogs',events:'Events',community:'Community',unis_blog:"Uni’s Blog"};
+export const NEWS_CATEGORIES={world:'World',news:'NEWS',maintenance:'Maintenance',changelogs:'Changelogs',events:'Events',community:'Community',unis_blog:"Uni’s Blog"};
 export async function initializeNews(db){
- for(const [key,label] of Object.entries(NEWS_CATEGORIES))await db.prepare('INSERT INTO website_post_categories(category_key,label,artwork) VALUES(?,?,?) ON CONFLICT(category_key) DO UPDATE SET category_key=excluded.category_key').bind(key,label,'assets/news-'+(key==='unis_blog'?'news':key)+'.png').run();
+ for(const [key,label] of Object.entries(NEWS_CATEGORIES))await db.prepare('INSERT INTO website_post_categories(category_key,label,artwork) VALUES(?,?,?) ON CONFLICT(category_key) DO UPDATE SET label=excluded.label').bind(key,label,'assets/news-'+(key==='unis_blog'?'news':key)+'.png').run();
  // Only published release records become posts. Pending work never becomes a release announcement.
  let releases=[];try{const file=JSON.parse(await readFile(new URL('../scripts/changelog.json',import.meta.url),'utf8'));releases=Array.isArray(file)?file:file.releases||[];}catch{}
  for(const release of releases){

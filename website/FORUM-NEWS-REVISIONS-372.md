@@ -1,0 +1,21 @@
+# Forum news revisions — native task372
+
+The existing source-ID delivery queue now detects published title, body, category and public-author changes and updates the same managed announcement topic. A successful response must confirm the exact content revision and topic ID before delivery is recorded. Publication changes during a send are picked up on the next tick. Unknown outcomes remain uncertain for reconciliation, rather than blindly creating duplicates.
+
+Withdrawals (archive, draft, deleted, future publication or missing source) send only source ID and archive status. The existing first post becomes an explicit archived notice, and its subject is marked [Archived]. No unpublished fields travel to MyBB. Republishing restores the same topic and first-post identity. No reply is deleted, moved or rewritten. The original first-post date and author remain unchanged. Only previously managed topics can be archived; an unpublished new article never creates a forum topic.
+
+The private CLI adapter uses MyBB PostDataHandler validation and update_post/insert_thread. It checks current forum14 public visibility and author permissions, exact DuneRealms uid2 ownership, first-post identity, visibility and immutable source marker. Moved, hidden or reassigned topics require review. A native advisory lock and persisted source mapping guard creation; per-source revision tracking makes successful edits/replays idempotent. Native MyISAM post/thread writes are not claimed to be a cross-service transaction. The website records confirmed revision/state atomically in its own database.
+
+The website category label is reconciled to NEWS, matching the visible forum and Discord label. Other established labels, artwork and destination permissions are retained. The Discord worker remains independent; historical messages are not replayed, and editing a website article does not create another Discord announcement. X remains manual, as requested.
+
+## Validation at this staged checkpoint
+
+21 focused Node checks pass across forum revisions, Discord failure/deduplication, public pagination/author links, safe article formatting and manual X draft generation. Actual MySQL syntax/claim/revision transitions were exercised with connection-local temporary tables: publish, edit, withdraw, republish and no repeat delivery passed.
+
+The actual installed MyBB PostDataHandler was exercised with every native table shadowed by a connection-local temporary table before cache/session initialization. Only bootstrap paths and CREATE TABLE statements were redirected for isolation; native adapter and PostDataHandler logic were unchanged. Create/edit/archive/replay/republish retained the same topic, first-post ID and original date. A sentinel reply remained byte-for-byte unchanged. Wrong topic author, forum, visibility and first-post identity all rejected changes. The synthetic source ID had zero permanent delivery mappings after the test. Existing production forum remained12threads/21posts and9managed news mappings.
+
+Reproduce native checks by uploading tests/native-forum-news-shadow.php as /tmp/forum372-shadow.php, tests/native-forum-news-qa.py as /tmp/forum372-native-qa.py and the candidate integrations/forum-news.php as /tmp/forum-news372-candidate.php on the existing integration host, then run the Python script. It refuses an existing /tmp/forum372-native-qa/state.json; preserve/rename previous fixture evidence first. The configured MyBB database cache is required. All synthetic rows exist only in temporary tables; the saved fixture JSON contains only synthetic posts/threads/mapping/revision data. No production account/session/topic is created by the harness.
+
+For the actual MySQL worker test, upload node/forum-news.mjs as /tmp/forum-news372-candidate.mjs and tests/native-forum-news-mysql.mjs to /tmp, then execute with the deployed Node22 runtime. It uses the existing private connection file without printing credentials, shadows queue/source tables, and injects a send stub so no public announcement is made.
+
+This checkpoint is staged only. Merge/deployment, backup paths, live existing-topic reconciliation and a genuine fresh Discord delivery must be recorded in native task372 before closure. Do not fabricate a live test news article or enable paid/automatic X posting.
