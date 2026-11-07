@@ -38,9 +38,9 @@
   "owner-richwjr": {
     "label": "richwjr",
     "role": "NETWORKSTAFF",
-    "src": "/assets/seals/owner-richwjr.png",
-    "footer150": "/assets/seals/owner-richwjr-150.png",
-    "footer300": "/assets/seals/owner-richwjr-300.png",
+    "src": "/assets/seals/owner-richwjr.png?v=20261108-corrected",
+    "footer150": "/assets/seals/owner-richwjr-150.png?v=20261108-corrected",
+    "footer300": "/assets/seals/owner-richwjr-300.png?v=20261108-corrected",
     "original": "website/artwork/seals/owner-richwjr.png",
     "alpha": true
   },
@@ -128,9 +128,9 @@
   "main-network-admin-grmacken": {
     "label": "grmacken",
     "role": "MAINNETWORKADMIN",
-    "src": "/assets/seals/main-network-admin-grmacken.png",
-    "footer150": "/assets/seals/main-network-admin-grmacken-150.png",
-    "footer300": "/assets/seals/main-network-admin-grmacken-300.png",
+    "src": "/assets/seals/main-network-admin-grmacken.png?v=20261108-corrected",
+    "footer150": "/assets/seals/main-network-admin-grmacken-150.png?v=20261108-corrected",
+    "footer300": "/assets/seals/main-network-admin-grmacken-300.png?v=20261108-corrected",
     "original": "website\\artwork\\network-seals\\main-network-admin-grmacken-master.png",
     "alpha": true
   },
