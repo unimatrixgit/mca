@@ -196,6 +196,7 @@ public final class DuneLobby extends JavaPlugin implements Listener, CommandExec
         Merchant merchant=Bukkit.createMerchant(water?"Discreet Welvaarder":"Discreet Spice Seller"); merchant.setRecipes(List.of(recipe)); player.openMerchant(merchant,true);
     }
     @EventHandler public void interact(PlayerInteractEvent e) {
+        if (LobbyBuildAccess.allows(e)) return;
         if(!inLobby(e.getPlayer().getWorld()) || e.getClickedBlock()==null || e.getAction()!=Action.RIGHT_CLICK_BLOCK) return;
         var b=e.getClickedBlock(); e.setCancelled(true); if(e.getHand()!=EquipmentSlot.HAND) return;
         int x=b.getX(),z=b.getZ();
