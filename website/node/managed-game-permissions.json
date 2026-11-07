@@ -713,6 +713,21 @@
         "duneprotect.rollback": true
       },
       "scope": "network-global; local-only moderation requires a separate server-context design, not this global snapshot"
+    },
+    {
+      "id": "game_builder",
+      "permissions": {
+        "dune.clans.view": true,
+        "dune.quests.view": true,
+        "dune.tickets.view": true,
+        "dunebank.use": true,
+        "duneess.basics": true,
+        "duneess.chat.faction": true,
+        "duneess.chat.nearby": true,
+        "duneess.chat.network": true,
+        "duneess.chat.team": true
+      },
+      "scope": "Builder membership; ordinary player baseline only. Building tools require separate reviewed permissions."
     }
   ],
   "bankLinkedNodes": [

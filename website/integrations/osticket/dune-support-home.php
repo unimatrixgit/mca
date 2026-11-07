@@ -8,6 +8,7 @@ $topicUrl = static function ($name) use ($publicTopics) {
     return count($matches)===1 ? '/open.php?topicId='.$matches[0] : null;
 };
 $cards = [
+ ['Build with us','BUILDER APPLICATION','Help shape our cities, sietches, interiors and starports. Tell us your style, rough availability and share examples of your own builds. Staff review every application privately.','Builder Application','Apply to build','seals/rank-builder-300.png'],
  ['Parental requests','FOR PARENTS & GUARDIANS','Request parental consent or ask about a child’s account. The Legal team reviews requests manually; this form does not automatically grant consent or change an account.','Parental consent request [Preview]','Open parental request','seals/department-legal-v2-150.png'],
  ['GDPR data removal','PRIVACY & ACCOUNT DATA','Ask the Legal team to review deletion of your account data. Identify the relevant account and explain your request. Ownership and scope are verified before any action. Do not upload passwords or identity documents.','GDPR data removal request','Request data removal','seals/department-legal-150.png'],
  ['General support','ACCOUNT, WEBSITE & GAME HELP','Tell Support what went wrong, where it happened, when it happened and what you tried. Include the error message or a relevant screenshot without passwords or unrelated personal information.','General support','Get support','nav-support-full-v2.webp'],
@@ -26,7 +27,8 @@ $esc = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 <?php foreach ($cards as [$title,$label,$description,$topic,$button,$art]):
  $url = $topicUrl($topic); if (!$url) continue;
  if ($topic === 'Ban appeal') $url = '/appeal.php';
- if ($topic === 'Alpha Tester Signup') $url = '/alpha-signup.php'; ?>
+ if ($topic === 'Alpha Tester Signup') $url = '/alpha-signup.php';
+ if ($topic === 'Builder Application') $url = '/builder-signup.php'; ?>
 <section class="dune-support-card">
  <img src="https://www.dunerealms.com/assets/<?=$esc($art)?>" alt="" width="180" height="120" loading="lazy">
  <div><p class="eyebrow"><?=$esc($label)?></p><h2><?=$esc($title)?></h2><p><?=$esc($description)?></p><a class="button" href="<?=$esc($url)?>"><?=$esc($button)?></a>

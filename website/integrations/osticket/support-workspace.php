@@ -23,6 +23,10 @@ function dune_support_workspace(string $html, string $path): string {
         $title = $staff ? 'Staff sign in' : 'Access your support requests';
         $description = 'Use the existing secure sign-in options below.';
     }
+    if (!$staff && ($page==='builder-signup.php' || $page==='open.php' && str_contains($html,'Builder application'))) {
+        $title='Join the Builder Team';$art='seals/rank-builder-300.png';
+        $description='Show us your style, your ideas and the worlds you would like to help build. Staff review applications privately.';
+    }
     $esc = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     $hero = '<section class="dune-support-workspace-hero" aria-label="'.($staff?'Staff workspace':'Support workspace').'">'
         .'<img src="https://www.dunerealms.com/assets/'.$esc($art).'" width="112" height="112" alt="">'

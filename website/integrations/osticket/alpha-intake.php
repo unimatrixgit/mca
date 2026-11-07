@@ -2,12 +2,15 @@
 // Alpha intake uses its structured answers, not a second issue form.
 function dune_alpha_intake($topicId) {
     $topic = Topic::lookup((int)$topicId);
-    if (!$topic || $topic->getName() !== 'Alpha Tester Signup') return;
+    if (!$topic || !in_array($topic->getName(), ['Alpha Tester Signup','Builder Application'], true)) return;
+    $builder=$topic->getName()==='Builder Application';
+    $prefix=$builder?'builder_':'alpha_';
+    $label=$builder?'Builder application':'Alpha tester application';
     // Preserve server-issued field names across native session rotation.
     $applicationFields=[];
     foreach ($topic->getForms() as $definition) {
         foreach ($definition->getForm()->getFields() as $field) {
-            if (str_starts_with((string)$field->get('name'),'alpha_')) $applicationFields[]=$field;
+            if (str_starts_with((string)$field->get('name'),$prefix)) $applicationFields[]=$field;
         }
     }
     if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
@@ -28,7 +31,7 @@ function dune_alpha_intake($topicId) {
     $_SESSION['dune_alpha_field_maps'][]=$mapping;
     $_SESSION['dune_alpha_field_maps']=array_slice($_SESSION['dune_alpha_field_maps'],-5);
     $form = TicketForm::objects()->one()->getForm();
-    $values = ['subject'=>'Alpha tester application', 'message'=>'Alpha tester application submitted using the structured application form. Please review the application answers attached to this ticket.'];
+    $values = ['subject'=>$label, 'message'=>$label.' submitted using the structured application form. Please review the application answers attached to this ticket.'];
     if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         foreach ($values as $name=>$value) {
             foreach ($form->getField($name)->getFormNames() as $key) $_POST[$key]=$value;

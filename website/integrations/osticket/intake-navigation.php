@@ -2,12 +2,12 @@
 // Navigation only. Existing SSO nonce, identity and native form authorisation remain authoritative.
 function dune_intake_candidate_path($candidate) {
     if (!is_string($candidate) || strlen($candidate)>128) return null;
-    if ($candidate==='/alpha-signup.php' || $candidate==='/open.php') return $candidate;
+    if ($candidate==='/alpha-signup.php' || $candidate==='/builder-signup.php' || $candidate==='/open.php') return $candidate;
     return preg_match('~^/open\.php\?topicId=([1-9][0-9]{0,8})$~D',$candidate) ? $candidate : null;
 }
 function dune_public_intake_path($candidate) {
     $candidate=dune_intake_candidate_path($candidate);
-    if ($candidate===null || $candidate==='/alpha-signup.php' || $candidate==='/open.php') return $candidate;
+    if ($candidate===null || $candidate==='/alpha-signup.php' || $candidate==='/builder-signup.php' || $candidate==='/open.php') return $candidate;
     preg_match('~topicId=([1-9][0-9]{0,8})$~D',$candidate,$match);
     $public=Topic::getPublicHelpTopics();
     return is_array($public) && array_key_exists((int)$match[1],$public) ? $candidate : null;
@@ -15,6 +15,7 @@ function dune_public_intake_path($candidate) {
 function dune_requested_intake_path($file, $query, $method) {
     if (!in_array($method,['GET','HEAD'],true)) return null;
     if ($file==='alpha-signup.php') return '/alpha-signup.php';
+    if ($file==='builder-signup.php') return '/builder-signup.php';
     if ($file!=='open.php') return null;
     if (!array_key_exists('topicId',$query)) return '/open.php';
     if (!is_string($query['topicId'])) return null;

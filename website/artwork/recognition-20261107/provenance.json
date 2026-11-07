@@ -1,0 +1,257 @@
+[
+  {
+    "key": "builder-team",
+    "asset": "rank-builder",
+    "master": "website\\artwork\\recognition-20261107\\rank-builder-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-dcce950b-0f39-4725-9539-7761b82b3d12.png",
+    "sha256": "920fab1b998fd9ff2fcdddd4a1425abee831d16ad20996be67b9a8b64724c9c1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\rank-builder-150.png",
+      "website\\web\\assets\\seals\\rank-builder-300.png",
+      "website\\web\\assets\\seals\\rank-builder-600.png"
+    ]
+  },
+  {
+    "key": "builder-award",
+    "asset": "builder-award",
+    "master": "website\\artwork\\recognition-20261107\\builder-award-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-3cd40f71-f181-4958-80e4-33db806a3778.png",
+    "sha256": "d681c7dfe39c331e4ad9f6eb1eef10ddbfc9fee576e55174cea12b46568440cb",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\builder-award-150.png",
+      "website\\web\\assets\\seals\\builder-award-300.png",
+      "website\\web\\assets\\seals\\builder-award-600.png"
+    ]
+  },
+  {
+    "key": "award-support",
+    "asset": "award-support",
+    "master": "website\\artwork\\recognition-20261107\\award-support-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-990060bd-ef10-4890-868b-d0665c44c6fa.png",
+    "sha256": "ea385fd53e46b88aaf4f5499e64befbea0582f9e1b398e2a7c3a6ae50869f3b0",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-support-150.png",
+      "website\\web\\assets\\seals\\award-support-300.png",
+      "website\\web\\assets\\seals\\award-support-600.png"
+    ]
+  },
+  {
+    "key": "award-ban-appeals",
+    "asset": "award-ban-appeals",
+    "master": "website\\artwork\\recognition-20261107\\award-ban-appeals-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-e93d04ac-08f3-4fdf-b3bc-b401a5361961.png",
+    "sha256": "e74c4194f5010f3a7cd8e16b9044c3b412244a770e6d815a7260674ffb239303",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-ban-appeals-150.png",
+      "website\\web\\assets\\seals\\award-ban-appeals-300.png",
+      "website\\web\\assets\\seals\\award-ban-appeals-600.png"
+    ]
+  },
+  {
+    "key": "award-forum-support",
+    "asset": "award-forum-support",
+    "master": "website\\artwork\\recognition-20261107\\award-forum-support-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-383e76a1-b9c5-4bf0-b97f-4504e02a7b4c.png",
+    "sha256": "affec13c2509ab9adb71825ba733d5415c90bb89e9fb246a4c381b9d2975ba63",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-forum-support-150.png",
+      "website\\web\\assets\\seals\\award-forum-support-300.png",
+      "website\\web\\assets\\seals\\award-forum-support-600.png"
+    ]
+  },
+  {
+    "key": "award-legal",
+    "asset": "award-legal",
+    "master": "website\\artwork\\recognition-20261107\\award-legal-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-dfe70395-272f-47fc-b90f-f0811464cfd2.png",
+    "sha256": "03a87e74dca16d1fa24c7fb1047d376f6549582e6dc470fd06e809be8fcb60dc",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-legal-150.png",
+      "website\\web\\assets\\seals\\award-legal-300.png",
+      "website\\web\\assets\\seals\\award-legal-600.png"
+    ]
+  },
+  {
+    "key": "award-sales",
+    "asset": "award-sales",
+    "master": "website\\artwork\\recognition-20261107\\award-sales-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-6904548b-e626-4b8e-b79e-e99ab663c121.png",
+    "sha256": "8e882d839d6b1175ab5d73f0731bc066c436c2bf7320cb018e453057c0d69ef2",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-sales-150.png",
+      "website\\web\\assets\\seals\\award-sales-300.png",
+      "website\\web\\assets\\seals\\award-sales-600.png"
+    ]
+  },
+  {
+    "key": "award-network-staff",
+    "asset": "award-network-staff",
+    "master": "website\\artwork\\recognition-20261107\\award-network-staff-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-fea97104-039c-49d2-9c19-380542a31237.png",
+    "sha256": "7c46dbdd20c1ae140ddb35c9543fd21423d2f67d6bc6fa010069891b77aef6ae",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-network-staff-150.png",
+      "website\\web\\assets\\seals\\award-network-staff-300.png",
+      "website\\web\\assets\\seals\\award-network-staff-600.png"
+    ]
+  },
+  {
+    "key": "award-dev",
+    "asset": "award-dev",
+    "master": "website\\artwork\\recognition-20261107\\award-dev-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-68ec3f30-1f78-47b6-b4a2-04198d1adef6.png",
+    "sha256": "209e2275e89187c6b888496fbb2766d8a5201c1e1c2903e16556d7809d03ce79",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\award-dev-150.png",
+      "website\\web\\assets\\seals\\award-dev-300.png",
+      "website\\web\\assets\\seals\\award-dev-600.png"
+    ]
+  },
+  {
+    "key": "forum-award-1",
+    "asset": "forum-posts-1",
+    "master": "website\\artwork\\recognition-20261107\\forum-posts-1-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-e2bee5ba-7a94-45d8-ab7e-ef778ec64cac.png",
+    "sha256": "7185f2e91f22e0f4c02e31c7da7113d459195f8751ab4aaa069698b899436176",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-posts-1-150.png",
+      "website\\web\\assets\\seals\\forum-posts-1-300.png",
+      "website\\web\\assets\\seals\\forum-posts-1-600.png"
+    ]
+  },
+  {
+    "key": "forum-award-10",
+    "asset": "forum-posts-10",
+    "master": "website\\artwork\\recognition-20261107\\forum-posts-10-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-7d0cc0db-bcfb-4e2e-b584-ec200c6189f9.png",
+    "sha256": "b6ebc6c03a44de0f9b1340275bb1b12488231f8ec1d8321c9852f29490fc134d",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-posts-10-150.png",
+      "website\\web\\assets\\seals\\forum-posts-10-300.png",
+      "website\\web\\assets\\seals\\forum-posts-10-600.png"
+    ]
+  },
+  {
+    "key": "forum-award-50",
+    "asset": "forum-posts-50",
+    "master": "website\\artwork\\recognition-20261107\\forum-posts-50-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-d4e11584-c7f9-4acf-b764-d0d6e4e9bfd2.png",
+    "sha256": "87fc142f73882790b1bf55fce6191fc07d1ae1fed15d78cfcb9dde5f098871c2",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-posts-50-150.png",
+      "website\\web\\assets\\seals\\forum-posts-50-300.png",
+      "website\\web\\assets\\seals\\forum-posts-50-600.png"
+    ]
+  },
+  {
+    "key": "forum-award-100",
+    "asset": "forum-posts-100",
+    "master": "website\\artwork\\recognition-20261107\\forum-posts-100-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-5f352f86-87fb-4b96-b300-ffd2ace256da.png",
+    "sha256": "af3a999a54632c9d120529f2b8f1f3ac9e3d96a72de97866da1516f0fe26d8e7",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-posts-100-150.png",
+      "website\\web\\assets\\seals\\forum-posts-100-300.png",
+      "website\\web\\assets\\seals\\forum-posts-100-600.png"
+    ]
+  },
+  {
+    "key": "forum-award-1000",
+    "asset": "forum-posts-1000",
+    "master": "website\\artwork\\recognition-20261107\\forum-posts-1000-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-dc145cd7-48e8-4741-9cda-46d9aeec83dd.png",
+    "sha256": "2dc0b639e76b98807dee40a4555ccf88542e6591f0b83a2f6946a8bf43d55ff1",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-posts-1000-150.png",
+      "website\\web\\assets\\seals\\forum-posts-1000-300.png",
+      "website\\web\\assets\\seals\\forum-posts-1000-600.png"
+    ]
+  },
+  {
+    "key": "forum-legend",
+    "asset": "forum-legend",
+    "master": "website\\artwork\\recognition-20261107\\forum-legend-master.png",
+    "generator": "Built-in imagegen; true transparent output",
+    "sourceFile": "exec-5a391196-daf6-4ced-bfc9-6b940a53fdb3.png",
+    "sha256": "a583af2f9964dcea1fb9c8ec8e1de53260ea03f7cf2277b1899a7bdfdb935bdf",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "webFiles": [
+      "website\\web\\assets\\seals\\forum-legend-150.png",
+      "website\\web\\assets\\seals\\forum-legend-300.png",
+      "website\\web\\assets\\seals\\forum-legend-600.png"
+    ]
+  }
+]

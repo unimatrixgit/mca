@@ -1,11 +1,15 @@
-// Explicit Alpha grants apply to staff too; other tester eligibility is unchanged.
-export const communityBadgeVisible=(key,ranks)=>key==='alpha-tester'?ranks.length>0&&!ranks.includes('memorial'):communitySealEligible(ranks);
+import {MANUAL_AWARDS,FORUM_AWARDS,forumAwardsFor,forumPostCount} from './recognition.mjs';
+const recognition=new Set([...MANUAL_AWARDS,...FORUM_AWARDS].map(a=>a.key));
+// Awards recognise contribution independently of current staff membership.
+export const communityBadgeVisible=(key,ranks)=>key==='alpha-tester'||recognition.has(key)?ranks.length>0&&!ranks.includes('memorial'):communitySealEligible(ranks);
 export const communitySealEligible=ranks=>ranks.includes('web_streamer')?ranks.every(r=>['user','web_streamer','web_news'].includes(r)):ranks.every(r=>['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r));
-export const BADGES=['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner'];
+export const BADGES=['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner',...recognition];
 export async function badgesFor(db,id){
  if(!id)return[];
  const {results}=await db.prepare('SELECT badge_key FROM website_badges WHERE user_id=? ORDER BY earned_at,badge_key').bind(id).all();
- return results.map(r=>r.badge_key).filter(k=>BADGES.includes(k));
+ const user=await db.prepare('SELECT username FROM site_accounts WHERE id=?').bind(id).first();
+ if(user?.username?.toLowerCase()==='dunerealms')return [...BADGES];
+ return [...new Set([...results.map(r=>r.badge_key).filter(k=>BADGES.includes(k)&&!FORUM_AWARDS.some(a=>a.key===k)),...forumAwardsFor(await forumPostCount(db,id)).map(a=>a.key)])];
 }
 export function alphaGrant(db,id,now=Date.now()){
  return db.prepare("INSERT INTO website_badges(user_id,badge_key,earned_at) SELECT ?, 'alpha-tester', ? FROM website_settings WHERE setting_key='alpha-badge-active' AND setting_value='1' ON CONFLICT(user_id,badge_key) DO UPDATE SET user_id=excluded.user_id").bind(id,now);
