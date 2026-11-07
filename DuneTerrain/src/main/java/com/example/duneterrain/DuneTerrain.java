@@ -651,28 +651,52 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
 
     private static final class SietchPopulator extends BlockPopulator {
         private final DuneTerrain plugin;
+        private static final ThreadLocal<int[]> chunkBounds = new ThreadLocal<>();
         private final java.util.concurrent.ConcurrentHashMap<RockPlateaus.Shape,List<HighlandSietches.Site>> highlandSites = new java.util.concurrent.ConcurrentHashMap<>();
         private SietchPopulator(DuneTerrain plugin) { this.plugin = plugin; }
         @Override public void populate(WorldInfo world, Random random, int cx, int cz, LimitedRegion region) {
             if (!world.getName().equalsIgnoreCase("arrakis")) return;
             if (!plugin.getConfig().getBoolean("sietches.enabled", true)) return;
-            populateHighlands(world,cx,cz,region);
+            // Desert-only. Every intersecting chunk builds its own slice; no writes into
+            // neighbours or reliance on LimitedRegion's buffer for the full structure.
             int spacing = Math.max(256, plugin.getConfig().getInt("sietches.spacing", 2000));
             int centerX = cx * 16 + 8, centerZ = cz * 16 + 8;
-            long cellX = Math.floorDiv(centerX, spacing), cellZ = Math.floorDiv(centerZ, spacing);
+            chunkBounds.set(new int[]{cx * 16, cz * 16});
+            try {
+                for (long cellX = Math.floorDiv(centerX - 40, spacing); cellX <= Math.floorDiv(centerX + 40, spacing); cellX++)
+                    for (long cellZ = Math.floorDiv(centerZ - 40, spacing); cellZ <= Math.floorDiv(centerZ + 40, spacing); cellZ++)
+                        populateDesert(world, cx, cz, region, spacing, cellX, cellZ);
+            } finally { chunkBounds.remove(); }
+        }
+
+        private int surfaceHeight(WorldInfo world, int x, int z) {
+            String p = "planets.arrakis.terrain.";
+            double scale = Math.max(.001, plugin.getConfig().getDouble(p + "noise-scale", .02));
+            double noise = Math.sin(x * scale) * Math.cos(z * scale * 1.13)
+                + Math.sin(x * scale * 2.7 + z * scale * 1.45) * .35;
+            return Math.max(world.getMinHeight() + 8, Math.min(world.getMaxHeight() - 9,
+                plugin.getConfig().getInt(p + "base-height", 70)
+                + (int)Math.round(noise * plugin.getConfig().getDouble(p + "height-variation", 11))));
+        }
+
+        private void populateDesert(WorldInfo world, int cx, int cz, LimitedRegion region, int spacing, long cellX, long cellZ) {
             long h1 = mix64(cellX * 0x9E3779B97F4A7C15L ^ cellZ * 0xC2B2AE3D27D4EB4FL ^ 0x534945544348L);
             long h2 = mix64(cellZ * 0x165667B19E3779F9L ^ cellX * 0x85EBCA77C2B2AE63L ^ ~0x534945544348L);
             long anchorX = cellX * spacing + 8 + Math.floorMod(h1, spacing - 16);
             long anchorZ = cellZ * spacing + 8 + Math.floorMod(h2, spacing - 16);
-            if (Math.floorDiv(anchorX, 16) != cx || Math.floorDiv(anchorZ, 16) != cz) return;
+            if (anchorX + 40 < cx * 16L || anchorX - 40 > cx * 16L + 15
+                || anchorZ + 40 < cz * 16L || anchorZ - 40 > cz * 16L + 15) return;
             int x = (int) anchorX, z = (int) anchorZ;
+            if (Math.abs((long)x) < 512 && Math.abs((long)z) < 512) return; // City arrival reserve.
             int minGap=Math.max(192,plugin.getConfig().getInt("planets.arrakis.highlands.min-spacing",300));
             int maxGap=Math.max(minGap,plugin.getConfig().getInt("planets.arrakis.highlands.max-spacing",500));
             int minRadius=Math.max(6,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.min-radius",65));
             int maxRadius=Math.max(minRadius,plugin.getConfig().getInt("planets.arrakis.darkstone-islands.max-radius",90));
             double scale=Math.max(.001,plugin.getConfig().getDouble("planets.arrakis.terrain.noise-scale",.02));
-            if(RockPlateaus.regionDepth(x,z,minGap,maxGap,minRadius,maxRadius,scale)>=-.15)return;
-            int y = region.getHighestBlockYAt(x, z);
+            // Check the whole footprint, not only the entrance, against rock formations.
+            for (int dx = -40; dx <= 40; dx += 4) for (int dz = -40; dz <= 40; dz += 4)
+                if (RockPlateaus.regionDepth(x+dx,z+dz,minGap,maxGap,minRadius,maxRadius,scale)>=-.15) return;
+            int y = surfaceHeight(world, x, z);
             if (y < world.getMinHeight() + 40 || y > world.getMaxHeight() - 4 || y - 36 < world.getMinHeight()) return;
 
             // Enlarged hub, side chambers, cache chamber, and reservoir. The surface entrance stays compact.
@@ -693,9 +717,16 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
             });
             carveRoom(region, x, hy - 12, z - 10, 8, 4, 8);
             carveRoom(region, x, hy - 23, z + 8, 14, 10, 14);
+            // Two additional connected workshops/living chambers, without more caches or water.
+            carveRoom(region, x - 18, hy - 8, z - 26, 8, 5, 8);
+            carveRoom(region, x + 18, hy - 8, z - 26, 8, 5, 8);
+            carveTunnelNetwork(region, new int[][]{{x-18,hy-6,z-4},{x-18,hy-7,z-15},{x-18,hy-8,z-26}});
+            carveTunnelNetwork(region, new int[][]{{x+18,hy-6,z},{x+18,hy-7,z-14},{x+18,hy-8,z-26}});
+            furnishSleepingHall(region, x - 18, hy - 8, z - 26);
+            furnishKitchen(region, x + 18, hy - 8, z - 26);
 
             // A broad, rough cave mouth opens from the surface and slopes down into the hub.
-            carveCaveEntrance(region, x, z, hy);
+            carveCaveEntrance(region, x, z, hy, surfaceHeight(world, x + 11, z - 7));
 
             // Long switchbacks keep the descent gradual from the hub to the enlarged reservoir.
             carveTunnelNetwork(region, new int[][]{
@@ -715,11 +746,15 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
                 set(region, x + 3, hy + dy, z + 4, Material.STONE);
                 set(region, x + 3, hy + dy, z + 6, Material.STONE);
             }
-            for (int dx = -5; dx <= 5; dx++) for (int dz = -5; dz <= 5; dz++) {
-                if (dx * dx + dz * dz > 25) continue;
+            for (int dx = -6; dx <= 6; dx++) for (int dz = -6; dz <= 6; dz++) {
+                boolean pool = dx*dx + dz*dz <= 25;
+                boolean edge = !pool && ((dx-1)*(dx-1)+dz*dz<=25 || (dx+1)*(dx+1)+dz*dz<=25
+                    || dx*dx+(dz-1)*(dz-1)<=25 || dx*dx+(dz+1)*(dz+1)<=25);
+                if (!pool && !edge) continue;
                 set(region, x + dx, hy - 29, z + 8 + dz, Material.STONE);
                 for (int waterY = hy - 28; waterY <= hy - 25; waterY++)
-                    set(region, x + dx, waterY, z + 8 + dz, Material.WATER);
+                    set(region, x + dx, waterY, z + 8 + dz, pool ? Material.WATER : Material.STONE);
+                if (edge) set(region, x + dx, hy - 24, z + 8 + dz, Material.STONE);
             }
 
             furnishSleepingHall(region, x - 18, hy - 6, z - 2);
@@ -794,9 +829,12 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
 
         private static void carveCaveEntrance(LimitedRegion region, int x, int z, int hubY) {
+            carveCaveEntrance(region, x, z, hubY, region.getHighestBlockYAt(x + 11, z - 7));
+        }
+
+        private static void carveCaveEntrance(LimitedRegion region, int x, int z, int hubY, int surfaceY) {
             int entryX = x + 6, entryZ = z - 7;
             int outsideX = x + 11;
-            int surfaceY = region.getHighestBlockYAt(outsideX, entryZ);
             int mouthY = Math.max(hubY + 4, surfaceY - 3);
 
             // Hollow a rough chamber just behind the stone arch, then connect it to the hub.
@@ -878,6 +916,7 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
 
         private void placePersonalChest(LimitedRegion r, int x, int y, int z, long cellX, long cellZ) {
+            if (!owns(r,x,y,z)) return;
             set(r, x, y-1, z, Material.CHISELED_STONE_BRICKS);
             set(r, x, y, z, Material.CHEST);
             BlockState state = r.getBlockState(x, y, z);
@@ -890,7 +929,13 @@ public final class DuneTerrain extends JavaPlugin implements Listener {
         }
 
         private static void set(LimitedRegion region, int x, int y, int z, Material material) {
-            if (region.isInRegion(x, y, z)) region.setType(x, y, z, material);
+            if (owns(region,x,y,z)) region.setType(x, y, z, material);
+        }
+
+        private static boolean owns(LimitedRegion region, int x, int y, int z) {
+            int[] bounds = chunkBounds.get();
+            return (bounds == null || x >= bounds[0] && x < bounds[0]+16 && z >= bounds[1] && z < bounds[1]+16)
+                && region.isInRegion(x,y,z);
         }
     }
 

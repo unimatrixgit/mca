@@ -1,0 +1,9 @@
+name: DuneArrakeen
+version: 1.0.0
+main: com.dunerealms.arrakeen.Arrakeen
+api-version: '1.21.8'
+depend: [DuneTerrain]
+description: Console-only installer and verifier for the original Arrakeen and starport build
+commands:
+  arrakeen:
+    description: Console-only build status, fenced install and saved-world checks

@@ -213,7 +213,7 @@ def validate():
     results = {name: pos in seen for name, pos in targets.items()}
     assert all(results.values()), results
     assert max(blocks) < 128, "Writer uses one-byte palette VarInts"
-    return {"spawnLocal": start, "walkablePositions": len(seen), "reachable": results,
+    return {"spawnLocal": start, "walkablePositions": len(seen), "reachable": results, "targetPositions": targets,
             "dimensions": [W, H, L], "installation": "not installed; origin unset",
             "nonAir": len(blocks) - blocks.count(0),
             "paletteCounts": {NAMES[k]: v for k, v in Counter(blocks).items()}}
@@ -297,6 +297,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--preview", action="store_true")
+    parser.add_argument("--runtime-plan", type=Path, help="Optional own installer resource; does not install it")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     build()
@@ -305,6 +306,12 @@ if __name__ == "__main__":
     (args.output / "DuneRealms-Arrakeen-Starport.schem").write_bytes(data)
     report.update(sha256=hashlib.sha256(data).hexdigest(), compressedBytes=len(data))
     (args.output / "arrakeen-validation.json").write_text(json.dumps(report, indent=2) + "\n")
+    if args.runtime_plan:
+        positions=list(report["targetPositions"].values())
+        raw=struct.pack(">iiii",0x44524131,W,H,L)+blocks+struct.pack(">i",len(positions))
+        raw+=b"".join(struct.pack(">iii",*p) for p in positions)
+        args.runtime_plan.parent.mkdir(parents=True,exist_ok=True)
+        args.runtime_plan.write_bytes(gzip.compress(raw,mtime=0))
     if args.preview:
         preview(args.output)
     print(json.dumps(report, indent=2))
