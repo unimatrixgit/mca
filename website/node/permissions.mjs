@@ -34,8 +34,8 @@ const core=[...staff,'web.bank.staff.manage','web.quests.manage','web.menu.items
 const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.support'];
 const appeals=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.appeals','web.menu.bans','web.bans.view','web.bans.manage','web.bans.evidence'];
 export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',legacy:'Existing legacy/custom ranks'};
-export const isOwnerRank=key=>['owners','official_account','web_net_admin','web_net_owner'].includes(key);
-export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand','council_member'].includes(key)?'players':(key.startsWith('web_')||key==='official_account')?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
+export const isOwnerRank=key=>['owners','official_account','web_net_admin','network_admin'].includes(key);
+export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand','council_member'].includes(key)?'players':(key.startsWith('web_')||['official_account','network_admin'].includes(key))?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
 export const DEFAULT_RANKS=[
  {key:'user',label:'User',level:10,kind:'access',nodes:basic},
  {key:'vip',label:'VIP',level:20,kind:'access',nodes:basic},
@@ -49,9 +49,8 @@ export const DEFAULT_RANKS=[
  {key:'web_forum',label:'Forum Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.menu.forum','web.forum.view','web.forum.moderate']},
  {key:'web_support',label:'Support Team',level:45,kind:'access',nodes:support},
  {key:'official_account',label:'Official Account',level:100,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
- {key:'web_net_owner',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
+ {key:'network_admin',label:'Network Admin',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
  {key:'web_net_admin',label:'Main Network Administrator',level:95,kind:'access',nodes:Object.keys(WEBSITE_NODES)},
- {key:'web_network',label:'Network Staff',level:90,kind:'access',nodes:Object.keys(WEBSITE_NODES).filter(n=>n!=='web.luckperms.edit')},
  {key:'web_sales',label:'Sales Team',level:45,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.sales']},
  {key:'web_legal',label:'Legal Team',level:55,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.legal']},
  {key:'web_appeal',label:'Appeal Team',level:50,kind:'access',nodes:appeals},
@@ -69,7 +68,7 @@ DEFAULT_RANKS.push({key:'web_dev',label:'Dev Team',level:55,kind:'access',nodes:
 // Membership does not grant account moderation, financial, console, OP or WorldEdit authority.
 DEFAULT_RANKS.push({key:'game_builder',label:'Builder',level:40,kind:'access',nodes:[...basic,'web.menu.staffmanual']});
 DEFAULT_RANKS.push({key:'memorial',label:'Memorial',level:1,kind:'access',nodes:[]});
-for(const rank of DEFAULT_RANKS)if(['owners','corestaff','web_network','web_net_admin'].includes(rank.key))rank.nodes=[...new Set([...rank.nodes,'web.tickets.dev'])];
+for(const rank of DEFAULT_RANKS)if(['owners','corestaff','network_admin','web_net_admin'].includes(rank.key))rank.nodes=[...new Set([...rank.nodes,'web.tickets.dev'])];
 export const rankKey=role=>role==='player'?'user':role;
 export async function rankFor(db,key){
  const row=await db.prepare('SELECT rank_key,label,rank_level,kind,permissions_json,version FROM cp_ranks WHERE rank_key=?').bind(rankKey(key)).first();
@@ -119,4 +118,4 @@ export async function initializeQuestAccess(db){
  statements.push(db.prepare('INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES(?,?,?)').bind(key,'complete',Date.now()));await db.batch(statements);
 }
 
-export async function initializeBankAccess(db){const key='bank-access-v1';if(await db.prepare('SELECT setting_value FROM website_settings WHERE setting_key=?').bind(key).first())return;const statements=[];for(const rank of DEFAULT_RANKS){const stored=await rankFor(db,rank.key);const additions=['web.bank.personal.view',...(rank.nodes.includes('web.menu.staffmanual')?['web.bank.staff.view','web.bank.staff.deposit']:[]),...(['owners','corestaff','web_network','web_net_admin'].includes(rank.key)?['web.bank.staff.manage']:[])];const nodes=[...new Set([...stored.nodes,...additions])];statements.push(db.prepare('UPDATE cp_ranks SET permissions_json=?,version=version+1 WHERE rank_key=? AND version=?').bind(JSON.stringify(nodes),rank.key,stored.version));}statements.push(db.prepare('INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES(?,?,?)').bind(key,'complete',Date.now()));await db.batch(statements);}
+export async function initializeBankAccess(db){const key='bank-access-v1';if(await db.prepare('SELECT setting_value FROM website_settings WHERE setting_key=?').bind(key).first())return;const statements=[];for(const rank of DEFAULT_RANKS){const stored=await rankFor(db,rank.key);const additions=['web.bank.personal.view',...(rank.nodes.includes('web.menu.staffmanual')?['web.bank.staff.view','web.bank.staff.deposit']:[]),...(['owners','corestaff','network_admin','web_net_admin'].includes(rank.key)?['web.bank.staff.manage']:[])];const nodes=[...new Set([...stored.nodes,...additions])];statements.push(db.prepare('UPDATE cp_ranks SET permissions_json=?,version=version+1 WHERE rank_key=? AND version=?').bind(JSON.stringify(nodes),rank.key,stored.version));}statements.push(db.prepare('INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES(?,?,?)').bind(key,'complete',Date.now()));await db.batch(statements);}

@@ -16,6 +16,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
  }
  const user=await identity(request,db);if(!user)return json({message:'Sign in first.'},401);
  const access=await accessFor(db,user);
+ const editProtected=user.username?.toLowerCase()==='unimatrix999'&&access.ranks.includes('owners');
  if(url.pathname==='/api/ranks/honour')return honourAction(db,user,request,origin);
  if(!access.nodes.includes('web.ranks.manage'))return json({message:'Rank-management permission required.'},403);
  if(request.method==='GET'&&url.pathname==='/api/ranks'&&!url.search){
@@ -49,8 +50,9 @@ export function createRankAdmin(db,settings,origin){return async request=>{
   if(typeof body.userId!=='string'||body.userId.length!==36||!Array.isArray(keys)||!keys.length||keys.length>20||keys.some(k=>!validKey(k))||new Set(keys).size!==keys.length)return json({message:'Select 1–20 distinct ranks.'},400);
   const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();if(!target)return json({message:'Account not found.'},404);
   const ranks=await Promise.all(keys.map(key=>rankFor(db,key))),previous=await accessFor(db,target);
-  if(ranks.some(r=>r.kind!=='access'||r.level===0)||previous.ranks.some(isOwnerRank)||!isOwnerRank(access.rank)&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
+  if(ranks.some(r=>r.kind!=='access'||r.level===0)||(previous.ranks.some(isOwnerRank)&&!editProtected)||!isOwnerRank(access.rank)&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
   if(keys.includes('memorial')&&(!isOwnerRank(access.rank)||target.id===user.id||keys.some(k=>!['memorial','user','crysknife'].includes(k))))return json({message:'Only Owners can create memorial accounts. Memorials cannot hold staff, supporter or gameplay ranks.'},403);
+  if(editProtected&&target.id===user.id&&!keys.includes('owners'))return json({message:'Your Owner role must be retained.'},403);
   const primary=keys.includes('memorial')?ranks.find(r=>r.key==='memorial'):ranks.find(r=>r.key===target.role)||[...ranks].sort((a,b)=>b.level-a.level)[0];
   await db.batch([db.prepare('UPDATE site_accounts SET role=? WHERE id=?').bind(primary.key,target.id),db.prepare('DELETE FROM cp_account_ranks WHERE user_id=?').bind(target.id),...ranks.filter(r=>r.key!==primary.key).map(r=>db.prepare('INSERT INTO cp_account_ranks(user_id,rank_key) VALUES(?,?)').bind(target.id,r.key)),...await memorialRoleStatements(db,target,keys),db.prepare('DELETE FROM site_sessions WHERE user_id=?').bind(target.id),audit('account-ranks',target.id+' -> '+keys.join(',')),nativeSyncChange(db)]);
   let memorialSyncPending=false;if(keys.includes('memorial'))try{await setGitArchived(db,target.id,true,settings);}catch{memorialSyncPending=true;}

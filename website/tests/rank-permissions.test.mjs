@@ -47,3 +47,13 @@ test('dictated role catalog gives website staff ban read and shop support withou
 });
 
 test('multiple ranks union departments, revoke removed access and protect secondary Owners',async()=>{const r=await setup();try{const id=r.accounts.member.id,owner=r.accounts.owner.cookie;assert.equal((await r.req('/api/ranks/assign',owner,{userId:id,ranks:['web_sales','web_legal']})).status,200);let user=await r.db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(id).first();let a=await accessFor(r.db,user);assert(a.nodes.includes('web.tickets.sales'));assert(a.nodes.includes('web.tickets.legal'));assert(!a.nodes.includes('web.tickets.admin'));assert.equal((await r.req('/api/ranks/assign',owner,{userId:id,ranks:['web_sales']})).status,200);user=await r.db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(id).first();a=await accessFor(r.db,user);assert(!a.nodes.includes('web.tickets.legal'));assert(a.nodes.includes('web.tickets.sales'));await r.db.prepare('INSERT INTO cp_account_ranks(user_id,rank_key) VALUES(?,?)').bind(id,'owners').run();assert.equal((await r.req('/api/ranks/assign',owner,{userId:id,ranks:['user']})).status,403);assert.equal((await r.req('/api/ranks/assign',owner,{userId:r.accounts.core.id,ranks:[]})).status,400);}finally{r.db.close();}});
+
+test('unimatrix999 Owner can edit protected assignments but cannot remove own Owner role',async()=>{
+ const r=await setup();try{
+ await r.db.prepare("UPDATE site_accounts SET username='unimatrix999' WHERE id=?").bind(r.accounts.owner.id).run();
+ await r.db.prepare("UPDATE site_accounts SET role='network_admin' WHERE id=?").bind(r.accounts.core.id).run();
+ assert.equal((await r.req('/api/ranks/assign',r.accounts.owner.cookie,{userId:r.accounts.core.id,ranks:['network_admin']})).status,200);
+ assert.equal((await r.req('/api/ranks/assign',r.accounts.owner.cookie,{userId:r.accounts.owner.id,ranks:['network_admin']})).status,403);
+ assert.equal((await accessFor(r.db,{id:r.accounts.core.id,role:'network_admin'})).label,'Network Admin');
+ }finally{r.db.close();}
+});

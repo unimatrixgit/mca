@@ -5,4 +5,4 @@ export const protectedStaffRanks=ranks=>Array.isArray(ranks)&&ranks.some(isOwner
 export function gameStaffSeals(ranks=[]){return [...GAME_STAFF_SEALS,...RECOGNITION.roles].filter(seal=>ranks.includes(seal.rank)||protectedStaffRanks(ranks));}
 export function managedRoleSeals(ranks=[]){return [...(ranks.includes('web_streamer')||protectedStaffRanks(ranks)?['rank-streamer']:[]),...(ranks.includes('web_dev')||protectedStaffRanks(ranks)?['rank-dev']:[]),...(ranks.includes('crysknife')?['rank-crysknife']:[]),...gameStaffSeals(ranks).map(s=>s.key)];}
 
-export function currentStaffRanks(ranks=[]){return ranks.some(key=>DEFAULT_RANKS.some(r=>r.key===key&&(key.startsWith('web_')||key.startsWith('game_')||['staff','corestaff','owners','official_account'].includes(key))));}
+export function currentStaffRanks(ranks=[]){return ranks.some(key=>DEFAULT_RANKS.some(r=>r.key===key&&(key.startsWith('web_')||key.startsWith('game_')||['staff','corestaff','owners','official_account','network_admin'].includes(key))));}

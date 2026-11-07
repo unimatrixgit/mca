@@ -15,7 +15,7 @@ function render(){
  wrapper.replaceChildren();wrapper.classList.add('rank-editor');
  const tools=el('div'),pickerLabel=el('label','Choose a website rank'),picker=el('select');picker.setAttribute('aria-label','Website rank to edit');
  for(const[kind,title]of Object.entries(current.sections)){const group=el('optgroup');group.label=title;for(const rank of current.ranks.filter(r=>r.section===kind)){const o=el('option',rank.label+' · '+rank.key);o.value=rank.key;group.append(o);}if(group.children.length)picker.append(group);}
- selectedRank=current.ranks.some(r=>r.key===selectedRank)?selectedRank:(current.ranks.find(r=>r.key==='web_network')||current.ranks[0]).key;picker.value=selectedRank;pickerLabel.append(picker);tools.className='rank-editor-tools';tools.append(pickerLabel);wrapper.append(tools);
+ selectedRank=current.ranks.some(r=>r.key===selectedRank)?selectedRank:(current.ranks.find(r=>r.key==='network_admin')||current.ranks[0]).key;picker.value=selectedRank;pickerLabel.append(picker);tools.className='rank-editor-tools';tools.append(pickerLabel);wrapper.append(tools);
  const rank=current.ranks.find(r=>r.key===selectedRank),summary=el('div');summary.className='rank-editor-summary';summary.append(el('h3',rank.label),el('p',rank.editable?'Change only the permissions this role needs. Accounts with multiple ranks combine their permissions.':'This rank is protected. Its permissions are shown for reference.'));
  const search=el('input');search.type='search';search.placeholder='Search permissions by name or node';search.setAttribute('aria-label','Search permissions');summary.append(search);wrapper.append(summary);
  const groups=el('div');groups.className='permission-groups';const inputs=[];
