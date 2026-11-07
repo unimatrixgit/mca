@@ -17,7 +17,7 @@ $plugins->add_hook('member_register_start','dune_accounts_login');
 $plugins->add_hook('member_do_register_start','dune_accounts_login');
 function dune_accounts_info(){return ['name'=>'DuneRealms accounts','description'=>'Central CP sign-in; no password copying.','website'=>'https://www.dunerealms.com','author'=>'DuneRealms','version'=>'1.0.0','compatibility'=>'18*'];}
 function dune_accounts_login(){header('Location: /dune-sso.php');exit;}
-function dune_accounts_theme($html){require_once '/home/dunerealms/apps/integrations/shared-header.php';return dune_shared_header(str_replace('</head>','<link rel="stylesheet" href="/dune-theme.css"><style>.signature img[src*="/assets/seals/"]{width:71px!important;height:71px!important;object-fit:contain;margin:6px!important;vertical-align:middle}</style></head>',$html));}
+function dune_accounts_theme($html){require_once '/home/dunerealms/apps/integrations/shared-header.php';return dune_shared_header(str_replace('</head>','<link rel="stylesheet" href="/dune-theme.css"><style>.signature img[src*="/assets/seals/"]{width:calc(71px * var(--dune-seal-scale,1))!important;height:calc(71px * var(--dune-seal-scale,1))!important;object-fit:contain;margin:6px!important;vertical-align:middle}</style></head>',$html));}
 function dune_accounts_admin_login(){header('Location: /dune-sso.php?admin=1');exit;}
 function dune_accounts_admin(){
  require_once '/home/dunerealms/apps/integrations/shared-header.php';ob_start('dune_shared_header');

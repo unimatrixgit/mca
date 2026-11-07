@@ -17,10 +17,10 @@ function dune_community_seal_keys($websiteId){
   return$cache[$websiteId]=array_values(array_unique(array_intersect($keys,$catalog)));
  }catch(Throwable$e){return[];}
 }
-function dune_signature_recognition_keys($websiteId){
- $keys=dune_community_seal_keys($websiteId);if(!$keys)return[];
- try{static$pdo,$staff=[];if(!array_key_exists($websiteId,$staff)){if(!$pdo){$c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);$pdo=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);}$q=$pdo->prepare('SELECT role AS rank_key FROM site_accounts WHERE id=? UNION SELECT rank_key FROM cp_account_ranks WHERE user_id=?');$q->execute([$websiteId,$websiteId]);$staff[$websiteId]=dune_signature_staff_ranks($q->fetchAll(PDO::FETCH_COLUMN));}return dune_signature_filter_awards($keys,$staff[$websiteId]);}catch(Throwable$e){return dune_signature_filter_awards($keys,true);}
+function dune_signature_is_staff($websiteId){
+ try{static$pdo,$staff=[];if(!array_key_exists($websiteId,$staff)){if(!$pdo){$c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);$pdo=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);}$q=$pdo->prepare('SELECT role AS rank_key FROM site_accounts WHERE id=? UNION SELECT rank_key FROM cp_account_ranks WHERE user_id=?');$q->execute([$websiteId,$websiteId]);$staff[$websiteId]=dune_signature_staff_ranks($q->fetchAll(PDO::FETCH_COLUMN));}return$staff[$websiteId];}catch(Throwable$e){return true;}
 }
+function dune_signature_recognition_keys($websiteId){return dune_signature_filter_awards(dune_community_seal_keys($websiteId),dune_signature_is_staff($websiteId));}
 function dune_community_seal_html($websiteId,$size=48){
  $labels=array_merge(['alpha-tester'=>'Alpha Tester','beta-tester'=>'Beta Tester','launch-contributor'=>'Launch Contributor','dedicated-tester'=>'Dedicated Tester','season-tavren-ii'=>'Season · Tavren II Aedrecht','dunegit-owner'=>'DuneGit Repository Owner'],dune_recognition_labels());$cells='';
  foreach(dune_signature_recognition_keys($websiteId)as$key)if(is_file(__DIR__.'/osticket/assets/seals/'.$key.'.png')){$label=htmlspecialchars($labels[$key],ENT_QUOTES);$cells.='<td style="padding:0 3px"><img src="https://support.dunerealms.com/assets/seals/'.$key.'.png" title="'.$label.'" alt="'.$label.'" width="48" height="48" style="display:block;width:48px;height:48px;object-fit:contain"></td>';}
