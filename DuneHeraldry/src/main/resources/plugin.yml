@@ -1,0 +1,15 @@
+name: DuneHeraldry
+version: 1.0.1
+main: com.dunerealms.heraldry.DuneHeraldry
+api-version: '1.21.8'
+description: Placeable faction heraldry for staff construction
+authors: [DuneRealms]
+commands:
+  staffkit:
+    description: Receive faction banners for staff building
+    usage: /staffkit banners [all|atreides|corrino|harkonnen|fremen|ordos]
+    permission: dune.staffkit.banners
+permissions:
+  dune.staffkit.banners:
+    description: Receive decorative faction banners; grants no build bypass or rank
+    default: op

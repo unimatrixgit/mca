@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "dunerealms:entity/banner/atreides"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "dunerealms:entity/banner/corrino"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "dunerealms:entity/banner/harkonnen"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "dunerealms:entity/banner/fremen"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "dunerealms:entity/banner/ordos"
+    }
+  ]
+}
