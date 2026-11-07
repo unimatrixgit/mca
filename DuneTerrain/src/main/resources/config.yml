@@ -7,9 +7,9 @@ server:
 # Guild Navigator settings are now managed by DuneNPC/config.yml.
 
 sietches:
-  enabled: false
+  enabled: true
   spacing: 2000
-  # Sietch generation is disabled, including mountain sites.
+  # Only desert sietches generate. Rock/highland sites remain disabled.
   highlands:
     enabled: false
     frequency-multiplier: 3
