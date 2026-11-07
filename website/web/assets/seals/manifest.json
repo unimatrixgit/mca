@@ -128,9 +128,9 @@
   "main-network-admin-grmacken": {
     "label": "grmacken",
     "role": "MAINNETWORKADMIN",
-    "src": "/assets/seals/main-network-admin-grmacken-v2.png",
-    "footer150": "/assets/seals/main-network-admin-grmacken-v2-150.png",
-    "footer300": "/assets/seals/main-network-admin-grmacken-v2-300.png",
+    "src": "/assets/seals/main-network-admin-grmacken-v3.png",
+    "footer150": "/assets/seals/main-network-admin-grmacken-v3-150.png",
+    "footer300": "/assets/seals/main-network-admin-grmacken-v3-300.png",
     "original": "website\\artwork\\network-seals\\main-network-admin-grmacken-master.png",
     "alpha": true
   },
