@@ -16,7 +16,8 @@ const teams=[
  ['Ban appeals','web.tickets.appeals','department-ban-appeals-150.png'],
  ['Forum team','web.forum.moderate','department-forum-support-150.png'],
  ['News team','web.posts.publish',null],
- ['Sales team','web.tickets.sales','department-sales-150.png']
+ ['Sales team','web.tickets.sales','department-sales-150.png'],
+ ['Build Team',null,'rank-builder-150.png']
 ];
 function sealFor(user,ranks){
  if(ranks.includes('web_dev'))return '/assets/seals/rank-dev-150.png';
@@ -24,6 +25,7 @@ function sealFor(user,ranks){
  if(ranks.includes('web_net_admin')&&user.username.toLowerCase()==='grmacken')return '/assets/seals/main-network-admin-grmacken-150.png';
  if(ranks.includes('web_network')||ranks.includes('web_net_owner'))return '/assets/seals/rank-network-staff-150.png';
  if(ranks.includes('corestaff')&&user.username.toLowerCase()==='racoonvibz')return '/assets/seals/corestaff-racoonvibz-150.png';
+ if(ranks.includes('game_builder'))return '/assets/seals/rank-builder-150.png';
  return '/assets/nav-staff-v2.webp';
 }
 export async function publicStaffRoster(db){
@@ -32,14 +34,14 @@ export async function publicStaffRoster(db){
  for(const user of results){
   const access=await accessFor(db,user);
   if(access.ranks.includes('official_account'))continue;
-  if(!access.ranks.some(r=>!['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r))||!access.nodes.some(n=>['web.tickets.staff','web.forum.moderate','web.posts.edit','web.ranks.manage'].includes(n)))continue;
+  if(!access.ranks.some(r=>!['user','vip','patron_caravan','patron_guild','patron_grand'].includes(r))||(!access.ranks.includes('game_builder')&&!access.nodes.some(n=>['web.tickets.staff','web.forum.moderate','web.posts.edit','web.ranks.manage'].includes(n))))continue;
   const currentRanks=await Promise.all(access.ranks.filter(k=>!['user','vip','patron_caravan','patron_guild','patron_grand'].includes(k)).map(key=>rankFor(db,key)));
   currentRanks.sort((a,b)=>b.level-a.level||a.label.localeCompare(b.label));
   const rankLabels=[...new Set(currentRanks.map(rank=>rank.label))];
   let publicProfile={};try{const profile=await publicProfileFor(db,user.id);publicProfile={honours:profile.honours,bio:profile.bio,socials:profile.socials,git:profile.git};}catch{}
   let linked=false;try{linked=!!await db.prepare('SELECT 1 AS linked FROM site_game_links WHERE user_id=?').bind(user.id).first();}catch{}
   const portrait={url:'https://cp.dunerealms.com/api/avatars/roster/'+encodeURIComponent(user.username),mode:linked?'skin':'image'};
-  roster.push({publicProfile,portrait,closedTickets:statsForAccount(closureStats,user.id),username:user.username,name:user.username,rankLabels,level:access.level,seal:sealFor(user,access.ranks),teams:teams.filter(([,node])=>access.nodes.includes(node)).map(([label])=>label)});
+  roster.push({publicProfile,portrait,closedTickets:statsForAccount(closureStats,user.id),username:user.username,name:user.username,rankLabels,level:access.level,seal:sealFor(user,access.ranks),teams:teams.filter(([,node])=>node?access.nodes.includes(node):access.ranks.includes('game_builder')).map(([label])=>label)});
  }
  return roster.sort((a,b)=>b.level-a.level||a.username.localeCompare(b.username));
 }

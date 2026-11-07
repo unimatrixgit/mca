@@ -63,3 +63,20 @@ test('hierarchy deduplicates equivalent web/game labels and reflects revocation'
  await db.prepare("DELETE FROM cp_account_ranks WHERE user_id='a'").run();await db.prepare("UPDATE site_accounts SET role='user' WHERE id='a'").run();html=await(await createStaffRoster(db)(new Request('https://www.dunerealms.com/staff.html'))).text();assert(!html.includes('class="roster-hierarchy"'));
  }finally{db.close();}
 });
+
+test('Build Team is last, includes builder-only accounts and follows rank removal',async()=>{
+ const db=setup();try{
+ await db.prepare("INSERT INTO site_accounts(id,username,role) VALUES('o','owner','owners'),('b','builder','user'),('u','ordinary','user')").run();
+ await db.prepare("INSERT INTO cp_account_ranks(user_id,rank_key) VALUES('b','game_builder')").run();
+ let roster=await publicStaffRoster(db);
+ assert.deepEqual(roster.find(p=>p.username==='builder').teams,['Build Team']);
+ assert(!roster.find(p=>p.username==='owner').teams.includes('Build Team'));
+ assert(!roster.some(p=>p.username==='ordinary'));
+ const html=await(await createStaffRoster(db)(new Request('https://www.dunerealms.com/staff.html'))).text();
+ assert(html.indexOf('Build Team<small>')>html.indexOf('Sales team<small>'));
+ assert(html.includes('/assets/seals/rank-builder-150.png'));
+ assert(html.includes('href="/people/builder"'));
+ await db.prepare("DELETE FROM cp_account_ranks WHERE user_id='b'").run();
+ assert(!(await publicStaffRoster(db)).some(p=>p.username==='builder'));
+ }finally{db.close();}
+});
