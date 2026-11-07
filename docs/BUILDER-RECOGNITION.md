@@ -10,6 +10,8 @@ Authorized staff with account-assignment permission can grant or revoke **Builde
 
 Forum awards are cumulative at1,10,50,100,1000 approved posts. The additional **Forum Legend** starts at1001 (more than1000), alongside the1000-post award. Current MyBB `postnum` is authoritative, including existing members and count reductions. No fake posts or stored counter migrations are needed. Post author panels show the highest ribbon and expandable earlier awards; native and central profiles show earned awards.
 
+Awards remain visible on staff profiles but are omitted from staff forum/support/email signatures to keep them compact. Ordinary users retain their awards in signatures. This does not revoke awards or suppress the separate forum author-panel ribbons. Personal identity, membership and department seals remain.
+
 `website/node/recognition-catalog.json` is shared with PHP. New manual/forum entries automatically join the DuneRealms example account; role entries join its displayed role seals. Showcase display is not a permission, purchase, earned achievement or post-count grant. Keep Crysknife excluded and never display another user's named personal seal. To extend the catalogue, provide safe unique keys, labels, integer thresholds where applicable, and public image derivatives; deploy the matching catalogue to the native integrations directory too.
 
 ## Applications and publication
