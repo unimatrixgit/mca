@@ -80,3 +80,13 @@ test('Build Team is last, includes builder-only accounts and follows rank remova
  assert(!(await publicStaffRoster(db)).some(p=>p.username==='builder'));
  }finally{db.close();}
 });
+
+test('roster selects assigned personal staff seals with role fallback',async()=>{
+ const db=setup();try{
+ await db.prepare("INSERT INTO site_accounts(id,username,role) VALUES('a','halobeau143','game_builder'),('b','helper','web_support')").run();
+ const roster=await publicStaffRoster(db,{halo:{label:'halobeau143',role:'STAFF',footer150:'/assets/seals/personal-staff-halobeau143-150.png'}});
+ assert.equal(roster.find(p=>p.username==='halobeau143').personalSeal,'/assets/seals/personal-staff-halobeau143-150.png');
+ assert.equal(roster.find(p=>p.username==='helper').personalSeal,null);
+ assert.deepEqual(roster.find(p=>p.username==='halobeau143').teams,['Build Team']);
+ }finally{db.close();}
+});
