@@ -66,6 +66,8 @@ DEFAULT_RANKS.push(...[['game_quests','Quest Team',45,['web.quests.manage']],['g
 for(const rank of DEFAULT_RANKS)if(rank.nodes.includes('web.menu.staffmanual'))rank.nodes=[...new Set([...rank.nodes,'web.bank.staff.view','web.bank.staff.deposit'])];
 for(const rank of DEFAULT_RANKS)if(rank.key.startsWith('web_'))rank.nodes=[...new Set([...rank.nodes,'web.menu.bans','web.bans.view','web.shop.support'])];
 DEFAULT_RANKS.push({key:'web_dev',label:'Dev Team',level:55,kind:'access',nodes:[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.dev']});
+// Membership does not grant account moderation, financial, console, OP or WorldEdit authority.
+DEFAULT_RANKS.push({key:'game_builder',label:'Builder',level:40,kind:'access',nodes:[...basic,'web.menu.staffmanual']});
 DEFAULT_RANKS.push({key:'memorial',label:'Memorial',level:1,kind:'access',nodes:[]});
 for(const rank of DEFAULT_RANKS)if(['owners','corestaff','web_network','web_net_admin'].includes(rank.key))rank.nodes=[...new Set([...rank.nodes,'web.tickets.dev'])];
 export const rankKey=role=>role==='player'?'user':role;

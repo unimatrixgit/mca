@@ -1,3 +1,5 @@
+import {contactSchema} from '../node/contact-email.mjs';
+import {TERMS_VERSION} from '../node/first-login.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -12,10 +14,10 @@ test('public social links use HTTPS and matching platform hosts',()=>{
  assert.equal(normalizeSocials({website:'https://example.org/stream'}).website,'https://example.org/stream');
 });
 test('CP profile updates preserve private birthday and export only public fields',async()=>{
- const db=new LocalD1(schema),app=createPanel(db);try{
+ const db=new LocalD1(schema+';'+contactSchema),app=createPanel(db);try{
   const req=(path,body,cookie,requestOrigin=origin)=>app(new Request(origin+path,{method:body?'POST':'GET',headers:{Origin:requestOrigin,...(cookie?{Cookie:cookie}:{}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})}));
   assert.equal((await req('/api/account/profile')).status,401);
-  const registered=await req('/api/auth/register',{username:'streamer',password:'long test password 123',ageBand:'15plus'}),cookie=registered.headers.get('set-cookie').split(';')[0];
+  const registered=await req('/api/auth/register',{username:'streamer',password:'long test password 123',ageBand:'15plus',email:'streamer@example.test',termsAccepted:'yes',termsVersion:TERMS_VERSION}),cookie=registered.headers.get('set-cookie').split(';')[0];
   const body={displayName:'Caravan Streamer',bio:'Live desert adventures',publicInfo:'Streams on weekends',birthday:'2000-02-02',publicBirthday:false,socials:{twitch:'https://twitch.tv/caravan',youtube:'https://youtube.com/@caravan',twitter:'https://x.com/caravan'}};
   assert.equal((await req('/api/account/profile',body,cookie,'https://evil.test')).status,403);
   assert.equal((await req('/api/account/profile',body,cookie)).status,200);

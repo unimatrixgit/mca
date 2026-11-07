@@ -1,5 +1,6 @@
 <?php
 if(PHP_SAPI!=='cli')exit(1);
+require_once __DIR__.'/recognition.php';
 $accounts=json_decode(stream_get_contents(STDIN),true);if(!is_array($accounts)||!$accounts)throw new Exception('Verified accounts required');
 $c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);
 $p=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
@@ -32,10 +33,10 @@ $p->beginTransaction();try{
  foreach($accounts as$a){
   if(!preg_match('/^[a-f0-9-]{36}$/i',$a['id']??''))throw new Exception('Invalid central identity');
   if(isset($a['rankLabel'])){$q=$p->prepare('INSERT INTO dune_signature_rank_labels(website_id,rank_label) VALUES(?,?) ON DUPLICATE KEY UPDATE rank_label=VALUES(rank_label)');$q->execute([$a['id'],(function_exists('mb_substr')?mb_substr((string)$a['rankLabel'],0,500):substr((string)$a['rankLabel'],0,500))]);}
-  if(isset($a['roleSeals'])){if(!is_array($a['roleSeals'])||array_diff($a['roleSeals'],['rank-streamer','rank-crysknife','rank-dev','rank-game-mod','rank-game-admin']))throw new Exception('Invalid assigned role seal');$q=$p->prepare('DELETE FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$a['id']]);$q=$p->prepare('INSERT INTO dune_signature_role_seals(website_id,seal_key) VALUES(?,?)');foreach(array_unique($a['roleSeals'])as$key)$q->execute([$a['id'],$key]);}
+  if(isset($a['roleSeals'])){if(!is_array($a['roleSeals'])||array_diff($a['roleSeals'],array_merge(['rank-streamer','rank-crysknife','rank-dev','rank-game-mod','rank-game-admin'],array_column(dune_recognition_catalog()['roles'],'key'))))throw new Exception('Invalid assigned role seal');$q=$p->prepare('DELETE FROM dune_signature_role_seals WHERE website_id=?');$q->execute([$a['id']]);$q=$p->prepare('INSERT INTO dune_signature_role_seals(website_id,seal_key) VALUES(?,?)');foreach(array_unique($a['roleSeals'])as$key)$q->execute([$a['id'],$key]);}
   if(isset($a['forumGroup'])){if(!in_array($a['forumGroup'],[2,4,6],true))throw new Exception('Invalid native forum group');$q=$p->prepare('UPDATE drforum_users u JOIN drforum_dune_accounts a ON a.uid=u.uid SET u.usergroup=? WHERE a.website_id=?');$q->execute([$a['forumGroup'],$a['id']]);}
   if(array_key_exists('communityBadges',$a)){
-   if(!is_array($a['communityBadges'])||array_diff($a['communityBadges'],['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner']))throw new Exception('Invalid verified badge snapshot');
+   if(!is_array($a['communityBadges'])||array_diff($a['communityBadges'],array_merge(['alpha-tester','beta-tester','launch-contributor','dedicated-tester','season-tavren-ii','dunegit-owner'],dune_recognition_keys())))throw new Exception('Invalid verified badge snapshot');
    $q=$p->prepare('DELETE FROM dune_community_badges WHERE website_id=?');$q->execute([$a['id']]);
    $q=$p->prepare('INSERT INTO dune_community_badges(website_id,badge_key,username) VALUES(?,?,?)');foreach(array_unique($a['communityBadges'])as$key)$q->execute([$a['id'],$key,$a['username']??'']);
   }

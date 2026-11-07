@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {LocalD1} from './d1-adapter.mjs';
 import {initializeBadges,badgesFor,alphaGrant,seasonGrant,awardDedicated} from '../node/community-badges.mjs';
-const schema='CREATE TABLE site_accounts(id TEXT PRIMARY KEY,role TEXT,username TEXT,display_name TEXT);'+readFileSync(new URL('../node/schema.sql',import.meta.url),'utf8').split('CREATE TABLE IF NOT EXISTS site_game_links')[1].replace(/^/,'CREATE TABLE IF NOT EXISTS site_game_links').replace(/ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4/g,'');
+const schema="CREATE TABLE site_accounts(id TEXT PRIMARY KEY,role TEXT,username TEXT,display_name TEXT,password_hash TEXT DEFAULT 'fixture-hash');"+readFileSync(new URL('../node/schema.sql',import.meta.url),'utf8').split('CREATE TABLE IF NOT EXISTS site_game_links')[1].replace(/^/,'CREATE TABLE IF NOT EXISTS site_game_links').replace(/ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4/g,'');
 test('Alpha excludes staff, season includes everyone, closed phases do not grant new accounts',async()=>{
  const db=new LocalD1(schema);try{
   for(const [id,role]of[['member','user'],['owner','owners'],['mixed','user']])await db.prepare('INSERT INTO site_accounts(id,role) VALUES(?,?)').bind(id,role).run();
