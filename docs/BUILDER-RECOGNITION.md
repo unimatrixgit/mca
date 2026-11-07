@@ -8,7 +8,7 @@ The `game_builder` rank shows the Builder Team seal. Its initial game permission
 
 Authorized staff with account-assignment permission can grant or revoke **Builder Award** from a user's More menu. The API enforces Origin, active targets, rank hierarchy, an explicit registered award and boolean decision, with audit/outbox synchronization. Rank membership does not award it. Existing department awards still require25 verified closures **within that department**, including protected staff.
 
-Forum awards are cumulative at1,10,50,100,1000 approved posts. The additional **Forum Legend** starts at1001 (more than1000), alongside the1000-post award. Current MyBB `postnum` is authoritative, including existing members and count reductions. No fake posts or stored counter migrations are needed. Post author panels show the highest ribbon and expandable earlier awards; native and central profiles show earned awards.
+Forum awards are cumulative at1,10,50,100,1000 approved posts. The additional **Forum Legend** starts at1001 (more than1000), alongside the1000-post award. Current MyBB `postnum` is authoritative, including existing members and count reductions. No fake posts or stored counter migrations are needed. Post author panels show all earned ribbons in one compact row that shrinks to fit; native and central profiles retain larger awards.
 
 Awards remain visible on staff profiles but are omitted from staff forum/support/email signatures to keep them compact. Ordinary users retain their awards in signatures. This does not revoke awards or suppress the separate forum author-panel ribbons. Personal identity, membership and department seals remain.
 
