@@ -7,7 +7,7 @@ import {LocalD1} from './d1-adapter.mjs';
 test('Dev rank is limited to its department, leadership gains Dev access, ordinary users do not',()=>{
  const dev=DEFAULT_RANKS.find(r=>r.key==='web_dev');assert(dev.nodes.includes('web.tickets.dev'));assert(dev.nodes.includes('web.tickets.staff'));
  for(const n of ['web.tickets.admin','web.tickets.legal','web.git.admin','web.ranks.manage','web.servers.console','web.bans.manage'])assert(!dev.nodes.includes(n));
- for(const key of ['owners','corestaff','web_network','web_net_admin'])assert(DEFAULT_RANKS.find(r=>r.key===key).nodes.includes('web.tickets.dev'));
+ for(const key of ['owners','corestaff','network_admin','web_net_admin'])assert(DEFAULT_RANKS.find(r=>r.key===key).nodes.includes('web.tickets.dev'));
  for(const key of ['user','vip','web_support'])assert(!DEFAULT_RANKS.find(r=>r.key===key).nodes.includes('web.tickets.dev'));
 });
 test('Dev seal follows Dev access including protected Corestaff without leaking other department seals',()=>{

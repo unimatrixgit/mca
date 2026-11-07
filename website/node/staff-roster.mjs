@@ -25,7 +25,7 @@ function sealFor(user,ranks){
  if(ranks.includes('web_dev'))return '/assets/seals/rank-dev-150.png';
  if(ranks.includes('owners')&&['unimatrix999','dunerealms','grmacken','richwjr'].includes(user.username.toLowerCase()))return '/assets/seals/owner-'+user.username.toLowerCase()+'-150.png';
  if(ranks.includes('web_net_admin')&&user.username.toLowerCase()==='grmacken')return '/assets/seals/main-network-admin-grmacken-150.png';
- if(ranks.includes('web_network')||ranks.includes('web_net_owner'))return '/assets/seals/rank-network-staff-150.png';
+ if(ranks.includes('network_admin')||ranks.includes('network_admin'))return '/assets/seals/rank-network-staff-150.png';
  if(ranks.includes('corestaff')&&user.username.toLowerCase()==='racoonvibz')return '/assets/seals/corestaff-racoonvibz-150.png';
  if(ranks.includes('game_builder'))return '/assets/seals/rank-builder-150.png';
  return '/assets/nav-staff-v2.webp';

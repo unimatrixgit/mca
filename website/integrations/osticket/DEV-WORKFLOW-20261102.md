@@ -5,7 +5,7 @@ The native osTicket Dev department/team and non-public help topic route developm
 ## Access and decisions
 
 - Ordinary members are denied server-side. Staff and VIP accounts may submit and see their own requests. The Dev team may read the full register.
-- Dev membership follows `web_dev` or protected leadership (`owners`, `corestaff`, `web_net_admin`, `web_network`). The private department additionally requires `web.tickets.dev`; it is not granted by generic support-administrator access.
+- Dev membership follows `web_dev` or protected leadership (`owners`, `corestaff`, `web_net_admin`, `network_admin`). The private department additionally requires `web.tickets.dev`; it is not granted by generic support-administrator access.
 - Review authority requires the verified central username AND current rank: `unimatrix999` / `owners`, or `grmacken` / `web_net_admin`. Their submissions are automatically approved. Dev cannot approve its own new requests.
 - Reviewers and the central `dev` / `web_dev` account may change Low, Medium and High priorities and edit approved execution briefs. Approved Bugs precede normal work; approval is still required.
 - Denial closes the native ticket. Approval keeps/reopens it. Completion requires an approved task, a completion report and a successful native close before the registry is marked completed.

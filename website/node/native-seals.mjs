@@ -7,7 +7,7 @@ import{badgesFor,BADGES,communityBadgeVisible}from './community-badges.mjs';
 export function visibleCommunityBadges(keys,ranks){return keys.filter(key=>BADGES.includes(key)&&ranks.length>0&&communityBadgeVisible(key,ranks));}
 export function staffSealFor(account,manifest){
  const ranks=Array.isArray(account.ranks)?account.ranks:[account.role];
- const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':(ranks.includes('web_network')||ranks.includes('web_net_owner'))?'NETWORKSTAFF':'';
+ const role=ranks.includes('owners')?'OWNER':ranks.includes('web_net_admin')?'MAINNETWORKADMIN':ranks.includes('corestaff')?'CORESTAFF':(ranks.includes('network_admin')||ranks.includes('network_admin'))?'NETWORKSTAFF':'';
  const named=kind=>Object.values(manifest).find(asset=>asset.role===kind&&asset.label?.toLowerCase()===account.username.toLowerCase())?.footer150||null;
  if(role&&named(role))return named(role);
  if(protectedStaffRanks(ranks)&&named('OWNER'))return named('OWNER');

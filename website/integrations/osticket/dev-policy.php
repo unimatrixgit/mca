@@ -5,11 +5,11 @@ function dune_dev_id($value){return is_string($value)&&preg_match('/^[1-9][0-9]*
 function dune_dev_origin_valid($origin){return $origin===null||$origin==='https://support.dunerealms.com';}
 // Central SSO identity only. Never accept ranks or actor IDs from submitted fields.
 function dune_dev_team($identity) {
- return is_array($identity) && (bool)array_intersect($identity['ranks']??[], ['owners','official_account','corestaff','web_network','web_net_admin','web_dev']);
+ return is_array($identity) && (bool)array_intersect($identity['ranks']??[], ['owners','official_account','corestaff','network_admin','web_net_admin','web_dev']);
 }
 function dune_dev_submitter($identity) {
  if (!is_array($identity)) return false;
- $staffRanks=['owners','official_account','corestaff','staff','web_network','web_net_owner','web_net_admin','web_dev','web_streamer','web_news','web_forum','web_support','web_sales','web_legal','web_appeal','game_mod','game_admin','game_support','game_appeal','game_quests','game_restoration'];
+ $staffRanks=['owners','official_account','corestaff','staff','network_admin','network_admin','web_net_admin','web_dev','web_streamer','web_news','web_forum','web_support','web_sales','web_legal','web_appeal','game_mod','game_admin','game_support','game_appeal','game_quests','game_restoration'];
  return (bool)array_intersect($identity['ranks']??[],array_merge($staffRanks,['vip','council_member'])) || (bool)array_intersect($identity['permissions']??[], ['web.menu.staffmanual','web.tickets.staff','web.forum.moderate','web.posts.edit']);
 }
 function dune_dev_owner($identity) {

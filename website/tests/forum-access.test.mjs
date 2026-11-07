@@ -17,7 +17,7 @@ test('rank management does not grant native MyBB administration',()=>{
  ])assert.equal(group({nodes}),expected,nodes.join(','));
 });
 test('existing intended leadership remains explicitly authorised and forum team remains moderator',()=>{
- for(const [key,expected]of [['owners',4],['web_net_admin',4],['web_network',4],['corestaff',4],['web_forum',6],['web_news',2],['web_support',2],['user',2]]){
+ for(const [key,expected]of [['owners',4],['web_net_admin',4],['network_admin',4],['corestaff',4],['web_forum',6],['web_news',2],['web_support',2],['user',2]]){
   const rank=DEFAULT_RANKS.find(r=>r.key===key);assert(rank,key);assert.equal(group({nodes:rank.nodes}),expected,key);
  }
 });

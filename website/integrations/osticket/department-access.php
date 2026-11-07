@@ -6,7 +6,7 @@ function dune_sync_ticket_departments($staff,$identity,$role){
  if(!$wanted){http_response_code(403);exit('No support department is assigned to this website role.');}
  $c=json_decode(file_get_contents('/home/dunerealms/.config/integrations.json'),true);
  $db=new PDO('mysql:host='.$c['host'].';dbname='.$c['database'].';charset=utf8mb4',$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
- $allDepartments=(bool)array_intersect($identity['ranks']??[$identity['role']??''],['owners','web_network','web_net_admin']);
+ $allDepartments=(bool)array_intersect($identity['ranks']??[$identity['role']??''],['owners','network_admin','web_net_admin']);
  $db->exec('CREATE TABLE IF NOT EXISTS dune_ticket_extra_team_grants(staff_id INT NOT NULL,team_id INT NOT NULL,PRIMARY KEY(staff_id,team_id)) ENGINE=InnoDB');
  $q=$db->prepare($allDepartments?'SELECT id FROM drsupport_department ORDER BY id':'SELECT id FROM drsupport_department WHERE name IN ('.implode(',',array_fill(0,count($wanted),'?')).') ORDER BY id');$q->execute($allDepartments?[]:$wanted);$ids=$q->fetchAll(PDO::FETCH_COLUMN);if(!$ids){http_response_code(503);exit('Support departments are unavailable.');}
  $db->beginTransaction();try{

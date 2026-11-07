@@ -20,7 +20,7 @@ function fixture(){
 }
 test('Owner-only removal is recoverable, revokes sessions and retains unrelated receipts',async()=>{
  const {db,add,session}=fixture();try{
- const owner=await add('owner','owners'),member=await add('member'),victim=await add('victim'),protectedUser=await add('protected','web_net_owner');await session(victim);
+ const owner=await add('owner','owners'),member=await add('member'),victim=await add('victim'),protectedUser=await add('protected','network_admin');await session(victim);
  await db.prepare('INSERT INTO cp_account_ranks VALUES(?,?)').bind(victim.id,'patron_guild').run();
  db.sqlite.exec('CREATE TABLE retained_receipts(id TEXT PRIMARY KEY,user_id TEXT);');await db.prepare('INSERT INTO retained_receipts VALUES(?,?)').bind('receipt',victim.id).run();
  const input={userId:victim.id,confirmation:victim.username};assert.equal((await archiveAccount(db,member,input)).status,403);
@@ -44,7 +44,7 @@ test('disabled memorial and archived accounts cannot sign in even with a valid-s
 });
 test('honour is automatic, citation is protected, multiline, versioned and safely rendered',async()=>{
  const {db,add,req}=fixture();try{
- const owner=await add('owner','owners'),recipient=await add('recipient','web_net_owner'),member=await add('member');
+ const owner=await add('owner','owners'),recipient=await add('recipient','network_admin'),member=await add('member');
  const basic=DEFAULT_RANKS.find(r=>r.key==='user').nodes;
  await db.prepare('INSERT INTO cp_ranks VALUES(?,?,?,?,?,?)').bind('crysknife','Holy Order of The Crysknife',20,'access',JSON.stringify(basic),1).run();
  await db.prepare('INSERT INTO cp_account_ranks VALUES(?,?)').bind(recipient.id,'crysknife').run();
