@@ -258,7 +258,7 @@
     "owners",
     "web_net_admin",
     "official_account",
-    "web_net_owner"
+    "network_admin"
   ],
   "suggestedRoles": [
     {
@@ -426,7 +426,7 @@
       "scope": "network-global; local-only moderation requires a separate server-context design, not this global snapshot"
     },
     {
-      "id": "web_network",
+      "id": "network_admin",
       "permissions": {
         "coreprotect.inspect": true,
         "coreprotect.lookup": true,
