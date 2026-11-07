@@ -205,7 +205,7 @@ def apply(connector, data, teams, notify=broadcast):
                         for rank, permissions in payload['ranks'].items():
                             name = mapping(cursor, rank)
                             write_group(cursor, name, permissions)
-                            prefix = PATRON_PREFIXES.get(rank) or {'web_net_owner': 'prefix.90.&8[&4Network Staff&8] &r', 'crysknife': 'prefix.20.&8[&eHoly Order&8] &r'}.get(rank)
+                            prefix = PATRON_PREFIXES.get(rank) or {'network_admin': 'prefix.90.&8[&4Network Admin&8] &r', 'crysknife': 'prefix.20.&8[&eHoly Order&8] &r'}.get(rank)
                             if prefix:
                                 write_group(cursor, name, {prefix: True})
                         for identity, ranks in payload['users'].items():
