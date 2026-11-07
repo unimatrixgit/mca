@@ -1,0 +1,347 @@
+{
+  "reachable": {
+    "spawn": true,
+    "palace-hall": true,
+    "gallery-one": true,
+    "gallery-two": true,
+    "east-gate": true,
+    "market": true,
+    "terminal": true,
+    "frigate": true,
+    "north-promenade": true,
+    "south-promenade": true,
+    "new-home-0-0": true,
+    "new-home-0-1": true,
+    "new-home-0-2": true,
+    "new-home-0-3": true,
+    "new-home-0-4": true,
+    "new-home-0-5": true,
+    "new-home-0-6": true,
+    "new-home-0-7": true,
+    "new-home-1-0": true,
+    "new-home-1-1": true,
+    "new-home-1-2": true,
+    "new-home-1-3": true,
+    "new-home-1-4": true,
+    "new-home-1-5": true,
+    "new-home-1-6": true,
+    "new-home-1-7": true,
+    "existing-home-0-0": true,
+    "existing-home-0-1": true,
+    "existing-home-0-2": true,
+    "existing-home-1-0": true,
+    "existing-home-1-1": true,
+    "existing-home-1-2": true,
+    "existing-home-2-0": true,
+    "existing-home-2-1": true,
+    "existing-home-2-2": true,
+    "existing-home-3-0": true,
+    "existing-home-3-1": true,
+    "existing-home-3-2": true,
+    "apron-316-65": true,
+    "apron-374-65": true,
+    "apron-316-183": true,
+    "apron-374-183": true
+  },
+  "targetPositions": {
+    "spawn": [
+      486,
+      4,
+      184
+    ],
+    "palace-hall": [
+      252,
+      4,
+      184
+    ],
+    "gallery-one": [
+      112,
+      43,
+      134
+    ],
+    "gallery-two": [
+      147,
+      71,
+      154
+    ],
+    "east-gate": [
+      431,
+      4,
+      184
+    ],
+    "market": [
+      352,
+      4,
+      184
+    ],
+    "terminal": [
+      462,
+      4,
+      184
+    ],
+    "frigate": [
+      508,
+      6,
+      129
+    ],
+    "north-promenade": [
+      72,
+      4,
+      78
+    ],
+    "south-promenade": [
+      72,
+      4,
+      284
+    ],
+    "new-home-0-0": [
+      62,
+      4,
+      51
+    ],
+    "new-home-0-1": [
+      108,
+      4,
+      51
+    ],
+    "new-home-0-2": [
+      154,
+      4,
+      51
+    ],
+    "new-home-0-3": [
+      200,
+      4,
+      51
+    ],
+    "new-home-0-4": [
+      246,
+      4,
+      51
+    ],
+    "new-home-0-5": [
+      292,
+      4,
+      51
+    ],
+    "new-home-0-6": [
+      338,
+      4,
+      51
+    ],
+    "new-home-0-7": [
+      384,
+      4,
+      51
+    ],
+    "new-home-1-0": [
+      62,
+      4,
+      312
+    ],
+    "new-home-1-1": [
+      108,
+      4,
+      312
+    ],
+    "new-home-1-2": [
+      154,
+      4,
+      312
+    ],
+    "new-home-1-3": [
+      200,
+      4,
+      312
+    ],
+    "new-home-1-4": [
+      246,
+      4,
+      312
+    ],
+    "new-home-1-5": [
+      292,
+      4,
+      312
+    ],
+    "new-home-1-6": [
+      338,
+      4,
+      312
+    ],
+    "new-home-1-7": [
+      384,
+      4,
+      312
+    ],
+    "existing-home-0-0": [
+      320,
+      4,
+      108
+    ],
+    "existing-home-0-1": [
+      361,
+      4,
+      108
+    ],
+    "existing-home-0-2": [
+      402,
+      4,
+      108
+    ],
+    "existing-home-1-0": [
+      320,
+      4,
+      145
+    ],
+    "existing-home-1-1": [
+      361,
+      4,
+      145
+    ],
+    "existing-home-1-2": [
+      402,
+      4,
+      145
+    ],
+    "existing-home-2-0": [
+      320,
+      4,
+      226
+    ],
+    "existing-home-2-1": [
+      361,
+      4,
+      226
+    ],
+    "existing-home-2-2": [
+      402,
+      4,
+      226
+    ],
+    "existing-home-3-0": [
+      320,
+      4,
+      263
+    ],
+    "existing-home-3-1": [
+      361,
+      4,
+      263
+    ],
+    "existing-home-3-2": [
+      402,
+      4,
+      263
+    ],
+    "apron-316-65": [
+      526,
+      4,
+      129
+    ],
+    "apron-374-65": [
+      584,
+      4,
+      129
+    ],
+    "apron-316-183": [
+      526,
+      4,
+      247
+    ],
+    "apron-374-183": [
+      584,
+      4,
+      247
+    ]
+  },
+  "walkablePositions": 276201,
+  "dimensions": [
+    608,
+    144,
+    384
+  ],
+  "spawnLocal": [
+    486,
+    4,
+    184
+  ],
+  "originWorld": [
+    -486,
+    68,
+    -184
+  ],
+  "spawnWorld": [
+    0.5,
+    72,
+    0.5
+  ],
+  "cityFootprint": [
+    418,
+    336
+  ],
+  "oldCityFootprint": [
+    226,
+    224
+  ],
+  "palaceFootprint": [
+    225,
+    157
+  ],
+  "oldPalaceFootprint": [
+    65,
+    88
+  ],
+  "homes": 28,
+  "paletteCounts": {
+    "sandstone": 700478,
+    "sand": 60855,
+    "cut_sandstone": 153004,
+    "smooth_sandstone": 364317,
+    "polished_deepslate": 26424,
+    "yellow_terracotta": 55944,
+    "dark_prismarine": 40642,
+    "sea_lantern": 250,
+    "calcite": 63,
+    "air": 32185395,
+    "dark_oak_planks": 1080,
+    "chiseled_sandstone": 23894,
+    "red_sandstone": 98,
+    "brown_terracotta": 126,
+    "waxed_cut_copper": 116,
+    "tinted_glass": 6817,
+    "stripped_dark_oak_log": 280,
+    "red_concrete": 185
+  },
+  "status": "Offline grand design, not installed",
+  "atreidesSource": "website/web/assets/faction-atreides.svg / DuneGit",
+  "schematicSha256": "9bb3a5cf6f28fe8ba6b3ec5934a1e379ce669eb778928cb27f891fe79a4e4524",
+  "runtimePlanSha256": "fa04fb9980e7f01fb9d426c76b3c9fc1ebec1a53092fa07d327ec19c37e27f2e",
+  "textures": {
+    "version": "Minecraft1.21.8 existing client",
+    "jarSha256": "ea74e9c5e92d01f95f3d39196ddb734e19a077a58b4c433c34109487d600276f",
+    "files": {
+      "assets/minecraft/textures/block/sandstone_top.png": "41a5965dbf8a1505ab7ffd9984a16bad566c907c513d5638d5e8260cb5916646",
+      "assets/minecraft/textures/block/sandstone.png": "5ab8fe2fcc44fa6721be20ead4eac049eb257dd1269795ea0d2e6d611f0d51f1",
+      "assets/minecraft/textures/block/cut_sandstone.png": "1d930274a3b36ea0753d6e6a61eebee4aa2b24ac257c958ce38adef19cf83302",
+      "assets/minecraft/textures/block/chiseled_sandstone.png": "b83985fce4ec27112eddeb8759145198f77014cc7eceb81daa4390a9e1a5aafa",
+      "assets/minecraft/textures/block/yellow_terracotta.png": "7c00bf901f78ad628a06335d47310a6b18c1419243d4150e32cdf01d51bafca6",
+      "assets/minecraft/textures/block/dark_prismarine.png": "f5055d900a645407ce199318d5c2471e403e283cff569125c5bc8185b8f47972",
+      "assets/minecraft/textures/block/green_terracotta.png": "ffe10089bcef9873c74f18be35e605c5d035f472c06bf677746d39ff8a656c07",
+      "assets/minecraft/textures/block/tinted_glass.png": "f6d7b83baf3a8773338af8089cac7ccf91c66594c2efd472bce541fb9c0cf7c5",
+      "assets/minecraft/textures/block/sea_lantern.png": "4211d9c9d541f7b83357643882d0d90d74114c4e5a4f9daf088fc62fec3ace6c",
+      "assets/minecraft/textures/block/sand.png": "3be385d7e4402f24327dacbf7557d622e7d0cef4650e582457d144d90476f106",
+      "assets/minecraft/textures/block/polished_deepslate.png": "5843efd88bee24d560957d038d4634276ed4ad8e47797ba1850a07ad45b33729",
+      "assets/minecraft/textures/block/red_sandstone_top.png": "ce7a845cac6cd86204774f01a0f868cfbbf361f39def69f120b720a1066ecd2a",
+      "assets/minecraft/textures/block/red_sandstone.png": "616d883eca1d0bbfcefe6082ae6111b119808d945ff752ac1a0ac00c90add2a5",
+      "assets/minecraft/textures/block/brown_terracotta.png": "e162788c4a41a06711dcef4572ca4f4dfee090463fdd0d523ff98d00458b1daf",
+      "assets/minecraft/textures/block/calcite.png": "bf4d6a2d7e044fb5e17ba86b86e24df4f031e75df600bc0fa6aabb5377644cb9",
+      "assets/minecraft/textures/block/cut_copper.png": "4bfc7253ccb07028fcefd90b4f7960873cd843521a1fdaaa6d4c450e7d032bba",
+      "assets/minecraft/textures/block/stripped_dark_oak_log_top.png": "4c0c7d44ce80698064b1beaa8b4237faf9ede8169c872bfb37196dd7399e8c71",
+      "assets/minecraft/textures/block/stripped_dark_oak_log.png": "23b5b04b273a99c1f645b6a043af11b4d63a07535fe66ebf7e612a623b99d330",
+      "assets/minecraft/textures/block/dark_oak_planks.png": "665f44b119f5a21711c4cb83749d871635134c001cb0c14761c4f02a40dd8645",
+      "assets/minecraft/textures/block/orange_terracotta.png": "3074d90b0a27d1c149df2f3eacc9c6895c4cc0548999f864146dc18f64bcab5a",
+      "assets/minecraft/textures/block/red_concrete.png": "4069c61ef07e5c113c2e0850b009d8c814c21881525535a01dffea7d52fd1896"
+    }
+  }
+}
