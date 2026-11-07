@@ -1,0 +1,9 @@
+name: DuneArrakeenGrand
+version: 1.0.1
+main: com.dunerealms.arrakeengrand.ArrakeenGrand
+api-version: '1.21.8'
+depend: [DuneTerrain]
+description: Console-only fenced installer for the grand Atreides Arrakeen revision
+commands:
+  arrakeengrand:
+    description: Console-only UUID/SHA-fenced grand revision installation and verification
