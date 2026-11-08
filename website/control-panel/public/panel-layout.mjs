@@ -17,7 +17,8 @@ export const USER_GROUPS=[
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
  ['Politics & Gameplay',[
   item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
-  item('Landsraad','landsraad','web.menu.game','nav-clan-v2.webp',{placeholder:true})]],
+  item('Landsraad','landsraad','web.menu.game','seals/office-landsraad.png',{aliases:['house-elections','imperial-elections'],placeholder:true}),
+  item('Imperial Command','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice'],placeholder:true})]],
  ['Services',[
   item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
   item('Email','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),

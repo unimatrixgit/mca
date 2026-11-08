@@ -23,7 +23,7 @@ if(dashboard&&!embedded){
  for(const item of DEV_ITEMS)framePage(item.page,item.label,null,'https://support.dunerealms.com/dev-tasks.php?view='+item.view);
  function placeholder(id,title,copy){if(document.getElementById(id))return;const section=el('section');section.id=id;section.hidden=true;section.className='cp-layout-placeholder';section.append(el('p','COMING TO THE REALMS'),el('h2',title),el('p',copy),el('p','Placeholder · no actions are available yet.'));dashboard.append(section);}
  placeholder('discord-link','Discord linking','Secure Discord account linking will be available here. This placeholder does not connect an account or change Discord roles.');
- placeholder('landsraad','Landsraad','The future home of clan, faction and imperial elections.');
+
  placeholder('hosting-control','Hosting control','Your future hosting workspace. No servers are provisioned from this page.');
  // Move original nodes, never clone forms or their listeners/CSRF fields.
  const oldStaff=document.getElementById('staff');
