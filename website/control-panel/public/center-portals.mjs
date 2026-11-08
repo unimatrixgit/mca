@@ -5,7 +5,7 @@ import './embed-size.mjs';
 import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS,factionMenuItem,REALM_GROUPS} from './panel-layout.mjs';
 const dashboard=document.getElementById('dashboard');
 const embedded=new URLSearchParams(location.search).get('embedded')==='1';
-const asset=file=>'https://www.dunerealms.com/assets/'+file;
+const asset=file=>(file==='imperial-postbank-v1.png'?'https://cp.dunerealms.com/assets/':'https://www.dunerealms.com/assets/')+file;
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 if(dashboard&&!embedded){
  document.body.classList.add('cp-centers-ready','cp-panels-ready');
