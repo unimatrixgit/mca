@@ -160,3 +160,15 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 .cp-realm-tabs a[aria-current="page"]{box-shadow:inset 4px 0 #d5b86e;background:#344b32}
 #realm-panel .cp-panel-card strong{display:block;color:#ecd495;font-size:1.15rem;line-height:1.5}
 #realm-panel .cp-panel-card p{color:#c7d5c5;font-size:.85rem;line-height:1.6}
+
+/* Live ballot rows: identity and allocation share one compact header. */
+.politics-page .politics-live-candidate{grid-template-columns:48px minmax(0,1fr) auto;gap:8px 14px;padding:14px;align-items:center}
+.politics-page .politics-live-candidate .politics-candidate-head{grid-column:1;grid-row:1;width:48px;height:48px;border:1px solid #b39752;border-radius:7px;background:#102b24;image-rendering:pixelated}
+.politics-page .politics-live-candidate .politics-candidate-identity{grid-column:2;grid-row:1;min-width:0}
+.politics-page .politics-live-candidate .politics-candidate-identity h4{margin:0 0 4px;font-size:.95rem;min-height:0}
+.politics-page .politics-live-candidate .politics-candidate-identity small{display:block;font-size:.78rem;line-height:1.4;color:#d3bd83}
+.politics-page .politics-live-candidate .politics-candidate-votes,.politics-page .politics-live-candidate .politics-candidate-count{grid-column:3;grid-row:1;margin:0;display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:.78rem}
+.politics-page .politics-live-candidate .politics-candidate-votes input{box-sizing:border-box;width:68px;min-width:0;min-height:38px;padding:7px;margin:0}
+.politics-page .politics-live-candidate>details{grid-column:2/-1;grid-row:2;margin:0;padding-top:6px}
+.politics-page .politics-live-candidate details p{overflow-wrap:anywhere;white-space:pre-wrap}
+@media(max-width:480px){.politics-page .politics-live-candidate{grid-template-columns:40px minmax(0,1fr) auto;gap:8px}.politics-page .politics-live-candidate .politics-candidate-head{width:40px;height:40px}.politics-page .politics-live-candidate .politics-candidate-votes{flex-direction:column;gap:3px}.politics-page .politics-live-candidate .politics-candidate-votes input{width:54px}.politics-page .politics-live-candidate>details{grid-column:1/-1}}
