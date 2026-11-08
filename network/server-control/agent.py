@@ -517,6 +517,18 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.authorized():
             return self.reply(401, {'message': 'Unauthorized'})
+        if self.path == '/bank/managed-transfer':
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=2000:raise ValueError()
+                data=json.loads(self.rfile.read(length))
+                if not isinstance(data,dict) or set(data)!={'actor','source','target','amount','request_id','memo','from_number','to_number'}:raise ValueError()
+                from managed_bank_transfer import transfer
+                return self.reply(200,transfer(network_database,**data))
+            except (ValueError,TypeError,KeyError):
+                return self.reply(409,{'message':'Transfer declined'})
+            except Exception:
+                return self.reply(503,{'message':'Confirmation unavailable'})
         if self.path == '/bank/remittance':
             try:
                 length=int(self.headers.get('Content-Length','0'))

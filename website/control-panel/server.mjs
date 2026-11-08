@@ -1,3 +1,4 @@
+import {createManagedTransfers} from './managed-bank-transfer.mjs';
 import {createOfficialBank} from './official-bank.mjs';
 import {createBankBeneficiaries} from './bank-beneficiaries.mjs';
 import {createBankTransfers} from './bank-transfers.mjs';
@@ -96,6 +97,7 @@ export function createPanel(db,settings={},dependencies={}){
  const kitMarket=createKitMarket(db,settings,dependencies.kitMarket);
  const imperialAtelier=createImperialAtelier(db,settings,dependencies.imperialAtelier);
  const bankBeneficiaries=createBankBeneficiaries(db,dependencies.bankBeneficiaries);
+ const managedTransfers=createManagedTransfers(db,settings,dependencies.managedTransfers);
  const bankTransfers=createBankTransfers(db,settings,dependencies.bankTransfers);
  const officialBank=createOfficialBank(db,settings,dependencies.officialBank);
  const banking=createBanking(db,settings,dependencies.banking);
@@ -148,6 +150,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path==='/api/kits/upgrade-tokens')return upgradeTokens(request);
   if(path.startsWith('/api/kits/'))return kitMarket(request);
   if(path==='/api/ranks/game')return gameRanks(request);
+  if(path==='/api/bank/managed-transfer')return managedTransfers(request);
   if(path==='/api/bank/beneficiaries')return bankBeneficiaries(request);
   if(path==='/api/bank/transfer-own'||path==='/api/bank/remittance')return bankTransfers(request);
   if(path==='/api/bank/official')return officialBank(request);
