@@ -35,3 +35,7 @@ At official result, revoke only previous office-linked ranks, seals and signatur
 | Concord Sister | High Preceptor of the Veiled Court |
 
 For appointed posts count consecutive appointments/terms, not votes. Rank/seal automation, delivery, permanent honour art and backend implementation remain work until separately verified.
+
+## Election office ledger implementation
+Final results are recorded once per kind, faction and scheduled cycle, with immutable identity, dates and events. House expiry is the next two-week calendar boundary; Emperor expiry the next four-week boundary. A delayed worker or runoff does not extend a mandate. No-vote results record a vacant cycle. Three consecutive same-player victories in the same office and faction record a permanent recognition; a gap, vacancy or different winner breaks the streak. Recognition remains recorded after later defeats.
+This is an election-fact ledger, not an activated authority source. Existing game offices and account ranks remain authoritative until the separate succession adapter is tested and deployed. Seal/signature projection and political notifications are pending; no rank grants are claimed by this change. Seven rule tests and five isolated MariaDB concurrency/rollback scenarios verified.
