@@ -57,7 +57,7 @@ export const STAFF_GROUPS=[
   item('Exchange management','exchange-admin','web.menu.exchange','nav-exchange-v2.webp',{aliases:['exchange-settings-admin']}),
   item('Git management','git-admin','web.git.admin','nav-manual-v2.webp'),
   item('Community goals','community-goals','web.community.manage','nav-shop-v1.webp'),
-  item('Imperial Treasury','staff-bank','web.bank.staff.view','nav-shop-v1.webp'),
+  item('I.D. Revenue','staff-bank','web.bank.staff.view','nav-shop-v1.webp'),
   item('Item management','items','web.menu.items','nav-clan-v2.webp')]]
 ];
 // Mirrors native Dev review policy; ordinary Dev/staff membership is not approval authority.
