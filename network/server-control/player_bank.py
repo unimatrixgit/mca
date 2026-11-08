@@ -29,7 +29,8 @@ def read_player(connect,player_uuid):
    cursor.execute('SELECT balance FROM dune_player_banks WHERE player_uuid=%s',(player_uuid,));row=cursor.fetchone();balance=money(row['balance'] if row else 0)
    cursor.execute('SELECT balance FROM dune_economy_balances WHERE uuid=%s',(player_uuid,));row=cursor.fetchone();wallet=money(row['balance'] if row else 0,True)
    cursor.execute('SELECT id,action,delta,balance_after,created_at,reference FROM dune_player_bank_ledger WHERE player_uuid=%s ORDER BY created_at DESC,id DESC LIMIT 50',(player_uuid,));ledger=_ledger(cursor)
- return {'playerUuid':player_uuid,'currency':'dunemarks','balanceDunemarks':balance,'walletDunemarks':wallet,'ledger':ledger}
+   cursor.execute('SELECT id,action,delta,balance_after,created_at,reference FROM dune_current_bank_ledger WHERE player_uuid=%s ORDER BY created_at DESC,id DESC LIMIT 50',(player_uuid,));current_ledger=_ledger(cursor)
+ return {'playerUuid':player_uuid,'currency':'dunemarks','balanceDunemarks':balance,'walletDunemarks':wallet,'ledger':ledger,'currentLedger':current_ledger}
 
 def read_staff(connect):
  with connect() as con:

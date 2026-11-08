@@ -3,9 +3,10 @@ import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie','X-Content-Type-Options':'nosniff'}});
-export function ledgerCounterparty(row,player,staff=false){
+export function ledgerCounterparty(row,player,staff=false,current=false){
  const ref=row.reference;
  if(typeof ref!=='string')return null;
+ if(!staff&&new RegExp('^web-own:[a-f0-9-]{36}:'+(current?'current':'savings')+'$').test(ref))return {type:current?'player':'current',owner:player.toLowerCase()};
  if(!staff&&row.amountDunemarks==='5000.00'&&ref==='alpha-launch-20261108:from-server:'+player.toLowerCase())return {type:'server',owner:'network'};
  const match=staff&&row.amountDunemarks==='-5000.00'&&/^alpha-launch-20261108:to:([a-f0-9-]{36})$/.exec(ref);
  return match&&uuid.test(match[1])?{type:'player',owner:match[1]}:null;
@@ -44,12 +45,16 @@ export function createBanking(db,settings={},dependencies={}){
    const currentPlayer=await linked(currentUser);if(typeof currentPlayer!=='string'||!uuid.test(currentPlayer)||currentPlayer.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked Minecraft account changed. Refresh before viewing this bank.'},409);
    bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,faction?'faction':staff?'server':'player',faction?bank.factionId:staff?'network':player.toLowerCase());
    if(!staff&&!faction)bank.currentAccountNumber=await(dependencies.accountNumber||imperialAccount)(db,'current',player.toLowerCase());
-   for(const row of bank.ledger){
+   if(!staff&&!faction){
+    const current=projectBank({...raw,ledger:raw.currentLedger||[]},{playerUuid:player});if(!current)throw Error();bank.currentLedger=current.ledger;
+    for(const row of bank.currentLedger)row.counterparty=ledgerCounterparty((raw.currentLedger||[]).find(r=>r.id===row.id)||{},player,false,true);
+   }
+   for(const row of [...bank.ledger,...(bank.currentLedger||[])]){
     const counterparty=row.counterparty;delete row.counterparty;
     const number=counterparty?await(dependencies.accountNumber||imperialAccount)(db,counterparty.type,counterparty.owner):null;
-    const outgoing=row.amountDunemarks.startsWith('-');
-    row.fromAccount=outgoing?bank.accountNumber:number;
-    row.toAccount=outgoing?number:bank.accountNumber;
+    const outgoing=row.amountDunemarks.startsWith('-'),own=(bank.currentLedger||[]).includes(row)?bank.currentAccountNumber:bank.accountNumber;
+    row.fromAccount=outgoing?own:number;
+    row.toAccount=outgoing?number:own;
    }
    return reply({linked:staff?undefined:true,bank,canManage:faction?false:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
