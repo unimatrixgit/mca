@@ -1,3 +1,4 @@
+import {createElectoralRoll} from '../node/electoral-roll.mjs';
 import {createHosting} from '../node/hosting.mjs';
 import {initializeOfficeLedger,startOfficeLedger} from './election-office-ledger.mjs';
 import {createMailAccounts} from '../node/mail-accounts.mjs';
@@ -95,6 +96,7 @@ export function createPanel(db,settings={},dependencies={}){
  const banBridge=createBanBridge(db,settings,dependencies.bans);
  const banRegister=createBanRegister(db,settings,dependencies.bans);
  const electionVoting=createElectionVoting(db,settings,dependencies.electionVoting);
+ const electoralRoll=createElectoralRoll(db);
  const electionApplications=createElectionApplications(db,settings,dependencies.electionApplications);
  const politicsPreview=createPoliticsPreview(db,settings,dependencies.politicsPreview);
  const banEvidence=createBanEvidence(db,settings,dependencies.banEvidence);
@@ -105,6 +107,7 @@ export function createPanel(db,settings={},dependencies={}){
   const path=new URL(request.url).pathname;
   const onboarding=await firstLoginGate(request,db);if(onboarding)return onboarding;
   if(['/api/politics/ballot/house','/api/politics/ballot/imperial'].includes(path))return electionVoting(request);
+  if(path==='/api/politics/electoral-roll')return electoralRoll(request);
   if(path==='/api/politics/applications')return electionApplications(request);
   if(path==='/api/politics/preview')return politicsPreview(request);
   if(path==='/api/admin/register-user')return adminRegistration(request);
@@ -183,7 +186,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
   const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
-  if(!['internal-mail.mjs','internal-mail.css','mail-service-ui.mjs','mail-workspace.css','hosting-control.mjs','election-voting-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  if(!['internal-mail.mjs','internal-mail.css','mail-service-ui.mjs','mail-workspace.css','hosting-control.mjs','election-voting-view.mjs','electoral-roll-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }

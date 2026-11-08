@@ -29,6 +29,7 @@ export const REALM_GROUPS=[
   item('Faction Elections','house-elections','web.menu.game','seals/office-house_leader.png'),
   item('Emperor Elections','imperial-elections','web.menu.game','seals/emperor-v1.png'),
   item('Election Applications','applications','web.menu.game','seals/office-landsraad.png'),
+  item('Electoral Roll','electoral-roll','web.menu.game','seals/office-landsraad.png'),
   item('Faction Council','formal-council','web.menu.game','seals/office-house_leader.png'),
   item('Imperial Council','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]]
 ];
