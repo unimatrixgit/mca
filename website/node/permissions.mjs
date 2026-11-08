@@ -1,6 +1,11 @@
 import {communityBadgeVisible} from './community-badges.mjs';
 import {badgesFor} from './community-badges.mjs';
+import {isStaffMailAccess} from './staff-mail-policy.mjs';
 export const NODES={
+ 'web.mail.internal.view':'Read and manage only your own internal mailbox',
+ 'web.mail.staff.view':'Access the shared staff mailbox (automatic for current staff)',
+ 'web.mail.faction.view':'Faction Council mailbox — current linked Minecraft faction required *',
+ 'web.mail.imperial.view':'Imperial Council mailbox — verified Minecraft identity required *',
  'web.tickets.dev':'Access private development tasks and Dev team department',
  'web.shop.support':'Read shop purchases and payment status; manage coupons and discounts',
  'web.bank.personal.view':'View your personal Dunemarks bank *','web.bank.staff.view':'View the shared server treasury *','web.bank.staff.deposit':'Deposit into the shared server treasury *','web.bank.staff.manage':'Manage the shared server treasury through authorised game controls *',
@@ -28,7 +33,7 @@ export const NODES={
  'dunelobby.visit':'Visit lobby','dunelobby.build':'Build in protected lobby','dunelobby.admin':'Lobby administration'
 };
 export const WEBSITE_NODES=Object.fromEntries(Object.entries(NODES).filter(([node])=>node.startsWith('web.')));
-const basic=['web.bank.personal.view','web.quests.view','web.menu.game','web.menu.inventory','web.menu.rewards','web.menu.security','web.menu.tickets','web.tickets.view','web.tickets.create','web.tickets.reply'];
+const basic=['web.mail.internal.view','web.bank.personal.view','web.quests.view','web.menu.game','web.menu.inventory','web.menu.rewards','web.menu.security','web.menu.tickets','web.tickets.view','web.tickets.create','web.tickets.reply'];
 const staff=[...basic,'web.bank.staff.view','web.bank.staff.deposit','web.menu.staffmanual','web.menu.administration','web.accounts.view','web.accounts.revoke','web.community.manage','web.tickets.staff','web.tickets.manage','web.menu.forum','web.forum.view','web.forum.moderate','web.menu.exchange','web.exchange.view','web.menu.posts','web.posts.view','web.posts.edit'];
 const core=[...staff,'web.bank.staff.manage','web.quests.manage','web.menu.items','web.items.manage','web.menu.servers','web.menu.permissions','web.accounts.assign','web.ranks.manage','web.servers.view','web.servers.logs','web.servers.power','web.servers.console','web.menu.luckperms','web.luckperms.view','web.exchange.manage','web.posts.publish'];
 const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.support'];
@@ -89,7 +94,7 @@ export async function accessFor(db,user){
  const valid=ranks.filter(r=>r.kind==='access'&&r.level>0).sort((a,b)=>b.level-a.level);
  const rank=valid[0]||{key:'unknown',label:'Unknown rank',level:0};
  const nodes=valid.some(r=>isOwnerRank(r.key))?Object.keys(WEBSITE_NODES):[...new Set(valid.flatMap(r=>r.nodes.filter(n=>Object.hasOwn(WEBSITE_NODES,n))))];
- return{rank:rank.key,label:valid.map(r=>r.label).join(' · '),level:rank.level,ranks:valid.map(r=>r.key),nodes};
+ const access={rank:rank.key,label:valid.map(r=>r.label).join(' · '),level:rank.level,ranks:valid.map(r=>r.key),nodes};if(isStaffMailAccess(access)&&!nodes.includes('web.mail.staff.view'))nodes.push('web.mail.staff.view');return access;
 }
 export async function can(db,user,node){return !!user&&(await accessFor(db,user)).nodes.includes(node);}
 export async function publicUser(db,user){if(!user)return null;const access=await accessFor(db,user);return{username:user.username,staff:access.nodes.includes('web.menu.administration'),rank:access.rank,ranks:access.ranks,rankLabel:access.label,rankLevel:access.level,communityBadges:(await badgesFor(db,user.id)).filter(k=>communityBadgeVisible(k,access.ranks)),permissions:access.nodes};}

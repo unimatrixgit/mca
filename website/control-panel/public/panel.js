@@ -26,6 +26,13 @@ async function contactEmailAction(button,host,payload,pending,clearSecret=()=>{}
 async function contactEmailSettings(){
  let host=document.getElementById('contact-email-settings');
  if(!host){host=el('section');host.id='contact-email-settings';document.getElementById('password-form').after(host);}
+ const passwordForm=document.getElementById('password-form');
+ let passwordCard=document.getElementById('website-password-card');
+ if(!passwordCard){passwordCard=el('section');passwordCard.id='website-password-card';passwordForm.before(passwordCard);passwordCard.append(el('h3','Website password'),passwordForm);}
+ passwordCard.after(host);
+ passwordCard.classList.add('security-independent-card');host.classList.add('security-independent-card');
+
+
  const data=await api('account/email');host.replaceChildren(el('h3','Support notification email'),el('p','Add a private email address for ticket updates. Confirm ownership before it is used. This does not change your sign-in or public profile.'));
  const status=el('p',data.email?'Verified contact: '+data.email:'No verified contact email. Read your updates on the Support website.');status.setAttribute('role','status');host.append(status);
  const form=el('form'),label=el('label','Email address'),email=el('input');email.name='email';email.type='email';email.autocomplete='email';email.maxLength=254;email.required=true;email.value=data.pendingEmail||data.email||'';label.append(email);
@@ -140,4 +147,3 @@ async function editHonour(host,row,button){
 async function firstLoginControls(){let host=document.getElementById('first-login-terms');if(!host){host=el('section');host.id='first-login-terms';$('security').append(host);}host.replaceChildren();const details=el('details'),summary=el('summary','+ Read the Terms of Service');details.append(summary);const terms=el('iframe');terms.src='/terms.html';terms.title='Terms of Service';terms.style.cssText='width:100%;height:400px;border:1px solid #b89b50';details.append(terms);const form=el('form'),label=el('label'),check=el('input');check.type='checkbox';check.required=true;label.append(check,document.createTextNode(' I agree to the Terms of Service (2026-11-05-v1).'));const accept=el('button','Accept terms');accept.type='submit';form.append(label,accept);form.onsubmit=e=>{e.preventDefault();action(accept,async()=>{await api('auth/terms',{accepted:true,version:'2026-11-05-v1'});notice('Terms accepted.');});};const next=el('button','Check completed steps & continue');next.type='button';next.onclick=()=>action(next,load);host.append(details,form,next);}
 
 if(new URLSearchParams(location.search).get('mode')==='register')document.getElementById('register-tab').click();
-

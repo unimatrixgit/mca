@@ -1,3 +1,5 @@
+import {createMailAccounts} from '../node/mail-accounts.mjs';
+import {createInternalMail,startInternalMailSync,initializeInternalMailAccess,syncClanMailRegistry} from '../node/internal-mail.mjs';
 import {createElectionVoting,startElectionClock} from './election-voting.mjs';
 import {initializeBallots} from './election-ballots.mjs';
 import {initializeRounds} from './election-rounds.mjs';
@@ -58,12 +60,13 @@ import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {createAccountAdmin} from '../node/account-admin.mjs';
 import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
-const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
+const sharedAssets=new Set(['imperial-post-logo.svg','mail-stamp-personal.svg','mail-stamp-clan.svg','mail-stamp-staff.svg','mail-stamp-faction.svg','mail-stamp-imperial.svg','ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
- const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
+ const internalMail=createInternalMail(db,{origin,settings,...dependencies.internalMail});
+ const mailAccounts=createMailAccounts(db);const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const adminRegistration=createAdminRegistration(db,origin);const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
  const tailorAppearance=createTailorAppearance(db,dependencies.tailorAppearance);
  const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
@@ -75,7 +78,7 @@ export function createPanel(db,settings={},dependencies={}){
  const pool=dependencies.inventoryPool||{async query(){throw Error('Inventory database is not configured');}};
  const community=createCommunityAdmin(db,settings,{pool});
  const exchange=createExchange(db,pool);
- const clans=createClans(db,{origin}),gameTickets=createGameTickets(db,settings);
+ const clans=createClans(db,{origin,onClanCreated:()=>syncClanMailRegistry(db),onClanDeleted:()=>syncClanMailRegistry(db)}),gameTickets=createGameTickets(db,settings);
  const questRewards=createQuestRewards(db,settings,pool);
  const gameRanks=createGameRanks(db,settings);
  const kitStudio=createKitStudio(db,settings,dependencies.kitStudio);
@@ -132,6 +135,8 @@ export function createPanel(db,settings={},dependencies={}){
   if(['/api/clans/shop','/api/clans/shop/price','/api/clans/game-context'].includes(path))return clanShop(request);
   if(path==='/api/clans'||path.startsWith('/api/clans/'))return clans(request);
   if(path==='/api/git/me')return gitIdentity(request);
+  if(path==='/api/mail/accounts')return mailAccounts(request);
+  if(path.startsWith('/api/internal-mail/'))return internalMail(request);
   if(['/api/mail/me','/api/mail/password','/api/mail/signature','/api/mail/template'].includes(path))return mailIdentity(request);
   if(['/api/account/profile','/api/account/avatar','/api/account/avatar/remove'].includes(path))return profile(request);
   if(path.startsWith('/api/avatars/'))return avatars(request);
@@ -175,7 +180,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
   const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
-  if(!['election-voting-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  if(!['internal-mail.mjs','internal-mail.css','mail-service-ui.mjs','mail-workspace.css','hosting-control.mjs','election-voting-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }
@@ -186,20 +191,20 @@ export async function startPanel(settings=process.env){
   else{const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});}
   inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));
  }
- const db=await openDatabase(settings);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
+ const db=await openDatabase(settings);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeInternalMailAccess(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
  const stopElectionClock=startElectionClock(db);
- const stopBanSync=startModerationSync(db,settings);
+ const stopBanSync=startModerationSync(db,settings),stopInternalMail=startInternalMailSync(db);
  const security={'X-Robots-Tag':'noindex, nofollow, noarchive','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' https://www.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://support.dunerealms.com; frame-src 'self' https://luckperms.net https://www.dunerealms.com https://support.dunerealms.com https://forums.dunerealms.com https://clans.dunerealms.com https://wiki.dunerealms.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com https://clans.dunerealms.com"};
  const server=createServer(async(req,res)=>{try{
-  req.setTimeout(30000);const bodyLimit=req.method==='POST'&&req.url==='/api/ban-evidence'?7*1024*1024:65536;let length=0;const chunks=[];for await(const chunk of req){length+=chunk.length;if(length>bodyLimit){res.writeHead(413,{...security,'Content-Type':'application/json'});res.end(JSON.stringify({message:'The upload exceeds the permitted request size.'}));return;}chunks.push(chunk);}
+  req.setTimeout(req.url==='/api/internal-mail/messages/send'?120000:30000);const bodyLimit=req.method==='POST'&&req.url==='/api/internal-mail/messages/send'?32*1024*1024:req.method==='POST'&&req.url==='/api/ban-evidence'?7*1024*1024:65536;let length=0;const chunks=[];for await(const chunk of req){length+=chunk.length;if(length>bodyLimit){res.writeHead(413,{...security,'Content-Type':'application/json'});res.end(JSON.stringify({message:'The upload exceeds the permitted request size.'}));return;}chunks.push(chunk);}
   if(!req.url?.startsWith('/')||req.url.startsWith('//')){res.writeHead(400,security);res.end();return;}
   const result=await handle(new Request(origin+req.url,{method:req.method,headers:req.headers,...(!['GET','HEAD'].includes(req.method)?{body:Buffer.concat(chunks)}:{})}));
   const headers=new Headers(security);result.headers.forEach((value,key)=>headers.set(key,value));
   res.writeHead(result.status,Object.fromEntries(headers));res.end(Buffer.from(await result.arrayBuffer()));
  }catch(error){console.error('Panel request failed:',error.code||error.name);res.writeHead(503,security);res.end('{"message":"The account panel is temporarily unavailable."}');}});
- server.headersTimeout=10000;server.requestTimeout=30000;
+ server.headersTimeout=10000;server.requestTimeout=120000;
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(Number(settings.CP_PORT||3003),'127.0.0.1',resolve);});
- process.once('SIGTERM',()=>{stopElectionClock();stopBanSync();server.close(async()=>{await Promise.allSettled([db.close(),inventoryPool?.end()]);process.exit(0);});});console.log('Account panel listening on localhost');return server;
+ process.once('SIGTERM',()=>{stopElectionClock();stopBanSync();stopInternalMail();server.close(async()=>{await Promise.allSettled([db.close(),inventoryPool?.end()]);process.exit(0);});});console.log('Account panel listening on localhost');return server;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)await startPanel();
 
