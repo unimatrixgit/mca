@@ -12,17 +12,17 @@ function fixture(){
  const calls=[],state={time:Date.now(),code:'a'.repeat(36),fail:null};
  const app=createContactEmail(db,{now:()=>state.time,makeCode:()=>state.code,broker:async b=>{calls.push(b);if(b.action===state.fail)throw Error('Transport unavailable');return{ok:true};}});
  const req=(body,headers={})=>app(new Request(origin+'/api/account/email',{method:body===undefined?'GET':'POST',headers:{Cookie:'__Host-dune_session='+token,Origin:origin,'Content-Type':'application/json',...headers},...(body===undefined?{}:{body:JSON.stringify(body)})}));
- return{db,calls,state,req,request:email=>req({action:'request',email,currentPassword:password}),confirm:()=>req({action:'confirm',code:state.code})};
+ return{db,calls,state,req,request:email=>req({action:'request',email,confirmed:true}),confirm:()=>req({action:'confirm',code:state.code})};
 }
 test('email parsing rejects header injection, internal aliases and malformed addresses',()=>{
  assert.equal(normalizeContactEmail(' Traveller@Example.COM '),'traveller@example.com');
  for(const email of ['x\r\nBcc: y@example.com','a@accounts.dunerealms.invalid','a@localhost','a..b@example.org','a@example..org','<a@example.com>','a'.repeat(65)+'@example.com',null,{},'x@-example.com'])assert.throws(()=>normalizeContactEmail(email));
 });
-test('requires an authenticated account, correct origin and current password',async()=>{
+test('requires an authenticated account, correct origin and explicit confirmation',async()=>{
  const f=fixture();try{
   assert.equal((await f.req(undefined,{Cookie:''})).status,401);
-  assert.equal((await f.req({action:'request',email:'a@example.org',currentPassword:password},{Origin:'https://evil.example'})).status,403);
-  assert.equal((await f.req({action:'request',email:'a@example.org',currentPassword:'wrong'})).status,403);
+  assert.equal((await f.req({action:'request',email:'a@example.org',confirmed:true},{Origin:'https://evil.example'})).status,403);
+  assert.equal((await f.req({action:'request',email:'a@example.org',confirmed:false})).status,400);
   assert.equal(f.calls.length,0);
  }finally{f.db.close();}
 });
@@ -44,7 +44,7 @@ test('expired and superseded codes cannot activate an address',async()=>{
 test('resend cooldown and persistent hourly budget apply across handler instances',async()=>{
  const f=fixture();try{
   await f.request('first@example.org');assert.equal((await f.request('other@example.org')).status,429);
-  async function requestFresh(){const app=createContactEmail(f.db,{now:()=>f.state.time,broker:async()=>({ok:true})});return app(new Request(origin+'/api/account/email',{method:'POST',headers:{Cookie:'__Host-dune_session='+token,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({action:'request',email:'first@example.org',currentPassword:password})}));}
+  async function requestFresh(){const app=createContactEmail(f.db,{now:()=>f.state.time,broker:async()=>({ok:true})});return app(new Request(origin+'/api/account/email',{method:'POST',headers:{Cookie:'__Host-dune_session='+token,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({action:'request',email:'first@example.org',confirmed:true})}));}
   for(let i=0;i<4;i++){f.state.time+=60001;assert.equal((await requestFresh()).status,200);}
   f.state.time+=60001;assert.equal((await requestFresh()).status,429);
  }finally{f.db.close();}
@@ -54,8 +54,8 @@ test('resend cooldown and persistent hourly budget apply across handler instance
 test('native sync failure is honest and retryable without reusing the verification code',async()=>{
  const f=fixture();try{await f.request('first@example.org');f.state.fail='sync';assert.equal((await f.confirm()).status,202);assert.equal((await(await f.req()).json()).syncPending,true);assert.equal((await f.confirm()).status,400);f.state.fail=null;assert.equal((await f.req({action:'sync'})).status,200);assert.equal((await(await f.req()).json()).syncPending,false);}finally{f.db.close();}
 });
-test('remove is password-protected, clears pending verification and restores native alias',async()=>{
- const f=fixture();try{await f.request('first@example.org');await f.confirm();assert.equal((await f.req({action:'remove',currentPassword:'wrong'})).status,403);assert.equal((await f.req({action:'remove',currentPassword:password})).status,200);const state=await(await f.req()).json();assert.equal(state.email,null);assert.equal(state.verified,false);assert.equal(f.calls.at(-1).email,null);}finally{f.db.close();}
+test('remove requires explicit confirmation, clears pending verification and restores native alias',async()=>{
+ const f=fixture();try{await f.request('first@example.org');await f.confirm();assert.equal((await f.req({action:'remove',confirmed:false})).status,400);assert.equal((await f.req({action:'remove',confirmed:true})).status,200);const state=await(await f.req()).json();assert.equal(state.email,null);assert.equal(state.verified,false);assert.equal(f.calls.at(-1).email,null);}finally{f.db.close();}
 });
 test('concurrent confirmation grants at most one current revision',async()=>{
  const f=fixture();try{await f.request('first@example.org');const responses=await Promise.all([f.confirm(),f.confirm()]);assert.equal(responses.filter(r=>r.status===200).length,1);assert.equal(f.calls.filter(b=>b.action==='sync').length,1);}finally{f.db.close();}

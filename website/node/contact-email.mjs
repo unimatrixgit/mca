@@ -1,9 +1,8 @@
-import {createHash,randomBytes,scrypt as rawScrypt,timingSafeEqual} from 'node:crypto';
-import {promisify} from 'node:util';
+import {createHash,randomBytes,timingSafeEqual} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {identity} from './auth.mjs';
 import {json} from './game-link.mjs';
-const scrypt=promisify(rawScrypt),hash=s=>createHash('sha256').update(s).digest('hex');
+const hash=s=>createHash('sha256').update(s).digest('hex');
 export const contactSchema=`CREATE TABLE IF NOT EXISTS site_contact_emails (
  user_id CHAR(36) PRIMARY KEY,address VARCHAR(254),verified_at BIGINT,
  pending_address VARCHAR(254),code_hash CHAR(64),expires_at BIGINT,attempts INTEGER NOT NULL DEFAULT 0,
@@ -40,10 +39,7 @@ export function createContactEmail(db,{origin='https://cp.dunerealms.com',broker
    const time=now();if(passwordAttempts.size>5000)for(const [id,r]of passwordAttempts)if(r.until<time)passwordAttempts.delete(id);
    let limit=passwordAttempts.get(user.id);if(!limit||limit.until<time)passwordAttempts.set(user.id,limit={until:time+900000,count:0});
    if(passwordAttempts.size>5000||++limit.count>5)return json({message:'Too many attempts. Try again in 15 minutes.'},429);
-   if(typeof body.currentPassword!=='string'||body.currentPassword.length>256)return json({message:'Enter your current website password.'},400);
-   const account=await db.prepare('SELECT password_salt,password_hash FROM site_accounts WHERE id=?').bind(user.id).first();
-   const actual=await scrypt(body.currentPassword,account.password_salt,64);
-   if(!/^[a-f0-9]{128}$/i.test(account.password_hash)||!timingSafeEqual(actual,Buffer.from(account.password_hash,'hex')))return json({message:'Incorrect current password.'},403);
+   if(body.confirmed!==true)return json({message:'Confirm this change before continuing.'},400);
   }
   await db.prepare('INSERT INTO site_contact_emails(user_id) VALUES(?) ON CONFLICT(user_id) DO UPDATE SET user_id=excluded.user_id').bind(user.id).run();
   const row=await db.prepare('SELECT * FROM site_contact_emails WHERE user_id=?').bind(user.id).first(),time=now();

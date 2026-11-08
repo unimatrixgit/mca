@@ -123,3 +123,9 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 /* Shared compact context tabs across faction and Imperial pages. */
 .politics-page .cp-context-links{display:flex;flex-wrap:wrap;gap:8px}.politics-page .cp-context-links a{flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:7px;padding:9px 11px;font-size:.82rem;line-height:1.25;min-height:46px;box-sizing:border-box}.politics-page .cp-context-links a img{width:26px;height:26px;flex:0 0 26px}.politics-page .cp-context-links a span{white-space:nowrap}@media(max-width:650px){.politics-page .cp-context-links a{flex:1 1 145px;font-size:.78rem;padding:8px}.politics-page .cp-context-links a span{white-space:normal}}
 .politics-ballot-filters{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:14px 0}.politics-ballot-filters input{flex:1 1 180px;min-width:0;padding:10px 12px;color:#eed9a5;background:#102b23;border:1px solid #ae9452;border-radius:8px;font:inherit}.politics-page .politics-ballot-filters button{min-height:36px;padding:7px 11px;font-size:.78rem}.politics-page .politics-ballot-filters button[aria-pressed=true]{outline:2px solid #edce80;outline-offset:2px}
+
+/* Explicit confirmation, styled with the shared Dev palette. */
+#security .security-confirmation{display:flex;align-items:center;gap:14px;padding:18px;margin:18px 0;border:1px solid #ba9b4b;border-left:4px solid #d6b75f;border-radius:12px;background:linear-gradient(120deg,#1b3b2e,#102b24);color:#ead8a3;cursor:pointer}
+#security .security-confirmation input{flex:0 0 20px;width:20px;height:20px;margin:0;accent-color:#d6b75f}
+#security .security-confirmation:focus-within{outline:2px solid #efd28a;outline-offset:3px}
+#contact-email-settings button:disabled{opacity:.5;cursor:not-allowed}
