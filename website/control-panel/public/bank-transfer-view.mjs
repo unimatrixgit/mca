@@ -1,7 +1,7 @@
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 export function showOwnTransfer(container,bank,refresh){
  container.querySelector('.bank-transfer-form')?.remove();
- const form=el('form');form.className='bank-transfer-form bank-instructions';form.append(el('h3','Transfer between my accounts'),el('p','Move Dunemarks between your own current and savings accounts. No transfer fee.'));
+ const form=el('form');form.className='bank-transfer-form bank-instructions';form.append(el('h3','Vault Passage'),el('p','Internal transfer between your own current and savings accounts. No transfer fee.'));
  const field=(label,node)=>{const l=el('label',label);l.append(node);form.append(l);return node;};
  const source=field('From account',el('select'));for(const [key,label,number]of [['current','Current account',bank.currentAccountNumber],['savings','Savings account',bank.accountNumber]]){const o=el('option',label+' · '+number);o.value=key;source.append(o);}
  const destination=el('p');form.append(destination);const update=()=>{destination.textContent='To: '+(source.value==='current'?'Savings account · '+bank.accountNumber:'Current account · '+bank.currentAccountNumber);};source.onchange=update;update();
