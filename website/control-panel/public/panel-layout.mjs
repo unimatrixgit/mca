@@ -10,25 +10,27 @@ export const USER_GROUPS=[
   item('Support tickets','tickets','web.menu.tickets','nav-support-v2.webp'),
   item('Inventory','planetary-inventory','web.menu.inventory','nav-exchange-v2.webp')]],
  ['DuneRealms',[
+  item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
   item('Imperial Tailor','kits-exchange','web.menu.inventory','clan-atelier-v1.webp'),
   item('Exchange settings','exchange-settings','web.menu.inventory','nav-exchange-v2.webp'),
   item('Shop settings','shop-settings','web.menu.inventory','nav-shop-v1.webp'),
   item('Rewards & codes','rewards-codes','web.menu.rewards','seals/season-tavren-ii-150.png'),
   item('Order of the Crysknife','crysknife',null,'seals/order-crysknife-v1.png',{crysknifeOnly:true}),
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
+ ['Services',[
+  item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
+  item('Email','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),
+  item('Hosting control','hosting-control','web.menu.security','seals/department-network-staff-150.png',{placeholder:true})]]
+];
+export const REALM_GROUPS=[
  ['Realm & Politics',[
-  item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
   item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png'),
   item('Proclamations','council-motd','web.menu.game','seals/office-landsraad.png'),
   item('Faction Elections','house-elections','web.menu.game','seals/office-house_leader.png'),
   item('Emperor Elections','imperial-elections','web.menu.game','seals/emperor-v1.png'),
   item('Election Applications','applications','web.menu.game','seals/office-landsraad.png'),
   item('Faction Council','formal-council','web.menu.game','seals/office-house_leader.png'),
-  item('Imperial Council','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]],
- ['Services',[
-  item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
-  item('Email','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),
-  item('Hosting control','hosting-control','web.menu.security','seals/department-network-staff-150.png',{placeholder:true})]]
+  item('Imperial Council','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]]
 ];
 export const STAFF_GROUPS=[
  ['Website Tools',[
@@ -61,9 +63,9 @@ export const hasDevPanel=canSubmitDevRequest;
 export function menuGroupsFor(user,panel){
  if(!user||panel==='staff'&&!hasStaffPanel(user))return[];
  const nodes=new Set(user.permissions||[]);
- return(panel==='staff'?STAFF_GROUPS:USER_GROUPS).map(([label,items])=>[label,items.filter(i=>(!i.node||nodes.has(i.node))&&(!i.staffOnly||hasStaffPanel(user))&&(!i.reviewerOnly||canReviewDev(user))&&(!i.crysknifeOnly||canAwardCrysknife(user)))]).filter(([,items])=>items.length);
+ return(panel==='realm'?REALM_GROUPS:panel==='staff'?STAFF_GROUPS:USER_GROUPS).map(([label,items])=>[label,items.filter(i=>(!i.node||nodes.has(i.node))&&(!i.staffOnly||hasStaffPanel(user))&&(!i.reviewerOnly||canReviewDev(user))&&(!i.crysknifeOnly||canAwardCrysknife(user)))]).filter(([,items])=>items.length);
 }
-export function menuItemFor(page){return[...USER_GROUPS,...STAFF_GROUPS].flatMap(([,items])=>items).find(i=>i.page===page||i.aliases?.includes(page));}
+export function menuItemFor(page){return[...USER_GROUPS,...STAFF_GROUPS,...REALM_GROUPS].flatMap(([,items])=>items).find(i=>i.page===page||i.aliases?.includes(page));}
 export function splitMenuGroups(groups){
  const midpoint=Math.ceil(groups.reduce((n,[,items])=>n+items.length,0)/2),left=[],right=[];let used=0;
  for(const[label,items]of groups){const take=Math.max(0,Math.min(items.length,midpoint-used));if(take)left.push([label,items.slice(0,take)]);if(take<items.length)right.push([take?label+' · continued':label,items.slice(take)]);used+=items.length;}

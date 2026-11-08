@@ -149,3 +149,14 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 .cp-panel-sidebar a[data-panel-page]:has(.cp-menu-ribbon){padding-bottom:24px}
 .cp-panel-sidebar .cp-menu-ribbon{position:absolute;right:7px;bottom:4px;border:1px solid #d8b65f;border-radius:3px;padding:1px 6px;background:linear-gradient(110deg,#ddbe69,#a68437);color:#10291e;font:800 9px/1.3 system-ui,sans-serif;letter-spacing:.08em;pointer-events:none}
 .cp-panel-sidebar .cp-menu-ribbon[data-kind="update"]{background:#234a3c;color:#f0d997}
+
+/* Realm portal uses gold artwork tabs, never a duplicate side menu. */
+.cp-panel-frame[data-panel="realm"]{grid-template-columns:minmax(0,1fr)}
+.cp-panel-frame[data-panel="realm"]>.cp-panel-sidebar{display:none!important}
+.cp-realm-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:0 auto 20px;max-width:1500px;padding:0 20px}
+.cp-realm-tabs[hidden]{display:none!important}
+.cp-realm-tabs a{display:flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid #b99b52;border-radius:10px;background:linear-gradient(130deg,#294738,#122c23);color:#efdba5;text-decoration:none;font-size:13px}
+.cp-realm-tabs img{width:32px;height:32px;object-fit:contain}
+.cp-realm-tabs a[aria-current="page"]{box-shadow:inset 4px 0 #d5b86e;background:#344b32}
+#realm-panel .cp-panel-card strong{display:block;color:#ecd495;font-size:1.15rem;line-height:1.5}
+#realm-panel .cp-panel-card p{color:#c7d5c5;font-size:.85rem;line-height:1.6}
