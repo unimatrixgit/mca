@@ -1,5 +1,5 @@
 // Internal Dunemarks identifiers, not SEPA accounts. Never used as authorization.
-const types={player:['PL','101'],clan:['CL','201'],faction:['FA','301'],server:['SV','979']};
+const types={player:['PL','101'],current:['CA','102'],clan:['CL','201'],faction:['FA','301'],server:['SV','979']};
 export const accountSchema=`CREATE TABLE IF NOT EXISTS imperial_bank_accounts (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,bank_type VARCHAR(12) NOT NULL,owner_key VARCHAR(64) NOT NULL,created_at BIGINT NOT NULL,UNIQUE KEY bank_owner(bank_type,owner_key)) ENGINE=InnoDB`;
 export function accountNumber(type,id){
  const t=types[type];if(!t||!Number.isSafeInteger(Number(id))||Number(id)<1||Number(id)>9999999)throw Error('Invalid bank identifier');
@@ -15,7 +15,7 @@ export function validAccountNumber(value){
 export async function imperialAccount(db,type,owner){
  if(!types[type]||typeof owner!=='string')throw Error('Invalid bank owner');
  owner=owner.toLowerCase();
- if(['player','clan'].includes(type)&&!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(owner))throw Error('Invalid bank owner');
+ if(['player','current','clan'].includes(type)&&!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(owner))throw Error('Invalid bank owner');
  if(type==='server'&&owner!=='network'||type==='faction'&&!['atreides','harkonnen','corrino','ordos','fremen','veiled_concord','spacing_guild'].includes(owner))throw Error('Invalid bank owner');
  const existing=await db.prepare('SELECT id FROM imperial_bank_accounts WHERE bank_type=? AND owner_key=?').bind(type,owner).first();
  if(existing)return accountNumber(type,Number(existing.id));

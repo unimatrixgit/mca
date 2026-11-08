@@ -12,3 +12,5 @@ test('invalid types, overflow, zero and wrong owner are rejected',async()=>{
  for(const [t,o]of [['player','alice'],['clan','test'],['faction','fake'],['server','other']])await assert.rejects(imperialAccount({},t,o));
  assert.equal(validAccountNumber('DRPL 9790 0000 0001'),false);
 });
+
+test('current account is separate from savings and has a valid check number',()=>{const current=accountNumber('current',3),savings=accountNumber('player',3);assert.notEqual(current,savings);assert(current.startsWith('DRCA 102'));assert(validAccountNumber(current));assert(!validAccountNumber(current.slice(0,-1)+(current.endsWith('1')?'2':'1')));});
