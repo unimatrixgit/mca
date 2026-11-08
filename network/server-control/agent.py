@@ -442,6 +442,16 @@ class Handler(BaseHTTPRequestHandler):
             return
         if quest_route(self, 'GET', url):
             return
+        if url.path == '/bank/official':
+            try:
+                args=parse_qs(url.query,strict_parsing=True)
+                if set(args)!={'key'} or len(args['key'])!=1:raise ValueError()
+                from official_bank import read_official
+                return self.reply(200,read_official(network_database,args['key'][0]))
+            except (ValueError,KeyError):
+                return self.reply(400,{'message':'Invalid account'})
+            except Exception:
+                return self.reply(503,{'message':'Official account unavailable'})
         if url.path == '/bank/mcserver':
             if url.query: return self.reply(400,{'message':'Account overrides are not accepted'})
             try:
