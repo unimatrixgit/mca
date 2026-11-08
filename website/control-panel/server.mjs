@@ -66,7 +66,7 @@ import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {createAccountAdmin} from '../node/account-admin.mjs';
 import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
-const sharedAssets=new Set(['imperial-postbank-v1.png','imperial-post-logo.svg','mail-stamp-personal.svg','mail-stamp-clan.svg','mail-stamp-staff.svg','mail-stamp-faction.svg','mail-stamp-imperial.svg','ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
+const sharedAssets=new Set(['imperial-postbank-v2.png','spost-company-v1.png','vaerkring-company-v1.png','imperial-postbank-v1.png','imperial-post-logo.svg','mail-stamp-personal.svg','mail-stamp-clan.svg','mail-stamp-staff.svg','mail-stamp-faction.svg','mail-stamp-imperial.svg','ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
