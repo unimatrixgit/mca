@@ -5,8 +5,8 @@ export const USER_GROUPS=[
  ['Profile',[
   item('Minecraft account','game','web.menu.game','nav-clan-v2.webp'),
   item('Personal information','site-profile','web.menu.security','nav-account-v2.webp',{aliases:['security','discord-link']}),
-  item('Personal Accounts','personal-bank','web.bank.personal.view','nav-shop-v1.webp'),
-  item('Inbox','shared-inbox','web.menu.game','nav-support-v2.webp'),
+  item('My Bank Account','personal-bank','web.bank.personal.view','nav-shop-v1.webp'),
+  item('Imperial Mail','shared-inbox','web.menu.game','nav-support-v2.webp'),
   item('Support tickets','tickets','web.menu.tickets','nav-support-v2.webp'),
   item('Inventory','planetary-inventory','web.menu.inventory','nav-exchange-v2.webp')]],
  ['DuneRealms',[
