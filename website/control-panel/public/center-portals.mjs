@@ -1,3 +1,4 @@
+import {paintMenuRibbons, MENU_RELEASE} from './menu-ribbons.mjs';
 import './pages.mjs';
 import './embed-size.mjs';
 import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS,factionMenuItem} from './panel-layout.mjs';
@@ -59,6 +60,7 @@ if(dashboard&&!embedded){
   if(next!==signature){
    signature=next;frame.dataset.panel=panel;sidebar.replaceChildren();rightSidebar.replaceChildren();const home=el('a',panel==='dev'?'Dev Panel overview':panel==='staff'?'Staff Panel overview':'User Panel overview');home.className='cp-panel-overview-link';home.href=panel==='dev'?'#dev-panel':panel==='staff'?'#staff-panel':'#user-home';sidebar.append(home);
    const halves=panel==='dev'?[groups,[]]:splitMenuGroups(groups);rightSidebar.hidden=!halves[1].length;for(const[side,sections]of [[sidebar,halves[0]],[rightSidebar,halves[1]]])for(const[label,items]of sections){const h=el('h3',label);h.className='cp-panel-category';side.append(h);for(const item of items){const a=linkFor(item);a.dataset.panelPage=item.page||'';side.append(a);}}
+   paintMenuRibbons(frame, document.querySelector('.dune-release-badge')?.textContent.match(/\d+(?:\.\d+){3}/)?.[0] || MENU_RELEASE);
    groupCards(userSummary,userGroups);groupCards(staffSummary,staffGroups);
    preserved.replaceChildren();if(user.permissions.includes('web.menu.game')){const a=el('a','Clan Center');a.href='https://clans.dunerealms.com/';preserved.append(a);}if(officeEligible){const a=el('a','Imperial Atelier · current office');a.href='#imperial-atelier';preserved.append(a);}
    reference.replaceChildren();if(user.permissions.includes('web.menu.staffmanual')){const a=el('a','Staff guide');a.href='#staff-manual';reference.append(a);}if(user.permissions.includes('web.ranks.manage')){const a=el('a','Linked in-game ranks');a.href='#game-permissions';reference.append(a);}

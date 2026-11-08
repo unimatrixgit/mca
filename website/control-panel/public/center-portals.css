@@ -143,3 +143,9 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 :is(#imperial-command,#imperial-elections) .politics-card{border-top:3px solid #caaa63;background:linear-gradient(135deg,#302339,#112d25)}
 #imperial-water .politics-hero{background:linear-gradient(100deg,#102d37ed,#12362bd9),url('https://www.dunerealms.com/assets/water.webp') center/cover}
 #imperial-spice .politics-hero{background:linear-gradient(100deg,#3e2b17ef,#173028d9),url('https://www.dunerealms.com/assets/spice.webp') center/cover}
+
+/* Release ribbons: sidebar menu buttons only, never portal cards. */
+.cp-panel-sidebar a[data-panel-page]{position:relative}
+.cp-panel-sidebar a[data-panel-page]:has(.cp-menu-ribbon){padding-bottom:24px}
+.cp-panel-sidebar .cp-menu-ribbon{position:absolute;right:7px;bottom:4px;border:1px solid #d8b65f;border-radius:3px;padding:1px 6px;background:linear-gradient(110deg,#ddbe69,#a68437);color:#10291e;font:800 9px/1.3 system-ui,sans-serif;letter-spacing:.08em;pointer-events:none}
+.cp-panel-sidebar .cp-menu-ribbon[data-kind="update"]{background:#234a3c;color:#f0d997}
