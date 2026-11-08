@@ -1,13 +1,14 @@
 import './pages.mjs';
 import './embed-size.mjs';
-import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS} from './panel-layout.mjs';
+import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS,factionMenuItem} from './panel-layout.mjs';
 const dashboard=document.getElementById('dashboard');
 const embedded=new URLSearchParams(location.search).get('embedded')==='1';
 const asset=file=>'https://www.dunerealms.com/assets/'+file;
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 if(dashboard&&!embedded){
  document.body.classList.add('cp-centers-ready','cp-panels-ready');
- let user=null,signature='',queued=false,sessionGeneration=0;
+ let user=null,signature='',queued=false,sessionGeneration=0,factionContext=null;
+ async function loadFaction(){const generation=sessionGeneration;factionContext=null;signature='';if(!user?.permissions?.includes('web.menu.game'))return;try{const response=await fetch('/api/politics/preview',{cache:'no-store'});const value=response.ok?await response.json():null;if(generation!==sessionGeneration)return;factionContext=value;signature='';schedule();}catch{if(generation===sessionGeneration){factionContext=null;signature='';schedule();}}}
  const centers=el('nav');centers.className='cp-center-nav';centers.setAttribute('aria-label','Control panel portals');
  const frame=el('div');frame.className='cp-panel-frame';const sidebar=el('nav');sidebar.className='cp-panel-sidebar';sidebar.setAttribute('aria-label','Left panel tools');const rightSidebar=el('nav');rightSidebar.className='cp-panel-sidebar cp-panel-sidebar-right';rightSidebar.setAttribute('aria-label','Right panel tools');
  const breadcrumb=el('p');breadcrumb.className='cp-center-breadcrumb';dashboard.before(centers,breadcrumb,frame);frame.append(sidebar,dashboard,rightSidebar);frame.hidden=centers.hidden=breadcrumb.hidden=true;
@@ -39,7 +40,7 @@ if(dashboard&&!embedded){
  const userHome=document.getElementById('user-home');const userSummary=el('div');userSummary.className='cp-panel-summary';userHome?.append(userSummary);
  const preserved=el('div');preserved.className='cp-context-links';userHome?.append(preserved);
  const reference=el('div');reference.className='cp-context-links';staffHome.append(reference);
- function linkFor(item){const a=el('a');a.href=item.url||'#'+item.page;const label=el('span',item.label);a.append(label);art(a,item.art);if(item.placeholder){const note=el('small','Placeholder');a.append(note);}return a;}
+ function linkFor(item){item=factionMenuItem(item,factionContext);const a=el('a');a.href=item.url||'#'+item.page;const label=el('span',item.label);a.append(label);art(a,item.art);if(item.placeholder){const note=el('small','Placeholder');a.append(note);}return a;}
  function groupCards(host,groups){host.replaceChildren();for(const[label,items]of groups){const card=el('section');card.className='cp-panel-card';card.append(el('h3',label));for(const item of items)card.append(linkFor(item));host.append(card);}}
  function related(id,items){const section=document.getElementById(id);if(!section)return;const allowed=items.filter(([, ,node])=>user.permissions.includes(node));const key=JSON.stringify(allowed);const old=section.querySelector(':scope>.cp-context-links');const hero=section.querySelector(':scope>.cp-user-page-hero');if(old?.dataset.signature===key){if(hero&&old.previousElementSibling!==hero)hero.after(old);return;}old?.remove();const nav=el('nav');nav.dataset.signature=key;nav.className='cp-context-links';nav.setAttribute('aria-label','Related account tools');for(const[label,page]of allowed){const a=el('a',label);a.href='#'+page;art(a,page==='discord-link'?'nav-discord-v2.webp':page==='luckperms'||page==='game-permissions'?'nav-clan-v2.webp':'nav-account-v2.webp');if(page===id)a.setAttribute('aria-current','page');nav.append(a);}if(hero)hero.after(nav);else section.prepend(nav);}
  function paint(){
@@ -63,14 +64,15 @@ if(dashboard&&!embedded){
    reference.replaceChildren();if(user.permissions.includes('web.menu.staffmanual')){const a=el('a','Staff guide');a.href='#staff-manual';reference.append(a);}if(user.permissions.includes('web.ranks.manage')){const a=el('a','Linked in-game ranks');a.href='#game-permissions';reference.append(a);}
   }
   for(const a of frame.querySelectorAll('.cp-panel-sidebar a')){const selected=a.hash==='#'+active||menuItemFor(active)?.page===a.dataset.panelPage;if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
-  const current=DEV_ITEMS.find(i=>i.page===active)||menuItemFor(active);breadcrumb.textContent=(panel==='dev'?'Dev Panel':panel==='staff'?'Staff Panel':'User Panel')+' / '+(current?.label||(active==='staff-panel'||active==='user-home'?'Overview':dashboard.querySelector(':scope>section.cp-page-active h2')?.textContent||'Overview'));
+  const current=factionMenuItem(DEV_ITEMS.find(i=>i.page===active)||menuItemFor(active),factionContext);breadcrumb.textContent=(panel==='dev'?'Dev Panel':panel==='staff'?'Staff Panel':'User Panel')+' / '+(current?.label||(active==='staff-panel'||active==='user-home'?'Overview':dashboard.querySelector(':scope>section.cp-page-active h2')?.textContent||'Overview'));
   related('site-profile',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);related('security',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
   related('discord-link',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
   related('luckperms',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);related('game-permissions',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);
  }
  function schedule(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;paint();});}
  for(const side of [sidebar,rightSidebar])side.addEventListener('click',event=>{const a=event.target.closest('a[href^="#"]');if(!a)return;event.preventDefault();navigate(a.hash.slice(1));});
- window.addEventListener('dune:session',event=>{sessionGeneration++;user=event.detail;signature='';schedule();});for(const name of ['dune:page','hashchange','popstate'])window.addEventListener(name,schedule);
+ window.addEventListener('dune:session',event=>{sessionGeneration++;user=event.detail;factionContext=null;signature='';schedule();loadFaction();});for(const name of ['dune:page','hashchange','popstate'])window.addEventListener(name,schedule);
+ window.addEventListener('dune:game-link-changed',()=>{sessionGeneration++;loadFaction();schedule();});
  new MutationObserver(schedule).observe(dashboard,{childList:true,subtree:true});
- const initialGeneration=sessionGeneration;try{const response=await fetch('/api/auth/session',{cache:'no-store'});if(response.ok){const data=await response.json();if(initialGeneration===sessionGeneration){user=data.user;if(user&&!location.hash)navigate('user-home');paint();}}}catch{if(initialGeneration===sessionGeneration)paint();}
+ const initialGeneration=sessionGeneration;try{const response=await fetch('/api/auth/session',{cache:'no-store'});if(response.ok){const data=await response.json();if(initialGeneration===sessionGeneration){user=data.user;loadFaction();if(user&&!location.hash)navigate('user-home');paint();}}}catch{if(initialGeneration===sessionGeneration)paint();}
 }

@@ -98,7 +98,7 @@ function renderFactionSeals(){
 function render(){
  renderFactionSeals();
  resetInboxViews();
- for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');v.content.replaceChildren();}
+ for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');if(!(id==='shared-inbox'&&v.section.dataset.internalMail==='true'))v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
  views.applications.content.append(applicationsDashboard());
  const landing=views.landsraad.content,grid=el('div',undefined,'politics-grid');
@@ -106,7 +106,7 @@ function render(){
  const house=views['house-elections'].content;
  if(context?.faction){const name=context.faction[0].toUpperCase()+context.faction.slice(1);house.append(card(name+' · House chamber','Your faction was confirmed from your linked Minecraft account. The candidates below are fictional examples, not members of your House.','seals/office-house_leader.png'),electionPreview());}
  else{const title=context?.linked===false?'Link your Minecraft account':context?'House not confirmed':'Checking your linked House';const box=card(title,context?.linked===false?'Link your Minecraft identity to enter the chamber belonging to the faction you chose in game.':'Your House has not been confirmed. Other House elections remain hidden.','seals/office-house_leader.png');box.append(artLink('Minecraft account','game','nav-clan-v2.webp'));house.append(box);}
- const council=views['formal-council'].content;council.append(councilPreview(),rallyPreview(),revoltPreview(),warPreview(),inboxPreview());views['shared-inbox'].content.append(inboxPreview());
+ const council=views['formal-council'].content;council.append(councilPreview(),rallyPreview(),revoltPreview(),warPreview(),inboxPreview());if(views['shared-inbox'].section.dataset.internalMail!=='true')views['shared-inbox'].content.append(inboxPreview());
  const councilLink=card('Faction Council','Banking, appointments, rallies, war requests and your shared inbox.','seals/office-house_leader.png');councilLink.append(artLink('Enter the council','formal-council','seals/office-house_leader.png'));landing.append(councilLink);
  const lore=card('The Veiled Concord · Caitain','In the quiet courts of Caitain, the Concord keeps the promises that crowns forget. Its scholars train in memory, diplomacy and patient observation. Three woven paths surround a guiding star upon their seal: knowledge, restraint and accord. Their elected Reverent Mother speaks with the standing of a House leader, while an appointed Concord Sister tends the treasury. They may counsel another House toward war, but never declare it themselves.','seals/veiled-concord-v1.png');lore.classList.add('politics-concord');landing.append(lore);
  const imperial=views['imperial-elections'].content;imperial.append(electionPreview(true));
