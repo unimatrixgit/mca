@@ -142,7 +142,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path==='/api/kits/upgrade-tokens')return upgradeTokens(request);
   if(path.startsWith('/api/kits/'))return kitMarket(request);
   if(path==='/api/ranks/game')return gameRanks(request);
-  if(path==='/api/bank/personal'||path==='/api/bank/staff')return banking(request);
+  if(path==='/api/bank/personal'||path==='/api/bank/staff'||path==='/api/bank/faction')return banking(request);
   if(path==='/api/quests'||path.startsWith('/api/quests/'))return quests(request);
   if(['/api/clans/shop','/api/clans/shop/price','/api/clans/game-context'].includes(path))return clanShop(request);
   if(path==='/api/clans'||path.startsWith('/api/clans/'))return clans(request);
