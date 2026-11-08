@@ -50,6 +50,7 @@ export function createRankAdmin(db,settings,origin){return async request=>{
   if(typeof body.userId!=='string'||body.userId.length!==36||!Array.isArray(keys)||!keys.length||keys.length>20||keys.some(k=>!validKey(k))||new Set(keys).size!==keys.length)return json({message:'Select 1–20 distinct ranks.'},400);
   const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();if(!target)return json({message:'Account not found.'},404);
   const ranks=await Promise.all(keys.map(key=>rankFor(db,key))),previous=await accessFor(db,target);
+  if(keys.includes('crysknife')&&!previous.ranks.includes('crysknife'))return json({message:'Award the Crysknife from User Panel → DuneRealms → Order of the Crysknife, with a citation and confirmation.'},403);
   if(ranks.some(r=>r.kind!=='access'||r.level===0)||(previous.ranks.some(isOwnerRank)&&!editProtected)||!isOwnerRank(access.rank)&&(ranks.some(r=>r.level>=access.level)||previous.level>=access.level||target.id===user.id))return json({message:'That assignment is protected. Owner accounts cannot be changed here.'},403);
   if(keys.includes('memorial')&&(!isOwnerRank(access.rank)||target.id===user.id||keys.some(k=>!['memorial','user','crysknife'].includes(k))))return json({message:'Only Owners can create memorial accounts. Memorials cannot hold staff, supporter or gameplay ranks.'},403);
   if(editProtected&&target.id===user.id&&!keys.includes('owners'))return json({message:'Your Owner role must be retained.'},403);

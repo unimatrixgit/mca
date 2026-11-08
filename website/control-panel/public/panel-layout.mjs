@@ -13,6 +13,7 @@ export const USER_GROUPS=[
   item('Exchange settings','exchange-settings','web.menu.inventory','nav-exchange-v2.webp'),
   item('Shop settings','shop-settings','web.menu.inventory','nav-shop-v1.webp'),
   item('Rewards & codes','rewards-codes','web.menu.rewards','seals/season-tavren-ii-150.png'),
+  item('Order of the Crysknife','crysknife',null,'seals/order-crysknife-v1.png',{crysknifeOnly:true}),
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
  ['Politics & Gameplay',[
   item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
@@ -47,12 +48,13 @@ export const STAFF_GROUPS=[
 ];
 // Mirrors native Dev review policy; ordinary Dev/staff membership is not approval authority.
 export function canReviewDev(user){const ranks=new Set(user?.ranks||[]),name=user?.username?.toLowerCase();return name==='unimatrix999'&&ranks.has('owners')||name==='grmacken'&&ranks.has('web_net_admin');}
+export const canAwardCrysknife=user=>!!user&&(['unimatrix999','grmacken'].includes(user.username?.toLowerCase())||(user.ranks||[]).includes('crysknife'));
 export const hasStaffPanel=user=>!!user&&staffAreasFor(user).length>0;
 export const hasDevPanel=canSubmitDevRequest;
 export function menuGroupsFor(user,panel){
  if(!user||panel==='staff'&&!hasStaffPanel(user))return[];
  const nodes=new Set(user.permissions||[]);
- return(panel==='staff'?STAFF_GROUPS:USER_GROUPS).map(([label,items])=>[label,items.filter(i=>(!i.node||nodes.has(i.node))&&(!i.staffOnly||hasStaffPanel(user))&&(!i.reviewerOnly||canReviewDev(user)))]).filter(([,items])=>items.length);
+ return(panel==='staff'?STAFF_GROUPS:USER_GROUPS).map(([label,items])=>[label,items.filter(i=>(!i.node||nodes.has(i.node))&&(!i.staffOnly||hasStaffPanel(user))&&(!i.reviewerOnly||canReviewDev(user))&&(!i.crysknifeOnly||canAwardCrysknife(user)))]).filter(([,items])=>items.length);
 }
 export function menuItemFor(page){return[...USER_GROUPS,...STAFF_GROUPS].flatMap(([,items])=>items).find(i=>i.page===page||i.aliases?.includes(page));}
 export function splitMenuGroups(groups){

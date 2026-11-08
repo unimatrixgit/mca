@@ -44,7 +44,7 @@ test('disabled memorial and archived accounts cannot sign in even with a valid-s
 });
 test('honour is automatic, citation is protected, multiline, versioned and safely rendered',async()=>{
  const {db,add,req}=fixture();try{
- const owner=await add('owner','owners'),recipient=await add('recipient','network_admin'),member=await add('member');
+ const owner=await add('unimatrix999','owners'),recipient=await add('recipient','network_admin'),member=await add('member');
  const basic=DEFAULT_RANKS.find(r=>r.key==='user').nodes;
  await db.prepare('INSERT INTO cp_ranks VALUES(?,?,?,?,?,?)').bind('crysknife','Holy Order of The Crysknife',20,'access',JSON.stringify(basic),1).run();
  await db.prepare('INSERT INTO cp_account_ranks VALUES(?,?)').bind(recipient.id,'crysknife').run();
