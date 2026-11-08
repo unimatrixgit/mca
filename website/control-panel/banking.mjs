@@ -53,6 +53,9 @@ export function createBanking(db,settings={},dependencies={}){
     const counterparty=row.counterparty;delete row.counterparty;
     const number=counterparty?await(dependencies.accountNumber||imperialAccount)(db,counterparty.type,counterparty.owner):null;
     const outgoing=row.amountDunemarks.startsWith('-'),own=(bank.currentLedger||[]).includes(row)?bank.currentAccountNumber:bank.accountNumber;
+    const ownName=staff?'Imperial Treasury':faction?'House '+bank.factionId:currentUser.username||'Your account';
+    let otherName=null;if(counterparty?.type==='server')otherName='Imperial Treasury';else if(counterparty?.owner===player.toLowerCase())otherName=currentUser.username||'Your account';else if(counterparty?.type==='player')otherName=await(dependencies.accountName|| (async owner=>(await db.prepare('SELECT a.username FROM site_game_links l JOIN site_accounts a ON a.id=l.user_id WHERE l.minecraft_uuid=?').bind(owner).first())?.username||'Account holder'))(counterparty.owner);
+    row.fromName=outgoing?ownName:otherName;row.toName=outgoing?otherName:ownName;
     row.fromAccount=outgoing?own:number;
     row.toAccount=outgoing?number:own;
    }
