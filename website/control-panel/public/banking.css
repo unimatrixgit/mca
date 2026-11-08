@@ -55,3 +55,29 @@
 .bank-account-preview{padding:16px 20px;margin:0 0 18px;border:1px dashed #657b63;border-radius:12px;color:#c1d1c5}
 .bank-account-preview h3{margin:0 0 6px;font-size:17px;color:#e4c775}
 .bank-account-preview p{margin:0;font-size:14px;line-height:1.5}
+/* Compact account cards; account identity and access stay visible. */
+.bank-workspace .bank-account-overview{gap:12px;margin:16px 0}
+.bank-workspace .bank-account-overview .bank-account-tile{position:relative;padding:16px!important;gap:7px;border-radius:8px}
+.bank-workspace .bank-account-tile>img{position:absolute;right:14px;top:14px;width:24px;height:24px}
+.bank-workspace .bank-account-tile>small{padding-right:30px;font-size:10px;line-height:1.3}
+.bank-workspace .bank-account-tile>strong{font-size:28px;line-height:1.1;margin:3px 0 2px}
+.bank-workspace .bank-account-tile>span{font-size:12px;line-height:1.35}
+.bank-workspace .bank-account-tile>code{font-size:12px;line-height:1.4;color:inherit}
+.bank-workspace .bank-account-tile>.bank-account-access{font-size:10px!important;padding:2px 7px}
+.bank-workspace .bank-account-controls{gap:6px;padding-top:3px}
+.bank-workspace .bank-account-controls button{min-height:32px;padding:6px 9px;font-size:11px;line-height:1.4;margin:0}
+@media(max-width:650px){.bank-workspace .bank-account-overview .bank-account-tile{padding:14px!important}.bank-workspace .bank-account-tile>strong{font-size:26px}}
+/* Easy Banking-inspired account list, in Postbank colours. */
+.bank-workspace .bank-account-overview{grid-template-columns:1fr;gap:10px}
+.bank-workspace .bank-account-overview .bank-account-tile{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:18px;row-gap:5px;background:#173b30!important;border-left:3px solid #c9af67;color:#ecf3ed}
+.bank-workspace .bank-account-overview .bank-account-tile:first-child :is(small,strong,span){color:inherit}
+.bank-workspace .bank-account-tile>img{display:none}
+.bank-workspace .bank-account-tile>small{grid-column:1;grid-row:1;padding:0;color:#dfc67f!important;font-size:11px;font-weight:600}
+.bank-workspace .bank-account-tile>strong{grid-column:2;grid-row:1 / 3;text-align:right;font-size:25px;white-space:nowrap}
+.bank-workspace .bank-account-tile>span:not(.bank-account-access){grid-column:1;grid-row:2;font-size:11px;color:#b8cbbb!important}
+.bank-workspace .bank-account-tile>code{grid-column:1;grid-row:3;color:#d9e4d9;font-size:12px}
+.bank-workspace .bank-account-tile>.bank-account-access{grid-column:2;grid-row:3;justify-self:end;border:0;padding:0;color:#b8cbbb!important}
+.bank-workspace .bank-account-controls{grid-column:1 / -1;justify-content:flex-end;border-top:1px solid #365648;padding-top:7px;margin-top:4px}
+@media(max-width:480px){.bank-workspace .bank-account-tile>strong{font-size:20px}.bank-workspace .bank-account-tile>code{font-size:10px}.bank-workspace .bank-account-overview .bank-account-tile{column-gap:8px}}
+.bank-workspace .bank-account-controls a{display:inline-block;border:1px solid #8c8052;border-radius:6px;background:#17392d;color:#ead398;padding:6px 9px;font-size:11px;line-height:1.4;text-decoration:none}
+.bank-workspace .bank-account-tile>strong{max-width:100%;overflow-wrap:anywhere}
