@@ -44,3 +44,14 @@
 .bank-workspace .bank-ledger tr:nth-child(even){background:#15352a}.bank-workspace .bank-ledger tr:hover{background:#204737}
 .bank-workspace :is(input,textarea,button,a):focus-visible{outline:2px solid #ead394;outline-offset:3px}
 @media(max-width:650px){.bank-workspace{padding:16px!important}.bank-workspace .bank-balance-grid,.imperial-bank-view .clan-stat-grid{grid-template-columns:1fr}.bank-workspace .bank-dashboard-links a{padding:12px;font-size:13px}.bank-workspace>header{padding:18px!important}.bank-workspace .imperial-account-card{padding:18px!important}}
+/* Account overview: compact bank cards with explicit service availability. */
+.bank-account-overview .bank-account-tile{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:24px;min-width:0}
+.bank-account-tile>strong{font-size:clamp(28px,3vw,40px);line-height:1.15}
+.bank-account-tile>code{font-size:13px;overflow-wrap:anywhere;letter-spacing:.04em}
+.bank-account-access{font-size:12px!important;border:1px solid currentColor;border-radius:20px;padding:3px 10px}
+.bank-account-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px}
+.bank-account-controls button{font-size:13px;padding:9px 12px;min-height:40px}
+.bank-account-controls button:disabled{opacity:.55;cursor:not-allowed}
+.bank-account-preview{padding:16px 20px;margin:0 0 18px;border:1px dashed #657b63;border-radius:12px;color:#c1d1c5}
+.bank-account-preview h3{margin:0 0 6px;font-size:17px;color:#e4c775}
+.bank-account-preview p{margin:0;font-size:14px;line-height:1.5}
