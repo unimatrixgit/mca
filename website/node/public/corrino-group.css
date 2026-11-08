@@ -15,3 +15,5 @@ body{background:#0c241d;color:#e5e4d1}header{background:#132f25;border-bottom:1p
 
 .founding-parent{max-width:620px;margin-inline:auto}
 .charter-document{max-width:900px;margin:48px auto;padding:clamp(24px,5vw,64px);background:#eee0bb;color:#30261c;border:double 6px #ad8742;box-shadow:0 12px 40px #0004;font-family:Georgia,serif;line-height:1.8}.charter-document .eyebrow,.charter-document h3,.charter-document h4{color:#654719}.charter-document h3{text-align:center;font-size:32px}.charter-document h4{margin:28px 0 8px;font-size:19px}.charter-motto{text-align:center;font-weight:bold;border-block:1px solid #ac8a52;padding:20px 0}.charter-signature{font-style:italic;font-size:25px}
+
+.brand .corrino-wordmark{width:210px;height:70px;object-fit:contain}footer .brand .corrino-wordmark{width:180px;height:60px}
