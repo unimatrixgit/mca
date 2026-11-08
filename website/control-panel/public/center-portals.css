@@ -129,3 +129,17 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 #security .security-confirmation input{flex:0 0 20px;width:20px;height:20px;margin:0;accent-color:#d6b75f}
 #security .security-confirmation:focus-within{outline:2px solid #efd28a;outline-offset:3px}
 #contact-email-settings button:disabled{opacity:.5;cursor:not-allowed}
+
+/* House heraldry follows the verified faction, never demo candidates. */
+.politics-page[data-faction="atreides"]{--house-tone:#19384a;--house-art:url("https://www.dunerealms.com/assets/gui/faction-atreides-aerdrecht-heraldic.png")}
+.politics-page[data-faction="harkonnen"]{--house-tone:#462526;--house-art:url("https://www.dunerealms.com/assets/gui/faction-harkonnen-harkveen-heraldic.png")}
+.politics-page[data-faction="corrino"]{--house-tone:#382447;--house-art:url("https://www.dunerealms.com/assets/gui/faction-corrino-korenholt-heraldic.png")}
+.politics-page[data-faction="ordos"]{--house-tone:#24442e;--house-art:url("https://www.dunerealms.com/assets/gui/faction-ordos-oordwijk-heraldic.png")}
+.politics-page[data-faction="fremen"]{--house-tone:#49402a;--house-art:url("https://www.dunerealms.com/assets/gui/faction-fremen-vrijduin-heraldic.png")}
+.politics-page[data-faction]:not([data-faction=""]) .politics-hero{background-image:linear-gradient(90deg,#102b24f5,#102b24b8),var(--house-art);background-position:center;background-size:cover;border-color:#c9ab64}
+.politics-page[data-faction]:not([data-faction=""]) .politics-card{border-top:3px solid #c9ab64;background:linear-gradient(135deg,var(--house-tone,#16392b),#102b24)}
+.politics-page[data-faction]:not([data-faction=""]) .politics-candidate,.politics-page[data-faction]:not([data-faction=""]) .politics-leaders li{background-image:linear-gradient(90deg,#102b24f5,#102b24da),var(--house-art);background-position:center;background-size:cover}
+:is(#imperial-command,#imperial-elections) .politics-hero{background:linear-gradient(100deg,#21182fee,#172e29d9),url('https://www.dunerealms.com/assets/landsraad-appointments.webp') center/cover;border-color:#dbb967;box-shadow:inset 0 0 0 5px #dbb96715}
+:is(#imperial-command,#imperial-elections) .politics-card{border-top:3px solid #caaa63;background:linear-gradient(135deg,#302339,#112d25)}
+#imperial-water .politics-hero{background:linear-gradient(100deg,#102d37ed,#12362bd9),url('https://www.dunerealms.com/assets/water.webp') center/cover}
+#imperial-spice .politics-hero{background:linear-gradient(100deg,#3e2b17ef,#173028d9),url('https://www.dunerealms.com/assets/spice.webp') center/cover}

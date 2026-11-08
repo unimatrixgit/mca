@@ -14,7 +14,6 @@ const specs={
  'imperial-spice':['THE SPICE CHARTER','Spice Rights','The Emperor’s future register of spice rights.','seals/spice-rights-v1.png']
 };
 const dashboard=document.getElementById('dashboard'),nav=dashboard?.querySelector('nav'),views={};let user=null,serial=0,context=null;
-const electionLinks=[['Proclamations','council-motd','seals/office-landsraad.png'],['Faction Council','formal-council','seals/office-house_leader.png'],['Landsraad Assembly','landsraad','seals/office-landsraad.png'],['Faction Elections','house-elections','seals/office-house_leader.png'],['Emperor Elections','imperial-elections','seals/emperor-v1.png']];
 const commandLinks=[['Imperial Council','imperial-command','seals/emperor-v1.png'],['Water Rights','imperial-water','seals/water-rights-v1.png'],['Spice Rights','imperial-spice','seals/spice-rights-v1.png']];
 function artLink(label,page,art){const a=el('a');a.href='#'+page;const img=el('img');img.src=asset(art);img.alt='';img.width=img.height=32;a.append(img,el('span',label));return a;}
 function card(title,copy,art){const box=el('article',undefined,'politics-card');if(art){const img=el('img');img.src=asset(art);img.alt='';img.width=80;img.height=80;box.append(img);}box.append(el('h3',title),el('p',copy));return box;}
@@ -82,11 +81,22 @@ function warPreview(){
 for(const[id,[eyebrow,title,description,seal]]of Object.entries(specs)){
  const section=el('section',undefined,'politics-page');section.id=id;section.hidden=true;
  const hero=el('header',undefined,'cp-user-page-hero politics-hero');const image=el('img');image.src=asset(seal);image.alt='';image.width=112;image.height=112;const copy=el('div');copy.append(el('small',eyebrow),el('h2',title),el('p',description));hero.append(image,copy);
- const tabs=el('nav',undefined,'cp-context-links');tabs.setAttribute('aria-label',title+' pages');for(const[label,page,art]of(id.startsWith('imperial-')&&id!=='imperial-elections'?commandLinks:electionLinks)){const a=artLink(label,page,art);if(page===id)a.setAttribute('aria-current','page');tabs.append(a);}
+ const tabs=el('nav',undefined,'cp-context-links');tabs.setAttribute('aria-label',title+' pages');const links=id.startsWith('imperial-')&&id!=='imperial-elections'?commandLinks:[];tabs.hidden=!links.length;for(const[label,page,art]of links){const a=artLink(label,page,art);if(page===id)a.setAttribute('aria-current','page');tabs.append(a);}
  const preview=el('aside',undefined,'politics-preview-note');preview.append(el('strong','WEBSITE DESIGN PREVIEW'),el('span','Voting and rights grants are not active. These pages do not change the game.'));
  const content=el('div',undefined,'politics-content');section.append(hero,tabs,preview,content);dashboard?.append(section);nav?.append(artLink(title,id,seal));views[id]={section,content};
 }
+const factionSeals={atreides:['House Aerdrecht','house-aerdrecht-v1.png'],harkonnen:['House Harkveen','house-harkveen-v1.png'],corrino:['House Korenholt','house-korenholt-v1.png'],ordos:['House Oordwijk','house-oordwijk-v1.png'],fremen:['Vrijduin','house-vrijduin-v1.png'],veiled_concord:['The Veiled Concord','veiled-concord-v1.png']};
+function renderFactionSeals(){
+ const faction=context?.linked?factionSeals[String(context.faction||'').toLowerCase()]:null;
+ for(const id of ['formal-council','house-elections']){
+  views[id].section.dataset.faction=faction?String(context.faction).toLowerCase():'';
+  const hero=views[id].section.querySelector('.politics-hero'),image=hero.querySelector('img');
+  image.src=asset(faction?'seals/'+faction[1]:specs[id][3]);image.alt=faction?faction[0]+' seal':'';
+  hero.querySelector('small').textContent=faction?faction[0].toUpperCase():specs[id][0];
+ }
+}
 function render(){
+ renderFactionSeals();
  resetInboxViews();
  for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
