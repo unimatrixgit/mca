@@ -1,3 +1,4 @@
+import {electionAuthority} from '../node/election-authority.mjs';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store',Vary:'Cookie'}});
@@ -20,8 +21,15 @@ export function createPoliticsPreview(db,settings={},deps={}){
   if((await linked(current))?.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked account changed. Refresh.'},409);
   const b=bank.status==='fulfilled'?bank.value:null,o=office.status==='fulfilled'?office.value:null;
   const faction=b?.playerUuid?.toLowerCase()===player.toLowerCase()&&houses.has(b.factionId)?b.factionId:null;
-  const emperor=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='emperor');
-  const houseLeader=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='house_leader');
-  return reply({preview:true,linked:true,faction,factionStatus:faction?'verified':'unavailable',emperor:!!emperor,houseLeader:!!houseLeader,officeStatus:o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)?'verified':'unavailable'});
+  let emperor=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='emperor');
+  let houseLeader=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='house_leader');
+  const authority=await(deps.electionAuthority||electionAuthority)(db,{userId:user.id,playerUuid:player,faction,now:(deps.clock||Date.now)()});
+  if(authority.house.managed)houseLeader=authority.house.verified&&authority.house.active;
+  if(authority.imperial.managed)emperor=authority.imperial.verified&&authority.imperial.active;
+  // Identity can change while the authority lookup is pending.
+  const latest=await auth(request);if(!latest||latest.id!==user.id||!(await access(latest)).nodes.includes('web.menu.game'))return reply({message:'Access changed. Refresh.'},403);
+  if((await linked(current))?.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked account changed. Refresh.'},409);
+  const verified=authority.house.managed?authority.house.verified:o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices);
+  return reply({preview:true,linked:true,faction,factionStatus:faction?'verified':'unavailable',emperor:!!emperor,houseLeader:!!houseLeader,officeStatus:verified?'verified':'unavailable'});
  };
 }
