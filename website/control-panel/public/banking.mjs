@@ -21,7 +21,7 @@ async function loadSharedAccounts(grid,g,s,v){
  if(g!==generation||s!==v.serial||!grid.isConnected)return;
  const grouped=new Map();
  const houseNames={corrino:'House Korenholt',atreides:'House Aerdrecht',harkonnen:'House Harkveen',ordos:'House Oordwijk',fremen:'Vrijduin'};
- const expanded=results.flatMap(result=>result.status==='fulfilled'&&result.value[0]==='official'?(result.value[1]?.accounts||[]).map(a=>({status:'fulfilled',value:['mcserver',a]})):[result]);expanded.sort((a,b)=>Number(['mcserver','server'].includes(a.value?.[0]))-Number(['mcserver','server'].includes(b.value?.[0])));for(const result of expanded){if(result.status!=='fulfilled')continue;const[k,d]=result.value;if(!d)continue;
+ const expanded=results.flatMap(result=>result.status==='fulfilled'&&result.value[0]==='official'?(result.value[1]?.accounts||[]).map(a=>({status:'fulfilled',value:['mcserver',a]})):[result]);const priority=r=>!['mcserver','server'].includes(r.value?.[0])?0:r.value?.[1]?.name?.includes('Official Account')?10:r.value?.[0]==='mcserver'?11:12;expanded.sort((a,b)=>priority(a)-priority(b));for(const result of expanded){if(result.status!=='fulfilled')continue;const[k,d]=result.value;if(!d)continue;
  let title,holder,number,value,access,href;
  if(k==='mcserver'&&d.bank){title='OFFICIAL 979 ACCOUNT';holder=d.name||'Official account';number=d.bank.accountNumber;value=d.bank.balanceDunemarks+' DM';access='Account administrator';href='#personal-bank';}
  else if(k==='server'&&d.bank){title='OFFICIAL 979 ACCOUNT';holder='Imperial Treasury · Staff bank';number=d.bank.accountNumber;value=d.bank.balanceDunemarks+' DM';access=d.canManage?'Management access':'View only';href='#staff-bank';}

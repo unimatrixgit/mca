@@ -1,4 +1,4 @@
-import {imperialAccount} from './imperial-accounts.mjs';
+import {imperialAccount,validAccountNumber} from './imperial-accounts.mjs';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
@@ -15,7 +15,7 @@ export function projectBank(data,{playerUuid,staff=false}={}){
  if(data?.currency!=='dunemarks'||typeof data.balanceDunemarks!=='string'||!money.test(data.balanceDunemarks)||!Array.isArray(data.ledger)||data.ledger.length>200)return null;
  if(staff?data.account!=='server':data.playerUuid?.toLowerCase()!==playerUuid?.toLowerCase()||typeof data.walletDunemarks!=='string'||!signed.test(data.walletDunemarks))return null;
  if(data.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||typeof r.amountDunemarks!=='string'||!signed.test(r.amountDunemarks)||typeof r.balanceDunemarks!=='string'||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
- return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,memo:typeof r.memo==='string'?r.memo.slice(0,140):'',counterparty:ledgerCounterparty(r,playerUuid,staff),...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
+ return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,memo:typeof r.memo==='string'?r.memo.slice(0,140):'',...(validAccountNumber(r.fromAccount)&&validAccountNumber(r.toAccount)?{fromAccount:r.fromAccount,toAccount:r.toAccount,memo:typeof r.memo==='string'?r.memo.slice(0,140):''}:{}),counterparty:ledgerCounterparty(r,playerUuid,staff),...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
 }
 export function createBanking(db,settings={},dependencies={}){
  const authenticate=dependencies.authenticate||(r=>identity(r,db)),access=dependencies.access||(u=>accessFor(db,u));
@@ -56,8 +56,8 @@ export function createBanking(db,settings={},dependencies={}){
     const ownName=staff?'Imperial Treasury':faction?'House '+bank.factionId:currentUser.username||'Your account';
     let otherName=null;if(counterparty?.type==='server')otherName='Imperial Treasury';else if(counterparty?.owner===player.toLowerCase())otherName=currentUser.username||'Your account';else if(counterparty?.type==='player')otherName=await(dependencies.accountName|| (async owner=>(await db.prepare('SELECT a.username FROM site_game_links l JOIN site_accounts a ON a.id=l.user_id WHERE l.minecraft_uuid=?').bind(owner).first())?.username||'Account holder'))(counterparty.owner);
     row.fromName=outgoing?ownName:otherName;row.toName=outgoing?otherName:ownName;
-    row.fromAccount=outgoing?own:number;
-    row.toAccount=outgoing?number:own;
+    row.fromAccount=row.fromAccount||(outgoing?own:number);
+    row.toAccount=row.toAccount||(outgoing?number:own);
    }
    return reply({linked:staff?undefined:true,bank,canManage:faction?false:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}

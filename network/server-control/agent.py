@@ -517,6 +517,18 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.authorized():
             return self.reply(401, {'message': 'Unauthorized'})
+        if self.path == '/bank/remittance':
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=2000: raise ValueError('Invalid transfer')
+                data=json.loads(self.rfile.read(length))
+                if not isinstance(data,dict) or set(data)!={'player','source','amount','request_id','memo','target','target_type','from_number','to_number'}: raise ValueError('Invalid transfer')
+                from bank_remittances import remit
+                return self.reply(200,remit(network_database,**data))
+            except (ValueError,TypeError,KeyError):
+                return self.reply(409,{'message':'Transfer declined'})
+            except Exception:
+                return self.reply(503,{'message':'Transfer confirmation unavailable'})
         if self.path == '/bank/transfer-own':
             try:
                 length = int(self.headers.get('Content-Length', '0'))
