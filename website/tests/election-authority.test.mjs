@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{electionAuthority}from'../node/election-authority.mjs';
+const first=Date.parse('2026-11-15T09:00:00Z'),period=14*86400000,context={userId:'user',playerUuid:'player',faction:'corrino',now:first+10800000};
+const term={user_id:'user',player_uuid:'player',kind:'house',faction:'corrino',election_start:first,starts_at:first+10800000,expires_at:first+period,outcome:'winner'};
+const db=row=>({prepare(){return{bind(){return{async first(){return row;}}}}}});
+test('legacy authority remains untouched before first close',async()=>{const a=await electionAuthority({prepare(){throw Error('must not query');}},{...context,now:first});assert.deepEqual(a,{house:{managed:false},imperial:{managed:false}});});
+test('verified matching mandate activates only its own office',async()=>{const a=await electionAuthority(db(term),context);assert.equal(a.house.active,true);assert.equal(a.imperial.managed,false);});
+test('expiry, wrong faction, wrong account, wrong UUID and future activation deny authority',async()=>{for(const row of [{...term,expires_at:context.now},{...term,faction:'atreides'},{...term,user_id:'other'},{...term,player_uuid:'other'},{...term,starts_at:context.now+1}])assert.equal((await electionAuthority(db(row),context)).house.active,false);});
+test('new election invalidates previous term even if stale row has extended expiry',async()=>{const a=await electionAuthority(db({...term,expires_at:first+3*period}),{...context,now:first+period});assert.equal(a.house.active,false);});
+test('vacancy and database failure never restore game office',async()=>{const empty=await electionAuthority(db(null),context);assert.equal(empty.house.managed,true);assert.equal(empty.house.active,false);const failure=await electionAuthority({prepare(){throw Error('offline');}},context);assert.equal(failure.house.verified,false);assert.equal(failure.house.active,false);});

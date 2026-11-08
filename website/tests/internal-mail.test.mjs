@@ -79,3 +79,11 @@ test('mail report ticket belongs to the reporter and conversion retries reuse it
  const args={body:{folder:'INBOX',uid:'1',uidValidity:'1',reporterId:'forged-staff'},broker,createTicket};
  assert.equal((await convertReportedMail(db,args)).ticketId,123);assert.equal((await convertReportedMail(db,args)).ticketId,123);assert.equal(created,1);
 });
+
+test('elected office replaces legacy political mailbox access and expiry revokes it',async()=>{
+ const user={id:'12345678-1234-1234-1234-123456789abc'};
+ const db={prepare(sql){return{bind(){return{async first(){return sql.includes('site_game_links')?{minecraft_uuid:user.id}:{role:'user',assigned:0};}}}}};
+ const run=active=>politicalMailContext(db,user,{SERVER_CONTROL_TOKEN:'a'.repeat(64)},{accessLookup:async()=>({nodes:['web.menu.game']}),authorityLookup:async()=>({house:{managed:true,verified:true,active},imperial:{managed:true,verified:true,active}}),fetcher:async url=>({ok:true,json:async()=>url.includes('/bank/')?{playerUuid:user.id,factionId:'corrino'}:{playerUuid:user.id,offices:[{office:'emperor'},{office:'house-leader:corrino'}]}})});
+ const winner=await run(true);assert.equal(winner.canFactionMail,true);assert.equal(winner.canImperialMail,true);
+ const expired=await run(false);assert.equal(expired.canFactionMail,false);assert.equal(expired.canImperialMail,false);
+});
