@@ -110,3 +110,25 @@
 .bank-recent-activity strong{color:#dfc67e;font-size:12px}.bank-recent-activity small{color:#aabeb1;grid-column:1/-1;font-size:10px}
 .bank-account-detail{margin-top:24px}.bank-row-balance b{font-variant-numeric:tabular-nums}
 @media(max-width:1100px){.bank-dashboard-layout{grid-template-columns:1fr}.bank-quick-actions{margin-top:4px}}
+/* Professional Postbank theme: uniform interactive accounts and restrained hierarchy. */
+#personal-bank.bank-workspace,#staff-bank.bank-workspace{background:#0d2721!important;border-color:#355347!important;border-radius:12px!important;padding:28px!important}
+.bank-workspace .bank-overview-summary{background:linear-gradient(115deg,#21483b,#15392e);border:1px solid #58735b;border-radius:10px;padding:22px 24px;box-shadow:none}
+.bank-workspace .bank-dashboard-layout{grid-template-columns:minmax(0,1.8fr) minmax(210px,1fr);gap:24px}
+.bank-workspace .bank-account-overview .bank-list-card{background:#15382e!important;border:1px solid #3b5a4c!important;border-radius:9px;box-shadow:0 3px 8px #00000012}
+.bank-workspace .bank-account-overview .bank-list-card:hover{border-color:#b49d60!important}
+.bank-workspace .bank-list-card>.bank-account-row{display:grid!important;grid-template-columns:32px minmax(0,1fr) minmax(86px,auto)!important;justify-content:stretch!important;justify-items:stretch!important;align-items:center!important;width:100%!important;min-height:94px;margin:0!important;padding:17px 18px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important;font:400 13px/1.4 Inter,Arial,sans-serif!important;letter-spacing:normal!important;text-transform:none!important}
+.bank-workspace .bank-account-row>.bank-row-copy{display:flex!important;align-items:flex-start!important;justify-content:center!important;gap:4px;min-width:0;text-align:left!important}
+.bank-workspace .bank-account-row>.bank-row-icon{display:flex;align-items:center;justify-content:center;width:30px;height:34px;background:#224b3b;border-radius:7px;font-size:21px;color:#d7c084}
+.bank-workspace .bank-row-copy>b{font-size:13px;font-weight:600;color:#e7e8d8;letter-spacing:0;text-align:left}
+.bank-workspace .bank-row-copy>code{display:block;width:auto!important;background:transparent!important;padding:0!important;border:0!important;color:#a9c0b1;font:400 11px/1.4 ui-monospace,monospace;letter-spacing:.02em}
+.bank-workspace .bank-row-copy>small{font:400 11px/1.3 Inter,Arial,sans-serif;color:#90ad9c;letter-spacing:0;text-transform:none}
+.bank-workspace .bank-account-row>.bank-row-balance{display:flex!important;align-items:flex-end!important;text-align:right!important;gap:3px;max-width:150px}
+.bank-workspace .bank-row-balance>b{font:600 17px/1.3 Inter,Arial,sans-serif;color:#eddb9d;letter-spacing:-.02em;text-align:right}
+.bank-workspace .bank-row-balance>small{font:400 10px/1.3 Inter,Arial,sans-serif;color:#91ab9d;letter-spacing:.08em}
+.bank-workspace .bank-quick-actions{background:#123127;border:1px solid #355347;padding:18px;border-radius:9px}
+.bank-workspace .bank-quick-actions h3{font-size:15px;color:#e6ddbe;font-weight:600}
+.bank-workspace .bank-quick-actions>button,.bank-workspace .bank-quick-actions>a{border:1px solid #48634e;border-radius:6px;font-size:12px;background:#1a3c2f;color:#e6d49b;box-shadow:none;min-height:40px}
+.bank-workspace .bank-recent-activity article{line-height:1.5}.bank-workspace .bank-recent-activity strong{font-variant-numeric:tabular-nums}
+.bank-workspace .user-page-hero{padding:18px 20px!important;border-radius:8px!important}.bank-workspace .user-page-hero h2{font-size:28px!important}.bank-workspace .user-page-hero p{font-size:13px!important}
+@media(max-width:1100px){.bank-workspace .bank-dashboard-layout{grid-template-columns:1fr}}
+@media(max-width:600px){#personal-bank.bank-workspace,#staff-bank.bank-workspace{padding:16px!important}.bank-workspace .bank-list-card>.bank-account-row{grid-template-columns:26px minmax(0,1fr) minmax(68px,auto)!important;padding:13px 12px!important;gap:9px!important;min-height:86px}.bank-workspace .bank-row-balance>b{font-size:15px}.bank-workspace .bank-row-copy>b{font-size:12px}.bank-workspace .bank-row-copy>code{font-size:10px}.bank-workspace .bank-account-row>.bank-row-balance{max-width:105px}}
