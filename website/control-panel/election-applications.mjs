@@ -52,8 +52,31 @@ export async function submitApplication(db,{actor,context,input,now=Date.now(),c
  }}]);
  return result;
 }
+// Read-only projection: totals belong to individual rounds, never combined across runoffs.
+export function applicationProgress(application, rounds, term, honour, now=Date.now()) {
+ const history=rounds.map(r=>({number:Number(r.round_number)+1,status:r.status,
+  opensAt:Number(r.opens_at),closesAt:Number(r.closes_at),eligible:!!Number(r.eligible),votes:Number(r.votes||0)}));
+ const latest=rounds.at(-1),final=latest&&['winner','no_votes'].includes(latest.status);
+ const won=final&&latest.status==='winner'&&latest.winner_id===application.id;
+ return {state:final?'closed':'open',phase:final?'Final result':latest?(now<Number(latest.closes_at)?'Voting open':'Finalising round'):(now<Number(application.election_start)?'Applications open':'Awaiting round'),
+  votes:history.filter(r=>r.eligible).at(-1)?.votes??0,
+  result:final?(latest.status==='no_votes'?'No votes cast':won?'Elected':'Not elected'):'Pending',
+  officeRecorded:!!(won&&term?.application_id===application.id),
+  term:won&&term?.application_id===application.id?{startsAt:Number(term.starts_at),expiresAt:Number(term.expires_at),streak:Number(term.streak)}:null,
+  honour:honour?{title:honour.title,earnedAt:Number(honour.earned_at)}:null,rounds:history};
+}
 export async function ownApplications(db,userId){
  if(!userId)throw Error('Applicant required');
- const rows=await db.prepare('SELECT public_id,kind,faction,election_start,motivation,status,created_at FROM political_applications WHERE user_id=? ORDER BY created_at DESC LIMIT 100').bind(userId).all();
- return rows.results;
+ const rows=(await db.prepare('SELECT id,player_uuid,public_id,kind,faction,election_start,motivation,status,created_at FROM political_applications WHERE user_id=? ORDER BY created_at DESC LIMIT 100').bind(userId).all()).results;
+ const output=[];
+ for(const row of rows){
+  const rounds=(await db.prepare(`SELECT r.*, EXISTS(SELECT 1 FROM political_round_candidates c WHERE c.round_id=r.id AND c.application_id=?) AS eligible,
+   COALESCE((SELECT SUM(a.votes) FROM political_ballot_allocations a JOIN political_ballots b ON b.id=a.ballot_id WHERE b.round_id=r.id AND a.application_id=?),0) AS votes
+   FROM political_election_rounds r WHERE r.kind=? AND r.faction=? AND r.election_start=? ORDER BY r.round_number`).bind(row.id,row.id,row.kind,row.faction,row.election_start).all()).results;
+  const term=await db.prepare('SELECT application_id,starts_at,expires_at,streak FROM political_office_terms WHERE kind=? AND faction=? AND election_start=?').bind(row.kind,row.faction,row.election_start).first();
+  const honour=await db.prepare('SELECT title,earned_at FROM political_election_honours WHERE player_uuid=? AND kind=? AND faction=?').bind(row.player_uuid,row.kind,row.faction).first();
+  const {id,player_uuid,...publicRow}=row;
+  output.push({...publicRow,progress:applicationProgress(row,rounds,term,honour)});
+ }
+ return output;
 }
