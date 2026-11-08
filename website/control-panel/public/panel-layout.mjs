@@ -74,3 +74,10 @@ export const DEV_ITEMS=[['Overview','dev-panel','overview'],['Development Queue'
 
 
 
+
+export function factionMenuItem(item,context){
+ const houses={atreides:['House Aerdrecht','house-aerdrecht-v1.png'],harkonnen:['House Harkveen','house-harkveen-v1.png'],corrino:['House Korenholt','house-korenholt-v1.png'],ordos:['House Oordwijk','house-oordwijk-v1.png'],fremen:['Vrijduin','house-vrijduin-v1.png'],veiled_concord:['Veiled Concord','veiled-concord-v1.png']};
+ const house=context?.linked?houses[String(context.faction||'').toLowerCase()]:null;
+ const suffix={'formal-council':'Council','house-elections':'Elections'}[item?.page];
+ return house&&suffix?{...item,label:house[0]+' '+suffix,art:'seals/'+house[1]}:item;
+}
