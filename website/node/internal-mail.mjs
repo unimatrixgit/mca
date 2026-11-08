@@ -1,3 +1,4 @@
+import {runPoliticalNotifications} from './political-notifications.mjs';
 import {runTicketMail} from './internal-mail-tickets.mjs';
 import {spawn} from 'node:child_process';
 import {scrypt as rawScrypt,timingSafeEqual} from 'node:crypto';
@@ -53,7 +54,7 @@ export async function resolveMailRecipients(db,values,{eligible=internalMailElig
  }
  return [...new Set(resolved)];
 }
-export function startInternalMailSync(db,{broker=internalMailBroker}={}){let busy=false,closed=false;const sync=async()=>{if(busy||closed)return;busy=true;try{await initializePoliticalMailRanks(db);await initializeMailReports(db);await ensureStaffMailbox(broker);await initializeClanMail(db);await reconcileClanMail(db,broker);const{results}=await db.prepare(eligibilitySql).all();for(const user of results){if(closed)break;await ensureInternalMailbox(db,user,broker).catch(()=>{});}await runTicketMail(db,{broker,eligible:internalMailEligible,staffAccess:canUseStaffMail});}catch{console.error('Internal mailbox reconciliation pending');}finally{busy=false;}};void sync();const timer=setInterval(sync,60000);timer.unref();return()=>{closed=true;clearInterval(timer);};}
+export function startInternalMailSync(db,{broker=internalMailBroker}={}){let busy=false,closed=false;const sync=async()=>{if(busy||closed)return;busy=true;try{await initializePoliticalMailRanks(db);await initializeMailReports(db);await ensureStaffMailbox(broker);await initializeClanMail(db);await reconcileClanMail(db,broker);const{results}=await db.prepare(eligibilitySql).all();for(const user of results){if(closed)break;await ensureInternalMailbox(db,user,broker).catch(()=>{});}await runTicketMail(db,{broker,eligible:internalMailEligible,staffAccess:canUseStaffMail});await runPoliticalNotifications(db,{broker,eligible:internalMailEligible});}catch{console.error('Internal mailbox reconciliation pending');}finally{busy=false;}};void sync();const timer=setInterval(sync,60000);timer.unref();return()=>{closed=true;clearInterval(timer);};}
 const routes={
  '/api/internal-mail/messages/list':['internal_list',['folder','offset','limit','unread','tag','sort']],
  '/api/internal-mail/messages/move':['internal_move',['folder','uid','uidValidity','destination']],

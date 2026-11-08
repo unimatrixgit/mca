@@ -1,3 +1,4 @@
+import {createHosting} from '../node/hosting.mjs';
 import {initializeOfficeLedger,startOfficeLedger} from './election-office-ledger.mjs';
 import {createMailAccounts} from '../node/mail-accounts.mjs';
 import {createInternalMail,startInternalMailSync,initializeInternalMailAccess,syncClanMailRegistry} from '../node/internal-mail.mjs';
@@ -67,7 +68,7 @@ export function createPanel(db,settings={},dependencies={}){
  const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
  const auth=createAuth(db,origin,settings),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const internalMail=createInternalMail(db,{origin,settings,...dependencies.internalMail});
- const mailAccounts=createMailAccounts(db);const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
+ const hosting=createHosting(db,{origin});const mailAccounts=createMailAccounts(db);const mailIdentity=createMailIdentityRoute(db,{origin}),gitIdentity=createGitIdentityRoute(db,settings,origin);
  const adminRegistration=createAdminRegistration(db,origin);const admin=createAccountAdmin(db,origin),profile=createProfile(db,settings,origin),avatars=createAvatars(db,settings);
  const tailorAppearance=createTailorAppearance(db,dependencies.tailorAppearance);
  const memorials=createMemorials(db,{...settings,PUBLIC_ORIGIN:'https://www.dunerealms.com'});
@@ -136,6 +137,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(['/api/clans/shop','/api/clans/shop/price','/api/clans/game-context'].includes(path))return clanShop(request);
   if(path==='/api/clans'||path.startsWith('/api/clans/'))return clans(request);
   if(path==='/api/git/me')return gitIdentity(request);
+  if(path.startsWith('/api/hosting/'))return hosting(request);
   if(path==='/api/mail/accounts')return mailAccounts(request);
   if(path.startsWith('/api/internal-mail/'))return internalMail(request);
   if(['/api/mail/me','/api/mail/password','/api/mail/signature','/api/mail/template'].includes(path))return mailIdentity(request);

@@ -48,7 +48,8 @@ function dune_support_workspace(string $html, string $path): string {
     foreach ($navigation as [$label,$url,$icon,$active]) $submenu .= '<a href="'.$esc($url).'"'.($active?' aria-current="page"':'').'>'
         .'<img src="https://www.dunerealms.com/assets/'.$esc($icon).'" width="34" height="34" alt=""><span>'.$esc($label).'</span></a>';
     $submenu .= '</nav>';
-    $heading = '<div class="dune-support-desk-heading">'.$hero.$submenu.'</div>';
+    $toggle='';if($staff&&in_array($page,['index.php','tickets.php','dashboard.php'],true)){require_once __DIR__.'/application-visibility.php';$toggle=dune_application_toggle_html();}
+    $heading = '<div class="dune-support-desk-heading">'.$hero.$submenu.$toggle.'</div>';
     // Only the native content root; forms, messages and navigation are byte-preserved.
     $html = preg_replace_callback('~<div\b[^>]*\bid=["\']content["\'][^>]*>~i', static fn($m) => $m[0].$heading, $html, 1);
     $html = preg_replace_callback('~<body\b([^>]*)>~i', static function($m) use ($staff) {
