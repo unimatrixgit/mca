@@ -13,7 +13,7 @@ async function loadSharedAccounts(grid,g,s,v){
  const read=async path=>{const r=await fetch(path,{cache:'no-store'});return r.ok?r.json():null;};
  const jobs=[];
  if(permissions.includes('web.bank.staff.view'))jobs.push(['server',read('/api/bank/staff')]);
- if(permissions.includes('web.menu.game'))jobs.push(['clan',read('/api/clans/shop')],['house',read('/api/politics/preview')]);
+ if(permissions.includes('web.menu.game'))jobs.push(['clan',read('/api/clans/shop')],['house',read('/api/bank/faction')]);
  const results=await Promise.allSettled(jobs.map(async([kind,p])=>[kind,await p]));
  if(g!==generation||s!==v.serial||!grid.isConnected)return;
  let sharedGrid=null;
@@ -22,7 +22,7 @@ async function loadSharedAccounts(grid,g,s,v){
  let title,holder,number,value,access,href;
  if(k==='server'&&d.bank){title='SERVER ACCOUNT';holder='Imperial Treasury';number=d.bank.accountNumber;value=d.bank.balanceDunemarks+' DM';access=d.canManage?'Management access':'View only';href='#staff-bank';}
  else if(k==='clan'&&d.member&&d.clan){title='CLAN ACCOUNT';holder=d.clan.name;number=d.bank?.accountNumber||'Account connection pending';value=d.bankAvailable&&d.bank?d.bank.balanceDunemarks+' DM':'Balance unavailable';access='View account · payments checked in game';href='#clan-bank';}
- else if(k==='house'&&d.factionStatus==='verified'&&d.faction){title='HOUSE ACCOUNT';holder=houseNames[d.faction]||d.faction;number=d.factionAccount||'Account connection pending';value='Balance connection pending';access='Preview · transfer access not connected';href='#formal-council';}
+ else if(k==='house'&&d.bank?.factionId){title='HOUSE ACCOUNT';holder=houseNames[d.bank.factionId]||d.bank.factionId;number=d.bank.accountNumber;value=d.bank.balanceDunemarks+' DM';access='View account · payments checked in game';href='#formal-council';}
  else continue;
  const card=el('article');card.className='bank-account-tile';card.append(el('small',title),el('strong',value),el('span','Account holder: '+holder),el('code',number));const badge=el('span',access);badge.className='bank-account-access';card.append(badge);const actions=el('div');actions.className='bank-account-controls';const open=el('a','Open account');open.href=href;actions.append(open);card.append(actions);if(!sharedGrid){const heading=el('h3','Shared accounts');heading.className='bank-shared-heading';sharedGrid=el('div');sharedGrid.className='bank-balance-grid bank-account-overview';grid.after(heading,sharedGrid);}card.bankData=d.bank;sharedGrid.append(card);compactAccount(card,v);
  }

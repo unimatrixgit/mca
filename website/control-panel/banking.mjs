@@ -20,22 +20,30 @@ export function createBanking(db,settings={},dependencies={}){
  const authenticate=dependencies.authenticate||(r=>identity(r,db)),access=dependencies.access||(u=>accessFor(db,u));
  const linked=dependencies.linked||(async u=>(await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(u.id).first())?.minecraft_uuid);
  return async request=>{
-  const url=new URL(request.url),staff=url.pathname==='/api/bank/staff';
-  if(!['/api/bank/personal','/api/bank/staff'].includes(url.pathname))return reply({message:'Not found.'},404);
+  const url=new URL(request.url),staff=url.pathname==='/api/bank/staff',faction=url.pathname==='/api/bank/faction',required=faction?'web.menu.game':staff?'web.bank.staff.view':'web.bank.personal.view';
+  if(!['/api/bank/personal','/api/bank/staff','/api/bank/faction'].includes(url.pathname))return reply({message:'Not found.'},404);
   if(request.method!=='GET')return reply({message:'Bank transfers are handled in game.'},405);
   if(url.search)return reply({message:'This bank does not accept account or player overrides.'},400);
   const user=await authenticate(request);if(!user)return reply({message:'Sign in to view your bank.'},401);
-  const rights=await access(user);if(!rights?.nodes.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is not available for this account.'},403);
+  const rights=await access(user);if(!rights?.nodes.includes(required))return reply({message:'Bank access is not available for this account.'},403);
   try{
    const player=await linked(user);if(!player)return reply({linked:false});if(!uuid.test(player))throw Error();
    if((settings.SERVER_CONTROL_TOKEN||'').length<64)throw Error();
-   const r=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433'+(staff?'/bank/staff':'/bank/player?uuid='+encodeURIComponent(player)),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(8000)});
-   if(!r.ok)throw Error();const bank=projectBank(await r.json(),{playerUuid:player,staff});if(!bank)throw Error();
+   const r=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433'+(staff?'/bank/staff':(faction?'/bank/faction?uuid=':'/bank/player?uuid=')+encodeURIComponent(player)),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(8000)});
+   if(!r.ok)throw Error();const raw=await r.json();
+   if(faction&&!['atreides','harkonnen','corrino','ordos','fremen','veiled_concord','spacing_guild'].includes(raw.factionId))throw Error();
+   const bank=projectBank(faction?{...raw,walletDunemarks:'0.00',ledger:raw.ledger?.map(row=>({...row,reference:undefined}))}:raw,{playerUuid:player,staff});if(!bank)throw Error();
+   if(faction){delete bank.walletDunemarks;bank.factionId=raw.factionId;}
+
+   if(faction){
+    const verify=await(dependencies.fetcher||fetch)('http://127.0.0.1:15433/bank/faction?uuid='+encodeURIComponent(player),{headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN},signal:AbortSignal.timeout(8000)});
+    if(!verify.ok)throw Error();const latest=await verify.json();if(latest.playerUuid?.toLowerCase()!==player.toLowerCase()||latest.factionId!==bank.factionId)return reply({message:'Your House changed. Refresh the bank.'},409);
+   }
    const currentUser=await authenticate(request);if(!currentUser||currentUser.id!==user.id)return reply({message:'Sign in again before viewing this bank.'},401);
-   const currentRights=await access(currentUser);if(!currentRights?.nodes?.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is no longer available for this account.'},403);
+   const currentRights=await access(currentUser);if(!currentRights?.nodes?.includes(required))return reply({message:'Bank access is no longer available for this account.'},403);
    const currentPlayer=await linked(currentUser);if(typeof currentPlayer!=='string'||!uuid.test(currentPlayer)||currentPlayer.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked Minecraft account changed. Refresh before viewing this bank.'},409);
-   bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,staff?'server':'player',staff?'network':player.toLowerCase());
-   if(!staff)bank.currentAccountNumber=await(dependencies.accountNumber||imperialAccount)(db,'current',player.toLowerCase());
+   bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,faction?'faction':staff?'server':'player',faction?bank.factionId:staff?'network':player.toLowerCase());
+   if(!staff&&!faction)bank.currentAccountNumber=await(dependencies.accountNumber||imperialAccount)(db,'current',player.toLowerCase());
    for(const row of bank.ledger){
     const counterparty=row.counterparty;delete row.counterparty;
     const number=counterparty?await(dependencies.accountNumber||imperialAccount)(db,counterparty.type,counterparty.owner):null;
@@ -43,7 +51,7 @@ export function createBanking(db,settings={},dependencies={}){
     row.fromAccount=outgoing?bank.accountNumber:number;
     row.toAccount=outgoing?number:bank.accountNumber;
    }
-   return reply({linked:staff?undefined:true,bank,canManage:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
+   return reply({linked:staff?undefined:true,bank,canManage:faction?false:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
  };
 }
