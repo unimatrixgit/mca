@@ -20,7 +20,7 @@ export const USER_GROUPS=[
   item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
   item('Landsraad','landsraad','web.menu.game','seals/office-landsraad.png',{aliases:['house-elections','imperial-elections']}),
   item('Applications','applications','web.menu.game','seals/office-landsraad.png'),
-  item('Formal Council','formal-council','web.menu.game','seals/office-house_leader.png'),
+  item('Formal Council','formal-council','web.menu.game','seals/office-house_leader.png',{aliases:['council-motd']}),
   item('Imperial Command','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]],
  ['Services',[
   item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
@@ -68,4 +68,5 @@ export function splitMenuGroups(groups){
 }
 
 export const DEV_ITEMS=[['Overview','dev-panel','overview'],['Development Queue','dev-queue','queue'],['Approvals','dev-approvals','approvals'],['New Request','dev-new','new'],['Archive','dev-archive','archive']].map(([label,page,view])=>({label,page,view,art:'seals/team-dev-150.png'}));
+
 

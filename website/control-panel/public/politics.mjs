@@ -1,7 +1,8 @@
-import {councilPreview,inboxPreview,resetInboxViews} from './council-preview.mjs';
+import {councilPreview,inboxPreview,resetInboxViews,motdPreview} from './council-preview.mjs';
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const asset=name=>'https://www.dunerealms.com/assets/'+name;
 const specs={
+ 'council-motd':['WORDS BENEATH THE BANNERS','Message of the Day','Proclamations of your faction and the Imperial throne.','seals/office-landsraad.png'],
  'applications':['THE IMPERIAL REGISTER','Applications','Your candidatures, decisions and honours in one register.','seals/office-landsraad.png'],
  'formal-council':['THE HOUSE COUNCIL','Formal Council','Stewardship, diplomacy and the voice of your House.','seals/office-house_leader.png'],
  'shared-inbox':['LETTERS OF THE REALMS','Inbox','Personal, House, Clan and System correspondence.','seals/veiled-concord-v1.png'],
@@ -13,7 +14,7 @@ const specs={
  'imperial-spice':['THE SPICE CHARTER','Spice Rights','The Emperor’s future register of spice rights.','seals/spice-rights-v1.png']
 };
 const dashboard=document.getElementById('dashboard'),nav=dashboard?.querySelector('nav'),views={};let user=null,serial=0,context=null;
-const electionLinks=[['Formal Council','formal-council','seals/office-house_leader.png'],['Landsraad','landsraad','seals/office-landsraad.png'],['House Elections','house-elections','seals/office-house_leader.png'],['Imperial Elections','imperial-elections','seals/emperor-v1.png']];
+const electionLinks=[['MOTD','council-motd','seals/office-landsraad.png'],['Formal Council','formal-council','seals/office-house_leader.png'],['Landsraad','landsraad','seals/office-landsraad.png'],['House Elections','house-elections','seals/office-house_leader.png'],['Imperial Elections','imperial-elections','seals/emperor-v1.png']];
 const commandLinks=[['Imperial Command','imperial-command','seals/emperor-v1.png'],['Water','imperial-water','seals/water-rights-v1.png'],['Spice','imperial-spice','seals/spice-rights-v1.png']];
 function artLink(label,page,art){const a=el('a');a.href='#'+page;const img=el('img');img.src=asset(art);img.alt='';img.width=img.height=32;a.append(img,el('span',label));return a;}
 function card(title,copy,art){const box=el('article',undefined,'politics-card');if(art){const img=el('img');img.src=asset(art);img.alt='';img.width=80;img.height=80;box.append(img);}box.append(el('h3',title),el('p',copy));return box;}
@@ -87,6 +88,7 @@ for(const[id,[eyebrow,title,description,seal]]of Object.entries(specs)){
 function render(){
  resetInboxViews();
  for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');v.content.replaceChildren();}
+ views['council-motd'].content.append(motdPreview());
  views.applications.content.append(applicationsDashboard());
  const landing=views.landsraad.content,grid=el('div',undefined,'politics-grid');
  for(const[title,page,art,copy]of [['House Elections','house-elections','seals/office-house_leader.png','Enter your own House chamber. Only your verified in-game faction will appear.'],['Imperial Elections','imperial-elections','seals/emperor-v1.png','Follow the future Imperial ballot, candidates and results.']]){const box=card(title,copy,art);box.append(artLink('Open chamber',page,art));grid.append(box);}landing.append(grid,card('From nomination to result','The planned flow is nomination, voting, then a recorded result. Eligibility, terms and ballot rules will be defined before voting opens.'));
@@ -117,6 +119,7 @@ function applicationsDashboard(){
  for(const row of records){const tr=el('tr');for(const value of [row.id,row.user,row.role,row.date,row.election,row.status,String(row.votes),row.result,'No'])tr.append(el('td',value));const seal=el('img');seal.src=asset(row.prefix==='IMP'?'seals/emperor-v1.png':row.prefix==='CON'?'seals/veiled-concord-v1.png':'seals/office-house_leader.png');seal.alt='';seal.width=seal.height=28;tr.children[2].prepend(seal);const cell=el('td'),button=el('button','Details');button.type='button';button.setAttribute('aria-controls',details.id);button.setAttribute('aria-label','View details for '+row.id);button.addEventListener('click',()=>{details.replaceChildren(el('h3',row.id+' · '+row.role),demoNote());const data=el('dl',undefined,'applications-detail-grid');for(const [label,value]of [['Applicant',row.user],['Application date',row.date],['Election ID',row.election],['Election status',row.status],['Votes received',String(row.votes)],['Result / rank awarded',row.result],['Three consecutive terms honour','No — no permanent honour awarded'],['Term length',row.term],['Regular election time',row.time],['Election dates','Not scheduled — preview only'],['Eligibility',row.prefix==='IMP'?'Everyone may apply; House leaders allocate five votes':'Verified members of the relevant faction'],['Electorate / turnout','Not available in this demo'],['Finalisation / audit','No real result has been finalised']])data.append(el('dt',label),el('dd',value));details.append(data,el('h4','Motivation'),el('p',row.motivation));details.hidden=false;details.focus();});cell.append(button);tr.append(cell);body.append(tr);}table.append(body);wrap.append(table);register.append(wrap);host.append(register,details);
  const form=card('New application','Choose an election type and explain your motivation.','seals/office-house_leader.png');const fields=el('div',undefined,'politics-charter'),typeLabel=el('label','Application type'),select=el('select');for(const [prefix,title]of types){const option=el('option',prefix+' · '+title);option.value=prefix;select.append(option);}typeLabel.append(select);const motivationLabel=el('label','Motivation and plans'),text=el('textarea');text.rows=5;text.maxLength=5000;text.placeholder='Tell the electorate why you are standing and what you hope to achieve.';motivationLabel.append(text);const accept=el('label',undefined,'politics-accept'),check=el('input');check.type='checkbox';accept.append(check,el('span','Yes, I accept the responsibilities of this candidature.'));fields.append(typeLabel,motivationLabel,accept,disabled('Submit application — preview only'));form.append(fields,el('p','A permanent application number will be assigned only after a successful submission. No real application log is connected yet.'));host.append(form);return host;
 }
+
 
 
 
