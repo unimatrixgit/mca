@@ -442,6 +442,13 @@ class Handler(BaseHTTPRequestHandler):
             return
         if quest_route(self, 'GET', url):
             return
+        if url.path == '/bank/mcserver':
+            if url.query: return self.reply(400,{'message':'Account overrides are not accepted'})
+            try:
+                from official_bank import read_mcserver
+                return self.reply(200,read_mcserver(network_database))
+            except Exception:
+                return self.reply(503,{'message':'Official bank unavailable'})
         if url.path in ('/bank/player', '/bank/staff', '/bank/faction'):
             if MODE != 'gateway':
                 return self.reply(404, {'message': 'Not found'})
