@@ -6,3 +6,8 @@ Acceptance: approved issuers can award once; invalid or stale requests fail with
 Validation: focused permission, recipient, citation, confirmation, duplicate, preservation, menu and legacy honours tests; live browser form and assets verification; read-only/denied endpoint checks.
 Delivery: Dev fork PR, backup, scoped deployment, live checks; then publish community post explaining the rule and route.
 Follow-up Owner scope: Landsraad voting design, and Imperial Command under Politics & Gameplay with Water and Spice subpages for the Emperor. Website placeholders only; no in-game rights or economy changes.
+
+## Default for all new CP pages (Owner, 8 November)
+Use the shared Dev design: external CP stylesheet, wide artwork banner, bounded seal artwork, green cards with gold borders, clear labels, and gold action buttons. Never inject inline style elements (CP CSP blocks them). Register every new module in server static allowlist and verify the rendered page after deployment before reporting it ready.
+
+Stilgar artwork: original generated Minecraft-style portrait, 8 November 2026, stored as website/web/assets/stilgar-portrait-v1.png. Quote: “As written!” — Stilgar, Dune: Part Two; screenplay reference https://www.duneinfo.com/Content/files/dune-part-two-denis-villeneuve-jon-spaihts.pdf . Surrounding Order prose is original DuneRealms lore, not a quotation. Add framed portrait beside recipient profile citations without modifying their text.
