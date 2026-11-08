@@ -1,4 +1,5 @@
 import {electionAuthority} from '../node/election-authority.mjs';
+import {imperialAccount} from './imperial-accounts.mjs';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store',Vary:'Cookie'}});
@@ -30,6 +31,7 @@ export function createPoliticsPreview(db,settings={},deps={}){
   const latest=await auth(request);if(!latest||latest.id!==user.id||!(await access(latest)).nodes.includes('web.menu.game'))return reply({message:'Access changed. Refresh.'},403);
   if((await linked(current))?.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked account changed. Refresh.'},409);
   const verified=authority.house.managed?authority.house.verified:o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices);
-  return reply({preview:true,linked:true,faction,factionStatus:faction?'verified':'unavailable',emperor:!!emperor,houseLeader:!!houseLeader,officeStatus:verified?'verified':'unavailable'});
+  const factionAccount=faction?await (deps.accountNumber||imperialAccount)(db,'faction',faction):null;
+  return reply({factionAccount,preview:true,linked:true,faction,factionStatus:faction?'verified':'unavailable',emperor:!!emperor,houseLeader:!!houseLeader,officeStatus:verified?'verified':'unavailable'});
  };
 }

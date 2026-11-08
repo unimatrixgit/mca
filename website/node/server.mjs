@@ -63,7 +63,7 @@ export function createApplication(db,settings={}) {
     if(url.pathname==='/signin-with-chatgpt')return Response.redirect(origin+'/login.html?return_to='+encodeURIComponent(safeReturn(url.searchParams.get('return_to'))),302);
     if(url.pathname==='/healthz'){await db.prepare('SELECT 1 AS ok').first();return Response.json({status:'ok',database:'connected'},{headers:{'Cache-Control':'no-store'}});}
     if(url.pathname.startsWith('/api/auth/'))return auth(request);
-    if(['/forums.html','/login.html','/login.js','/login.css'].includes(url.pathname)){
+    if(['/corrino-group.html','/corrino-group.js','/corrino-group.css','/forums.html','/login.html','/login.js','/login.css'].includes(url.pathname)){
       if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
       const type=url.pathname.endsWith('.js')?'text/javascript':url.pathname.endsWith('.css')?'text/css':'text/html';
       return new Response(request.method==='HEAD'?null:await readFile(new URL(url.pathname.slice(1),root)),{headers:{...security,'Cache-Control':'no-store','Content-Type':type+'; charset=utf-8'}});
@@ -77,7 +77,7 @@ export function createApplication(db,settings={}) {
     const response=await worker.fetch(forwarded,{...settings,DB:db,FORUM_ADMIN_EMAILS:'verified-staff@dunerealms.internal',SUPPORT_STAFF_EMAILS:'verified-staff@dunerealms.internal'});
     const type=response.headers.get('Content-Type')||'';
     if(request.method!=='HEAD'&&(type.includes('text/html')||type.includes('javascript'))){
-      let body=(await response.text()).replaceAll('Sign in with ChatGPT','Sign in to DuneRealms');if(type.includes('text/html')&&response.status===200)body=await search.html(request,body);if(response.status===200&&type.includes('text/html')&&['/','/index.html','/portal.html'].includes(url.pathname)){const memorials=await memorialPortalBlock(db);if(memorials)body=body.replace('</head>','<link rel="stylesheet" href="/memorial.css"></head>').replace('</main>',memorials+'</main>');}
+      let body=(await response.text()).replaceAll('Sign in with ChatGPT','Sign in to DuneRealms');if(url.pathname==='/exchange-market.js')body=body.replace('parent.append(part,group);',"const groupLink=document.createElement('a');groupLink.href='/corrino-group.html';groupLink.setAttribute('aria-label','About Corrino Group');groupLink.append(group);parent.append(part,groupLink);");if(type.includes('text/html')&&response.status===200)body=await search.html(request,body);if(response.status===200&&type.includes('text/html')&&['/','/index.html','/portal.html'].includes(url.pathname)){const memorials=await memorialPortalBlock(db);if(memorials)body=body.replace('</head>','<link rel="stylesheet" href="/memorial.css"></head>').replace('</main>',memorials+'</main>');}
       const out=new Headers(response.headers);out.delete('Content-Length');out.set('Content-Security-Policy',security['Content-Security-Policy']);
       return new Response(body,{status:response.status,headers:out});
     }

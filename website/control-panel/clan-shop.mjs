@@ -1,5 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import {initializeHouseTailor,validateHouseKit,houseTailorState,saveHouseKit} from './house-tailor.mjs';
+import {imperialAccount} from './imperial-accounts.mjs';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 import {gameAuthorized,validUuid} from '../node/game-link.mjs';
@@ -47,6 +48,7 @@ export function createClanShop(db,settings={},dependencies={}){
    const currentLink=await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(currentUser.id).first();
    const currentClan=currentLink?await membership(currentLink.minecraft_uuid):null;
    if(!currentLink||currentLink.minecraft_uuid!==link.minecraft_uuid||!currentClan||currentClan.id!==clan.id||currentClan.user_id!==currentUser.id)return reply({message:'Your linked account or clan membership changed. Refresh before continuing.'},409);
+   if(bank)bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,'clan',currentClan.id);
    const legacy=await blueprint(currentClan),state=await houseTailorState(db,currentUser,currentClan,legacy);
    return reply({member:true,clan:{id:currentClan.id,name:currentClan.name,tag:currentClan.tag,role:currentClan.clan_role},canDesign:['owner','officer'].includes(currentClan.clan_role),blueprint:legacy,qualities:state.tiers,priceDunemarks:await price(),canSetPrice:currentNodes.includes('web.items.manage'),bank,bankAvailable:!!bank});
   }
