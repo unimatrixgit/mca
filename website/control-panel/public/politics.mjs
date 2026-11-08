@@ -89,6 +89,7 @@ const factionSeals={atreides:['House Aerdrecht','house-aerdrecht-v1.png'],harkon
 function renderFactionSeals(){
  const faction=context?.linked?factionSeals[String(context.faction||'').toLowerCase()]:null;
  for(const id of ['formal-council','house-elections']){
+  views[id].section.dataset.faction=faction?String(context.faction).toLowerCase():'';
   const hero=views[id].section.querySelector('.politics-hero'),image=hero.querySelector('img');
   image.src=asset(faction?'seals/'+faction[1]:specs[id][3]);image.alt=faction?faction[0]+' seal':'';
   hero.querySelector('small').textContent=faction?faction[0].toUpperCase():specs[id][0];
