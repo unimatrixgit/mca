@@ -1,1 +1,31 @@
-(()=>{if(!['/','/index.html'].includes(location.pathname))return;let user=null;function render(){const panel=document.querySelector('.dune-page-marker'),worlds=panel?.querySelector('.world-status');if(!panel||!worlds||panel.querySelector('.portal-account-card'))return;panel.classList.add('portal-account-welcome');const box=document.createElement('aside');box.className='portal-account-card';box.setAttribute('aria-label','Your DuneRealms account');const art=document.createElement('img');art.src='/assets/nav-account-full-v2.webp';art.alt='';art.width=art.height=80;const heading=document.createElement('h2');heading.textContent=user?'Welcome, '+user:'Join the caravan';const text=document.createElement('p');text.textContent=user?'Your place in the imperial ledger.':'Create your account and begin your DuneRealms journey.';const actions=document.createElement('div');for(const[label,url]of(user?[['Account centre','https://cp.dunerealms.com/']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']])){const a=document.createElement('a');a.textContent=label;a.href=url;actions.append(a);}box.append(art,heading,text,actions);panel.insertBefore(box,worlds);}new MutationObserver(render).observe(document.body,{childList:true,subtree:true});render();fetch('https://cp.dunerealms.com/api/welcome',{credentials:'include',cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d?.username){user=d.username;document.querySelector('.portal-account-card')?.remove();render();}}).catch(()=>{});})();
+(()=>{
+ const cp=location.hostname==='cp.dunerealms.com';
+ if(!cp&&!['/','/index.html'].includes(location.pathname))return;
+ let user=null,revision=0;
+ const site='https://www.dunerealms.com';
+ function render(){
+  const panel=document.querySelector('.dune-page-marker'),worlds=panel?.querySelector('.world-status');
+  if(!panel||!worlds)return;
+  const old=panel.querySelector('.portal-account-card');
+  if(old?.dataset.identity===(user||''))return;
+  old?.remove();
+  if(cp&&!user){panel.classList.remove('portal-account-welcome');return;}
+  panel.classList.add('portal-account-welcome');
+  const box=document.createElement('aside');box.className='portal-account-card';box.dataset.identity=user||'';box.setAttribute('aria-label',user?'Your Imperial Postbox':'Your DuneRealms account');
+  const art=document.createElement('img');art.src=site+(user?'/assets/imperial-postbox-v1.png':'/assets/nav-account-full-v2.webp');art.alt=user?'Emerald and gold Minecraft imperial postbox with sealed letters':'';art.width=user?200:80;art.height=user?300:80;if(user)art.className='imperial-postbox-art';
+  const heading=document.createElement('h2');heading.textContent=user?'Imperial Postbox':'Join the caravan';
+  const text=document.createElement('p');text.textContent=user?'Welcome, '+user+'. Your private correspondence.':'Create your account and begin your DuneRealms journey.';
+  const actions=document.createElement('div');
+  const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#internal-mail'],['Account centre','https://cp.dunerealms.com/']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
+  for(const[label,url]of links){const a=document.createElement('a');a.textContent=label;a.href=url;actions.append(a);}
+  box.append(art,heading,text,actions);
+  if(user){const status=document.createElement('p');status.className='postbox-status';status.textContent='Mail notifications are being connected.';box.append(status);}
+  panel.insertBefore(box,worlds);
+ }
+ new MutationObserver(render).observe(document.body,{childList:true,subtree:true});
+ async function refresh(){const current=++revision;try{const r=await fetch('https://cp.dunerealms.com/api/welcome',{credentials:'include',cache:'no-store'});const d=r.ok?await r.json():null;if(current===revision){user=typeof d?.username==='string'?d.username:null;render();}}catch{if(current===revision){user=null;render();}}}
+ window.addEventListener('dune:session',event=>{revision++;user=event.detail?.username||null;render();});
+ window.addEventListener('pageshow',refresh);window.addEventListener('focus',refresh);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+ render();refresh();
+})();
