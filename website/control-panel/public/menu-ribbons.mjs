@@ -7,7 +7,7 @@ export const MENU_CHANGES = {
   'council-motd': {introducedIn: '1.0.0.4', preview: true},
   'house-elections': {introducedIn: '1.0.0.4', preview: true},
   'imperial-elections': {introducedIn: '1.0.0.4', preview: true},
-  applications: {introducedIn: '1.0.0.4', preview: true},
+  applications: {introducedIn: '1.0.0.4'},
   'formal-council': {introducedIn: '1.0.0.4', preview: true},
   'imperial-command': {introducedIn: '1.0.0.4', preview: true},
   'site-profile': {updatedIn: '1.0.0.4'},
