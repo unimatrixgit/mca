@@ -6,7 +6,7 @@ function card(title,text){const n=el('article',undefined,'politics-card');n.appe
 function field(host,label,value,type='text'){const l=el('label',label),f=el(type==='textarea'?'textarea':'input');if(type!=='textarea')f.type=type;f.value=value;l.append(f);host.append(l);return f;}
 function confirm(host){const l=el('label',undefined,'politics-accept'),c=el('input');c.type='checkbox';l.append(c,el('span','Are you sure?'));host.append(l);return c;}
 function memberSearch(host){const q=field(host,'Search own-faction members','','search'),results=el('select');results.setAttribute('aria-label','Matching demo faction member');const names=['Demo AmberWarden','Demo WaterArchivist','Demo DawnBuilder'];function draw(){results.replaceChildren(el('option','Choose a demo member'));for(const name of names.filter(n=>n.toLowerCase().includes(q.value.toLowerCase()))){const option=el('option',name);option.value=name;results.append(option);}}q.addEventListener('input',draw);draw();host.append(results);return results;}
-export function councilPreview(){const root=el('div',undefined,'politics-content');root.append(motdPreview());
+export function councilPreview(){const root=el('div',undefined,'politics-content');
  const appointment=card('Faction Leader Control · Appoint your adviser','House leaders appoint a Mentat; the Reverent Mother appoints a Concord Sister. The appointment expires with the current two-week House term.');appointment.append(note());const form=el('div',undefined,'politics-charter');memberSearch(form);const role=el('label','Office'),select=el('select');select.append(el('option','Mentat'),el('option','Concord Sister'));role.append(select);form.append(role);confirm(form);form.append(button('Appoint adviser — preview only'));appointment.append(form);root.append(appointment);
  root.append(motdEditor('Faction'));
  const bank=card('Faction Bank','Bank controls belong to the active Mentat or Concord Sister. A decorative rank alone grants no banking access.');bank.append(note());const balance=el('div',undefined,'council-balance');balance.append(el('small','DEMO FACTION BALANCE'),el('strong','100,000 Dunemarks'),el('span','Kit income is credited to this bank.'));bank.append(balance);
@@ -38,5 +38,6 @@ export function motdPreview(){const grid=el('section',undefined,'politics-grid c
 
 
 export function motdEditor(kind='Faction'){const imperial=kind==='Imperial',owner=imperial?'Emperor':'current faction leader';const box=card(kind+' Message settings','Only the '+owner+' may publish this message.');const art=el('img');art.src='https://www.dunerealms.com/assets/seals/'+(imperial?'emperor-v1.png':'office-house_leader.png');art.alt='';art.width=art.height=48;box.prepend(art);box.append(note());const form=el('div',undefined,'politics-charter');const text=field(form,kind+' message of the day','','textarea');text.rows=3;text.maxLength=1000;text.placeholder=imperial?'Address every House of the realm…':'Address the members of your faction…';confirm(form);form.append(button('Publish '+kind.toLowerCase()+' message — preview only'));box.append(form);return box;}
+
 
 

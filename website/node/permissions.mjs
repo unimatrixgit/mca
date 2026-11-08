@@ -33,10 +33,16 @@ const staff=[...basic,'web.bank.staff.view','web.bank.staff.deposit','web.menu.s
 const core=[...staff,'web.bank.staff.manage','web.quests.manage','web.menu.items','web.items.manage','web.menu.servers','web.menu.permissions','web.accounts.assign','web.ranks.manage','web.servers.view','web.servers.logs','web.servers.power','web.servers.console','web.menu.luckperms','web.luckperms.view','web.exchange.manage','web.posts.publish'];
 const support=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.support'];
 const appeals=[...basic,'web.menu.staffmanual','web.tickets.staff','web.tickets.manage','web.tickets.appeals','web.menu.bans','web.bans.view','web.bans.manage','web.bans.evidence'];
-export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',legacy:'Existing legacy/custom ranks'};
+export const RANK_SECTIONS={players:'Players',website:'Website staff',game:'In-game staff',real_currency:'Real Currency (€)',game_currency:'Game Currency (Dunemarks)',appointed:'Appointed & Elected',legacy:'Other custom ranks'};
 export const isOwnerRank=key=>['owners','official_account','web_net_admin','network_admin'].includes(key);
-export const rankSection=key=>['user','vip','patron_caravan','patron_guild','patron_grand','council_member'].includes(key)?'players':(key.startsWith('web_')||['official_account','network_admin'].includes(key))?'website':key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
-export const DEFAULT_RANKS=[
+export const rankSection=key=>{
+ if(['vip','patron_caravan','patron_guild','patron_grand','council_member','vanity_guild','vanity_concord'].includes(key))return 'real_currency';
+ if(key.startsWith('vanity_dm_'))return 'game_currency';
+ if(key.startsWith('office_')||['reverent_mother','mentat','concord_sister','guild_envoy'].includes(key))return 'appointed';
+ if(key==='user')return 'players';
+ if(key.startsWith('web_')||['official_account','network_admin'].includes(key))return 'website';
+ return key.startsWith('game_')||['corestaff','owners'].includes(key)?'game':'legacy';
+};export const DEFAULT_RANKS=[
  {key:'user',label:'User',level:10,kind:'access',nodes:basic},
  {key:'vip',label:'VIP',level:20,kind:'access',nodes:basic},
  {key:'council_member',label:'Council Member',level:20,kind:'access',nodes:[...basic]},
@@ -119,3 +125,4 @@ export async function initializeQuestAccess(db){
 }
 
 export async function initializeBankAccess(db){const key='bank-access-v1';if(await db.prepare('SELECT setting_value FROM website_settings WHERE setting_key=?').bind(key).first())return;const statements=[];for(const rank of DEFAULT_RANKS){const stored=await rankFor(db,rank.key);const additions=['web.bank.personal.view',...(rank.nodes.includes('web.menu.staffmanual')?['web.bank.staff.view','web.bank.staff.deposit']:[]),...(['owners','corestaff','network_admin','web_net_admin'].includes(rank.key)?['web.bank.staff.manage']:[])];const nodes=[...new Set([...stored.nodes,...additions])];statements.push(db.prepare('UPDATE cp_ranks SET permissions_json=?,version=version+1 WHERE rank_key=? AND version=?').bind(JSON.stringify(nodes),rank.key,stored.version));}statements.push(db.prepare('INSERT INTO website_settings(setting_key,setting_value,updated_at) VALUES(?,?,?)').bind(key,'complete',Date.now()));await db.batch(statements);}
+
