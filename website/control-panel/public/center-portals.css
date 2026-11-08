@@ -65,3 +65,5 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 #crysknife .order-stilgar{margin:0;padding:9px 9px 14px;border:1px solid #e0c47b;border-radius:12px;background:linear-gradient(145deg,#d7b75c55,#0d3028 45%,#ba984535);box-shadow:inset 0 0 0 3px #d4b46120,0 0 22px #bba45120;text-align:center}
 #crysknife .order-stilgar img{display:block;width:100%;height:auto;border-radius:7px}#crysknife .order-stilgar blockquote{margin:12px 0 5px;color:#f1d993;font:italic 1.25rem Georgia,serif}#crysknife .order-stilgar figcaption{font-size:.7rem;color:#cfcca9}
 @media(max-width:650px){#crysknife .order-lore-card{grid-template-columns:1fr;padding:20px}#crysknife .order-stilgar{max-width:210px;justify-self:center}}
+
+#crysknife .order-award-card{width:100%;max-width:880px;box-sizing:border-box;margin:24px auto}#crysknife>.order-lore-card+p{text-align:center;max-width:880px;margin:20px auto;line-height:1.7}
