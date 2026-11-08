@@ -24,3 +24,7 @@
 .dune-page-marker.portal-account-welcome .portal-welcome-card p{font:400 13px/1.5 Manrope,system-ui,sans-serif;margin:10px 0 14px}
 .dune-page-marker.portal-account-welcome .portal-welcome-card h2{font:700 17px/1.3 Manrope,system-ui,sans-serif}
 .dune-page-marker.portal-account-welcome .portal-welcome-card a{font:700 12px/1.3 Manrope,system-ui,sans-serif;padding:8px 10px}
+
+.dune-page-marker.portal-account-welcome .portal-account-card p{font:400 12px/1.4 Manrope,system-ui,sans-serif!important;margin:6px 0 9px!important}
+.dune-page-marker.portal-account-welcome .portal-account-card .postbox-status{font:400 10px/1.35 Manrope,system-ui,sans-serif!important;margin:8px 0 0!important}
+.dune-page-marker.portal-account-welcome .portal-welcome-card p{font:400 13px/1.5 Manrope,system-ui,sans-serif!important;margin:10px 0 14px!important}
