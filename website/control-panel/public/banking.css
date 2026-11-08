@@ -81,3 +81,17 @@
 @media(max-width:480px){.bank-workspace .bank-account-tile>strong{font-size:20px}.bank-workspace .bank-account-tile>code{font-size:10px}.bank-workspace .bank-account-overview .bank-account-tile{column-gap:8px}}
 .bank-workspace .bank-account-controls a{display:inline-block;border:1px solid #8c8052;border-radius:6px;background:#17392d;color:#ead398;padding:6px 9px;font-size:11px;line-height:1.4;text-decoration:none}
 .bank-workspace .bank-account-tile>strong{max-width:100%;overflow-wrap:anywhere}
+/* Compact account list matching the supplied mobile banking reference. */
+.bank-workspace .bank-account-overview .bank-list-card{display:block;padding:0!important;border-left:1px solid #436353;border-radius:10px;overflow:hidden}
+.bank-workspace .bank-account-row{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;padding:15px 17px;border:0;border-radius:0;background:transparent;color:#d9e7dd;text-decoration:none;text-align:left;cursor:pointer;box-sizing:border-box}
+.bank-workspace .bank-account-row:hover{background:#204737}
+.bank-row-icon{font-size:24px;color:#d9bd76}
+.bank-row-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bank-row-copy b{font-size:14px;color:#efd790;font-weight:600}
+.bank-row-copy code{font-size:12px;letter-spacing:.025em;overflow-wrap:anywhere;color:#c1d0c5}
+.bank-row-copy small{font-size:12px;color:#aabeb1}
+.bank-row-balance{display:flex;flex-direction:column;align-items:flex-end;gap:4px;max-width:170px}
+.bank-row-balance b{font-size:17px;color:#efd790;font-weight:600;text-align:right}
+.bank-row-balance small{font-size:10px;color:#aabeb1}
+.bank-account-detail[hidden],.bank-wallet-detail[hidden]{display:none!important}
+@media(max-width:480px){.bank-workspace .bank-account-row{padding:12px;gap:8px;grid-template-columns:24px minmax(0,1fr) auto}.bank-row-copy b{font-size:12px}.bank-row-copy code{font-size:10px}.bank-row-balance{max-width:105px}.bank-row-balance b{font-size:14px}}
