@@ -24,11 +24,12 @@ export function createBankTransfers(db,settings={},deps={}){
   const text=await request.text();if(text.length>2000)return reply({message:'Request too large.'},413);
   let data;try{data=JSON.parse(text);}catch{return reply({message:'Invalid transfer.'},400);}
   if(!data||Object.keys(data).some(k=>!['source','amount','requestId','memo','confirmed',...(external?['recipientAccount','recipientName']:[])].includes(k))||data.confirmed!==true||!['current','savings'].includes(data.source)||typeof data.amount!=='string'||! /^(?:0|[1-9]\d{0,6})(?:\.\d{1,2})?$/.test(data.amount)||Number(data.amount)<=0||Number(data.amount)>1000000||!uuid.test(data.requestId||'')||typeof data.memo!=='string'||data.memo.length>140||/[\x00-\x1f]/.test(data.memo))return reply({message:'Check the amount, reference and confirmation.'},400);
+  if(external&&data.source!=='current')return reply({message:'Use your current account for payments to other accounts.'},400);
   const player=(await linked(user))?.toLowerCase();if(!uuid.test(player||''))return reply({message:'Link your Minecraft account first.'},403);
   let recipient=null,fromNumber=null;
   if(external){
    if(typeof data.recipientAccount!=='string'||typeof data.recipientName!=='string'||data.recipientName.length>80)return reply({message:'Select a verified recipient.'},400);
-   recipient=await resolve(data.recipientAccount,data.recipientName);if(!recipient||!uuid.test(recipient.player)||recipient.player===player)return reply({message:'Recipient changed or invalid. Check the account again; use LOCAL for your own accounts.'},409);
+   recipient=await resolve(data.recipientAccount,data.recipientName);if(!recipient||!uuid.test(recipient.player)||recipient.player===player)return reply({message:'Recipient changed or invalid. Check the account again; use Current & Savings for your own accounts.'},409);
    fromNumber=await(deps.accountNumber||imperialAccount)(db,data.source==='current'?'current':'player',player);
   }
   const current=await auth(request);if(!current||current.id!==user.id||!await permitted(current)||(await linked(current))?.toLowerCase()!==player)return reply({message:'Account access changed. Refresh before submitting.'},409);
