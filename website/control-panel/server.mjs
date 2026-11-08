@@ -1,3 +1,4 @@
+import {createBankTransfers} from './bank-transfers.mjs';
 import {createImperialCharters,initializeCharters} from './imperial-charters.mjs';
 import {createProclamations,initializeProclamations} from './proclamations.mjs';
 import {createElectoralRoll} from '../node/electoral-roll.mjs';
@@ -92,6 +93,7 @@ export function createPanel(db,settings={},dependencies={}){
  const publicKitCatalogue=createKitCatalogueBridge(settings,{db});
  const kitMarket=createKitMarket(db,settings,dependencies.kitMarket);
  const imperialAtelier=createImperialAtelier(db,settings,dependencies.imperialAtelier);
+ const bankTransfers=createBankTransfers(db,settings,dependencies.bankTransfers);
  const banking=createBanking(db,settings,dependencies.banking);
  const quests=createQuests(db,settings,dependencies.quests),clanShop=createClanShop(db,settings,dependencies.clanShop);
  const sso=createIntegrationSSO(db,settings);
@@ -142,6 +144,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path==='/api/kits/upgrade-tokens')return upgradeTokens(request);
   if(path.startsWith('/api/kits/'))return kitMarket(request);
   if(path==='/api/ranks/game')return gameRanks(request);
+  if(path==='/api/bank/transfer-own')return bankTransfers(request);
   if(path==='/api/bank/personal'||path==='/api/bank/staff'||path==='/api/bank/faction')return banking(request);
   if(path==='/api/quests'||path.startsWith('/api/quests/'))return quests(request);
   if(['/api/clans/shop','/api/clans/shop/price','/api/clans/game-context'].includes(path))return clanShop(request);
@@ -193,7 +196,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405});
   if(path.startsWith('/assets/')&&sharedAssets.has(path.slice(8))){const file=path.slice(8);return new Response(request.method==='HEAD'?null:await readFile(new URL('../web/assets/'+file,import.meta.url)),{headers:{'Content-Type':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'image/webp','Cache-Control':'public, max-age=3600'}});}
   const file=path==='/'?'index.html':path==='/servers'?'servers.html':path.slice(1);
-  if(!['bank-dashboard.mjs','internal-mail.mjs','internal-mail.css','mail-service-ui.mjs','mail-workspace.css','hosting-control.mjs','election-voting-view.mjs','imperial-charters-view.mjs','proclamations-view.mjs','electoral-roll-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
+  if(!['bank-transfer-view.mjs','bank-dashboard.mjs','internal-mail.mjs','internal-mail.css','mail-service-ui.mjs','mail-workspace.css','hosting-control.mjs','election-voting-view.mjs','imperial-charters-view.mjs','proclamations-view.mjs','electoral-roll-view.mjs','election-applications-view.mjs','election-rules.mjs','menu-ribbons.mjs','council-preview.mjs','politics.mjs','crysknife.mjs','x-news-draft.mjs','terms.html','admin-registration.mjs','mail-signature.mjs','webmail.mjs','git-control.mjs','git-control.css','site-profile.mjs','site-profile.css','index.html','panel.js','panel.css','servers.html','servers.js','servers.css','pages.mjs','user-page-hero.mjs','commerce-settings.mjs','shop-management.mjs','center-portals.mjs','panel-layout.mjs','embed-size.mjs','dev-request-access.mjs','center-portals.css','overview.mjs','overview.css','page-groups.mjs','ban-register.mjs','moderation-form-response.mjs','ban-record-cards.css','ban-evidence.mjs','ban-evidence.css','ranks.mjs','ranks.css','staff-manual.mjs','luckperms.mjs','community-admin.mjs','native-community.mjs','exchange.mjs','exchange.css','clans.mjs','clan-shop.mjs','house-tailor.mjs','banking.mjs','banking.css','game-ranks.mjs','upgrade-shop.mjs','kit-generator.mjs','kit-generator.css','kit-market.mjs','kit-market.css','kit-cart.mjs','imperial-atelier.mjs','quests.mjs','quests.css','clans.css','clan-request-gate.mjs','quest-rewards.mjs','quest-rewards.css','inventory/inventory-view.mjs','inventory/inventory-mount.mjs','inventory/inventory.css'].includes(file))return new Response('Not found',{status:404});
   return new Response(request.method==='HEAD'?null:await readFile(new URL('./public/'+file,import.meta.url)),{headers:{'Content-Type':types[file.slice(file.lastIndexOf('.'))],'Cache-Control':'no-store'}});
  };
 }

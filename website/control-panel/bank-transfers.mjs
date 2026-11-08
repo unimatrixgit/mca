@@ -1,0 +1,30 @@
+import {identity} from '../node/auth.mjs';
+import {accessFor} from '../node/permissions.mjs';
+const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store',Vary:'Cookie'}});
+const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/;
+export function createBankTransfers(db,settings={},deps={}){
+ const auth=deps.authenticate||(r=>identity(r,db)),access=deps.access||(u=>accessFor(db,u));
+ const linked=deps.linked||(async u=>(await db.prepare('SELECT minecraft_uuid FROM site_game_links WHERE user_id=?').bind(u.id).first())?.minecraft_uuid);
+ const excluded=deps.excluded||(async u=>!!await db.prepare("SELECT id FROM site_accounts WHERE id=? AND (role IN ('official_account','memorial') OR password_hash LIKE '!%' OR EXISTS(SELECT 1 FROM site_account_policies p WHERE p.user_id=site_accounts.id AND p.game_link_exempt=1))").bind(u.id).first());
+ const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
+ return async request=>{
+  if(request.method!=='POST')return reply({message:'Method not allowed.'},405);
+  if(new URL(request.url).search)return reply({message:'Account overrides are not accepted.'},400);
+  if(request.headers.get('origin')!==origin)return reply({message:'Invalid request origin.'},403);
+  if(!/^application\/json(?:;|$)/i.test(request.headers.get('content-type')||''))return reply({message:'JSON required.'},415);
+  const user=await auth(request);if(!user)return reply({message:'Sign in first.'},401);
+  const permitted=async u=>(await access(u))?.nodes?.includes('web.bank.personal.view')&&!await excluded(u);
+  if(!await permitted(user))return reply({message:'Personal bank access required.'},403);
+  const text=await request.text();if(text.length>2000)return reply({message:'Request too large.'},413);
+  let data;try{data=JSON.parse(text);}catch{return reply({message:'Invalid transfer.'},400);}
+  if(!data||Object.keys(data).some(k=>!['source','amount','requestId','memo','confirmed'].includes(k))||data.confirmed!==true||!['current','savings'].includes(data.source)||typeof data.amount!=='string'||! /^(?:0|[1-9]\d{0,6})(?:\.\d{1,2})?$/.test(data.amount)||Number(data.amount)<=0||Number(data.amount)>1000000||!uuid.test(data.requestId||'')||typeof data.memo!=='string'||data.memo.length>140||/[\x00-\x1f]/.test(data.memo))return reply({message:'Check the amount, reference and confirmation.'},400);
+  const player=(await linked(user))?.toLowerCase();if(!uuid.test(player||''))return reply({message:'Link your Minecraft account first.'},403);
+  const current=await auth(request);if(!current||current.id!==user.id||!await permitted(current)||(await linked(current))?.toLowerCase()!==player)return reply({message:'Account access changed. Refresh before submitting.'},409);
+  if((settings.SERVER_CONTROL_TOKEN||'').length<64)return reply({message:'Transfers unavailable.'},503);
+  try{
+   const result=await(deps.fetcher||fetch)('http://127.0.0.1:15433/bank/transfer-own',{method:'POST',headers:{Authorization:'Bearer '+settings.SERVER_CONTROL_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({player,source:data.source,amount:data.amount,request_id:data.requestId,memo:data.memo}),signal:AbortSignal.timeout(12000)});
+   if(!result.ok)return reply({message:result.status===409?'Transfer declined: insufficient funds, changed request or unavailable account. No transfer was confirmed.':'Transfer could not be confirmed. Retry the same request to check its result.'},result.status===409?409:503);
+   const body=await result.json();if(body.reference!==data.requestId)throw Error();return reply({transfer:body});
+  }catch{return reply({message:'Confirmation unavailable. Retry this same request; do not create a replacement payment.'},503);}
+ };
+}

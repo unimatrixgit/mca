@@ -500,6 +500,18 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.authorized():
             return self.reply(401, {'message': 'Unauthorized'})
+        if self.path == '/bank/transfer-own':
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 2000: raise ValueError('Invalid transfer')
+                data = json.loads(self.rfile.read(length))
+                if not isinstance(data,dict) or set(data) != {'player','source','amount','request_id','memo'}: raise ValueError('Invalid transfer')
+                from bank_transfers import transfer
+                return self.reply(200, transfer(network_database, **data))
+            except (ValueError, TypeError, KeyError):
+                return self.reply(409, {'message':'Transfer declined'})
+            except Exception:
+                return self.reply(503, {'message':'Transfer confirmation unavailable'})
         if kit_shop_route(self, 'POST', urlsplit(self.path)):
             return
         if player_kits_route(self, 'POST', urlsplit(self.path)):
