@@ -6,6 +6,20 @@ const request=box('Request a Loan','Choose an amount and explain its purpose. St
 views['loan-centre'].grid.append(request,box('My Applications','Application status and staff decisions will appear here. Connection pending.'),box('Current Loans','Your principal, interest, outstanding balance and due date. Connection pending.'),box('Make a Repayment','Partial and full repayments will be recorded against your loan. Payments are currently disabled.'),box('Loan History','Completed loans and their payment records. Connection pending.'));
 views['loan-administration'].grid.append(box('Application Review','Staff-only review queue. Approval does not automatically transfer funds.'),box('Payouts & repayments','Audited disbursement and repayment controls will appear here after transaction testing.'),box('Overdue accounts','Overdue status will be recorded without automatic fines. No collection actions are enabled.'));
 function session(user){for(const[id,v]of Object.entries(views)){const allowed=user?.permissions?.includes(id==='loan-administration'?'web.bank.staff.manage':'web.bank.personal.view');v.root.hidden=!allowed;} }window.addEventListener('dune:session',e=>session(e.detail));fetch('/api/auth/session',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>session(d?.user)).catch(()=>session(null));
-// Shared company endorsement: link existing Corrino marks without changing mail content.
-function linkCorrinoMarks(){for(const img of document.querySelectorAll('img[alt="Corrino Group"]')){if(img.closest('a'))continue;const a=document.createElement('a');a.href='https://www.dunerealms.com/corrino-group.html';a.setAttribute('aria-label','About Corrino Group');img.replaceWith(a);a.append(img);}}
+// Update only company presentation; mailbox content and permissions remain untouched.
+function linkCorrinoMarks(){
+ for(const img of document.querySelectorAll('img[alt="Corrino Group"]')){
+  if(!img.src.endsWith('/assets/corrino-group-v3.svg'))img.src='/assets/corrino-group-v3.svg';
+  img.width=150;img.height=39;
+  if(img.closest('a'))continue;
+  const a=el('a');a.href='https://www.dunerealms.com/corrino-group.html';a.setAttribute('aria-label','About Corrino Group');img.replaceWith(a);a.append(img);
+ }
+ for(const img of document.querySelectorAll('img[alt="SpicePost"]')){img.src='/assets/spost-company-v1.png';img.alt='Spost · Part of Corrino Group';img.width=240;img.height=80;}
+ const inventory=document.getElementById('planetary-inventory');
+ if(inventory&&!inventory.querySelector('.inventory-company-endorsement')){
+  const footer=el('div');footer.className='inventory-company-endorsement';
+  const a=el('a');a.href='https://www.dunerealms.com/corrino-group.html#vaerkring';a.setAttribute('aria-label','Vaerkring · Part of Corrino Group');
+  const img=el('img');img.src='/assets/vaerkring-company-v1.png';img.alt='Vaerkring · Part of Corrino Group';img.width=300;img.height=100;a.append(img);footer.append(a);inventory.append(footer);
+ }
+}
 linkCorrinoMarks();new MutationObserver(linkCorrinoMarks).observe(document.body,{childList:true,subtree:true});
