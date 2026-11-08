@@ -9,8 +9,8 @@ function session(user){for(const[id,v]of Object.entries(views)){const allowed=us
 // Update only company presentation; mailbox content and permissions remain untouched.
 function linkCorrinoMarks(){
  for(const img of document.querySelectorAll('img[alt="Corrino Group"]')){
-  if(!img.src.endsWith('/assets/corrino-group-v3.svg'))img.src='/assets/corrino-group-v3.svg';
-  img.width=150;img.height=39;
+  if(!img.src.endsWith('/assets/corrino-group-v4.png'))img.src='/assets/corrino-group-v4.png';
+  img.width=150;img.height=50;
   if(img.closest('a'))continue;
   const a=el('a');a.href='https://www.dunerealms.com/corrino-group.html';a.setAttribute('aria-label','About Corrino Group');img.replaceWith(a);a.append(img);
  }
