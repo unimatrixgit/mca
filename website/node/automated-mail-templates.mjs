@@ -1,6 +1,7 @@
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const line=value=>String(value??'').replace(/[\r\n]+/g,' ').slice(0,240);
 const variants={
+ 'political-event':{title:'Election Register',intro:'An update from the official DuneRealms election register.',action:'Open the election register'},
  'mail-report':{title:'Reported mail',intro:'A user has reported an internal message. Review the report and original message before creating a Legal ticket.',action:'Review reported mail'},
  'ticket-submitted':{title:'Ticket submitted',intro:'Your ticket has been submitted. You can follow its progress and reply in the Support Centre.',action:'View your ticket'},
  'new-ticket-alert':{title:'New ticket alert',intro:'A new ticket is waiting for your team. Open the staff ticket desk to review it.',action:'Open staff ticket'},

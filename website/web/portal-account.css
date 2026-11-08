@@ -37,3 +37,5 @@
 .cp-panel-sidebar>.cp-sidebar-postbox a{display:block;width:100%;box-sizing:border-box;padding:8px 6px;font:700 11px/1.3 Manrope,system-ui,sans-serif;text-align:center}
 
 .portal-account-card{position:relative}.portal-account-card .postbox-new-ribbon{position:absolute;top:8px;right:8px;padding:2px 7px;border:1px solid #e7c979;border-radius:3px;background:linear-gradient(110deg,#ddbe69,#a68437);color:#10291e;font:800 9px/1.3 system-ui,sans-serif;letter-spacing:.08em}
+
+.portal-account-card.has-unread-mail{border-color:#d8b85d;box-shadow:0 0 18px #c9a44a35}.has-unread-mail .postbox-status{color:#f4da83;font-weight:700}
