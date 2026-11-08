@@ -6,3 +6,5 @@
 .imperial-bank-view .clan-stat-grid>article,.bank-balance-grid article{border-radius:16px;border-color:#7d7950;background:linear-gradient(125deg,#204433,#102a23)}
 .bank-ledger td,.clan-table td{vertical-align:top}.bank-ledger td:nth-last-child(3),.bank-ledger td:nth-last-child(4){font-family:ui-monospace,monospace;font-size:12px;min-width:150px}
 @media(max-width:600px){.imperial-bank-brand{max-width:340px;margin-bottom:16px}.imperial-account-card{padding:18px!important}}
+
+.bank-dashboard-links{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.bank-dashboard-links a{border:1px solid #ac9655;border-radius:9px;padding:12px 18px;color:#ead398;text-decoration:none;background:#18392d}.bank-workspace form label{display:block;margin:15px 0}.bank-workspace input:not([type=checkbox]),.bank-workspace textarea{display:block;width:100%;margin-top:8px;padding:12px;border:1px solid #63816b;border-radius:8px;background:#102820;color:#ece6d3}.bank-workspace textarea{min-height:100px}.bank-workspace button:disabled{opacity:.55;cursor:not-allowed}

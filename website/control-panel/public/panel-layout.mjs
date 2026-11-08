@@ -24,6 +24,9 @@ export const USER_GROUPS=[
 ];
 export const REALM_GROUPS=[
  ['Realm & Politics',[
+  item('Bank Dashboard','bank-dashboard','web.bank.personal.view','nav-shop-v1.webp'),
+  item('Loan Centre','loan-centre','web.bank.personal.view','nav-shop-v1.webp'),
+  item('Loan Administration','loan-administration','web.bank.staff.manage','nav-shop-v1.webp'),
   item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png'),
   item('Proclamations','council-motd','web.menu.game','seals/office-landsraad.png'),
   item('Faction Elections','house-elections','web.menu.game','seals/office-house_leader.png'),
