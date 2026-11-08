@@ -24,9 +24,9 @@ export const USER_GROUPS=[
 ];
 export const REALM_GROUPS=[
  ['Imperial Postbank',[
-  item('Bank Dashboard','bank-dashboard','web.bank.personal.view','imperial-postbank-v1.png'),
-  item('Loan Centre','loan-centre','web.bank.personal.view','imperial-postbank-v1.png'),
-  item('Loan Administration','loan-administration','web.bank.staff.manage','imperial-postbank-v1.png')]],
+  item('Bank Dashboard','bank-dashboard','web.bank.personal.view','imperial-postbank-v2.png'),
+  item('Loan Centre','loan-centre','web.bank.personal.view','imperial-postbank-v2.png'),
+  item('Loan Administration','loan-administration','web.bank.staff.manage','imperial-postbank-v2.png')]],
  ['Realm & Politics',[
   item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png'),
   item('Proclamations','council-motd','web.menu.game','seals/office-landsraad.png'),
