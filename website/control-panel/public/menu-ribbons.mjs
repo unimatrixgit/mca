@@ -4,7 +4,7 @@ export const MENU_RELEASE = '1.0.0.4';
 export const MENU_CHANGES = {
   'shared-inbox': {introducedIn: '1.0.0.4'},
   landsraad: {introducedIn: '1.0.0.4', preview: true},
-  'council-motd': {introducedIn: '1.0.0.4', preview: true},
+  'council-motd': {introducedIn: '1.0.0.4'},
   'house-elections': {introducedIn: '1.0.0.4'},
   'imperial-elections': {introducedIn: '1.0.0.4'},
   applications: {introducedIn: '1.0.0.4'},
