@@ -1,3 +1,4 @@
+import {renderElectoralRoll} from './electoral-roll-view.mjs';
 import {renderVoting} from './election-voting-view.mjs';
 import {renderApplications} from './election-applications-view.mjs';
 import {electionDates,imperialVoteAllowance} from './election-rules.mjs';
@@ -5,6 +6,7 @@ import {councilPreview,inboxPreview,resetInboxViews,motdPreview,motdEditor} from
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const asset=name=>'https://www.dunerealms.com/assets/'+name;
 const specs={
+ 'electoral-roll':['THE VOICES OF THE REALM','Electoral Roll','Every voice recorded. Every choice private.','seals/office-landsraad.png'],
  'council-motd':['WORDS BENEATH THE BANNERS','Proclamations','Proclamations of your faction and the Imperial throne.','seals/office-landsraad.png'],
  'applications':['THE IMPERIAL REGISTER','Election Applications','Your candidatures, decisions and honours in one register.','seals/office-landsraad.png'],
  'formal-council':['THE HOUSE COUNCIL','Faction Council','Stewardship, diplomacy and the voice of your House.','seals/office-house_leader.png'],
@@ -104,6 +106,8 @@ function render(){
  resetInboxViews();
  for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes(id==='shared-inbox'?'web.mail.internal.view':'web.menu.game');if(!(id==='shared-inbox'&&v.section.dataset.internalMail==='true'))v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
+ views['electoral-roll'].content.append(renderElectoralRoll());
+ const rollNote=views['electoral-roll'].section.querySelector('.politics-preview-note');if(rollNote)rollNote.textContent='PUBLIC PARTICIPATION · Username, election and number of votes. Choices are never disclosed.';
  views.applications.content.append(renderApplications({user,context}));
   const applicationNote=views.applications.section.querySelector(".politics-preview-note");if(applicationNote)applicationNote.textContent="APPLICATION REGISTER · Submissions are saved. Voting opens at the scheduled time; automatic office awards are still being connected.";
  const landing=views.landsraad.content,grid=el('div',undefined,'politics-grid');

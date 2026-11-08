@@ -1,3 +1,4 @@
+import {votingHonour} from './electoral-roll.mjs';
 import {randomUUID} from 'node:crypto';
 import {accessFor} from './permissions.mjs';
 import {nativeSyncChange} from './native-sync-outbox.mjs';
@@ -8,9 +9,11 @@ export async function initializeHonours(db){
 }
 export function validCitation(value){return typeof value==='string'&&Array.from(value).length<=2000&&value.split(/\r?\n/).length<=20&&!/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(value);}
 export async function honoursFor(db,user){
- if(!(await accessFor(db,user)).ranks.includes('crysknife'))return [];
+ let vote=null;try{vote=await votingHonour(db,user.id);}catch(error){if(!/no such table|doesn't exist/i.test(error.message))throw error;}
+ const temporary=vote?[vote]:[];
+ if(!(await accessFor(db,user)).ranks.includes('crysknife'))return temporary;
  let row=null;try{row=await db.prepare("SELECT citation,updated_at,version FROM site_honours WHERE user_id=? AND rank_key='crysknife'").bind(user.id).first();}catch(e){if(!/no such table|doesn't exist/i.test(e.message))throw e;}
- return [{rank:'crysknife',title:'Holy Order of The Crysknife',seal:CRYSKNIFE_SEAL,citation:row?.citation||'',version:Number(row?.version||0),updatedAt:Number(row?.updated_at||0)}];
+ return [{rank:'crysknife',title:'Holy Order of The Crysknife',seal:CRYSKNIFE_SEAL,citation:row?.citation||'',version:Number(row?.version||0),updatedAt:Number(row?.updated_at||0)},...temporary];
 }
 export async function honourAction(db,actor,request,origin){
  const access=await accessFor(db,actor);
@@ -60,7 +63,7 @@ async function awardCrysknife(db,actor,target,body){
  return Response.json({ok:true,message:'The Crysknife has been awarded. The citation is saved.',nativeSyncPending:true});
 }
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function honourMarkup(honours=[],{showLore=true}={}){return honours.map(h=>'<section class="honour-panel" aria-label="'+esc(h.title)+'"><img src="'+esc(h.seal)+'" alt="'+esc(h.title)+' seal" width="130" height="130"><div><small>DUNEREALMS · HONORARY ORDER</small><h3>'+esc(h.title)+'</h3><p class="honour-citation">'+esc(h.citation||'Honoured member of the Order.')+'</p></div>'+(showLore?'<aside class="honour-stilgar"><img src="https://www.dunerealms.com/assets/stilgar-portrait-v1.png" alt="Minecraft-style portrait of Stilgar" width="180" height="180" loading="lazy"><blockquote>“As written!”</blockquote><cite>Stilgar · Dune: Part Two</cite><p>A blade. A bond. A legacy.</p><small>The Order remembers those who stand beside their community.</small></aside>':'')+'</section>').join('');}
+export function honourMarkup(honours=[],{showLore=true}={}){return honours.map(h=>'<section class="honour-panel" aria-label="'+esc(h.title)+'"><img src="'+esc(h.seal)+'" alt="'+esc(h.title)+' seal" width="130" height="130"><div><small>DUNEREALMS · '+(h.temporary?'ELECTION PARTICIPATION':'HONORARY ORDER')+'</small><h3>'+esc(h.title)+'</h3><p class="honour-citation">'+esc(h.citation||'Honoured member of the Order.')+'</p></div>'+(showLore&&!h.temporary?'<aside class="honour-stilgar"><img src="https://www.dunerealms.com/assets/stilgar-portrait-v1.png" alt="Minecraft-style portrait of Stilgar" width="180" height="180" loading="lazy"><blockquote>“As written!”</blockquote><cite>Stilgar · Dune: Part Two</cite><p>A blade. A bond. A legacy.</p><small>The Order remembers those who stand beside their community.</small></aside>':'')+'</section>').join('');}
 export const HONOUR_CSS='.honour-panel>div{flex:1;min-width:0}.honour-panel .honour-stilgar{flex:0 0 180px;align-self:center;padding:12px;text-align:center;border:1px solid #dbc075;border-radius:12px;background:linear-gradient(145deg,#d7b75c44,#10332b 50%,#a98b3833);box-shadow:inset 0 0 0 3px #d4b46120,0 0 24px #bba45122}.honour-panel .honour-stilgar img{display:block;width:100%;height:auto;max-width:180px;border-radius:7px}.honour-stilgar blockquote{font:italic 1.25rem Georgia,serif;color:#f1d993;margin:12px 0 6px}.honour-stilgar cite{font-size:.7rem;color:#d3c999;font-style:normal}.honour-stilgar p{font-size:.85rem;color:#ead394}.honour-stilgar small{display:block;letter-spacing:normal!important;line-height:1.5;margin-top:8px}@media(max-width:800px){.honour-panel{flex-wrap:wrap}.honour-panel .honour-stilgar{flex-basis:180px;margin-left:auto;margin-right:auto}}.honour-panel{display:flex;align-items:center;gap:24px;padding:24px;margin:24px 0;border:1px solid #bc9c4d;border-radius:16px;background:linear-gradient(135deg,#102e29,#173f4e);box-shadow:inset 0 0 0 5px #c7a65115}.honour-panel img{width:130px;height:130px;object-fit:contain;flex-shrink:0}.honour-panel small{letter-spacing:.13em;color:#cfb874;font-size:.7rem}.honour-panel h3{color:#ead293;font-family:Georgia,serif;margin:8px 0}.honour-citation{white-space:pre-wrap;overflow-wrap:anywhere;color:#eee4cb}.honour-panel p{margin-bottom:0}@media(max-width:560px){.honour-panel{flex-direction:column;align-items:flex-start;padding:20px;gap:12px}}';
 
 export const STILGAR_QUOTE_SOURCE='https://www.duneinfo.com/Content/files/dune-part-two-denis-villeneuve-jon-spaihts.pdf';
