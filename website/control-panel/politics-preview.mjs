@@ -23,7 +23,7 @@ export function createPoliticsPreview(db,settings={},deps={}){
   const b=bank.status==='fulfilled'?bank.value:null,o=office.status==='fulfilled'?office.value:null;
   const faction=b?.playerUuid?.toLowerCase()===player.toLowerCase()&&houses.has(b.factionId)?b.factionId:null;
   let emperor=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='emperor');
-  let houseLeader=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>x.office==='house_leader');
+  let houseLeader=o?.playerUuid?.toLowerCase()===player.toLowerCase()&&Array.isArray(o.offices)&&o.offices.some(x=>(x.office==='house_leader'||x.office==='house-leader:'+({corrino:'Corrino',atreides:'Atreides',harkonnen:'Harkonnen',ordos:'Ordos',fremen:'Fremen'}[faction])));
   const authority=await(deps.electionAuthority||electionAuthority)(db,{userId:user.id,playerUuid:player,faction,now:(deps.clock||Date.now)()});
   if(authority.house.managed)houseLeader=authority.house.verified&&authority.house.active;
   if(authority.imperial.managed)emperor=authority.imperial.verified&&authority.imperial.active;
