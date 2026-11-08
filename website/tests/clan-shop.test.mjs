@@ -7,7 +7,7 @@ function fixture(options={}){
  sql.exec(HOUSE_KIT_SCHEMA+';'+HOUSE_UNLOCK_SCHEMA+`;CREATE TABLE site_accounts(id TEXT PRIMARY KEY,role TEXT);CREATE TABLE cp_account_ranks(user_id TEXT,rank_key TEXT);CREATE TABLE cp_ranks(rank_key TEXT,kind TEXT,rank_level INT);CREATE TABLE site_kit_design_unlocks(user_id TEXT,quality TEXT);INSERT INTO site_accounts VALUES('alice','player');INSERT INTO cp_ranks VALUES('owners','access',100);`);
  let beforeBatch=null;
  const db={prepare(query){let values=[];return{bind(...a){values=a;return this},async first(){return sql.prepare(query).get(...values)||null},async all(){return{results:sql.prepare(query).all(...values)}},async run(){return{meta:{changes:Number(sql.prepare(query).run(...values).changes)}}}}},async batch(list){beforeBatch?.();beforeBatch=null;sql.exec('BEGIN');try{for(const s of list)await s.run();sql.exec('COMMIT')}catch(e){sql.exec('ROLLBACK');throw e;}}};
- const app=createClanShop(db,{GAME_LINK_SECRET:'s'.repeat(64),...options.settings}, {authenticate:options.authenticate||(async()=>({id:'alice',username:'Alice'})),access:options.access||(async()=>({nodes:['web.menu.game']})),fetcher:options.fetcher});
+ const app=createClanShop(db,{GAME_LINK_SECRET:'s'.repeat(64),...options.settings}, {accountNumber:async()=> 'DRPL 1010 0000 0127',authenticate:options.authenticate||(async()=>({id:'alice',username:'Alice'})),access:options.access||(async()=>({nodes:['web.menu.game']})),fetcher:options.fetcher});
  return{sql,db,app,beforeBatch:f=>beforeBatch=f,request:(body,origin='https://cp.dunerealms.com')=>app(new Request('https://cp.dunerealms.com/api/clans/shop',{method:body?'POST':'GET',headers:{Origin:origin,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})}))};
 }
 const design={name:'Clan stillsuit',color:'#385B49',lore:['Water is life.'],version:0};
@@ -65,7 +65,7 @@ test('a current clan role downgrade is reflected in bank/design flags before ret
 test('clan bank replies recheck the current session, account and view permission',async()=>{
  for(const [mode,status] of [['logout',401],['account',401],['permission',403]]){
   let user={id:'alice',username:'Alice'},nodes=['web.menu.game'];
-  const f=fixture({settings:{SERVER_CONTROL_TOKEN:'s'.repeat(64)},authenticate:async()=>user,access:async()=>({nodes:[...nodes]}),fetcher:async()=>{if(mode==='logout')user=null;if(mode==='account')user={id:'another'};if(mode==='permission')nodes=[];return Response.json({clanId:'clan',currency:'dunemarks',balanceDunemarks:'12.30',ledger:[]});}});
+  const f=fixture({settings:{SERVER_CONTROL_TOKEN:'s'.repeat(64)},accountNumber:async()=> 'DRPL 1010 0000 0127',authenticate:async()=>user,access:async()=>({nodes:[...nodes]}),fetcher:async()=>{if(mode==='logout')user=null;if(mode==='account')user={id:'another'};if(mode==='permission')nodes=[];return Response.json({clanId:'clan',currency:'dunemarks',balanceDunemarks:'12.30',ledger:[]});}});
   const response=await f.request();assert.equal(response.status,status,mode);const body=await response.json();assert.equal(body.bank,undefined);assert.equal(body.qualities,undefined);f.sql.close();
  }
 });

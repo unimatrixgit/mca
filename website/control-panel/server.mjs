@@ -55,6 +55,7 @@ import {initializeRanks,initializeCommunityAccess,initializeQuestAccess,initiali
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
+import {accountSchema} from './imperial-accounts.mjs';
 import {openDatabase} from '../node/mysql.mjs';
 import {createAuth} from '../node/auth.mjs';
 import {identity} from '../node/auth.mjs';
@@ -65,7 +66,7 @@ import {createCommunityRewards} from '../node/community-rewards.mjs';
 import {createAccountAdmin} from '../node/account-admin.mjs';
 import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
-const sharedAssets=new Set(['imperial-post-logo.svg','mail-stamp-personal.svg','mail-stamp-clan.svg','mail-stamp-staff.svg','mail-stamp-faction.svg','mail-stamp-imperial.svg','ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
+const sharedAssets=new Set(['imperial-postbank-v1.png','imperial-post-logo.svg','mail-stamp-personal.svg','mail-stamp-clan.svg','mail-stamp-staff.svg','mail-stamp-faction.svg','mail-stamp-imperial.svg','ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','reward-gold-ingot-transparent-v1.png','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const contactEmail=createContactEmail(db,{origin,...dependencies.contactEmail});
@@ -203,7 +204,7 @@ export async function startPanel(settings=process.env){
   else{const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});}
   inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));
  }
- const db=await openDatabase(settings);await initializeProclamations(db);await initializeCharters(db);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeOfficeLedger(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeInternalMailAccess(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
+ const db=await openDatabase(settings);await db.prepare(accountSchema).run();await initializeProclamations(db);await initializeCharters(db);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeOfficeLedger(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeInternalMailAccess(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
  const stopElectionClock=startElectionClock(db);const stopOfficeLedger=startOfficeLedger(db);
  const stopBanSync=startModerationSync(db,settings),stopInternalMail=startInternalMailSync(db);
  const security={'X-Robots-Tag':'noindex, nofollow, noarchive','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' https://www.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://support.dunerealms.com; frame-src 'self' https://luckperms.net https://www.dunerealms.com https://support.dunerealms.com https://forums.dunerealms.com https://clans.dunerealms.com https://wiki.dunerealms.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com https://clans.dunerealms.com"};

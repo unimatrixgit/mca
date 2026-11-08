@@ -1,3 +1,4 @@
+import {imperialAccount} from './imperial-accounts.mjs';
 import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
@@ -26,6 +27,7 @@ export function createBanking(db,settings={},dependencies={}){
    const currentUser=await authenticate(request);if(!currentUser||currentUser.id!==user.id)return reply({message:'Sign in again before viewing this bank.'},401);
    const currentRights=await access(currentUser);if(!currentRights?.nodes?.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is no longer available for this account.'},403);
    const currentPlayer=await linked(currentUser);if(typeof currentPlayer!=='string'||!uuid.test(currentPlayer)||currentPlayer.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked Minecraft account changed. Refresh before viewing this bank.'},409);
+   bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,staff?'server':'player',staff?'network':player.toLowerCase());
    return reply({linked:staff?undefined:true,bank,canManage:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
  };

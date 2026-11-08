@@ -5,7 +5,7 @@ export const USER_GROUPS=[
  ['Profile',[
   item('Minecraft account','game','web.menu.game','nav-clan-v2.webp'),
   item('Personal information','site-profile','web.menu.security','nav-account-v2.webp',{aliases:['security','discord-link']}),
-  item('Personal Bank','personal-bank','web.bank.personal.view','nav-shop-v1.webp'),
+  item('Personal Accounts','personal-bank','web.bank.personal.view','nav-shop-v1.webp'),
   item('Inbox','shared-inbox','web.menu.game','nav-support-v2.webp'),
   item('Support tickets','tickets','web.menu.tickets','nav-support-v2.webp'),
   item('Inventory','planetary-inventory','web.menu.inventory','nav-exchange-v2.webp')]],
@@ -53,7 +53,7 @@ export const STAFF_GROUPS=[
   item('Exchange management','exchange-admin','web.menu.exchange','nav-exchange-v2.webp',{aliases:['exchange-settings-admin']}),
   item('Git management','git-admin','web.git.admin','nav-manual-v2.webp'),
   item('Community goals','community-goals','web.community.manage','nav-shop-v1.webp'),
-  item('Server bank','staff-bank','web.bank.staff.view','nav-shop-v1.webp'),
+  item('Imperial Treasury','staff-bank','web.bank.staff.view','nav-shop-v1.webp'),
   item('Item management','items','web.menu.items','nav-clan-v2.webp')]]
 ];
 // Mirrors native Dev review policy; ordinary Dev/staff membership is not approval authority.
