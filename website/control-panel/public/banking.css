@@ -144,3 +144,5 @@
 @media(max-width:600px){.bank-workspace .bank-inline-detail,.bank-workspace .bank-account-detail{padding:16px}.bank-workspace>header,.bank-workspace>.user-page-hero{padding:18px!important}}
 
 .bank-workspace .bank-shared-heading{margin:26px 0 14px;padding-top:20px;border-top:1px solid #8d794855}
+
+#personal-bank>.cp-user-page-hero>img{width:160px!important;height:100px!important;object-fit:contain;flex:0 0 160px}#personal-bank>.imperial-bank-brand{display:none}@media(max-width:600px){#personal-bank>.cp-user-page-hero>img{width:100px!important;height:75px!important;flex-basis:100px}}
