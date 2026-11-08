@@ -18,9 +18,12 @@ export const USER_GROUPS=[
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
  ['Realm & Politics',[
   item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
-  item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png',{aliases:['house-elections','imperial-elections']}),
+  item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png'),
+  item('Proclamations','council-motd','web.menu.game','seals/office-landsraad.png'),
+  item('Faction Elections','house-elections','web.menu.game','seals/office-house_leader.png'),
+  item('Emperor Elections','imperial-elections','web.menu.game','seals/emperor-v1.png'),
   item('Election Applications','applications','web.menu.game','seals/office-landsraad.png'),
-  item('Faction Council','formal-council','web.menu.game','seals/office-house_leader.png',{aliases:['council-motd']}),
+  item('Faction Council','formal-council','web.menu.game','seals/office-house_leader.png'),
   item('Imperial Council','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]],
  ['Services',[
   item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
