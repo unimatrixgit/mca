@@ -1,5 +1,7 @@
 import {randomUUID} from 'node:crypto';
-import {accessFor,isOwnerRank} from './permissions.mjs';
+import {accessFor} from './permissions.mjs';
+import {nativeSyncChange} from './native-sync-outbox.mjs';
+export const canAwardCrysknife=(actor,ranks=actor?.ranks||[])=>['unimatrix999','grmacken'].includes(actor?.username?.toLowerCase())||ranks.includes('crysknife');
 export const CRYSKNIFE_SEAL='https://www.dunerealms.com/assets/seals/order-crysknife-v1.png';
 export async function initializeHonours(db){
  await db.prepare('CREATE TABLE IF NOT EXISTS site_honours(user_id CHAR(36) NOT NULL,rank_key VARCHAR(40) NOT NULL,citation TEXT NOT NULL,awarded_by CHAR(36) NOT NULL,updated_at BIGINT NOT NULL,version INTEGER NOT NULL,PRIMARY KEY(user_id,rank_key))').run();
@@ -12,7 +14,11 @@ export async function honoursFor(db,user){
 }
 export async function honourAction(db,actor,request,origin){
  const access=await accessFor(db,actor);
- if(!access.nodes.includes('web.accounts.assign'))return Response.json({message:'Rank assignment permission required.'},{status:403});
+ if(!canAwardCrysknife(actor,access.ranks))return Response.json({message:'Only unimatrix999, grmacken and members of the Order may award the Crysknife.'},{status:403});
+ if(request.method==='GET'&&new URL(request.url).searchParams.get('candidates')==='1'){
+ const {results}=await db.prepare("SELECT a.id,a.username,a.display_name FROM site_accounts a WHERE a.password_hash NOT LIKE '!%' AND a.role NOT IN ('crysknife','memorial','official_account') AND NOT EXISTS(SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key IN ('crysknife','memorial','official_account')) ORDER BY a.username").all();
+ return Response.json({candidates:results},{headers:{'Cache-Control':'no-store'}});
+ }
  const url=new URL(request.url);let body;
  if(request.method==='GET'){if([...url.searchParams.keys()].some(k=>k!=='userId'))return Response.json({message:'Invalid query.'},{status:400});body={userId:url.searchParams.get('userId')};}
  else {if(request.method!=='POST'||request.headers.get('origin')!==origin)return Response.json({message:'Origin rejected.'},{status:403});try{body=await request.json();}catch{return Response.json({message:'Invalid request.'},{status:400});}}
@@ -20,7 +26,7 @@ export async function honourAction(db,actor,request,origin){
  const target=await db.prepare('SELECT id,role FROM site_accounts WHERE id=?').bind(body.userId).first();
  if(!target)return Response.json({message:'Account not found.'},{status:404});
  const rights=await accessFor(db,target);
- if(!isOwnerRank(access.rank)&&rights.level>=access.level)return Response.json({message:'This award requires a higher rank.'},{status:403});
+ if(body.action==='award')return awardCrysknife(db,actor,target,body);
  if(!rights.ranks.includes('crysknife'))return Response.json({message:'Assign the Crysknife rank first.'},{status:409});
  const honour=(await honoursFor(db,target))[0];
  if(request.method==='GET')return Response.json({honour},{headers:{'Cache-Control':'no-store'}});
@@ -33,6 +39,18 @@ export async function honourAction(db,actor,request,origin){
  if(!result[0].meta.changes)return Response.json({message:'The citation changed. Refresh.'},{status:409});
  }catch(e){if(e.code==='ER_DUP_ENTRY'||String(e.message).includes('UNIQUE'))return Response.json({message:'The citation changed. Refresh.'},{status:409});throw e;}
  return Response.json({ok:true,version:honour.version+1});
+}
+// Membership, citation and audit commit together. A stale/duplicate request cannot rewrite an award.
+async function awardCrysknife(db,actor,target,body){
+ if(body.confirmed!==true||!validCitation(body.citation)||!body.citation.trim())return Response.json({message:'Write an honour citation and check the confirmation box.'},{status:400});
+ const now=Date.now();
+ const grant=db.prepare("INSERT INTO cp_account_ranks(user_id,rank_key) SELECT a.id,'crysknife' FROM site_accounts a WHERE a.id=? AND a.password_hash NOT LIKE '!%' AND a.role NOT IN ('crysknife','memorial','official_account') AND NOT EXISTS(SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key IN ('crysknife','memorial','official_account')) AND EXISTS(SELECT 1 FROM site_accounts issuer WHERE issuer.id=? AND issuer.password_hash NOT LIKE '!%' AND (LOWER(issuer.username) IN ('unimatrix999','grmacken') OR issuer.role='crysknife' OR EXISTS(SELECT 1 FROM cp_account_ranks ir WHERE ir.user_id=issuer.id AND ir.rank_key='crysknife')))").bind(target.id,actor.id);
+ try{await db.batch([{async run(c){const r=await grant.run(c);if(!r.meta.changes)throw Error('award-ineligible');return r;}},
+ db.prepare("DELETE FROM site_honours WHERE user_id=? AND rank_key='crysknife'").bind(target.id),
+ db.prepare("INSERT INTO site_honours(user_id,rank_key,citation,awarded_by,updated_at,version) VALUES(?,'crysknife',?,?,?,1)").bind(target.id,body.citation.replaceAll('\r\n','\n').trim(),actor.id,now),
+ db.prepare('INSERT INTO account_audit(id,actor_id,action,details,created_at) VALUES(?,?,?,?,?)').bind(randomUUID(),actor.id,'crysknife-awarded',JSON.stringify({recipient:target.id,citation:body.citation.trim()}),now),nativeSyncChange(db)]);
+ }catch(e){if(e.message==='award-ineligible'||e.code==='ER_DUP_ENTRY'||String(e.message).includes('UNIQUE'))return Response.json({message:'The recipient or your eligibility changed. Refresh the list.'},{status:409});throw e;}
+ return Response.json({ok:true,message:'The Crysknife has been awarded. The citation is saved.',nativeSyncPending:true});
 }
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function honourMarkup(honours=[]){return honours.map(h=>'<section class="honour-panel" aria-label="'+esc(h.title)+'"><img src="'+esc(h.seal)+'" alt="'+esc(h.title)+' seal" width="130" height="130"><div><small>DUNEREALMS · HONORARY ORDER</small><h3>'+esc(h.title)+'</h3><p class="honour-citation">'+esc(h.citation||'Honoured member of the Order.')+'</p></div></section>').join('');}
