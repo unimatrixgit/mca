@@ -1,0 +1,5 @@
+.dune-merch-gallery{background:linear-gradient(135deg,#193d30,#102c24);border:1px solid #b79b50;border-radius:18px;padding:clamp(16px,3vw,30px);box-shadow:inset 0 0 0 5px #102c2466;color:#e7dfc7;margin-bottom:20px}
+.dune-merch-gallery__eyebrow{color:#cdb266;letter-spacing:.16em;text-transform:uppercase;font-size:.75rem;margin-bottom:8px}
+.dune-merch-gallery h2{color:#ead18a;margin:0 0 12px;font-size:clamp(1.3rem,3vw,1.9rem)}
+.dune-merch-gallery figure{margin:18px 0 0}.dune-merch-gallery a{display:block;border:1px solid #b79b50;border-radius:10px;overflow:hidden}.dune-merch-gallery a:focus-visible{outline:3px solid #ffe6a1;outline-offset:4px}
+.dune-merch-gallery img{display:block;width:100%;height:auto}.dune-merch-gallery figcaption{font-size:.85rem;color:#c7cdbd;margin-top:12px;line-height:1.6}
