@@ -1,3 +1,4 @@
+import {initializeOfficeLedger,startOfficeLedger} from './election-office-ledger.mjs';
 import {createMailAccounts} from '../node/mail-accounts.mjs';
 import {createInternalMail,startInternalMailSync,initializeInternalMailAccess,syncClanMailRegistry} from '../node/internal-mail.mjs';
 import {createElectionVoting,startElectionClock} from './election-voting.mjs';
@@ -191,8 +192,8 @@ export async function startPanel(settings=process.env){
   else{const {Pool}=await import('pg');inventoryPool=new Pool({connectionString:settings.DUNE_INVENTORY_DATABASE_URL,max:3,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});}
   inventoryPool.on('error',()=>console.error('Inventory database connection unavailable.'));
  }
- const db=await openDatabase(settings);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeInternalMailAccess(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
- const stopElectionClock=startElectionClock(db);
+ const db=await openDatabase(settings);await initializeApplications(db);await initializeRounds(db);await initializeBallots(db);await initializeOfficeLedger(db);await initializeContactEmails(db);await initializeBanEvidence(db);await initializeClans(db);await initializeClanShop(db);await initializeMailIdentities(db);await initializeGitIdentities(db);await initializeRanks(db);await initializeInternalMailAccess(db);await initializeBadges(db);await initializeNews(db);await initializeCommunityAccess(db);await initializeQuestAccess(db);await initializeBankAccess(db);await initializeGameRanks(db);const handle=createPanel(db,settings,{inventoryPool}),origin=settings.CP_ORIGIN||'https://cp.dunerealms.com';
+ const stopElectionClock=startElectionClock(db);const stopOfficeLedger=startOfficeLedger(db);
  const stopBanSync=startModerationSync(db,settings),stopInternalMail=startInternalMailSync(db);
  const security={'X-Robots-Tag':'noindex, nofollow, noarchive','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' https://www.dunerealms.com; style-src 'self' https://www.dunerealms.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.dunerealms.com; img-src 'self' data: https://www.dunerealms.com https://support.dunerealms.com; frame-src 'self' https://luckperms.net https://www.dunerealms.com https://support.dunerealms.com https://forums.dunerealms.com https://clans.dunerealms.com https://wiki.dunerealms.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://www.dunerealms.com https://dunerealms.com https://clans.dunerealms.com"};
  const server=createServer(async(req,res)=>{try{
@@ -204,7 +205,7 @@ export async function startPanel(settings=process.env){
  }catch(error){console.error('Panel request failed:',error.code||error.name);res.writeHead(503,security);res.end('{"message":"The account panel is temporarily unavailable."}');}});
  server.headersTimeout=10000;server.requestTimeout=120000;
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(Number(settings.CP_PORT||3003),'127.0.0.1',resolve);});
- process.once('SIGTERM',()=>{stopElectionClock();stopBanSync();stopInternalMail();server.close(async()=>{await Promise.allSettled([db.close(),inventoryPool?.end()]);process.exit(0);});});console.log('Account panel listening on localhost');return server;
+ process.once('SIGTERM',()=>{stopOfficeLedger();stopElectionClock();stopBanSync();stopInternalMail();server.close(async()=>{await Promise.allSettled([db.close(),inventoryPool?.end()]);process.exit(0);});});console.log('Account panel listening on localhost');return server;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)await startPanel();
 
