@@ -22,6 +22,11 @@ def _ledger(cursor,staff=False):
   if isinstance(ref,str) and re.fullmatch(r'web-own:[a-f0-9-]{36}:(current|savings)',ref):
    cursor.execute('SELECT result FROM dune_bank_web_transfers WHERE request_id=%s',(ref.split(':')[1],));receipt=cursor.fetchone()
    if receipt and receipt['result']:entry['memo']=json.loads(receipt['result']).get('memo','')
+  if isinstance(ref,str) and re.fullmatch(r'web-ext:[a-f0-9-]{36}:(debit|credit)',ref):
+   cursor.execute('SELECT result FROM dune_bank_remittances WHERE request_id=%s',(ref.split(':')[1],));receipt=cursor.fetchone()
+   if receipt and receipt['result']:
+    data=json.loads(receipt['result']);entry['fromAccount']=data['fromAccount'];entry['toAccount']=data['toAccount'];entry['memo']=data['memo']
+
   if staff: entry['actorUuid']=identity(row['player_uuid'])
   result.append(entry)
  return result

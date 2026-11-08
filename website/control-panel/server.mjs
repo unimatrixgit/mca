@@ -149,7 +149,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path.startsWith('/api/kits/'))return kitMarket(request);
   if(path==='/api/ranks/game')return gameRanks(request);
   if(path==='/api/bank/beneficiaries')return bankBeneficiaries(request);
-  if(path==='/api/bank/transfer-own')return bankTransfers(request);
+  if(path==='/api/bank/transfer-own'||path==='/api/bank/remittance')return bankTransfers(request);
   if(path==='/api/bank/official')return officialBank(request);
   if(path==='/api/bank/personal'||path==='/api/bank/staff'||path==='/api/bank/faction')return banking(request);
   if(path==='/api/quests'||path.startsWith('/api/quests/'))return quests(request);
