@@ -85,7 +85,17 @@ for(const[id,[eyebrow,title,description,seal]]of Object.entries(specs)){
  const preview=el('aside',undefined,'politics-preview-note');preview.append(el('strong','WEBSITE DESIGN PREVIEW'),el('span','Voting and rights grants are not active. These pages do not change the game.'));
  const content=el('div',undefined,'politics-content');section.append(hero,tabs,preview,content);dashboard?.append(section);nav?.append(artLink(title,id,seal));views[id]={section,content};
 }
+const factionSeals={atreides:['House Aerdrecht','house-aerdrecht-v1.png'],harkonnen:['House Harkveen','house-harkveen-v1.png'],corrino:['House Korenholt','house-korenholt-v1.png'],ordos:['House Oordwijk','house-oordwijk-v1.png'],fremen:['Vrijduin','house-vrijduin-v1.png'],veiled_concord:['The Veiled Concord','veiled-concord-v1.png']};
+function renderFactionSeals(){
+ const faction=context?.linked?factionSeals[String(context.faction||'').toLowerCase()]:null;
+ for(const id of ['formal-council','house-elections']){
+  const hero=views[id].section.querySelector('.politics-hero'),image=hero.querySelector('img');
+  image.src=asset(faction?'seals/'+faction[1]:specs[id][3]);image.alt=faction?faction[0]+' seal':'';
+  hero.querySelector('small').textContent=faction?faction[0].toUpperCase():specs[id][0];
+ }
+}
 function render(){
+ renderFactionSeals();
  resetInboxViews();
  for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
