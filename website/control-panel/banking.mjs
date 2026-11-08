@@ -3,11 +3,18 @@ import {identity} from '../node/auth.mjs';
 import {accessFor} from '../node/permissions.mjs';
 const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i,money=/^(?:0|[1-9]\d{0,17})\.\d{2}$/,signed=/^-?(?:0|[1-9]\d{0,17})\.\d{2}$/;
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie','X-Content-Type-Options':'nosniff'}});
+export function ledgerCounterparty(row,player,staff=false){
+ const ref=row.reference;
+ if(typeof ref!=='string')return null;
+ if(!staff&&row.amountDunemarks==='5000.00'&&ref==='alpha-launch-20261108:from-server:'+player.toLowerCase())return {type:'server',owner:'network'};
+ const match=staff&&row.amountDunemarks==='-5000.00'&&/^alpha-launch-20261108:to:([a-f0-9-]{36})$/.exec(ref);
+ return match&&uuid.test(match[1])?{type:'player',owner:match[1]}:null;
+}
 export function projectBank(data,{playerUuid,staff=false}={}){
  if(data?.currency!=='dunemarks'||typeof data.balanceDunemarks!=='string'||!money.test(data.balanceDunemarks)||!Array.isArray(data.ledger)||data.ledger.length>200)return null;
  if(staff?data.account!=='server':data.playerUuid?.toLowerCase()!==playerUuid?.toLowerCase()||typeof data.walletDunemarks!=='string'||!signed.test(data.walletDunemarks))return null;
  if(data.ledger.some(r=>typeof r.id!=='string'||typeof r.action!=='string'||typeof r.amountDunemarks!=='string'||!signed.test(r.amountDunemarks)||typeof r.balanceDunemarks!=='string'||!money.test(r.balanceDunemarks)||!Number.isFinite(Number(r.createdAt))))return null;
- return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
+ return{currency:'dunemarks',balanceDunemarks:data.balanceDunemarks,...(staff?{account:'server'}:{walletDunemarks:data.walletDunemarks}),ledger:data.ledger.slice(0,100).map(r=>({id:r.id,action:r.action,amountDunemarks:r.amountDunemarks,balanceDunemarks:r.balanceDunemarks,createdAt:r.createdAt,counterparty:ledgerCounterparty(r,playerUuid,staff),...(staff?{actorName:typeof r.actorName==='string'?r.actorName.slice(0,80):''}:{})}))};
 }
 export function createBanking(db,settings={},dependencies={}){
  const authenticate=dependencies.authenticate||(r=>identity(r,db)),access=dependencies.access||(u=>accessFor(db,u));
@@ -28,6 +35,14 @@ export function createBanking(db,settings={},dependencies={}){
    const currentRights=await access(currentUser);if(!currentRights?.nodes?.includes(staff?'web.bank.staff.view':'web.bank.personal.view'))return reply({message:'Bank access is no longer available for this account.'},403);
    const currentPlayer=await linked(currentUser);if(typeof currentPlayer!=='string'||!uuid.test(currentPlayer)||currentPlayer.toLowerCase()!==player.toLowerCase())return reply({message:'Your linked Minecraft account changed. Refresh before viewing this bank.'},409);
    bank.accountNumber=await (dependencies.accountNumber||imperialAccount)(db,staff?'server':'player',staff?'network':player.toLowerCase());
+   if(!staff)bank.currentAccountNumber=await(dependencies.accountNumber||imperialAccount)(db,'current',player.toLowerCase());
+   for(const row of bank.ledger){
+    const counterparty=row.counterparty;delete row.counterparty;
+    const number=counterparty?await(dependencies.accountNumber||imperialAccount)(db,counterparty.type,counterparty.owner):null;
+    const outgoing=row.amountDunemarks.startsWith('-');
+    row.fromAccount=outgoing?bank.accountNumber:number;
+    row.toAccount=outgoing?number:bank.accountNumber;
+   }
    return reply({linked:staff?undefined:true,bank,canManage:staff?currentRights.nodes.includes('web.bank.staff.manage'):true});
   }catch{return reply({message:'The Dunemarks bank is temporarily unavailable. Refresh to check the current balance.'},503);}
  };

@@ -16,6 +16,8 @@ def _ledger(cursor,staff=False):
  for row in cursor.fetchall():
   if type(row['created_at']) is not int or not isinstance(row['id'],str) or not isinstance(row['action'],str):raise RuntimeError('Invalid bank ledger')
   entry={'id':row['id'],'action':row['action'],'amountDunemarks':money(row['delta'],True),'balanceDunemarks':money(row['balance_after']),'createdAt':row['created_at']}
+  ref=row.get('reference')
+  if isinstance(ref,str) and len(ref)<=160: entry['reference']=ref
   if staff: entry['actorUuid']=identity(row['player_uuid'])
   result.append(entry)
  return result
@@ -26,14 +28,14 @@ def read_player(connect,player_uuid):
   with con.cursor() as cursor:
    cursor.execute('SELECT balance FROM dune_player_banks WHERE player_uuid=%s',(player_uuid,));row=cursor.fetchone();balance=money(row['balance'] if row else 0)
    cursor.execute('SELECT balance FROM dune_economy_balances WHERE uuid=%s',(player_uuid,));row=cursor.fetchone();wallet=money(row['balance'] if row else 0,True)
-   cursor.execute('SELECT id,action,delta,balance_after,created_at FROM dune_player_bank_ledger WHERE player_uuid=%s ORDER BY created_at DESC,id DESC LIMIT 50',(player_uuid,));ledger=_ledger(cursor)
+   cursor.execute('SELECT id,action,delta,balance_after,created_at,reference FROM dune_player_bank_ledger WHERE player_uuid=%s ORDER BY created_at DESC,id DESC LIMIT 50',(player_uuid,));ledger=_ledger(cursor)
  return {'playerUuid':player_uuid,'currency':'dunemarks','balanceDunemarks':balance,'walletDunemarks':wallet,'ledger':ledger}
 
 def read_staff(connect):
  with connect() as con:
   with con.cursor() as cursor:
    cursor.execute("SELECT balance FROM dune_staff_bank_wallet WHERE account_key='network'");row=cursor.fetchone();balance=money(row['balance'] if row else 0)
-   cursor.execute('SELECT id,player_uuid,action,delta,balance_after,created_at FROM dune_staff_bank_ledger ORDER BY created_at DESC,id DESC LIMIT 50');ledger=_ledger(cursor,True)
+   cursor.execute('SELECT id,player_uuid,action,delta,balance_after,created_at,reference FROM dune_staff_bank_ledger ORDER BY created_at DESC,id DESC LIMIT 50');ledger=_ledger(cursor,True)
  return {'account':'server','currency':'dunemarks','balanceDunemarks':balance,'ledger':ledger}
 
 def read_faction(connect,player_uuid):
