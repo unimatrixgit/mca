@@ -172,3 +172,5 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 .politics-page .politics-live-candidate>details{grid-column:2/-1;grid-row:2;margin:0;padding-top:6px}
 .politics-page .politics-live-candidate details p{overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:480px){.politics-page .politics-live-candidate{grid-template-columns:40px minmax(0,1fr) auto;gap:8px}.politics-page .politics-live-candidate .politics-candidate-head{width:40px;height:40px}.politics-page .politics-live-candidate .politics-candidate-votes{flex-direction:column;gap:3px}.politics-page .politics-live-candidate .politics-candidate-votes input{width:54px}.politics-page .politics-live-candidate>details{grid-column:1/-1}}
+
+.cp-panel-category.cp-bank-category{flex-direction:column;gap:8px;background:linear-gradient(145deg,#244333,#0c251e);min-height:108px}.cp-bank-category:before,.cp-bank-category:after{display:none}.cp-bank-category .cp-section-art{width:150px;height:50px;flex-basis:auto;object-fit:contain}
