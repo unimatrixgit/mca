@@ -48,6 +48,24 @@ if(dashboard&&!embedded){
  function linkFor(item){item=factionMenuItem(item,factionContext);const a=el('a');a.href=item.url||'#'+item.page;const label=el('span',item.label);a.append(label);art(a,item.art);if(item.placeholder){const note=el('small','Placeholder');a.append(note);}return a;}
  function groupCards(host,groups){host.replaceChildren();for(const[label,items]of groups){const card=el('section');card.className='cp-panel-card';card.append(el('h3',label));for(const item of items)card.append(linkFor(item));host.append(card);}}
  function related(id,items){const section=document.getElementById(id);if(!section)return;const allowed=items.filter(([, ,node])=>user.permissions.includes(node));const key=JSON.stringify(allowed);const old=section.querySelector(':scope>.cp-context-links');const hero=section.querySelector(':scope>.cp-user-page-hero');if(old?.dataset.signature===key){if(hero&&old.previousElementSibling!==hero)hero.after(old);return;}old?.remove();const nav=el('nav');nav.dataset.signature=key;nav.className='cp-context-links';nav.setAttribute('aria-label','Related account tools');for(const[label,page]of allowed){const a=el('a',label);a.href='#'+page;art(a,page==='discord-link'?'nav-discord-v2.webp':page==='luckperms'||page==='game-permissions'?'nav-clan-v2.webp':'nav-account-v2.webp');if(page===id)a.setAttribute('aria-current','page');nav.append(a);}if(hero)hero.after(nav);else section.prepend(nav);}
+ async function fillElectionStatistics(card){
+  const generation=sessionGeneration;
+  card.replaceChildren(el('h3','Live election statistics'),el('p','Loading current chambers…'));
+  const results=await Promise.allSettled(['house','imperial'].map(async kind=>{
+   const response=await fetch('/api/politics/ballot/'+kind,{cache:'no-store'});
+   if(!response.ok)throw Error('Chamber unavailable');return response.json();
+  }));
+  if(generation!==sessionGeneration||!card.isConnected)return;
+  card.replaceChildren(el('h3','Live election statistics'));
+  for(let i=0;i<results.length;i++){
+   const title=i===0?'House':'Emperor',result=results[i];
+   if(result.status!=='fulfilled'){card.append(el('p',title+': unavailable. Open the chamber to check your eligibility.'));continue;}
+   const data=result.value,total=data.candidates.reduce((n,c)=>n+Number(c.votes),0);
+   const line=el('p');line.append(el('strong',title+': '+data.candidates.length+' candidate(s)'));
+   line.append(el('span',' · '+total+' votes'+(data.round?' in round '+(data.round.number+1):' · applications open')));card.append(line);
+  }
+  const refresh=el('button','Refresh standings');refresh.type='button';refresh.onclick=()=>fillElectionStatistics(card);card.append(refresh);
+ }
  function paint(){
   frame.hidden=centers.hidden=breadcrumb.hidden=!user;realmTabs.hidden=true;if(!user){signature='';sidebar.replaceChildren();rightSidebar.replaceChildren();for(const p of framePages){p.section.hidden=true;p.frame.removeAttribute('src');}return;}
   for(const id of ['staff-panel','discord-link','landsraad','hosting-control','user-management','community-goals']){const section=document.getElementById(id);if(section)section.hidden=false;}
@@ -70,7 +88,7 @@ if(dashboard&&!embedded){
    realmHome.replaceChildren();const hero=el('header');hero.className='cp-panel-hero';art(hero,'seals/office-landsraad.png',112);const intro=el('div');intro.append(el('p','THE IMPERIAL ASSEMBLY'),el('h2','Realm & Politics'),el('p','Your House, the throne and the next chapter of the realm.'));hero.append(intro);realmHome.append(hero);const stats=el('div');stats.className='cp-panel-summary';
    const house=factionMenuItem({page:'formal-council',label:'Not verified'},factionContext).label.replace(/ Council$/,'');
    const date=kind=>new Date(electionDates(kind)[0]).toLocaleString('en-GB',{timeZone:'UTC',dateStyle:'medium',timeStyle:'short'})+' GMT';
-   for(const[title,value,copy]of [['Your House',house,'Verified from your linked game account.'],['Next House election',date('house'),'Two-week terms · voting 09:00–12:00 GMT'],['Next Emperor election',date('imperial'),'Four-week terms · voting 15:00–18:00 GMT'],['Live election statistics','Not available yet','Real candidates and standings are available in each election chamber. Voting opens at the scheduled time.']]){const card=el('section');card.className='cp-panel-card';card.append(el('h3',title),el('strong',value),el('p',copy));stats.append(card);}realmHome.append(stats);
+   for(const[title,value,copy]of [['Your House',house,'Verified from your linked game account.'],['Next House election',date('house'),'Two-week terms · voting 09:00–12:00 GMT'],['Next Emperor election',date('imperial'),'Four-week terms · voting 15:00–18:00 GMT'],['Live election statistics','Loading…','Current chamber totals.']]){const card=el('section');card.className='cp-panel-card';card.append(el('h3',title),el('strong',value),el('p',copy));stats.append(card);if(title==='Live election statistics')queueMicrotask(()=>fillElectionStatistics(card));}realmHome.append(stats);
    sidebar.replaceChildren();rightSidebar.replaceChildren();const home=el('a',panel==='realm'?'Realm & Politics overview':panel==='dev'?'Dev Panel overview':panel==='staff'?'Staff Panel overview':'User Panel overview');home.className='cp-panel-overview-link';home.href=panel==='realm'?'#realm-panel':panel==='dev'?'#dev-panel':panel==='staff'?'#staff-panel':'#user-home';sidebar.append(home);
    const halves=panel==='realm'?[groups,[]]:panel==='dev'?[groups,[]]:splitMenuGroups(groups);rightSidebar.hidden=!halves[1].length;for(const[side,sections]of [[sidebar,halves[0]],[rightSidebar,halves[1]]])for(const[label,items]of sections){const h=el('h3',label);h.className='cp-panel-category';side.append(h);for(const item of items){const a=linkFor(item);a.dataset.panelPage=item.page||'';side.append(a);}}
    paintMenuRibbons(frame, document.querySelector('.dune-release-badge')?.textContent.match(/\d+(?:\.\d+){3}/)?.[0] || MENU_RELEASE);
