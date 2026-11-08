@@ -1,5 +1,6 @@
 """Read-only personal/staff Dunemarks projections for the authenticated private gateway."""
 import re
+import json
 import uuid
 from decimal import Decimal
 
@@ -18,6 +19,9 @@ def _ledger(cursor,staff=False):
   entry={'id':row['id'],'action':row['action'],'amountDunemarks':money(row['delta'],True),'balanceDunemarks':money(row['balance_after']),'createdAt':row['created_at']}
   ref=row.get('reference')
   if isinstance(ref,str) and len(ref)<=160: entry['reference']=ref
+  if isinstance(ref,str) and re.fullmatch(r'web-own:[a-f0-9-]{36}:(current|savings)',ref):
+   cursor.execute('SELECT result FROM dune_bank_web_transfers WHERE request_id=%s',(ref.split(':')[1],));receipt=cursor.fetchone()
+   if receipt and receipt['result']:entry['memo']=json.loads(receipt['result']).get('memo','')
   if staff: entry['actorUuid']=identity(row['player_uuid'])
   result.append(entry)
  return result
