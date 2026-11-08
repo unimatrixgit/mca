@@ -16,7 +16,7 @@
   const heading=document.createElement('h2');heading.textContent=user?'Imperial Postbox':'Join the caravan';
   const text=document.createElement('p');text.textContent=user?'Your private correspondence.':'Create your account and begin your DuneRealms journey.';
   const actions=document.createElement('div');
-  const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#internal-mail']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
+  const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#shared-inbox']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
   for(const[label,url]of links){const a=document.createElement('a');a.textContent=label;a.href=url;actions.append(a);}
   box.append(art,heading,text,actions);
   if(user){const status=document.createElement('p');status.className='postbox-status';status.textContent='Mail notifications are being connected.';box.append(status);}
