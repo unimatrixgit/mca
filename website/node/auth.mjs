@@ -64,6 +64,7 @@ export function createAuth(db,origin,settings={}){
         db.prepare('INSERT INTO site_age_declarations(user_id,age_band,declared_at) VALUES(?,?,?)').bind(id,data.ageBand,now),db.prepare('INSERT INTO site_contact_emails(user_id,address,version) VALUES(?,?,0)').bind(id,email),db.prepare('INSERT INTO site_terms_acceptances(user_id,version,accepted_at) VALUES(?,?,?)').bind(id,TERMS_VERSION,now),alphaGrant(db,id,now),seasonGrant(db,id,now)
       ]);}catch(error){if(error.code==='ER_DUP_ENTRY'||String(error.message).includes('UNIQUE constraint'))return json({message:'That username is unavailable.'},409);throw error;}
       await provisionGitIdentity(db,{id,username,display_name:username,role:'user'},settings).catch(()=>console.error('DuneGit registration setup pending'));
+      void import('./internal-mail.mjs').then(m=>m.ensureInternalMailbox(db,{id})).catch(()=>console.error('Internal mailbox registration setup pending'));
       return issue({id,username,role:'user'});
     }
     const user=await db.prepare('SELECT * FROM site_accounts WHERE username=?').bind(username).first();

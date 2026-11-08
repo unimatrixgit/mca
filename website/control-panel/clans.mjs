@@ -14,7 +14,7 @@ export const CLAN_SCHEMA=[
 export async function initializeClans(db,{mysql=true}={}){for(const sql of CLAN_SCHEMA)await db.prepare(sql+(mysql?' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4':'')).run();}
 
 /** Website clan membership only; never grants a website staff rank or claims game synchronization. */
-export function createClans(db,{origin='https://cp.dunerealms.com',authenticate=request=>identity(request,db),access=user=>accessFor(db,user)}={}){
+export function createClans(db,{origin='https://cp.dunerealms.com',authenticate=request=>identity(request,db),access=user=>accessFor(db,user),onClanCreated=async()=>{},onClanDeleted=async()=>{}}={}){
  const membership=id=>db.prepare('SELECT clan_id,clan_role FROM site_clan_members WHERE user_id=?').bind(id).first();
  const clan=id=>db.prepare('SELECT id,name,tag,description,owner_id,version,created_at,updated_at FROM site_clans WHERE id=? AND active=1').bind(id).first();
  const publicClan=row=>{const {owner_id,...safe}=row;return safe;};
@@ -58,7 +58,7 @@ export function createClans(db,{origin='https://cp.dunerealms.com',authenticate=
     const id=randomUUID();await db.batch([
      db.prepare('INSERT INTO site_clans(id,name,name_key,tag,description,owner_id,active,version,created_at,updated_at) VALUES(?,?,?,?,?,?,1,1,?,?)').bind(id,data.name,data.nameKey,data.tag,data.description,user.id,now,now),
      db.prepare("INSERT INTO site_clan_members(user_id,minecraft_uuid,clan_id,clan_role,joined_at) VALUES(?,?,?,'owner',?)").bind(user.id,link.minecraft_uuid,id,now),audit(id,{tag:data.tag})
-    ]);return json({ok:true,clanId:id},201);
+    ]);await onClanCreated({id,name:data.name,tag:data.tag}).catch(()=>console.error('Clan mailbox creation pending reconciliation'));return json({ok:true,clanId:id},201);
    }
    if(!uuid(body.clanId)||!Number.isSafeInteger(body.version)||body.version<1)return json({message:'Choose a current clan record and refresh before submitting.'},400);
    const record=await clan(body.clanId);if(!record)return json({message:'Clan not found.'},404);
@@ -98,6 +98,7 @@ export function createClans(db,{origin='https://cp.dunerealms.com',authenticate=
     }else if(action==='archive'){
      if(body.confirmTag!==record.tag)return json({message:'Type the clan tag to confirm archiving.'},400);
      await db.batch([lock(),db.prepare('UPDATE site_clans SET active=0 WHERE id=?').bind(record.id),db.prepare('DELETE FROM site_clan_members WHERE clan_id=?').bind(record.id),db.prepare("UPDATE site_clan_requests SET status='closed',updated_at=? WHERE clan_id=? AND status='pending'").bind(now,record.id),audit(record.id,{tag:record.tag})]);
+     await onClanDeleted(record).catch(()=>console.error('Clan mailbox removal pending reconciliation'));
     }else{
      if(typeof body.target!=='string')return json({message:'Choose a clan member.'},400);
      const target=await db.prepare('SELECT m.user_id,m.clan_role FROM site_clan_members m JOIN site_accounts a ON a.id=m.user_id WHERE m.clan_id=? AND a.username=?').bind(record.id,body.target).first();if(!target)return json({message:'Clan member not found.'},404);

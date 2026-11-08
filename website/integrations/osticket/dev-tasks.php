@@ -26,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       $topic=$db->query("SELECT topic_id,dept_id,team_id FROM drsupport_help_topic WHERE topic='Development task' AND ispublic=0")->fetch();if(!$topic)throw new RuntimeException('Dev routing is unavailable.');
       $user=User::lookupByEmail($identity['id'].'@accounts.dunerealms.invalid')?:User::fromVars(['name'=>$identity['username'],'email'=>$identity['id'].'@accounts.dunerealms.invalid']);
       if(!$user)throw new RuntimeException('Your support identity could not be resolved.');
-      $prompt=dune_dev_prompt($values);$nativeErrors=[];$subject='[DEV '.substr(hash('sha256',$key),0,16).'] '.mb_substr($values['title'],0,140);
+      $prompt=dune_dev_prompt($values);$nativeErrors=[];$subject=mb_substr($values['title'],0,180);
       $q=$db->prepare('SELECT t.ticket_id FROM drsupport_ticket t JOIN drsupport_ticket__cdata c ON c.ticket_id=t.ticket_id WHERE t.user_id=? AND t.dept_id=? AND c.subject=?');$q->execute([$user->getId(),$topic['dept_id'],$subject]);$existing=$q->fetchColumn();
       $ticket=$existing?Ticket::lookup($existing):Ticket::create(['uid'=>$user->getId(),'name'=>$identity['username'],'email'=>$identity['id'].'@accounts.dunerealms.invalid','topicId'=>$topic['topic_id'],'deptId'=>$topic['dept_id'],'teamId'=>$topic['team_id'],'subject'=>$subject,'message'=>nl2br($esc($prompt)),'source'=>'API','ip'=>'127.0.0.1','autorespond'=>false],$nativeErrors,'API',false,false);
       if(!$ticket)throw new RuntimeException('Ticket creation failed. Please contact Support.');

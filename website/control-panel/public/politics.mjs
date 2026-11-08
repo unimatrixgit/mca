@@ -102,7 +102,7 @@ function renderFactionSeals(){
 function render(){
  renderFactionSeals();
  resetInboxViews();
- for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');if(!(id==='shared-inbox'&&v.section.dataset.internalMail==='true'))v.content.replaceChildren();}
+ for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes(id==='shared-inbox'?'web.mail.internal.view':'web.menu.game');if(!(id==='shared-inbox'&&v.section.dataset.internalMail==='true'))v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
  views.applications.content.append(renderApplications({user,context}));
   const applicationNote=views.applications.section.querySelector(".politics-preview-note");if(applicationNote)applicationNote.textContent="APPLICATION REGISTER · Submissions are saved. Voting opens at the scheduled time; automatic office awards are still being connected.";

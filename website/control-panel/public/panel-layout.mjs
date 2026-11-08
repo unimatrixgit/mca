@@ -19,8 +19,8 @@ export const USER_GROUPS=[
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
  ['Services',[
   item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
-  item('Email','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),
-  item('Hosting control','hosting-control','web.menu.security','seals/department-network-staff-150.png',{placeholder:true})]]
+  item('DuneRealms Mail','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),
+  item('Hosting control','hosting-control','web.menu.security','seals/department-network-staff-150.png')]]
 ];
 export const REALM_GROUPS=[
  ['Realm & Politics',[
@@ -65,7 +65,7 @@ export function menuGroupsFor(user,panel){
  const nodes=new Set(user.permissions||[]);
  return(panel==='realm'?REALM_GROUPS:panel==='staff'?STAFF_GROUPS:USER_GROUPS).map(([label,items])=>[label,items.filter(i=>(!i.node||nodes.has(i.node))&&(!i.staffOnly||hasStaffPanel(user))&&(!i.reviewerOnly||canReviewDev(user))&&(!i.crysknifeOnly||canAwardCrysknife(user)))]).filter(([,items])=>items.length);
 }
-export function menuItemFor(page){return[...USER_GROUPS,...STAFF_GROUPS,...REALM_GROUPS].flatMap(([,items])=>items).find(i=>i.page===page||i.aliases?.includes(page));}
+export function menuItemFor(page){if(['clan-inbox','staff-inbox','faction-inbox','imperial-inbox'].includes(page))page='shared-inbox';return[...USER_GROUPS,...STAFF_GROUPS,...REALM_GROUPS].flatMap(([,items])=>items).find(i=>i.page===page||i.aliases?.includes(page));}
 export function splitMenuGroups(groups){
  const midpoint=Math.ceil(groups.reduce((n,[,items])=>n+items.length,0)/2),left=[],right=[];let used=0;
  for(const[label,items]of groups){const take=Math.max(0,Math.min(items.length,midpoint-used));if(take)left.push([label,items.slice(0,take)]);if(take<items.length)right.push([take?label+' · continued':label,items.slice(take)]);used+=items.length;}
