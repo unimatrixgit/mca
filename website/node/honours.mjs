@@ -15,6 +15,13 @@ export async function honoursFor(db,user){
 export async function honourAction(db,actor,request,origin){
  const access=await accessFor(db,actor);
  if(!canAwardCrysknife(actor,access.ranks))return Response.json({message:'Only unimatrix999, grmacken and members of the Order may award the Crysknife.'},{status:403});
+ if(request.method==='GET'&&new URL(request.url).searchParams.get('recipients')==='1'){
+ const page=Number(new URL(request.url).searchParams.get('page')||1);if(!Number.isSafeInteger(page)||page<1||page>100000)return Response.json({message:'Invalid page.'},{status:400});
+ const where="(a.role='crysknife' OR EXISTS(SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key='crysknife')) AND (a.password_hash NOT LIKE '!%' OR a.password_hash='!memorial') AND a.role<>'official_account'";
+ const count=await db.prepare('SELECT COUNT(*) AS total FROM site_accounts a WHERE '+where).first();
+ const {results}=await db.prepare("SELECT a.username,m.slug,EXISTS(SELECT 1 FROM site_game_links g WHERE g.user_id=a.id) AS linked FROM site_accounts a LEFT JOIN site_memorials m ON m.user_id=a.id WHERE "+where+" ORDER BY a.username LIMIT 9 OFFSET ?").bind((page-1)*9).all();
+ return Response.json({recipients:results.map(r=>({username:r.username,profile:r.slug?'https://www.dunerealms.com/memorial/'+encodeURIComponent(r.slug):'https://www.dunerealms.com/people/'+encodeURIComponent(r.username),avatar:'/api/avatars/roster/'+encodeURIComponent(r.username),skin:!!Number(r.linked)})),page,pages:Math.max(1,Math.ceil(Number(count.total)/9)),total:Number(count.total)},{headers:{'Cache-Control':'no-store'}});
+ }
  if(request.method==='GET'&&new URL(request.url).searchParams.get('candidates')==='1'){
  const {results}=await db.prepare("SELECT a.id,a.username,a.display_name FROM site_accounts a WHERE a.password_hash NOT LIKE '!%' AND a.role NOT IN ('crysknife','memorial','official_account') AND NOT EXISTS(SELECT 1 FROM cp_account_ranks r WHERE r.user_id=a.id AND r.rank_key IN ('crysknife','memorial','official_account')) ORDER BY a.username").all();
  return Response.json({candidates:results},{headers:{'Cache-Control':'no-store'}});
