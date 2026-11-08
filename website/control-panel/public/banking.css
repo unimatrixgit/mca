@@ -144,3 +144,7 @@
 @media(max-width:600px){.bank-workspace .bank-inline-detail,.bank-workspace .bank-account-detail{padding:16px}.bank-workspace>header,.bank-workspace>.user-page-hero{padding:18px!important}}
 
 .bank-workspace .bank-shared-heading{margin:26px 0 14px;padding-top:20px;border-top:1px solid #8d794855}
+
+#personal-bank>.cp-user-page-hero>img{width:160px!important;height:100px!important;object-fit:contain;flex:0 0 160px}#personal-bank>.imperial-bank-brand{display:none}@media(max-width:600px){#personal-bank>.cp-user-page-hero>img{width:100px!important;height:75px!important;flex-basis:100px}}
+
+.bank-workspace .bank-ledger .bank-credit td:nth-last-child(2){color:#9ee0ad;font-weight:700}.bank-workspace .bank-ledger .bank-debit td:nth-last-child(2){color:#f1a6a0;font-weight:700}.bank-workspace .bank-ledger .bank-credit td:first-child{border-left:3px solid #619c70}.bank-workspace .bank-ledger .bank-debit td:first-child{border-left:3px solid #ba6c64}.bank-workspace .bank-ledger .bank-neutral td:first-child{border-left:3px solid #b49d60}
