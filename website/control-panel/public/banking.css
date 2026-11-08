@@ -13,3 +13,34 @@
 .bank-workspace{font-variant-numeric:tabular-nums}.bank-workspace>.imperial-bank-brand{margin:0 0 24px;width:min(100%,380px);max-height:120px}.bank-workspace>header{padding:22px 24px;box-shadow:none;background:#15372c}.bank-workspace>header>img{width:64px;height:64px}.bank-workspace .bank-balance-grid{gap:16px;margin:24px 0 16px}.bank-workspace .bank-balance-grid article{padding:24px;box-shadow:none;border-color:#526c57}.bank-workspace .bank-balance-grid strong{font-size:clamp(28px,3vw,42px);letter-spacing:-.03em;margin:14px 0 4px}.bank-workspace .imperial-account-card{margin:0 0 18px;padding:20px 24px!important;box-shadow:none}.imperial-account-card button{margin-top:8px;border:1px solid #8d8054;border-radius:7px;background:#173b2e;color:#eedca8;padding:9px 14px;cursor:pointer}.bank-workspace .bank-instructions{font-size:14px;padding:18px 22px}.bank-workspace .bank-instructions h3{margin-top:0}.bank-statement-tools{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:12px 0}.bank-statement-tools label{display:block;font-size:12px;color:#c6cbb6;flex:1;max-width:420px}.bank-statement-tools input{display:block;width:100%;margin-top:7px;padding:11px 13px;background:#0d271f;border:1px solid #597260;border-radius:8px;color:#f0ead6}.bank-statement-tools span{font-size:12px;color:#b7c5b8;padding-bottom:12px}.bank-ledger th{font-size:11px;text-transform:uppercase;letter-spacing:.05em}.bank-ledger td{padding:12px 15px}.bank-ledger tr:hover{background:#234535}.bank-ledger tr[hidden]{display:none}.bank-ledger td:last-child,.bank-ledger td:nth-last-child(2){text-align:right;white-space:nowrap}@media(max-width:600px){.bank-statement-tools{align-items:stretch;flex-direction:column;gap:4px}.bank-workspace>header{padding:18px}}
 
 .inventory-company-endorsement{margin:24px 0 0;padding:16px;border-top:1px solid #ad874255;text-align:center}.inventory-company-endorsement img{max-width:100%;height:auto;object-fit:contain}
+/* Imperial Postbank: contemporary financial workspace, scoped to bank views. */
+.bank-workspace,.imperial-bank-view{--bank-ink:#ecf3ed;--bank-muted:#afc5bb;--bank-line:#36584b;--bank-surface:#102f27;color:var(--bank-ink);font-family:Inter,Arial,sans-serif;font-variant-numeric:tabular-nums}
+.bank-workspace{padding:clamp(20px,3vw,36px)!important;background:#0e2922!important;border:1px solid #36584b!important;border-radius:14px!important}
+.bank-workspace>header,.bank-workspace>.user-page-hero{background:linear-gradient(110deg,#12392f,#1b4639)!important;border:0!important;border-bottom:1px solid #486752!important;border-radius:10px!important;padding:22px 24px!important;min-height:0!important;box-shadow:none!important}
+.bank-workspace>header h2,.bank-workspace h2{font-family:Inter,Arial,sans-serif;font-weight:600;letter-spacing:-.035em;color:#f0e8ce;font-size:clamp(26px,3vw,36px)}
+.bank-workspace>header p{max-width:62ch;font-size:14px;color:#b9cdc2}
+.bank-workspace>.imperial-bank-brand,.imperial-bank-view>.imperial-bank-brand{width:240px;height:80px;max-width:100%;margin:0 0 20px;filter:none;object-fit:contain}
+.bank-workspace>p{font-size:13px;color:#afc5bb;line-height:1.6}
+.bank-workspace>button{border:1px solid #577767;background:#163d30;color:#ead8a2;border-radius:6px;padding:9px 16px;font-size:13px}
+.bank-workspace .bank-balance-grid,.imperial-bank-view .clan-stat-grid{gap:16px;margin:24px 0}
+.bank-workspace .bank-balance-grid article,.imperial-bank-view .clan-stat-grid>article{border:1px solid #436353;border-radius:10px;background:#173b30!important;padding:24px!important;box-shadow:none;min-width:0}
+.bank-workspace .bank-balance-grid article:first-child,.imperial-bank-view .clan-stat-grid>article:first-child{background:linear-gradient(120deg,#d0b56e,#e3ce93)!important;border-color:#e3ce93;color:#12352a}
+.bank-workspace .bank-balance-grid article:first-child :is(small,strong,span),.imperial-bank-view .clan-stat-grid>article:first-child :is(small,strong){color:#14382c}
+.bank-workspace .bank-balance-grid img{width:32px;height:32px;opacity:.8}
+.bank-workspace .bank-balance-grid strong,.imperial-bank-view .clan-stat-grid strong{font:600 clamp(28px,3vw,40px)/1.25 Inter,Arial,sans-serif;letter-spacing:-.035em;margin:18px 0 5px}
+.bank-workspace .bank-balance-grid small,.imperial-bank-view .clan-stat-grid small{font-size:11px;letter-spacing:.08em}
+.bank-workspace .imperial-account-card,.imperial-bank-view .imperial-account-card{border:1px solid #456353!important;border-left:3px solid #d5b765!important;border-radius:8px;background:#14382d!important;padding:20px 24px!important;box-shadow:none}
+.bank-workspace .imperial-account-card strong,.imperial-bank-view .imperial-account-card strong{font:500 clamp(15px,2vw,23px)/1.6 ui-monospace,monospace;letter-spacing:.06em;color:#f1e4bf}
+.bank-workspace .imperial-account-card p{margin:5px 0;font-size:13px}.bank-workspace .imperial-account-card small{margin-bottom:6px}
+.bank-workspace .bank-dashboard-links{gap:0;border-bottom:1px solid #456353;margin:22px 0;padding-bottom:0}
+.bank-workspace .bank-dashboard-links a{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:13px 18px;color:#d6e2d6;font-size:14px}
+.bank-workspace .bank-dashboard-links a:hover,.bank-workspace .bank-dashboard-links a:focus-visible{border-bottom-color:#dfc47d;background:#1c4235;color:#f3df9e}
+.bank-workspace .bank-instructions{background:#17372d;border:1px solid #35594b;border-left:3px solid #8da799;border-radius:7px;padding:18px 20px;font-size:13px;line-height:1.6}
+.bank-workspace .bank-instructions h3{font-size:16px;color:#e6dfc8;margin:0 0 5px}.bank-workspace .bank-instructions p{margin:4px 0}
+.bank-workspace h3,.imperial-bank-view h3{font-family:Inter,Arial,sans-serif;font-size:20px;letter-spacing:-.02em}
+.bank-workspace .bank-ledger,.imperial-bank-view .clan-table-scroll{border:1px solid #345648;border-radius:8px;background:#102e25}
+.bank-workspace .bank-ledger th,.imperial-bank-view .clan-table th{background:#1c4034;color:#c9d8c8;font-size:10px;letter-spacing:.08em;padding:14px 12px;white-space:nowrap}
+.bank-workspace .bank-ledger td,.imperial-bank-view .clan-table td{border-bottom:1px solid #294b3f;padding:14px 12px;font-size:12px;color:#dae5da}
+.bank-workspace .bank-ledger tr:nth-child(even){background:#15352a}.bank-workspace .bank-ledger tr:hover{background:#204737}
+.bank-workspace :is(input,textarea,button,a):focus-visible{outline:2px solid #ead394;outline-offset:3px}
+@media(max-width:650px){.bank-workspace{padding:16px!important}.bank-workspace .bank-balance-grid,.imperial-bank-view .clan-stat-grid{grid-template-columns:1fr}.bank-workspace .bank-dashboard-links a{padding:12px;font-size:13px}.bank-workspace>header{padding:18px!important}.bank-workspace .imperial-account-card{padding:18px!important}}
