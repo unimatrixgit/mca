@@ -36,3 +36,26 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 @media(max-width:1100px){.cp-panel-frame{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'left right' 'content content'}.cp-panel-frame[data-panel=dev]{grid-template-columns:1fr;grid-template-areas:'left' 'content'}.cp-panel-sidebar{display:flex;flex-direction:column}.cp-panel-sidebar>a{min-height:50px}.cp-panel-frame .cp-panel-category{min-height:64px}}
 @media(max-width:560px){.cp-panel-frame{gap:10px}.cp-panel-sidebar{padding:8px;gap:7px}.cp-panel-sidebar>a{padding:8px;font-size:11px;gap:6px;min-height:57px}.cp-panel-sidebar .cp-section-art{width:27px;height:27px;flex-basis:27px}.cp-panel-category{font-size:10px;letter-spacing:.04em}.cp-panel-category:before,.cp-panel-category:after{display:none}.cp-panel-frame>#dashboard{min-width:0}.cp-panel-sidebar small{font-size:8px}}
 .cp-context-links a{gap:9px}.cp-context-links .cp-section-art{width:28px;height:28px;flex-basis:28px}.cp-context-links a[aria-current=page]{background:#344a30;border-color:#dfbf70;box-shadow:inset 0 -2px #c6a453}
+
+/* Honour portal uses the shared CP/Dev palette and externally served styles. */
+#crysknife .order-hero{display:flex;align-items:center;gap:24px;padding:28px;border:1px solid #b99b52;border-radius:18px;background:linear-gradient(90deg,#102d27ed,#102d278c),url(https://www.dunerealms.com/assets/landsraad-appointments.webp) center/cover;min-height:190px;box-sizing:border-box}
+#crysknife .order-hero img{width:128px;height:128px;max-width:128px;object-fit:contain;flex:0 0 128px}
+#crysknife .order-hero small,#crysknife .order-card-heading small{color:#d5b965;letter-spacing:.14em;font-size:.7rem}
+#crysknife .order-hero h2{font-size:clamp(1.7rem,3vw,2.6rem);line-height:1.15;color:#ead394;border:0;margin:12px 0}
+#crysknife .order-hero p{line-height:1.65;color:#e5e2cf;margin:0}
+#crysknife>.order-hero+p{font-size:.86rem;line-height:1.7;color:#b7c7b7;margin:18px 4px}
+#crysknife .order-award-card{display:grid;gap:24px;margin-top:22px;padding:28px;border:1px solid #68754a;border-left:3px solid #b99b52;border-radius:14px;background:linear-gradient(125deg,#1b3d2f,#102d25);box-shadow:0 12px 28px #0002}
+#crysknife .order-card-heading{padding-bottom:18px;border-bottom:1px solid #b99b523d}
+#crysknife .order-card-heading h3{color:#ead394;font-size:1.4rem;margin:8px 0}
+#crysknife .order-card-heading p{margin:0;color:#c4d0bd;line-height:1.6}
+#crysknife label{display:grid;gap:10px;color:#e7d39b;font-weight:600}
+#crysknife label small{color:#b5c7b6;font-weight:400;line-height:1.6}
+#crysknife select,#crysknife textarea{width:100%;box-sizing:border-box;border:1px solid #647b5c;background:#0b241c;color:#eee5cf;border-radius:9px;padding:14px;font:inherit}
+#crysknife textarea{min-height:170px;resize:vertical;line-height:1.65}
+#crysknife select:focus,#crysknife textarea:focus{outline:2px solid #d6b55e;outline-offset:2px}
+#crysknife .order-confirm{display:flex;align-items:flex-start;gap:13px;padding:17px;background:#0c291f;border:1px solid #677747;border-radius:9px;font-size:.86rem;line-height:1.65;font-weight:400}
+#crysknife .order-confirm input{appearance:auto;display:block;width:19px;height:19px;min-width:19px;margin:3px 0 0;accent-color:#c6a652;position:static;opacity:1}
+#crysknife .order-award-button{justify-self:start;padding:14px 24px;border:1px solid #e5c879;background:linear-gradient(#d2b66a,#b4994e);border-radius:9px;color:#10261d;font-weight:700;min-height:48px}
+#crysknife .order-award-button:disabled{opacity:.55}
+#crysknife .order-status{white-space:pre-wrap;line-height:1.6;color:#ead394}
+@media(max-width:650px){#crysknife .order-hero{flex-direction:column;align-items:flex-start;padding:22px;gap:14px}#crysknife .order-hero img{width:96px;height:96px;flex-basis:96px;max-width:96px}#crysknife .order-award-card{padding:20px}#crysknife .order-award-button{width:100%}}
