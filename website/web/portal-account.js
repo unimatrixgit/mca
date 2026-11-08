@@ -8,18 +8,26 @@
   if(!panel||!worlds)return;
   const old=panel.querySelector('.portal-account-card');
   if(old?.dataset.identity===(user||''))return;
-  old?.remove();
+  old?.remove();panel.querySelector('.portal-welcome-card')?.remove();
   if(cp&&!user){panel.classList.remove('portal-account-welcome');return;}
   panel.classList.add('portal-account-welcome');
   const box=document.createElement('aside');box.className='portal-account-card';box.dataset.identity=user||'';box.setAttribute('aria-label',user?'Your Imperial Postbox':'Your DuneRealms account');
   const art=document.createElement('img');art.src=site+(user?'/assets/imperial-postbox-v1.png':'/assets/nav-account-full-v2.webp');art.alt=user?'Emerald and gold Minecraft imperial postbox with sealed letters':'';art.width=user?200:80;art.height=user?300:80;if(user)art.className='imperial-postbox-art';
   const heading=document.createElement('h2');heading.textContent=user?'Imperial Postbox':'Join the caravan';
-  const text=document.createElement('p');text.textContent=user?'Welcome, '+user+'. Your private correspondence.':'Create your account and begin your DuneRealms journey.';
+  const text=document.createElement('p');text.textContent=user?'Your private correspondence.':'Create your account and begin your DuneRealms journey.';
   const actions=document.createElement('div');
-  const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#internal-mail'],['Account centre','https://cp.dunerealms.com/']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
+  const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#internal-mail']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
   for(const[label,url]of links){const a=document.createElement('a');a.textContent=label;a.href=url;actions.append(a);}
   box.append(art,heading,text,actions);
   if(user){const status=document.createElement('p');status.className='postbox-status';status.textContent='Mail notifications are being connected.';box.append(status);}
+  if(user){
+   const welcome=document.createElement('aside');welcome.className='portal-welcome-card';welcome.setAttribute('aria-label','Your DuneRealms account');
+   const portrait=document.createElement('img');portrait.src=site+'/assets/nav-account-full-v2.webp';portrait.alt='';portrait.width=portrait.height=80;
+   const title=document.createElement('h2');title.textContent='Welcome, '+user;
+   const copy=document.createElement('p');copy.textContent='Your place in the imperial ledger.';
+   const account=document.createElement('a');account.href='https://cp.dunerealms.com/';account.textContent='Account centre';
+   welcome.append(portrait,title,copy,account);panel.insertBefore(welcome,worlds);
+  }
   panel.insertBefore(box,worlds);
  }
  new MutationObserver(render).observe(document.body,{childList:true,subtree:true});
