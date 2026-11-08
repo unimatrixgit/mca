@@ -1,3 +1,4 @@
+import {createOfficialBank} from './official-bank.mjs';
 import {createBankBeneficiaries} from './bank-beneficiaries.mjs';
 import {createBankTransfers} from './bank-transfers.mjs';
 import {createImperialCharters,initializeCharters} from './imperial-charters.mjs';
@@ -96,6 +97,7 @@ export function createPanel(db,settings={},dependencies={}){
  const imperialAtelier=createImperialAtelier(db,settings,dependencies.imperialAtelier);
  const bankBeneficiaries=createBankBeneficiaries(db,dependencies.bankBeneficiaries);
  const bankTransfers=createBankTransfers(db,settings,dependencies.bankTransfers);
+ const officialBank=createOfficialBank(db,settings,dependencies.officialBank);
  const banking=createBanking(db,settings,dependencies.banking);
  const quests=createQuests(db,settings,dependencies.quests),clanShop=createClanShop(db,settings,dependencies.clanShop);
  const sso=createIntegrationSSO(db,settings);
@@ -148,6 +150,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path==='/api/ranks/game')return gameRanks(request);
   if(path==='/api/bank/beneficiaries')return bankBeneficiaries(request);
   if(path==='/api/bank/transfer-own')return bankTransfers(request);
+  if(path==='/api/bank/official')return officialBank(request);
   if(path==='/api/bank/personal'||path==='/api/bank/staff'||path==='/api/bank/faction')return banking(request);
   if(path==='/api/quests'||path.startsWith('/api/quests/'))return quests(request);
   if(['/api/clans/shop','/api/clans/shop/price','/api/clans/game-context'].includes(path))return clanShop(request);
