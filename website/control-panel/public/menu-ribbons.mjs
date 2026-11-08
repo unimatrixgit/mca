@@ -2,7 +2,7 @@
 // not that its backend is available. Unreleased mail/claims features are omitted.
 export const MENU_RELEASE = '1.0.0.4';
 export const MENU_CHANGES = {
-  'shared-inbox': {introducedIn: '1.0.0.4', preview: true},
+  'shared-inbox': {introducedIn: '1.0.0.4'},
   landsraad: {introducedIn: '1.0.0.4', preview: true},
   'council-motd': {introducedIn: '1.0.0.4', preview: true},
   'house-elections': {introducedIn: '1.0.0.4'},
