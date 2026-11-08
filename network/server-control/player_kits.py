@@ -2,6 +2,7 @@
 import json
 import re
 import uuid
+import time
 
 HOUSES = ('Fremen', 'Harkonnen', 'Corrino', 'Atreides', 'Ordos')
 
@@ -32,12 +33,22 @@ def at(record, *keys):
         record = record.get(key, record.get(str(key), {}))
     return record
 
+def interim_winner(record, kind, faction=None, now=None):
+    now = int(time.time() * 1000) if now is None else now
+    entry = at(record, 'interim', kind) if kind == 'emperor' else at(record, 'interim', 'house', faction)
+    try:
+        player = identity(entry.get('uuid'))
+        start, end = entry.get('startsAt'), entry.get('expiresAt')
+        return player if type(start) is int and type(end) is int and start <= now < end else ''
+    except (ValueError, TypeError, AttributeError):
+        return ''
+
 def offices(record, week, player, faction):
     result = {}
-    emperor = winner(at(record, 'votes', 'emperor', week))
+    emperor = interim_winner(record, 'emperor') or winner(at(record, 'votes', 'emperor', week))
     if player == emperor:
         result['emperor'] = f'emperor:{week}:{player}'
-    if faction in HOUSES and player == winner(at(record, 'votes', 'house', week, faction)):
+    if faction in HOUSES and player == (interim_winner(record, 'house', faction) or winner(at(record, 'votes', 'house', week, faction))):
         result['house-leader:' + faction] = f'house-leader:{faction}:{week}:{player}'
         for appointment, office in (('water', 'water-steward'), ('steward', 'spice-steward')):
             entry = at(record, 'appointments', appointment)

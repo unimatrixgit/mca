@@ -5,13 +5,14 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function winner(election){
  return Object.entries(election?.tally||{}).filter(([id,n])=>uuid.test(id)&&Number.isInteger(n)&&n>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0]?.[0]||'';
 }
+export function interimWinner(state,kind,faction,now){const entry=kind==='emperor'?state?.interim?.emperor:state?.interim?.house?.[faction];return entry&&uuid.test(entry.uuid||'')&&Number.isSafeInteger(entry.startsAt)&&Number.isSafeInteger(entry.expiresAt)&&entry.startsAt<=now&&now<entry.expiresAt?entry.uuid.toLowerCase():'';}
 export function officesFor(state,player,now=Date.now()){
  if(!uuid.test(player.uuid))throw Error('Verified Minecraft UUID required');
  const week=Math.floor(now/604800000),id=player.uuid.toLowerCase(),faction=String(player.faction||''),house=houseKey(faction),roles=[];
- const emperor=winner(state?.votes?.emperor?.[week]);
+ const emperor=interimWinner(state,'emperor',faction,now)||winner(state?.votes?.emperor?.[week]);
  if(emperor.toLowerCase()===id)roles.push('emperor');
  // The stored election key is the game's faction name, matching Core Politics.
- if(faction&&winner(state?.votes?.house?.[week]?.[faction]).toLowerCase()===id)roles.push('house_leader');
+ if(faction&&(interimWinner(state,'house',faction,now)||winner(state?.votes?.house?.[week]?.[faction])).toLowerCase()===id)roles.push('house_leader');
  for(const [key,role]of [['steward','specerhuis'],['water','welvaart']]){
   const a=state?.appointments?.[key];
   if(emperor&&a?.week===week&&a.emperor===emperor&&faction&&faction.toLowerCase()===String(a.house||'').toLowerCase())roles.push(role);

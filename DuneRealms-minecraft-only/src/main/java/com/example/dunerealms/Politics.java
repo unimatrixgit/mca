@@ -215,18 +215,11 @@ public final class Politics {
         msg(p,"Unknown politics command.");return true;
     }
     private String winnerId(String prefix) {
-        String path=prefix+".tally";
-        if(state.getConfigurationSection(path)==null)return "";
-        String best="";int score=0;
-        for(String id:state.getConfigurationSection(path).getKeys(false)) {
-            int n=state.getInt(path+"."+id);
-            if(n>score || (n==score && id.compareTo(best)<0)){best=id;score=n;}
-        }
-        return best;
+        return recordWinnerId(state,prefix);
     }
     private String winnerName(String prefix) {
         String id=winnerId(prefix);
-        return id.isEmpty()?"Not elected":state.getString(prefix+".names."+id,id);
+        return id.isEmpty()?"Not elected":officeName(state,prefix,id);
     }
     public String leader(String house) {refresh();return winnerName("votes.house."+week()+"."+house);}
     public String emperor() {refresh();return winnerName("votes.emperor."+week());}
@@ -262,6 +255,8 @@ public final class Politics {
         return snapshot;
     }
     private static String recordWinnerId(YamlConfiguration record, String prefix) {
+        String interim=interimWinner(record,prefix,System.currentTimeMillis());
+        if(!interim.isBlank()) return interim;
         var tally = record.getConfigurationSection(prefix+".tally");
         if (tally == null) return "";
         String best=""; int score=0;
@@ -274,7 +269,23 @@ public final class Politics {
     private static String publicWinnerName(YamlConfiguration record, String prefix) {
         String id=recordWinnerId(record,prefix);
         if(id.isBlank()) return null;
-        String name=record.getString(prefix+".names."+id, "Unknown player");
+        String name=officeName(record,prefix,id);
         return name.matches("[A-Za-z0-9_]{1,32}")?name:"Unknown player";
     }
+    private static String interimPath(String prefix) {
+        if(prefix.matches("votes\\.emperor\\.[0-9]+"))return "interim.emperor";
+        if(prefix.matches("votes\\.house\\.[0-9]+\\.(Fremen|Harkonnen|Corrino|Atreides|Ordos)"))return "interim.house."+prefix.substring(prefix.lastIndexOf('.')+1);
+        return "";
+    }
+    static String interimWinner(YamlConfiguration record,String prefix,long now) {
+        String path=interimPath(prefix);if(path.isBlank())return "";
+        String id=record.getString(path+".uuid","");
+        if(!id.matches("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"))return "";
+        return record.getLong(path+".startsAt",Long.MAX_VALUE)<=now && record.getLong(path+".expiresAt",0)>now?id:"";
+    }
+    private static String officeName(YamlConfiguration record,String prefix,String id) {
+        String interim=interimWinner(record,prefix,System.currentTimeMillis());
+        return id.equals(interim)?record.getString(interimPath(prefix)+".name","Unknown player"):record.getString(prefix+".names."+id,"Unknown player");
+    }
+
 }
