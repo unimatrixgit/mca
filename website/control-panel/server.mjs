@@ -1,3 +1,4 @@
+import {createBankBeneficiaries} from './bank-beneficiaries.mjs';
 import {createBankTransfers} from './bank-transfers.mjs';
 import {createImperialCharters,initializeCharters} from './imperial-charters.mjs';
 import {createProclamations,initializeProclamations} from './proclamations.mjs';
@@ -93,6 +94,7 @@ export function createPanel(db,settings={},dependencies={}){
  const publicKitCatalogue=createKitCatalogueBridge(settings,{db});
  const kitMarket=createKitMarket(db,settings,dependencies.kitMarket);
  const imperialAtelier=createImperialAtelier(db,settings,dependencies.imperialAtelier);
+ const bankBeneficiaries=createBankBeneficiaries(db,dependencies.bankBeneficiaries);
  const bankTransfers=createBankTransfers(db,settings,dependencies.bankTransfers);
  const banking=createBanking(db,settings,dependencies.banking);
  const quests=createQuests(db,settings,dependencies.quests),clanShop=createClanShop(db,settings,dependencies.clanShop);
@@ -144,6 +146,7 @@ export function createPanel(db,settings={},dependencies={}){
   if(path==='/api/kits/upgrade-tokens')return upgradeTokens(request);
   if(path.startsWith('/api/kits/'))return kitMarket(request);
   if(path==='/api/ranks/game')return gameRanks(request);
+  if(path==='/api/bank/beneficiaries')return bankBeneficiaries(request);
   if(path==='/api/bank/transfer-own')return bankTransfers(request);
   if(path==='/api/bank/personal'||path==='/api/bank/staff'||path==='/api/bank/faction')return banking(request);
   if(path==='/api/quests'||path.startsWith('/api/quests/'))return quests(request);
