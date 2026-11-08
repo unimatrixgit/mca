@@ -59,3 +59,9 @@ html body.cp-panels-ready :is(.cp-center-nav,.cp-panel-sidebar,.cp-panel-summary
 #crysknife .order-award-button:disabled{opacity:.55}
 #crysknife .order-status{white-space:pre-wrap;line-height:1.6;color:#ead394}
 @media(max-width:650px){#crysknife .order-hero{flex-direction:column;align-items:flex-start;padding:22px;gap:14px}#crysknife .order-hero img{width:96px;height:96px;flex-basis:96px;max-width:96px}#crysknife .order-award-card{padding:20px}#crysknife .order-award-button{width:100%}}
+
+#crysknife .order-lore-card{display:grid;grid-template-columns:minmax(0,1fr) 180px;align-items:center;gap:26px;margin:22px 0;padding:26px;border:1px solid #697849;border-left:3px solid #b99b52;border-radius:14px;background:linear-gradient(125deg,#1a3c2d,#102b25)}
+#crysknife .order-lore-card h3{font-family:Georgia,serif;color:#ead394;font-size:1.45rem;line-height:1.3;margin:12px 0}#crysknife .order-lore-card p{color:#d8dfca;line-height:1.8}#crysknife .order-lore-card small{color:#c9ae65;font-size:.7rem;letter-spacing:.1em}
+#crysknife .order-stilgar{margin:0;padding:9px 9px 14px;border:1px solid #e0c47b;border-radius:12px;background:linear-gradient(145deg,#d7b75c55,#0d3028 45%,#ba984535);box-shadow:inset 0 0 0 3px #d4b46120,0 0 22px #bba45120;text-align:center}
+#crysknife .order-stilgar img{display:block;width:100%;height:auto;border-radius:7px}#crysknife .order-stilgar blockquote{margin:12px 0 5px;color:#f1d993;font:italic 1.25rem Georgia,serif}#crysknife .order-stilgar figcaption{font-size:.7rem;color:#cfcca9}
+@media(max-width:650px){#crysknife .order-lore-card{grid-template-columns:1fr;padding:20px}#crysknife .order-stilgar{max-width:210px;justify-self:center}}
