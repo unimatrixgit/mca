@@ -15,7 +15,7 @@ const pages={
  'clan-quests-player':['YOUR PERSONAL ADVENTURE','Player Quests','Follow your own story and track your progress through the desert.','nav-manual-full-v2.webp'],
  'clan-quests-clan':['COMMISSIONS UNDER YOUR BANNER','Clan Quests','Review the shared adventures and objectives of your clan.','nav-clan-full-v2.webp'],
  'clan-quests-guild':['CONTRACTS BEYOND THE HORIZON','Spacing Guild Quests','Explore Guild contracts for your character and your clan.','nav-manual-full-v2.webp'],
- 'personal-bank':['YOUR DUNEMARKS VAULT','Personal bank','Your personal savings, separate from your spending wallet.','dunemark-icon-64.png'],
+ 'personal-bank':['YOUR DUNEMARKS VAULT','Imperial Postbank','Your current account, savings and shared treasuries in one place.','dunemark-icon-64.png'],
  'tickets':['YOUR PRIVATE SUPPORT DESK','Support Tickets','Open a case, follow your tickets and stay in touch with the support team.','nav-support-full-v2.webp'],
  'site-profile':['YOUR COMMUNITY IDENTITY','Personal information','Introduce yourself and manage the details you share with the community.','nav-account-full-v2.webp'],
  'security':['PROTECT YOUR ACCOUNT','Security','Manage your password and keep access to your account secure.','nav-account-full-v2.webp'],

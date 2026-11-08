@@ -132,3 +132,13 @@
 .bank-workspace .user-page-hero{padding:18px 20px!important;border-radius:8px!important}.bank-workspace .user-page-hero h2{font-size:28px!important}.bank-workspace .user-page-hero p{font-size:13px!important}
 @media(max-width:1100px){.bank-workspace .bank-dashboard-layout{grid-template-columns:1fr}}
 @media(max-width:600px){#personal-bank.bank-workspace,#staff-bank.bank-workspace{padding:16px!important}.bank-workspace .bank-list-card>.bank-account-row{grid-template-columns:26px minmax(0,1fr) minmax(68px,auto)!important;padding:13px 12px!important;gap:9px!important;min-height:86px}.bank-workspace .bank-row-balance>b{font-size:15px}.bank-workspace .bank-row-copy>b{font-size:12px}.bank-workspace .bank-row-copy>code{font-size:10px}.bank-workspace .bank-account-row>.bank-row-balance{max-width:105px}}
+
+/* Dev visual language, with a quiet surface for financial records. */
+.bank-workspace>header,.bank-workspace>.user-page-hero{border:1px solid #b79b54!important;border-radius:14px!important;padding:26px!important;background:linear-gradient(100deg,#102d27ed,#14392bb8),url('https://www.dunerealms.com/assets/landsraad-appointments.webp') center/cover!important;box-shadow:inset 0 0 0 4px #c4a35d12!important}
+.bank-workspace .bank-overview-summary{border-color:#ab9253;background:linear-gradient(100deg,#173b2ef5,#183b2ed4),url('https://www.dunerealms.com/assets/clan-atelier-v1.webp') center/cover;box-shadow:inset 0 0 0 4px #c4a35d0c}
+.bank-workspace .bank-account-overview .bank-list-card{border-left:3px solid #b79b54!important;background:linear-gradient(120deg,#1d4032,#122f26)!important}
+.bank-workspace .bank-inline-detail,.bank-workspace .bank-account-detail{padding:24px;border:1px solid #a38b50;border-left:3px solid #d0b365;border-radius:12px;background:linear-gradient(135deg,#1a3c2f,#102d25);box-sizing:border-box}
+.bank-workspace .bank-inline-detail h3{font-size:22px;color:#ecd493;margin-bottom:16px}.bank-workspace .bank-inline-detail>code{display:block;padding:12px 15px;border:1px solid #607453;border-radius:7px;color:#eedaa3;background:#0e2922;margin:12px 0}
+.bank-workspace .bank-inline-detail>button{margin-top:16px;padding:10px 18px;border:1px solid #b79b54;border-radius:8px;background:#18392d;color:#ecd493}
+.bank-workspace .bank-quick-actions{border-color:#877c49;border-radius:12px}.bank-workspace .bank-ledger th{color:#e7ce8c;background:#244936}
+@media(max-width:600px){.bank-workspace .bank-inline-detail,.bank-workspace .bank-account-detail{padding:16px}.bank-workspace>header,.bank-workspace>.user-page-hero{padding:18px!important}}
