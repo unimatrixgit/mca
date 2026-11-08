@@ -23,10 +23,11 @@ export const USER_GROUPS=[
   item('Hosting control','hosting-control','web.menu.security','seals/department-network-staff-150.png')]]
 ];
 export const REALM_GROUPS=[
+ ['Imperial Postbank',[
+  item('Bank Dashboard','bank-dashboard','web.bank.personal.view','imperial-postbank-v1.png'),
+  item('Loan Centre','loan-centre','web.bank.personal.view','imperial-postbank-v1.png'),
+  item('Loan Administration','loan-administration','web.bank.staff.manage','imperial-postbank-v1.png')]],
  ['Realm & Politics',[
-  item('Bank Dashboard','bank-dashboard','web.bank.personal.view','nav-shop-v1.webp'),
-  item('Loan Centre','loan-centre','web.bank.personal.view','nav-shop-v1.webp'),
-  item('Loan Administration','loan-administration','web.bank.staff.manage','nav-shop-v1.webp'),
   item('Landsraad Assembly','landsraad','web.menu.game','seals/office-landsraad.png'),
   item('Proclamations','council-motd','web.menu.game','seals/office-landsraad.png'),
   item('Faction Elections','house-elections','web.menu.game','seals/office-house_leader.png'),
