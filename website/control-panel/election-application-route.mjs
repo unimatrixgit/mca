@@ -4,7 +4,7 @@ import {createPoliticsPreview} from './politics-preview.mjs';
 import {submitApplication,ownApplications} from './election-applications.mjs';
 import {validateCandidature} from './public/election-rules.mjs';
 const reply=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'private, no-store',Vary:'Cookie'}});
-// Staged route: mount only after schema migration and deployment acceptance.
+// Authenticated own-application route. Office grants and ballot writes are separate.
 export function createElectionApplications(db,settings={},deps={}){
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const auth=deps.authenticate||(r=>identity(r,db)),access=deps.access||(u=>accessFor(db,u));

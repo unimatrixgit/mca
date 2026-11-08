@@ -1,3 +1,4 @@
+import {renderApplications} from './election-applications-view.mjs';
 import {electionDates,imperialVoteAllowance} from './election-rules.mjs';
 import {councilPreview,inboxPreview,resetInboxViews,motdPreview,motdEditor} from './council-preview.mjs';
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -102,7 +103,8 @@ function render(){
  resetInboxViews();
  for(const[id,v]of Object.entries(views)){v.section.hidden=!user?.permissions?.includes('web.menu.game');if(!(id==='shared-inbox'&&v.section.dataset.internalMail==='true'))v.content.replaceChildren();}
  views['council-motd'].content.append(motdPreview());
- views.applications.content.append(applicationsDashboard());
+ views.applications.content.append(renderApplications({user,context}));
+  const applicationNote=views.applications.section.querySelector(".politics-preview-note");if(applicationNote)applicationNote.textContent="APPLICATION REGISTER · Submissions are saved. Voting and office awards are not yet active.";
  const landing=views.landsraad.content,grid=el('div',undefined,'politics-grid');
  for(const[title,page,art,copy]of [['Faction Elections','house-elections','seals/office-house_leader.png','Enter your own House chamber. Only your verified in-game faction will appear.'],['Emperor Elections','imperial-elections','seals/emperor-v1.png','Follow the future Imperial ballot, candidates and results.']]){const box=card(title,copy,art);box.append(artLink('Open chamber',page,art));grid.append(box);}landing.append(grid,card('From nomination to result','The planned flow is nomination, voting, then a recorded result. Eligibility, terms and ballot rules will be defined before voting opens.'));
  const house=views['house-elections'].content;

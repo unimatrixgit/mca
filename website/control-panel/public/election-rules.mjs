@@ -28,6 +28,7 @@ export function validateCandidature(input,context,now=Date.now()) {
   if(input.kind==='house'&&!context.faction)throw Error('A verified faction membership is required');
   const window=electionWindow(input.kind,input.start,now);
   if(window.phase!=='applications')throw Error('Applications for this election are closed');
+  if(window.votingOpens!==electionDates(input.kind,now,1)[0])throw Error('Only the next scheduled election accepts applications');
   const motivation=typeof input.motivation==='string'?input.motivation.trim():'';
   if(motivation.length<20||motivation.length>4000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(motivation))throw Error('Motivation must contain 20–4000 readable characters');
   // Never take faction or office authority from the submitted form.

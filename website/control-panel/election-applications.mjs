@@ -2,18 +2,18 @@ import {randomUUID} from 'node:crypto';
 import {validateCandidature} from './public/election-rules.mjs';
 
 export const applicationSchema = [
- `CREATE TABLE IF NOT EXISTS political_application_counters (scope VARCHAR(24) PRIMARY KEY, value INTEGER NOT NULL)`,
+ `CREATE TABLE IF NOT EXISTS political_application_counters (scope VARCHAR(24) PRIMARY KEY, value INTEGER NOT NULL) ENGINE=InnoDB`,
  `CREATE TABLE IF NOT EXISTS political_applications (
  id CHAR(36) PRIMARY KEY, public_id VARCHAR(32) NOT NULL UNIQUE,
  user_id CHAR(36) NOT NULL, player_uuid CHAR(36) NOT NULL,
  kind VARCHAR(16) NOT NULL, faction VARCHAR(32) NOT NULL,
  election_start BIGINT NOT NULL, motivation TEXT NOT NULL,
  status VARCHAR(16) NOT NULL, created_at BIGINT NOT NULL,
- UNIQUE KEY one_application (player_uuid,kind,election_start))`,
+ UNIQUE KEY one_application (player_uuid,kind,election_start)) ENGINE=InnoDB`,
  `CREATE TABLE IF NOT EXISTS political_application_events (
  id CHAR(36) PRIMARY KEY, application_id CHAR(36) NOT NULL,
  actor_id CHAR(36) NOT NULL, event VARCHAR(32) NOT NULL,
- created_at BIGINT NOT NULL, UNIQUE KEY application_event (application_id,event))`,
+ created_at BIGINT NOT NULL, UNIQUE KEY application_event (application_id,event)) ENGINE=InnoDB`,
 ];
 export async function initializeApplications(db) {
  for(const sql of applicationSchema)await db.prepare(sql).run();
