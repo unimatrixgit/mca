@@ -16,8 +16,20 @@ function card(title,copy,art){const box=el('article',undefined,'politics-card');
 function disabled(text){const b=el('button',text);b.type='button';b.disabled=true;return b;}
 function demoNote(){return el('p','DEMO DATA · Fictional names, votes and support. Nothing is submitted or saved.','politics-demo-note');}
 function demoSupport(counter=false){const box=el('div',undefined,'politics-demo-support');box.append(demoNote());for(const [name,state]of [['House Amber','Supports'],['House Jade',counter?'Supports':'Awaiting agreement']]){const row=el('p');row.append(el('strong',name+' · '),el('span',state));box.append(row);}box.append(el('strong',counter?'Demo outcome: 2 / 2 Houses — election denied':'Demo progress: 1 / 2 Houses'));return box;}
+function electionCalendar(imperial=false){
+ const weeks=imperial?4:2,hour=imperial?15:9;
+ const box=card(imperial?'Imperial election calendar':'House election calendar',`Every ${weeks} weeks · Sunday · ${String(hour).padStart(2,'0')}:00 GMT. Term: ${weeks} weeks.`,imperial?'seals/office-emperor.png':'seals/office-house_leader.png');
+ box.append(el('p','ILLUSTRATIVE SCHEDULE · The first election date has not been confirmed. These dates are examples, not scheduled elections.','politics-demo-note'));
+ const list=el('ol',undefined,'politics-calendar');list.setAttribute('aria-label','Example election dates');
+ for(let i=0;i<4;i++){
+  const date=new Date(Date.UTC(2026,10,15+i*weeks*7,hour)),entry=el('li'),time=el('time');time.dateTime=date.toISOString();
+  time.append(el('small',new Intl.DateTimeFormat('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}).format(date)),el('strong',String(date.getUTCDate()).padStart(2,'0')),el('span',`Sunday · ${String(hour).padStart(2,'0')}:00 GMT`));
+  entry.append(time,el('small','Demo date'));list.append(entry);
+ }
+ box.append(list,el('p',imperial?'On an Imperial election Sunday, House Elections take place at 09:00 GMT, followed by Imperial Elections at 15:00 GMT.':'House Elections run every two weeks. Every second House election Sunday also includes Imperial Elections at 15:00 GMT.'),el('p','Times stay fixed to GMT throughout the year.'));return box;
+}
 function electionPreview(imperial=false){
- const host=el('div',undefined,'politics-content');
+ const host=el('div',undefined,'politics-content');host.append(electionCalendar(imperial));
  const application=card('Submit your application for the upcoming election',imperial?'Everyone can submit an application to become Emperor.':'Members of your faction can apply to lead their own faction.','seals/'+(imperial?'office-emperor.png':'office-house_leader.png'));
  application.append(demoNote());const fields=el('div',undefined,'politics-charter');const label=el('label','Your motivation and plans'),motivation=el('textarea');motivation.rows=5;motivation.value=imperial?'DEMO: I would bring the Houses together, publish clear decisions and protect fair access to water and spice.':'DEMO: I would listen to our faction, organise community projects and represent our members in the Landsraad.';label.append(motivation);
  const accept=el('label',undefined,'politics-accept'),check=el('input');check.type='checkbox';accept.append(check,el('span','Yes, I accept the responsibility of standing for election.'));fields.append(label,accept,disabled('Submit application — preview only'));application.append(fields);host.append(application);
@@ -52,6 +64,15 @@ function revoltPreview(){
  const box=card('Start revolt','Bring a call for revolt before the Landsraad.','seals/office-landsraad.png');
  box.append(el('p','Design placeholder. Support requirements and consequences have not been defined; this action is not active.'),disabled('Start revolt'));return box;
 }
+function warPreview(){
+ const box=card('Declare war on House','A House declaration of war requires the support of the Emperor.','seals/office-emperor.png');box.append(demoNote());
+ const grid=el('div',undefined,'politics-grid'),request=el('section',undefined,'politics-charter');request.append(el('h4','House declaration'));
+ for(const [title,value]of [['Declaring House','Demo House Amber'],['Target House','Demo House Jade'],['Reason','DEMO: A disputed border crossing and failed negotiations have brought these Houses before the Landsraad.']]){const label=el('label',title),field=el(title==='Reason'?'textarea':'input');field.value=value;field.disabled=true;label.append(field);request.append(label);}
+ request.append(el('p','Imperial support: awaiting the Emperor. This demo declaration cannot proceed.'),disabled('Request Imperial support'));
+ const concord=el('section',undefined,'politics-charter');concord.append(el('h4','The Veiled Concord · Suggest a declaration of war'),el('p','The Concord cannot declare war. It may suggest that another House declare war; a suggestion is neither a declaration nor Imperial approval.'));
+ for(const [title,value]of [['Suggested declaring House','Demo House Amber'],['Suggested target','Demo House Jade'],['Diplomatic recommendation','DEMO: Ask House Amber to consider a declaration against House Jade after reviewing the disputed crossing.']]){const label=el('label',title),field=el(title==='Diplomatic recommendation'?'textarea':'input');field.value=value;field.disabled=true;label.append(field);concord.append(label);}
+ concord.append(disabled('Send suggestion — preview only'));grid.append(request,concord);box.append(grid);return box;
+}
 for(const[id,[eyebrow,title,description,seal]]of Object.entries(specs)){
  const section=el('section',undefined,'politics-page');section.id=id;section.hidden=true;
  const hero=el('header',undefined,'cp-user-page-hero politics-hero');const image=el('img');image.src=asset(seal);image.alt='';image.width=112;image.height=112;const copy=el('div');copy.append(el('small',eyebrow),el('h2',title),el('p',description));hero.append(image,copy);
@@ -66,7 +87,7 @@ function render(){
  const house=views['house-elections'].content;
  if(context?.faction){const name=context.faction[0].toUpperCase()+context.faction.slice(1);house.append(card(name+' · House chamber','Your faction was confirmed from your linked Minecraft account. The candidates below are fictional examples, not members of your House.','seals/office-house_leader.png'),electionPreview());}
  else{const title=context?.linked===false?'Link your Minecraft account':context?'House not confirmed':'Checking your linked House';const box=card(title,context?.linked===false?'Link your Minecraft identity to enter the chamber belonging to the faction you chose in game.':'Your House has not been confirmed. Other House elections remain hidden.','seals/office-house_leader.png');box.append(artLink('Minecraft account','game','nav-clan-v2.webp'));house.append(box);}
- landing.append(rallyPreview(),revoltPreview());
+ landing.append(rallyPreview(),revoltPreview(),warPreview());
  const imperial=views['imperial-elections'].content;imperial.append(electionPreview(true));
  const command=views['imperial-command'].content;command.append(card(context?.emperor?'Imperial office confirmed':'Reserved for the Emperor',context?.emperor?'Your linked character currently holds the Imperial office. This remains a read-only design preview.':'Only the current Emperor will be able to grant water and spice rights. Viewing this preview does not grant that authority.','seals/office-emperor.png'));const rights=el('div',undefined,'politics-grid');for(const[label,page,art,copy]of [['Water','imperial-water','items/office_water.png','Design the future register of water-rights grants.'],['Spice','imperial-spice','items/office_spice.png','Design the future register of spice-rights grants.']]){const box=card(label+' Rights',copy,art);box.append(artLink('Open '+label.toLowerCase()+' chamber',page,art));rights.append(box);}command.append(rights);
  for(const[id,resource,art]of [['imperial-water','water','items/office_water.png'],['imperial-spice','spice','items/office_spice.png']]){const host=views[id].content;const draft=el('section',undefined,'politics-charter');draft.append(el('small','IMPERIAL CHARTER · DESIGN ONLY'),el('h3','Grant '+resource+' rights'),el('p','A future decree will identify its recipient, scope and duration, with a reason and confirmation by the current Emperor.'));for(const[label,type,placeholder]of [['Recipient','select','Eligible recipient — not connected'],['Scope','input','Rights and territory — to be defined'],['Duration','input','Term — to be defined'],['Imperial decree','textarea','Reason for this grant']]){const wrap=el('label',label),field=el(type);field.disabled=true;if(type==='select')field.append(el('option',placeholder));else field.placeholder=placeholder;wrap.append(field);draft.append(wrap);}draft.append(disabled('Grant '+resource+' rights — not active'));host.append(draft,card('Rights register','No website grants have been recorded. The future register will distinguish active, expired and revoked charters.',art));}
