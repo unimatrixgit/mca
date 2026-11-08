@@ -1,7 +1,8 @@
+import {electionDates} from './election-rules.mjs';
 import {paintMenuRibbons, MENU_RELEASE} from './menu-ribbons.mjs';
 import './pages.mjs';
 import './embed-size.mjs';
-import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS,factionMenuItem} from './panel-layout.mjs';
+import {menuGroupsFor,menuItemFor,hasStaffPanel,hasDevPanel,splitMenuGroups,DEV_ITEMS,factionMenuItem,REALM_GROUPS} from './panel-layout.mjs';
 const dashboard=document.getElementById('dashboard');
 const embedded=new URLSearchParams(location.search).get('embedded')==='1';
 const asset=file=>'https://www.dunerealms.com/assets/'+file;
@@ -19,6 +20,9 @@ if(dashboard&&!embedded){
  const userButton=panelButton('User Panel','user-home','nav-account-v2.webp');
  const staffButton=panelButton('Staff Panel','staff-panel','nav-staff-v2.webp');
  const devLink=panelButton('Dev Panel','dev-panel','seals/team-dev-150.png');devLink.className='cp-dev-link';
+ const realmButton=panelButton('Realm & Politics','realm-panel','seals/office-landsraad.png');
+ const realmTabs=el('nav');realmTabs.className='cp-realm-tabs cp-context-links';realmTabs.setAttribute('aria-label','Realm and Politics tabs');frame.before(realmTabs);
+ const realmHome=el('section');realmHome.id='realm-panel';realmHome.className='cp-layout-home';realmHome.hidden=true;dashboard.append(realmHome);
  const framePages=[];
  function framePage(id,title,node,url){const section=el('section');section.id=id;section.hidden=true;section.className='cp-native-management';section.append(el('h2',title));const frame=el('iframe');frame.title=title;frame.loading='lazy';frame.referrerPolicy='same-origin';section.append(frame);dashboard.append(section);framePages.push({section,frame,node,url});}
  framePage('support-management','osTicket management','web.tickets.admin','https://support.dunerealms.com/dune-sso.php?staff=1&admin=1');
@@ -45,28 +49,38 @@ if(dashboard&&!embedded){
  function groupCards(host,groups){host.replaceChildren();for(const[label,items]of groups){const card=el('section');card.className='cp-panel-card';card.append(el('h3',label));for(const item of items)card.append(linkFor(item));host.append(card);}}
  function related(id,items){const section=document.getElementById(id);if(!section)return;const allowed=items.filter(([, ,node])=>user.permissions.includes(node));const key=JSON.stringify(allowed);const old=section.querySelector(':scope>.cp-context-links');const hero=section.querySelector(':scope>.cp-user-page-hero');if(old?.dataset.signature===key){if(hero&&old.previousElementSibling!==hero)hero.after(old);return;}old?.remove();const nav=el('nav');nav.dataset.signature=key;nav.className='cp-context-links';nav.setAttribute('aria-label','Related account tools');for(const[label,page]of allowed){const a=el('a',label);a.href='#'+page;art(a,page==='discord-link'?'nav-discord-v2.webp':page==='luckperms'||page==='game-permissions'?'nav-clan-v2.webp':'nav-account-v2.webp');if(page===id)a.setAttribute('aria-current','page');nav.append(a);}if(hero)hero.after(nav);else section.prepend(nav);}
  function paint(){
-  frame.hidden=centers.hidden=breadcrumb.hidden=!user;if(!user){signature='';sidebar.replaceChildren();rightSidebar.replaceChildren();for(const p of framePages){p.section.hidden=true;p.frame.removeAttribute('src');}return;}
+  frame.hidden=centers.hidden=breadcrumb.hidden=!user;realmTabs.hidden=!user;if(!user){signature='';sidebar.replaceChildren();rightSidebar.replaceChildren();for(const p of framePages){p.section.hidden=true;p.frame.removeAttribute('src');}return;}
   for(const id of ['staff-panel','discord-link','landsraad','hosting-control','user-management','community-goals']){const section=document.getElementById(id);if(section)section.hidden=false;}
   staffButton.hidden=!hasStaffPanel(user);devLink.hidden=!hasDevPanel(user);
   const active=dashboard.querySelector(':scope>section.cp-page-active')?.id||'user-home';
   for(const p of framePages){const allowed=p.node?user.permissions.includes(p.node):hasDevPanel(user);p.section.hidden=!allowed;if(!allowed)p.frame.removeAttribute('src');else if(active===p.section.id&&!p.frame.getAttribute('src'))p.frame.src=p.url;}
   const userGroups=menuGroupsFor(user,'user'),staffGroups=menuGroupsFor(user,'staff');
   const staffPages=new Set(staffGroups.flatMap(([,items])=>items.flatMap(i=>[i.page,...(i.aliases||[])])));
-  const panel=DEV_ITEMS.some(i=>i.page===active)?'dev':active==='staff-panel'||staffPages.has(active)||['staff','website-staff-home','staff-home','game-staff-home','network-staff-home','staff-manual'].includes(active)?'staff':'user';
+  const realmGroups=menuGroupsFor(user,'realm');realmButton.hidden=!realmGroups.length;realmHome.hidden=!realmGroups.length;
+  const realmActive=active==='realm-panel'||REALM_GROUPS.flatMap(([,items])=>items).some(i=>i.page===active||i.aliases?.includes(active));
+  const panel=realmActive?'realm':DEV_ITEMS.some(i=>i.page===active)?'dev':active==='staff-panel'||staffPages.has(active)||['staff','website-staff-home','staff-home','game-staff-home','network-staff-home','staff-manual'].includes(active)?'staff':'user';
   userButton.setAttribute('aria-pressed',String(panel==='user'));staffButton.setAttribute('aria-pressed',String(panel==='staff'));devLink.setAttribute('aria-pressed',String(panel==='dev'));
-  const groups=panel==='dev'?[['Dev Center',DEV_ITEMS]]:panel==='staff'?staffGroups:userGroups;
+  realmButton.setAttribute('aria-pressed',String(panel==='realm'));realmTabs.hidden=panel!=='realm';
+  const groups=panel==='realm'?realmGroups:panel==='dev'?[['Dev Center',DEV_ITEMS]]:panel==='staff'?staffGroups:userGroups;
   const officeLink=dashboard.querySelector('nav a[href="#imperial-atelier"]');const officeEligible=!!officeLink&&user.permissions.includes('web.menu.game');
   const next=JSON.stringify([user.username,panel,officeEligible,groups.map(([label,items])=>[label,items.map(i=>i.page||i.url)]),user.permissions]);
   if(next!==signature){
-   signature=next;frame.dataset.panel=panel;sidebar.replaceChildren();rightSidebar.replaceChildren();const home=el('a',panel==='dev'?'Dev Panel overview':panel==='staff'?'Staff Panel overview':'User Panel overview');home.className='cp-panel-overview-link';home.href=panel==='dev'?'#dev-panel':panel==='staff'?'#staff-panel':'#user-home';sidebar.append(home);
-   const halves=panel==='dev'?[groups,[]]:splitMenuGroups(groups);rightSidebar.hidden=!halves[1].length;for(const[side,sections]of [[sidebar,halves[0]],[rightSidebar,halves[1]]])for(const[label,items]of sections){const h=el('h3',label);h.className='cp-panel-category';side.append(h);for(const item of items){const a=linkFor(item);a.dataset.panelPage=item.page||'';side.append(a);}}
+   signature=next;frame.dataset.panel=panel;
+   realmTabs.replaceChildren();const overview=linkFor({page:'realm-panel',label:'Overview',art:'seals/office-landsraad.png'});realmTabs.append(overview);for(const[,items]of realmGroups)for(const item of items)realmTabs.append(linkFor(item));
+   realmHome.replaceChildren();const hero=el('header');hero.className='cp-panel-hero';art(hero,'seals/office-landsraad.png',112);const intro=el('div');intro.append(el('p','THE IMPERIAL ASSEMBLY'),el('h2','Realm & Politics'),el('p','Your House, the throne and the next chapter of the realm.'));hero.append(intro);realmHome.append(hero);const stats=el('div');stats.className='cp-panel-summary';
+   const house=factionMenuItem({page:'formal-council',label:'Not verified'},factionContext).label.replace(/ Council$/,'');
+   const date=kind=>new Date(electionDates(kind)[0]).toLocaleString('en-GB',{timeZone:'UTC',dateStyle:'medium',timeStyle:'short'})+' GMT';
+   for(const[title,value,copy]of [['Your House',house,'Verified from your linked game account.'],['Next House election',date('house'),'Two-week terms · voting 09:00–12:00 GMT'],['Next Emperor election',date('imperial'),'Four-week terms · voting 15:00–18:00 GMT'],['Live election statistics','Not available yet','Applications and vote totals are not live. Political demonstrations remain labelled as previews.']]){const card=el('section');card.className='cp-panel-card';card.append(el('h3',title),el('strong',value),el('p',copy));stats.append(card);}realmHome.append(stats);
+   sidebar.replaceChildren();rightSidebar.replaceChildren();const home=el('a',panel==='dev'?'Dev Panel overview':panel==='staff'?'Staff Panel overview':'User Panel overview');home.className='cp-panel-overview-link';home.href=panel==='dev'?'#dev-panel':panel==='staff'?'#staff-panel':'#user-home';sidebar.append(home);
+   const halves=panel==='realm'?[[],[]]:panel==='dev'?[groups,[]]:splitMenuGroups(groups);rightSidebar.hidden=!halves[1].length;for(const[side,sections]of [[sidebar,halves[0]],[rightSidebar,halves[1]]])for(const[label,items]of sections){const h=el('h3',label);h.className='cp-panel-category';side.append(h);for(const item of items){const a=linkFor(item);a.dataset.panelPage=item.page||'';side.append(a);}}
    paintMenuRibbons(frame, document.querySelector('.dune-release-badge')?.textContent.match(/\d+(?:\.\d+){3}/)?.[0] || MENU_RELEASE);
    groupCards(userSummary,userGroups);groupCards(staffSummary,staffGroups);
    preserved.replaceChildren();if(user.permissions.includes('web.menu.game')){const a=el('a','Clan Center');a.href='https://clans.dunerealms.com/';preserved.append(a);}if(officeEligible){const a=el('a','Imperial Atelier · current office');a.href='#imperial-atelier';preserved.append(a);}
    reference.replaceChildren();if(user.permissions.includes('web.menu.staffmanual')){const a=el('a','Staff guide');a.href='#staff-manual';reference.append(a);}if(user.permissions.includes('web.ranks.manage')){const a=el('a','Linked in-game ranks');a.href='#game-permissions';reference.append(a);}
   }
   for(const a of frame.querySelectorAll('.cp-panel-sidebar a')){const selected=a.hash==='#'+active||menuItemFor(active)?.page===a.dataset.panelPage;if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
-  const current=factionMenuItem(DEV_ITEMS.find(i=>i.page===active)||menuItemFor(active),factionContext);breadcrumb.textContent=(panel==='dev'?'Dev Panel':panel==='staff'?'Staff Panel':'User Panel')+' / '+(current?.label||(active==='staff-panel'||active==='user-home'?'Overview':dashboard.querySelector(':scope>section.cp-page-active h2')?.textContent||'Overview'));
+  for(const a of realmTabs.querySelectorAll('a')){if(a.hash==='#'+active||menuItemFor(active)?.page===a.hash.slice(1))a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
+  const current=factionMenuItem(DEV_ITEMS.find(i=>i.page===active)||menuItemFor(active),factionContext);breadcrumb.textContent=(panel==='realm'?'Realm & Politics':panel==='dev'?'Dev Panel':panel==='staff'?'Staff Panel':'User Panel')+' / '+(current?.label||(active==='staff-panel'||active==='user-home'?'Overview':dashboard.querySelector(':scope>section.cp-page-active h2')?.textContent||'Overview'));
   related('site-profile',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);related('security',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
   related('discord-link',[['Profile & biography','site-profile','web.menu.security'],['Security & email','security','web.menu.security'],['Discord linking','discord-link','web.menu.security']]);
   related('luckperms',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);related('game-permissions',[['LuckPerms','luckperms','web.menu.luckperms'],['Linked in-game ranks','game-permissions','web.ranks.manage']]);
