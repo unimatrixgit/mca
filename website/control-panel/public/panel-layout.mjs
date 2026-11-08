@@ -6,6 +6,7 @@ export const USER_GROUPS=[
   item('Minecraft account','game','web.menu.game','nav-clan-v2.webp'),
   item('Personal information','site-profile','web.menu.security','nav-account-v2.webp',{aliases:['security','discord-link']}),
   item('Personal Bank','personal-bank','web.bank.personal.view','nav-shop-v1.webp'),
+  item('Inbox','shared-inbox','web.menu.game','nav-support-v2.webp'),
   item('Support tickets','tickets','web.menu.tickets','nav-support-v2.webp'),
   item('Inventory','planetary-inventory','web.menu.inventory','nav-exchange-v2.webp')]],
  ['DuneRealms',[
@@ -17,8 +18,9 @@ export const USER_GROUPS=[
   item('Transactions','transactions','web.menu.inventory','nav-exchange-v2.webp')]],
  ['Politics & Gameplay',[
   item('Quests','quests','web.quests.view','nav-clan-v2.webp',{aliases:['clan-quests','clan-quests-player','clan-quests-clan','clan-quests-guild']}),
-  item('Landsraad','landsraad','web.menu.game','seals/office-landsraad.png',{aliases:['house-elections','imperial-elections'],placeholder:true}),
-  item('Imperial Command','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice'],placeholder:true})]],
+  item('Landsraad','landsraad','web.menu.game','seals/office-landsraad.png',{aliases:['house-elections','imperial-elections']}),
+  item('Formal Council','formal-council','web.menu.game','seals/office-house_leader.png'),
+  item('Imperial Command','imperial-command','web.menu.game','seals/office-emperor.png',{aliases:['imperial-water','imperial-spice']})]],
  ['Services',[
   item('Github','git-control','web.menu.security','nav-manual-v2.webp'),
   item('Email','webmail','web.menu.security','nav-support-v2.webp',{staffOnly:true}),

@@ -1,5 +1,6 @@
 import {gameStaffSeals,protectedStaffRanks} from './game-staff-seals.mjs';
 import {AWARD_LABELS,AWARD_FILES} from './recognition.mjs';
+import {politicalSeals} from './political-heraldry.mjs';
 import{readFileSync,existsSync}from'node:fs';
 import{createHash}from'node:crypto';
 import{identity}from'./auth.mjs';
@@ -46,6 +47,7 @@ export async function memberProfileData(db,target,settings={}){
  if(access.ranks.includes('web_dev')||protectedStaffRanks(access.ranks))add('rank-dev','Development',base+'rank-dev-150.png','Official');
  for(const key of (showcase?Object.keys(departments):departmentsFor(access.nodes,access.ranks,target.username).filter(key=>departmentAwardEarned(stats,key))))add('team-'+key,departments[key]+' Award',base+'award-'+key+'-150.png','Awards');
  for(const seal of gameStaffSeals(access.ranks))add(seal.key,seal.label,base+seal.file,'Official');
+ for(const seal of politicalSeals(access.ranks))add(seal.key,seal.label,base+seal.file,seal.group);
  const office=await optional(()=>db.prepare('SELECT roles_json,expires_at FROM drforum_dune_political_roles WHERE website_id=?').bind(target.id).first(),null);
  if(office&&Number(office.expires_at)>Date.now()/1000){const known={emperor:'Emperor',house_leader:'Faction leader',specerhuis:'Specerhuis',welvaart:'House of Water',guild_staff:'Vaerkring',landsraad:'Landsraad'};for(const key of JSON.parse(office.roles_json||'[]'))if(known[key])add('office-'+key,known[key],'https://forums.dunerealms.com/assets/seals/office-'+key+'.png','Political offices');}
  const clan=await optional(()=>db.prepare('SELECT c.name,c.tag,c.description,m.clan_role,m.joined_at,(SELECT COUNT(*) FROM site_clan_members n WHERE n.clan_id=c.id) AS member_count FROM site_clan_members m JOIN site_clans c ON c.id=m.clan_id WHERE m.user_id=? AND c.active=1').bind(target.id).first(),undefined);
