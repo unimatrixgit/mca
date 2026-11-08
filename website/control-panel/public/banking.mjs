@@ -33,7 +33,7 @@ function compactAccount(card,v){
  for(const detail of v.content.querySelectorAll('.bank-account-detail,.bank-inline-detail'))detail.hidden=true;
  if(click){click();return;}
  let panel=v.content.querySelector('.bank-inline-detail');if(!panel){panel=el('section');panel.className='bank-inline-detail bank-instructions';v.content.append(panel);}panel.replaceChildren();panel.hidden=false;
- panel.append(el('h3',holder+' · '+title.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())),el('code',number),el('p','Balance: '+amount),el('p',access));
+ panel.append(el('h3',holder+' Â· '+title.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())),el('code',number),el('p','Balance: '+amount),el('p',access));
  const current=title.includes('CURRENT');panel.append(el('p',current?'This is your current account: the Dunemarks you use in game. Your savings account is separate.':'This account stays within your bank overview.'));
  panel.append(el('p',current?'Account-number registration and web transfers are not connected yet.':'Transfers are not connected here yet.'));
  const ledger=card.bankData?.ledger;if(Array.isArray(ledger)){const table=el('table'),head=el('tr');for(const label of ['Date','Entry','Amount','Balance after'])head.append(el('th',label));table.append(head);for(const row of ledger){const tr=el('tr');tr.append(el('td',new Date(Number(row.createdAt)).toLocaleString()),el('td',row.action),el('td',row.amountDunemarks+' DM'),el('td',row.balanceDunemarks+' DM'));table.append(tr);}const wrap=el('div');wrap.className='bank-ledger';wrap.append(table);panel.append(wrap);if(!ledger.length)panel.append(el('p','No transactions recorded.'));}else panel.append(el('p','Transaction history is not connected for this account yet.'));
