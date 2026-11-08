@@ -22,6 +22,7 @@
   const links=user?[['Open Internal Mail','https://cp.dunerealms.com/#shared-inbox']]:[['Register','https://cp.dunerealms.com/?mode=register'],['Login','https://cp.dunerealms.com/']];
   for(const[label,url]of links){const a=document.createElement('a');a.textContent=label;a.href=url;actions.append(a);}
   box.append(art,heading,text,actions);
+  if(user&&document.querySelector('.dune-release-badge')?.textContent.match(/\d+(?:\.\d+){3}/)?.[0]==='1.0.0.4'){const ribbon=document.createElement('span');ribbon.className='postbox-new-ribbon';ribbon.textContent='NEW';ribbon.setAttribute('aria-label','New this release');box.append(ribbon);}
   if(user){const status=document.createElement('p');status.className='postbox-status';status.textContent='Mail notifications are being connected.';box.append(status);}
   if(user&&!cp){
    const welcome=document.createElement('aside');welcome.className='portal-welcome-card';welcome.setAttribute('aria-label','Your DuneRealms account');
