@@ -1,3 +1,4 @@
+import {createApiV1} from '../node/api-v1.mjs';
 import {createRankAdmin} from '../node/rank-admin.mjs';
 import {createStaffManual} from './staff-manual.mjs';
 import {initializeRanks,can} from '../node/permissions.mjs';
@@ -16,6 +17,7 @@ import {createServerControl} from './server-control.mjs';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
 const sharedAssets=new Set(['ornament.webp','guild.webp','minecraft-hero.webp','menu-0.webp','menu-5.webp','menu-6.webp','menu-9.webp','menu-12.webp','item-23.webp','dunemark-icon-64.png','arrakis-lore-frieze.svg']);
 export function createPanel(db,settings={},dependencies={}){
+ const apiV1=createApiV1(db,settings,{fetcher:dependencies.fetcher,audit:dependencies.apiAudit});
  const origin=new URL(settings.CP_ORIGIN||'https://cp.dunerealms.com').origin;
  const auth=createAuth(db,origin),links=createGameLink(db,settings,origin),rewards=createCommunityRewards(db,settings,origin);
  const admin=createAccountAdmin(db,origin);
@@ -28,6 +30,7 @@ export function createPanel(db,settings={},dependencies={}){
  const market=(settings.EXCHANGE_READ_TOKEN||'').length>=32?createMarketBridge({pool,readToken:settings.EXCHANGE_READ_TOKEN}):null;
  return async request=>{
   const path=new URL(request.url).pathname;
+  if(path==='/api/v1'||path.startsWith('/api/v1/'))return apiV1(request);
   if(path==='/api/staff/manual')return manual(request);
   if(path==='/api/game/permissions'||path==='/api/ranks'||path.startsWith('/api/ranks/'))return ranks(request);
   const menu=path==='/api/inventory'||path==='/api/exchange/sales-history'?'cp.menu.inventory':(path==='/api/game-link'||path.startsWith('/api/game-link/')&&path!=='/api/game-link/consume')?'cp.menu.game':path==='/api/community/rewards'?'cp.menu.rewards':null;
