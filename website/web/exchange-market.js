@@ -2,6 +2,7 @@ import {categories,planets,materialName,demoListings,validListings,filterListing
 const $=id=>document.getElementById(id);
 const state={items:[],page:0,demo:true,loading:false};
 const perPage=12;
+const currency=new Intl.NumberFormat(undefined,{maximumFractionDigits:2});
 const categoryIcons={ores:'◆',spice:'✦',building:'▦',equipment:'⚒',farming:'❧',misc:'◎'};
 function element(tag,className,value) {
   const el=document.createElement(tag); if(className) el.className=className;
@@ -25,14 +26,32 @@ function render() {
     return;
   }
   for(const offer of matches.slice(state.page*perPage,(state.page+1)*perPage)) {
-    const card=element('article','market-card'); card.dataset.planet=offer.origin;
-    const art=element('div','market-item-art'); art.setAttribute('aria-hidden','true');
-    art.append(element('span','',categoryIcons[offer.category]));
-    card.append(art,element('p','market-card-category',categories[offer.category]),element('h3','',materialName(offer.material)),
-      element('p','market-price',offer.price.toLocaleString(undefined,{maximumFractionDigits:2})+' dunemarks'),
-      element('p','market-unit','per item · '+offer.quantity+' available'),element('p','market-seller',offer.seller),
-      element('p','market-origin',planets[offer.origin]),element('small','market-instruction',listingInstruction(offer,state.demo)));
-    const price=card.querySelector('.market-price'),note=document.createElement('img');note.src='assets/dunemark-icon-64.png';note.alt='';note.setAttribute('aria-hidden','true');note.className='currency-note-icon';price.prepend(note);
+    const card=element('article','market-card catalogue-card'); card.dataset.planet=offer.origin;
+    const art=element('div','market-item-art catalogue-art');
+    art.setAttribute('aria-hidden','true');
+    art.append(element('span','catalogue-item-symbol',categoryIcons[offer.category]));
+    const tag=element('span','catalogue-category-tag',categories[offer.category]);
+    art.append(tag);
+    const details=element('div','catalogue-details');
+    details.append(element('p','catalogue-world',planets[offer.origin]),
+      element('h3','catalogue-name',materialName(offer.material)));
+    const stock=element('p','catalogue-stock',offer.quantity+' available');
+    details.append(stock);
+    const footer=element('div','catalogue-footer');
+    const price=element('div','catalogue-price');
+    const priceLabel=element('span','catalogue-price-label','Price per item');
+    const amount=element('strong','catalogue-price-amount',currency.format(offer.price));
+    const note=document.createElement('img');
+    note.src='assets/dunemark-icon-64.png';note.alt='';note.setAttribute('aria-hidden','true');note.className='currency-note-icon';
+    amount.prepend(note);
+    price.append(priceLabel,amount);
+    const seller=element('p','catalogue-seller','Seller: '+offer.seller);
+    const action=element('div','catalogue-trade');
+    action.append(element('span','catalogue-trade-label',state.demo?'Demo listing':'Trade in Minecraft'));
+    const instruction=element('code','catalogue-command',listingInstruction(offer,state.demo));
+    action.append(instruction);
+    footer.append(price,seller,action);
+    card.append(art,details,footer);
     root.append(card);
   }
 }
